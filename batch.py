@@ -10,7 +10,8 @@ import io
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
-from library.load import load_resources
+from library.load_prices import load_prices
+from library.load_resources import load_resources
 
 
 # ###################################################
@@ -80,6 +81,9 @@ def loader():
         file = io.BytesIO(data.content)
         workbook = load_workbook(filename=file, read_only=True, data_only=True)
 
+        # Log
+        log = ''
+
         # Process each sheet
         for sheet in workbook.sheetnames:
 
@@ -90,20 +94,23 @@ def loader():
 
             # Resources
             if sheet == 'Recursos':
-                ok, log = load_resources(dbClient, workbook[sheet])
+                ok, llog = load_resources(dbClient, workbook[sheet])
 
             # Prices
             elif sheet == 'Precios':
-                ok, log = True, 'Ok'
+                ok, llog = load_prices(dbClient, workbook[sheet])
 
             # Other
             else:
-                ok, log = False, 'Tipo de carga desconcida.'
+                ok, llog = False, 'Tipo de carga desconcida.'
 
-            # Save result
-            sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-            dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
-            dbClient.commit()               
+            # Append log
+            log += '\n' + llog
+
+        # Save result
+        sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
+        dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
+        dbClient.commit()               
 
 
 # #####################################
