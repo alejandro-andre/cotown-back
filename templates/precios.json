@@ -1,0 +1,10 @@
+[
+    "Flat_type.Name", 
+    "Place_type.Name", 
+    "Rent_long", 
+    "Rent_medium", 
+    "Rent_short", 
+    "Services", 
+    "Deposit", 
+    "Limit"
+]

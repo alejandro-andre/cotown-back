@@ -1,0 +1,12 @@
+{
+    data: Billing_Pricing_detailList {
+        Flat_type: Resource_flat_typeViaFlat_type_id { Name }
+        Place_type: Resource_place_typeViaPlace_type_id { Name }
+        Rent_long
+        Rent_medium
+        Rent_short
+        Deposit
+        Services
+        Limit
+    }
+}
