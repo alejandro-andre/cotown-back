@@ -88,6 +88,7 @@ def loader():
         for sheet in workbook.sheetnames:
 
             # Processing
+            log += sheet + '\n'
             sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
             dbClient.execute(sql, ('Procesando...', '', id))
             dbClient.commit()               
@@ -105,7 +106,7 @@ def loader():
                 ok, llog = False, 'Tipo de carga desconcida.'
 
             # Append log
-            log += '\n' + llog
+            log += llog + '\n'
 
         # Save result
         sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
