@@ -51,8 +51,7 @@ class DBClient:
                 (self.host, 22),
                 ssh_username=self.sshuser,
                 ssh_password=self.sshpassword,
-                remote_bind_address=('localhost', 5432),
-                local_bind_address=('localhost', 5432)
+                remote_bind_address=('localhost', 5432)
             )
             self.tunnel.start()
     

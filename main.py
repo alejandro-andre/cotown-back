@@ -9,7 +9,7 @@ import io
 from flask import Flask, request, send_file, send_from_directory
 
 # Cotown includes
-#from library.dbclient import DBClient
+from library.dbclient import DBClient
 from library.apiclient import APIClient
 from library.export import export_to_excel
 from library.word import contract
@@ -21,23 +21,53 @@ from library.word import contract
 
 def runapp():
 
+    # ###################################################
     # Environment variables
-    os.environ['SERVER'] = 'experis.flows.ninja'
-    os.environ['USER'] = 'modelsadmin'
-    os.environ['PASS'] = 'Ciber$2022'
-    SERVER = str(os.environ.get('SERVER'))
-    USER = str(os.environ.get('USER'))
-    PASS = str(os.environ.get('PASS'))
+    # ###################################################
 
-    # GraphQL client
+    SERVER   = str(os.environ.get('COTOWN_SERVER'))
+    DATABASE = str(os.environ.get('COTOWN_DATABASE'))
+    DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
+    DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
+    GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
+    GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
+    SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
+    SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
+
+    # Test
+    SERVER   = 'experis.flows.ninja'
+    DATABASE = 'niledb'
+    DBUSER   = 'postgres'
+    DBPASS   = 'postgres'
+    GQLUSER  = 'modelsadmin'
+    GQLPASS  = 'Ciber$2022'
+    SSHUSER  = 'themes'
+    SSHPASS  = 'Admin1234!'
+
+    # ###################################################
+    # GraphQL and DB client
+    # ###################################################
+
+    # graphQL API
     apiClient = APIClient(SERVER)
+    apiClient.auth(user=GQLUSER, password=GQLPASS)
 
-    # DB client
-    #dbClient = DBClient(SERVER, 'niledb', USER, PASS)
-    #dbClient.connect()
+    # DB API
+    dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
+    dbClient.connect()
 
     # Flask
     app = Flask(__name__)
+
+
+    # ###################################################
+    # Hi
+    # ###################################################
+
+    @app.route('/hello')
+    def getHello():
+
+        return 'Hi!'
 
 
     # ###################################################
@@ -60,7 +90,7 @@ def runapp():
         # Get token
         token = request.args.get('access_token')
         if token == None:
-            apiClient.auth(user=USER, password=PASS)
+            apiClient.auth(user=GQLUSER, password=GQLPASS)
         else:
             apiClient.auth(token=token)
 
@@ -79,7 +109,7 @@ def runapp():
         token = request.args.get('access_token')
         print(token)
         if token == None:
-            apiClient.auth(token=None, user=USER, password=PASS)
+            apiClient.auth(token=None, user=GQLUSER, password=GQLPASS)
         else:
             apiClient.auth(token)
         
