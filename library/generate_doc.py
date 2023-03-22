@@ -21,13 +21,17 @@ def part(p):
 
   if p is None:
     return
-  
-  s = ''
-  part = [
-    '', '', 'media', 'tercera', 'cuarta', 'quinta', 'sexta', 'septima', 'octava', 'novena', 'décima', 'onceava', 'doceava', 'treceava'
-  ][int(p[2:])]
-  n, s = ('una ', '') if p[0] == '1' else ('dos ', 's')
-  return n + part + s + ' parte' + s +' (' + p + ' parte' + s + ')'
+
+  try:  
+    s = ''
+    part = [
+      '', '', 'media', 'tercera', 'cuarta', 'quinta', 'sexta', 'septima', 'octava', 'novena', 'décima', 'onceava', 'doceava', 'treceava', 'catorceava', 'quinceava'
+    ][int(p[2:])]
+    n, s = ('una ', '') if p[0] == '1' else ('dos ', 's')
+    return n + part + s + ' parte' + s +' (' + p + ' parte' + s + ')'
+  except Exception as error:
+    print(p, error)
+    return p
 
 
 # ######################################################
