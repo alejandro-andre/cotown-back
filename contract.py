@@ -6,11 +6,11 @@
 from openpyxl import load_workbook
 import requests
 import os
-import io
 
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
+from library.utils import flatten_json
 from library.generate_doc import generate_doc
 
 
@@ -18,7 +18,7 @@ from library.generate_doc import generate_doc
 # Query
 # ######################################################
 
-QUERY = '''
+BOOKING = '''
 query BookingById ($id: Int!) {
   data: Booking_BookingList (
     where: { id: { EQ: $id } }
@@ -69,6 +69,7 @@ query BookingById ($id: Int!) {
           Owner_signer_id_type: Name
         }
         Owner_signer_id: Signer_document
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
       }
       ProviderViaService_id {
         Id_typeViaId_type_id {
@@ -88,6 +89,7 @@ query BookingById ($id: Int!) {
           Service_signer_id_type: Name
         }
         Service_signer_id: Signer_document
+        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
       }
     }
     CustomerViaCustomer_id {
@@ -144,18 +146,39 @@ def contracts(apiClient, id):
 
   # Get booking info
   variables = { 'id': id }
-  result = apiClient.call(QUERY, variables)
+  result = apiClient.call(BOOKING, variables)
+  context = flatten_json(result['data'][0])
+
+  # Get rent template
+  if context.get('Owner_template') is None:
+    print(context['Owner_name'], 'no tiene plantilla de contrato de renta')
+    return
+  fid = context['Owner_template'][0]['id']
+  template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
+  if template is None:
+    print(context['Owner_name'], 'no tiene plantilla de contrato de renta')
+    return
 
   # Generate rent contract
-  file = generate_doc(result['data'][0], 'templates/contrato.docx')
+  file = generate_doc(context, template.content)
   response = requests.post(
     'https://experis.flows.ninja/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
     files={'file': file}
   )
   oid_rent = response.content
 
+  # Get services template
+  if context.get('Service_template') is None:
+    print(context['Owner_name'], 'no tiene plantilla de contrato de servicios')
+    return
+  fid = context['Service_template'][0]['id']
+  template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
+  if template is None:
+    print(context['Owner_name'], 'no tiene plantilla de contrato de servicios')
+    return
+
   # Generate services contract
-  file = generate_doc(result['data'][0], 'templates/contrato.docx')
+  file = generate_doc(context, template.content)
   response = requests.post(
     'https://experis.flows.ninja/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
     files={'file': file}
@@ -243,11 +266,26 @@ def main():
     # ###################################################
 
     # Get pending contracts
-    ids = (1,4)
+    bookings = apiClient.call('''
+    {
+      data: Booking_BookingList ( 
+        orderBy: [{ attribute: id }]
+        where: { 
+          AND: [
+            { Status: { EQ: confirmada } }, 
+            { Contract_rent: { IS_NULL: true } } 
+          ] 
+        }
+      ) { id }
+    }
+    ''')
 
     # Loop thru contracts
-    for id in ids:
-        contracts(apiClient, id)
+    if bookings is not None:
+      for booking in bookings.get('data'):
+          id = booking['id']
+          print(id)
+          contracts(apiClient, id)
 
 
 # #####################################

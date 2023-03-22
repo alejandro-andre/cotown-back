@@ -75,7 +75,7 @@ def main():
         # Get request files
         entity = 'Batch/Upload'
         id = str(file['id'])
-        data = apiClient.getFile(entity, id)
+        data = apiClient.getFile(id, entity, 'File')
 
         # Load excel book
         file = io.BytesIO(data.content)

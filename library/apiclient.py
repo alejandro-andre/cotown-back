@@ -46,7 +46,7 @@ class APIClient:
     
 
     # Get file
-    def getFile(self, entity, id):
+    def getFile(self, id, entity, field='File'):
 
         # Get file from Airflows
         return requests.get(
@@ -54,7 +54,9 @@ class APIClient:
             + entity
             + '/'
             + str(id)
-            + '/File/contents?inline=true&access_token=' 
+            + '/'
+            + field
+            + '/contents?inline=true&access_token=' 
             + self.token
         )
 

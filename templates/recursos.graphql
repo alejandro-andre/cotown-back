@@ -1,6 +1,6 @@
 {
   data: Resource_ResourceList (
-    orderBy: [{attribute: id, direction:ASC, nullsGo: FIRST}]
+    orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
   ) {
     Owner: ProviderViaOwner_id { Name }
     Code
