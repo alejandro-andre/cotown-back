@@ -10,7 +10,6 @@ from flask import Flask, request, send_file, send_from_directory
 from library.dbclient import DBClient
 from library.apiclient import APIClient
 from library.export import export_to_excel
-from library.word import contract
 
 
 # #####################################
@@ -76,24 +75,6 @@ def runapp():
     def getHtml(filename):
 
         return send_from_directory('static', filename + '.html')
-
-
-    # ###################################################
-    # Contract
-    # ###################################################
-
-    @app.route('/contract/<int:id>', methods=['GET'])
-    def getContract(id):
-
-        # Get token
-        token = request.args.get('access_token')
-        if token == None:
-            apiClient.auth(user=GQLUSER, password=GQLPASS)
-        else:
-            apiClient.auth(token=token)
-
-        # Generate contract        
-        return contract(apiClient, id)
 
 
     # ###################################################

@@ -18,7 +18,7 @@ from library.load_resources import load_resources
 # Loader function
 # ###################################################
 
-def loader():
+def main():
 
     # ###################################################
     # Environment variables
@@ -58,7 +58,7 @@ def loader():
 
 
     # ###################################################
-    # Test
+    # Main
     # ###################################################
 
     # Get upload requests
@@ -95,18 +95,18 @@ def loader():
 
             # Resources
             if sheet == 'Recursos':
-                ok, llog = load_resources(dbClient, workbook[sheet])
+                ok, l = load_resources(dbClient, workbook[sheet])
 
             # Prices
             elif sheet == 'Precios':
-                ok, llog = load_prices(dbClient, workbook[sheet])
+                ok, l = load_prices(dbClient, workbook[sheet])
 
             # Other
             else:
-                ok, llog = False, 'Tipo de carga desconcida.'
+                ok, l = False, 'Error: Tipo de carga desconcida.'
 
             # Append log
-            log += llog + '\n'
+            log += l + '\n'
 
         # Save result
         sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
@@ -120,4 +120,4 @@ def loader():
 
 if __name__ == '__main__':
 
-    loader()
+    main()
