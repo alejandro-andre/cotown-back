@@ -190,7 +190,7 @@ def main():
         where: { 
           AND: [
             { Issued: { EQ: true } }, 
-            { Document: { IS_NULL: false } } 
+            { Document: { IS_NULL: true } } 
           ] 
         }
       ) { id }
