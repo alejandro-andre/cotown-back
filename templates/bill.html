@@ -82,7 +82,7 @@ p{margin:0.3em;}
     <tr class="row">
       <td class="cell"><p>{{data.Bill_issue_date}}</p></td>
       <td class="cell"><p>{{line.Line_product}}</p></td>
-      <td class="cell"><p>{{line.Line_tax_name}} {{line.Line_tax_value}} %</p></td>
+      <td class="cell"><p>{{line.Line_tax_name}} {{'{0:0,.0f}'.format(line.Line_tax_value)}}%</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Line_amount)}} €</p></td>
     </tr>
     {% endfor %}
@@ -110,7 +110,7 @@ p{margin:0.3em;}
     </tr>
     {% for line in data.Taxes %}
     <tr class="row">
-      <td class="cell">{{line.Tax_name}} {{line.Tax_value}}%</td>
+      <td class="cell">{{line.Tax_name}} {{'{0:0,.0f}'.format(line.Tax_value)}}%</td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Base)}} €</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Tax)}} €</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Amount)}} €</p></td>

@@ -10,6 +10,8 @@ from flask import Flask, request, send_file, send_from_directory
 from library.dbclient import DBClient
 from library.apiclient import APIClient
 from library.export import export_to_excel
+from bill import do_bill
+from contract import do_contracts
 
 
 # #####################################
@@ -76,6 +78,26 @@ def runapp():
 
         return send_from_directory('static', filename + '.html')
 
+
+    # ###################################################
+    # Bill
+    # ###################################################
+
+    @app.route('/bill/<int:id>', methods=['GET'])
+    def getBill(id):
+
+        return do_bill(apiClient, id)
+    
+
+    # ###################################################
+    # Contracts
+    # ###################################################
+
+    @app.route('/contracts/<int:id>', methods=['GET'])
+    def getContracts(id):
+
+        return do_contracts(apiClient, id)
+    
 
     # ###################################################
     # Export to excel
