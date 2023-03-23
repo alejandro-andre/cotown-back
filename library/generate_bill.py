@@ -150,7 +150,7 @@ def do_bill(apiClient, id):
     variables = {
       'id': id, 
       'bill': { 
-        'name': 'Factura ' + context['Bill_code'] + '.pdf', 
+        'name': str(context['Bill_type']).capitalize() + ' ' + str(context['Bill_code']) + '.pdf', 
         'oid': int(oid), 
         'type': 'application/pdf' 
       }

@@ -23,7 +23,10 @@ def flatten_json(json_obj, key='', flattened=None, prefix=''):
 
   # Scalar, store item
   else:
-    flattened[key] = json_obj
+    if json_obj is None:
+      flattened[key] = ''
+    else:
+      flattened[key] = json_obj
 
   return flattened
 

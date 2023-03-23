@@ -43,6 +43,7 @@ def runapp():
     SSHUSER  = 'themes'
     SSHPASS  = 'Admin1234!'
 
+
     # ###################################################
     # GraphQL and DB client
     # ###################################################
@@ -66,6 +67,7 @@ def runapp():
     @app.route('/hello')
     def getHello():
 
+        print('Hi')
         return 'Hi!'
 
 
@@ -76,6 +78,7 @@ def runapp():
     @app.route('/html/<path:filename>')
     def getHtml(filename):
 
+        print('HTML ', filename)
         return send_from_directory('static', filename + '.html')
 
 
@@ -86,7 +89,9 @@ def runapp():
     @app.route('/bill/<int:id>', methods=['GET'])
     def getBill(id):
 
-        return do_bill(apiClient, id)
+        print('Bill ', id)
+        do_bill(apiClient, id)
+        return 'ok'
     
 
     # ###################################################
@@ -96,7 +101,9 @@ def runapp():
     @app.route('/contracts/<int:id>', methods=['GET'])
     def getContracts(id):
 
-        return do_contracts(apiClient, id)
+        print('Contracts ', id)
+        do_contracts(apiClient, id)
+        return 'ok'
     
 
     # ###################################################
