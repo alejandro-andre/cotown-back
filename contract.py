@@ -142,7 +142,7 @@ query BookingById ($id: Int!) {
 # Generate contract
 # ######################################################
 
-def contracts(apiClient, id):
+def do_contracts(apiClient, id):
 
   # Get booking info
   variables = { 'id': id }
@@ -285,7 +285,7 @@ def main():
       for booking in bookings.get('data'):
           id = booking['id']
           print(id)
-          contracts(apiClient, id)
+          do_contracts(apiClient, id)
 
 
 # #####################################
