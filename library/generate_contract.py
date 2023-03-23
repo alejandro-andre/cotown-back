@@ -273,4 +273,5 @@ def do_contracts(apiClient, id):
     return ('Ok')
   
   except Exception as error:
+    print(error)
     return ('Error:', error)

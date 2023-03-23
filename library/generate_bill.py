@@ -161,4 +161,5 @@ def do_bill(apiClient, id):
     return ('ok!')
   
   except Exception as error:
+    print(error)
     return ('Error:', error)
