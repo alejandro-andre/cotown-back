@@ -1,0 +1,8 @@
+$env:COTOWN_SERVER='experis.flows.ninja'
+$env:COTOWN_DATABASE='niledb'
+$env:COTOWN_DBUSER='postgres'
+$env:COTOWN_DBPASS='postgres'
+$env:COTOWN_GQLUSER='modelsadmin'
+$env:COTOWN_GQLPASS='Ciber$$2022'
+$env:COTOWN_SSHUSER='themes'
+$env:COTOWN_SSHPASS='Admin1234!'
