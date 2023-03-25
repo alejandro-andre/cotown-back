@@ -33,16 +33,6 @@ def runapp():
     SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
     SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
 
-    # Test
-    SERVER   = 'experis.flows.ninja'
-    DATABASE = 'niledb'
-    DBUSER   = 'postgres'
-    DBPASS   = 'postgres'
-    GQLUSER  = 'modelsadmin'
-    GQLPASS  = 'Ciber$2022'
-    SSHUSER  = 'themes'
-    SSHPASS  = 'Admin1234!'
-
 
     # ###################################################
     # GraphQL and DB client
