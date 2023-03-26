@@ -11,7 +11,7 @@ from library.dbclient import DBClient
 from library.apiclient import APIClient
 from library.keycloak import createUser
 from library.export import export_to_excel
-from library.queries import get_customer
+from library.queries import get_customer, get_provider
 from bill import do_bill
 from contract import do_contracts
 
@@ -57,7 +57,7 @@ def runapp():
     # ###################################################
 
     @app.route('/hello')
-    def getHello():
+    def get_hello():
 
         print('Hi')
         return 'Hi!'
@@ -68,7 +68,7 @@ def runapp():
     # ###################################################
 
     @app.route('/html/<path:filename>')
-    def getHtml(filename):
+    def get_html(filename):
 
         print('HTML ', filename)
         return send_from_directory('static', filename + '.html')
@@ -79,14 +79,20 @@ def runapp():
     # ###################################################
 
     @app.route('/bill/<int:id>', methods=['GET'])
-    def getBill(id):
+    def get_bill(id):
 
         # Debug
         print('Bill ', id)
 
+        # Get token
+        token = request.args.get('access_token')
+        if token is not None:
+            apiClient.auth(token)
+
         # Generate bill
-        do_bill(apiClient, id)
-        return 'ok'
+        if do_bill(apiClient, id):
+            return 'ok'
+        abort(500)
     
 
     # ###################################################
@@ -94,45 +100,68 @@ def runapp():
     # ###################################################
 
     @app.route('/contracts/<int:id>', methods=['GET'])
-    def getContracts(id):
+    def get_contracts(id):
 
         # Debug
         print('Contracts ', id)
 
+        # Get token
+        token = request.args.get('access_token')
+        if token is not None:
+            apiClient.auth(token)
+
         # Generate contracts
-        do_contracts(apiClient, id)
-        return 'ok'
+        if do_contracts(apiClient, id):
+            return 'ok'
+        abort(500)
     
 
     # ###################################################
-    # Create user
+    # Create users
     # ###################################################
 
-    @app.route('/user/<int:id>', methods=['GET'])
-    def getUser(id):
+    @app.route('/provideruser/<int:id>', methods=['GET'])
+    def get_provider_user(id):
 
         # Debug
-        print('User ', id)
+        print('Provider user ', id)
 
         # Get token
         token = request.args.get('access_token')
-        if token == None:
-            abort(401)
-        apiClient.auth(token)
+        if token is not None:
+            apiClient.auth(token)
+
+        # Get customer
+        customer = get_provider(apiClient, id)
+        if customer is None:
+            abort(404)
+    
+        # Create keycloak account
+        if createUser(customer['Name'], customer['Last_name'], customer['Email'], 'P' + customer['Document']):
+            return 'ok'
+        abort(500)
+
+
+    @app.route('/customeruser/<int:id>', methods=['GET'])
+    def get_customer_user(id):
+
+        # Debug
+        print('Customer user ', id)
+
+        # Get token
+        token = request.args.get('access_token')
+        if token is not None:
+            apiClient.auth(token)
 
         # Get customer
         customer = get_customer(apiClient, id)
-        print(customer)
-    
-        # Create keycloak account
         if customer is None:
             abort(404)
-        return createUser(
-            customer['Name'],
-            customer['Last_name'],
-            customer['Email'],
-            'C' + customer['Document'],
-        )
+    
+        # Create keycloak account
+        if createUser(customer['Name'], customer['Last_name'], customer['Email'], 'C' + customer['Document']):
+            return 'ok'
+        abort(500)
 
 
     # ###################################################
@@ -140,16 +169,15 @@ def runapp():
     # ###################################################
 
     @app.route('/export/<string:name>', methods=['GET'])
-    def getExport(name):
+    def get_export(name):
 
         # Debug
         print('Excel ', name)
 
         # Get token
         token = request.args.get('access_token')
-        if token == None:
-            abort(401)
-        apiClient.auth(token)
+        if token is not None:
+            apiClient.auth(token)
        
         # Querystring variables
         vars = {}

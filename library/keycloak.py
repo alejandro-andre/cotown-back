@@ -42,7 +42,7 @@ def createUser(firstName, lastName, email, username):
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
     if response.status_code != 200:
-        return 'ko ' + str(response.status_code)
+        return False
 
     # Create user
     api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users'
@@ -57,7 +57,6 @@ def createUser(firstName, lastName, email, username):
         'email': email, 
         'enabled': 'true', 
         'username': username,
-        'emailVerified': 'true',
         'credentials': [
             {
             'type': 'password',
@@ -67,6 +66,10 @@ def createUser(firstName, lastName, email, username):
         ]
     }
     response = requests.post(api_url, json=user_data, headers=headers)
+
+    # Error
     if response.status_code > 201:
-        return 'ko ' + str(response.status_code)
-    return 'ok'
+        return False
+    
+    # Ok
+    return True

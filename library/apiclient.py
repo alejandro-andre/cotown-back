@@ -28,8 +28,9 @@ class APIClient:
     def auth(self, token=None, user=None, password=None):
 
         # Set token
-        self.token = token
-        return
+        if token is not None:
+            self.token = token
+            return
     
         # Get auth token
         result = self.client.execute(gql('mutation { login(username:"' + user + '", password:"' + password + '") }'))

@@ -149,7 +149,7 @@ def month(m):
 def part(p):
 
   if p is None:
-    return
+    return ''
 
   try:  
     s = ''
@@ -207,12 +207,12 @@ def do_contracts(apiClient, id):
     # Get rent template
     if context.get('Owner_template') is None:
       print(context['Owner_name'], 'no tiene plantilla de contrato de renta')
-      return
+      return False
     fid = context['Owner_template'][0]['id']
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
       print(context['Owner_name'], 'no tiene plantilla de contrato de renta')
-      return
+      return False
 
     # Generate rent contract
     file = generate_doc_file(context, template.content)
@@ -225,12 +225,12 @@ def do_contracts(apiClient, id):
     # Get services template
     if context.get('Service_template') is None:
       print(context['Owner_name'], 'no tiene plantilla de contrato de servicios')
-      return
+      return False
     fid = context['Service_template'][0]['id']
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
       print(context['Owner_name'], 'no tiene plantilla de contrato de servicios')
-      return
+      return False
 
     # Generate services contract
     file = generate_doc_file(context, template.content)
@@ -270,8 +270,8 @@ def do_contracts(apiClient, id):
 
     # Call graphQL endpoint
     apiClient.call(query, variables)
-    return ('Ok')
+    return True
   
   except Exception as error:
     print(error)
-    return ('Error:', error)
+    return False

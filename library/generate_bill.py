@@ -158,8 +158,8 @@ def do_bill(apiClient, id):
 
     # Call graphQL endpoint
     apiClient.call(query, variables)
-    return ('ok!')
+    return True
   
   except Exception as error:
     print(error)
-    return ('Error:', error)
+    return False
