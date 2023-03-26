@@ -4,12 +4,14 @@
 
 # System includes
 import os
-from flask import Flask, request, send_file, send_from_directory
+from flask import Flask, request, abort, send_file, send_from_directory
 
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
+from library.keycloak import createUser
 from library.export import export_to_excel
+from library.queries import get_customer
 from bill import do_bill
 from contract import do_contracts
 
@@ -79,7 +81,10 @@ def runapp():
     @app.route('/bill/<int:id>', methods=['GET'])
     def getBill(id):
 
+        # Debug
         print('Bill ', id)
+
+        # Generate bill
         do_bill(apiClient, id)
         return 'ok'
     
@@ -91,10 +96,44 @@ def runapp():
     @app.route('/contracts/<int:id>', methods=['GET'])
     def getContracts(id):
 
+        # Debug
         print('Contracts ', id)
+
+        # Generate contracts
         do_contracts(apiClient, id)
         return 'ok'
     
+
+    # ###################################################
+    # Create user
+    # ###################################################
+
+    @app.route('/user/<int:id>', methods=['GET'])
+    def getUser(id):
+
+        # Debug
+        print('User ', id)
+
+        # Get token
+        token = request.args.get('access_token')
+        if token == None:
+            abort(401)
+        apiClient.auth(token)
+
+        # Get customer
+        customer = get_customer(apiClient, id)
+        print(customer)
+    
+        # Create keycloak account
+        if customer is None:
+            abort(404)
+        return createUser(
+            customer['Name'],
+            customer['Last_name'],
+            customer['Email'],
+            'C' + customer['Document'],
+        )
+
 
     # ###################################################
     # Export to excel
@@ -103,13 +142,15 @@ def runapp():
     @app.route('/export/<string:name>', methods=['GET'])
     def getExport(name):
 
+        # Debug
+        print('Excel ', name)
+
         # Get token
         token = request.args.get('access_token')
         if token == None:
-            apiClient.auth(token=None, user=GQLUSER, password=GQLPASS)
-        else:
-            apiClient.auth(token)
-        
+            abort(401)
+        apiClient.auth(token)
+       
         # Querystring variables
         vars = {}
         for item in dict(request.args).keys():

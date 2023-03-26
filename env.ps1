@@ -1,4 +1,7 @@
 $env:COTOWN_SERVER='experis.flows.ninja'
+#$env:COTOWN_SERVER='core.cotown.com'
+$env:COTOWN_SECRET='3e595f8d-4ba2-4a7d-bede-2fca09e9ec97'
+#$env:COTOWN_SECRET='dea8ff00-78fb-4839-9a6e-3b20b59bc4e5'
 $env:COTOWN_DATABASE='niledb'
 $env:COTOWN_DBUSER='postgres'
 $env:COTOWN_DBPASS='postgres'
