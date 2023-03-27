@@ -36,7 +36,7 @@ def load_resources(dbClient, data):
                 pass
 
             # Provider.Name
-            elif column == 'Provider.Name':
+            elif column == 'Owner.Name':
                 id = None
                 if cell.value is not None and cell.value != '':
                     dbClient.select('SELECT id, "Name" FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
@@ -47,6 +47,19 @@ def load_resources(dbClient, data):
                     else:    
                         id = aux['id']
                 record['Owner_id'] = id
+
+            # Service.Name
+            elif column == 'Service.Name':
+                id = None
+                if cell.value is not None and cell.value != '':
+                    dbClient.select('SELECT id, "Name" FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
+                    aux = dbClient.fetch()
+                    if aux is None:
+                        log += 'Fila: ' + str(irow+2).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
+                        ok = False
+                    else:    
+                        id = aux['id']
+                record['Service_id'] = id
 
             # Resource_flat_type.Code
             elif column == 'Flat_type.Code':
@@ -91,13 +104,40 @@ def load_resources(dbClient, data):
             else:
                 record[column] = cell.value
 
-        # Resource type
+        # Flat
+        record['Flat_id'] = None
+        record['Room_id'] = None
         if len(record['Code']) == 12:
             record['Resource_type'] = 'piso'
+
+        # Room
         elif len(record['Code']) == 16:
             record['Resource_type'] = 'habitacion'
+            dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
+            aux = dbClient.fetch()
+            if aux is None:
+                log += 'Fila: ' + str(irow+2).zfill(4) + '.Piso "' + record['Code'][:12] + '" no encontrado\n'
+                ok = False
+            else:    
+                record['Flat_id'] = aux['id']
+
+        # Place
         else:
             record['Resource_type'] = 'plaza'
+            dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
+            aux = dbClient.fetch()
+            if aux is None:
+                log += 'Fila: ' + str(irow+2).zfill(4) + '.Piso "' + record['Code'][:12] + '" no encontrado\n'
+                ok = False
+            else:    
+                record['Flat_id'] = aux['id']
+            dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:16],))
+            aux = dbClient.fetch()
+            if aux is None:
+                log += 'Fila: ' + str(irow+2).zfill(4) + '.Habitación "' + record['Code'][:12] + '" no encontrada\n'
+                ok = False
+            else:    
+                record['Room_id'] = aux['id']
 
         # Resource address
         record['Address'] = record['Address'] + ' ' + record['Code'][12:].replace('.', ' ')
