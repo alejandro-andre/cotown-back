@@ -55,7 +55,7 @@ class APIClient:
 
         # Get file from Airflows
         return requests.get(
-            'https://experis.flows.ninja/wopi/files/'
+            'https://' + self.server + '/wopi/files/'
             + entity
             + '/'
             + str(id)

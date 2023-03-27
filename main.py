@@ -5,11 +5,12 @@
 # System includes
 import os
 from flask import Flask, request, abort, send_file, send_from_directory
+from multiprocessing import Process
 
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
-from library.keycloak import createUser
+from library.keycloak import create_user, delete_user
 from library.export import export_to_excel
 from library.queries import get_customer, get_provider
 from bill import do_bill
@@ -75,7 +76,7 @@ def runapp():
 
 
     # ###################################################
-    # Bill
+    # Bill (trigger)
     # ###################################################
 
     @app.route('/bill/<int:id>', methods=['GET'])
@@ -90,13 +91,13 @@ def runapp():
             apiClient.auth(token)
 
         # Generate bill
-        if do_bill(apiClient, id):
-            return 'ok'
-        abort(500)
+        p = Process(target=do_bill, args=(apiClient, id))
+        p.start()
+        return 'ok'
     
 
     # ###################################################
-    # Contracts
+    # Contracts (trigger)
     # ###################################################
 
     @app.route('/contracts/<int:id>', methods=['GET'])
@@ -111,57 +112,101 @@ def runapp():
             apiClient.auth(token)
 
         # Generate contracts
-        if do_contracts(apiClient, id):
-            return 'ok'
-        abort(500)
+        p = Process(target=do_contracts, args=(apiClient, id))
+        p.start()
+        return 'ok'
     
 
     # ###################################################
-    # Create users
+    # Create provider user
     # ###################################################
 
-    @app.route('/provideruser/<int:id>', methods=['GET'])
-    def get_provider_user(id):
-
-        # Debug
-        print('Provider user ', id)
-
-        # Get token
-        token = request.args.get('access_token')
-        if token is not None:
-            apiClient.auth(token)
-
+    def provider_user_add(id):
+        
         # Get customer
-        customer = get_provider(apiClient, id)
-        if customer is None:
-            abort(404)
+        data = get_provider(dbClient, id)
+        print('provider ', data)
+        if data is not  None:
+            print('provider found')
     
         # Create keycloak account
-        if createUser(customer['Name'], customer['Last_name'], customer['Email'], 'P' + customer['Document']):
-            return 'ok'
-        abort(500)
+        if create_user('P' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'P' + data['Document']):
+            print('provider created')
+        return
+        
+    @app.route('/provideruser/add/<int:id>', methods=['GET'])
+    def get_provider_user_add(id):
+
+        print('Provider user add', id)
+        p = Process(target=provider_user_add, args=(id,))
+        p.start()
+        return 'ok'
 
 
-    @app.route('/customeruser/<int:id>', methods=['GET'])
-    def get_customer_user(id):
+    # ###################################################
+    # Create customer user
+    # ###################################################
 
-        # Debug
-        print('Customer user ', id)
-
-        # Get token
-        token = request.args.get('access_token')
-        if token is not None:
-            apiClient.auth(token)
+    def customer_user_add(id):
 
         # Get customer
-        customer = get_customer(apiClient, id)
-        if customer is None:
-            abort(404)
+        data = get_customer(dbClient, id)
+        print('customer ', data)
+        if data is not None:
+            print('customer found')
     
         # Create keycloak account
-        if createUser(customer['Name'], customer['Last_name'], customer['Email'], 'C' + customer['Document']):
-            return 'ok'
-        abort(500)
+        if create_user('C' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'C' + data['Document']):
+            print('customer created')
+        return
+
+    @app.route('/customeruser/add/<int:id>', methods=['GET'])
+    def get_customer_user_add(id):
+
+        print('Customer user add', id)
+        p = Process(target=customer_user_add, args=(id,))
+        p.start()
+        return 'ok'
+
+
+    # ###################################################
+    # Delete provider user
+    # ###################################################
+
+    def provider_user_del(id):
+
+        # Delete provider
+        if delete_user('P' + str(id)):
+            print('provider deleted')
+        return
+
+    @app.route('/provideruser/del/<int:id>', methods=['GET'])
+    def get_provider_user_del(id):
+
+        print('Provider user del', id)
+        p = Process(target=provider_user_del, args=(id,))
+        p.start()
+        return 'ok'
+
+
+    # ###################################################
+    # Delete customer user
+    # ###################################################
+
+    def customer_user_del(id):
+
+        # Delete provider
+        if delete_user('C' + str(id)):
+            print('customer deleted')
+        return
+
+    @app.route('/customeruser/del/<int:id>', methods=['GET'])
+    def get_customer_user_del(id):
+
+        print('Customer user del', id)
+        p = Process(target=customer_user_del, args=(id,))
+        p.start()
+        return 'ok'
 
 
     # ###################################################

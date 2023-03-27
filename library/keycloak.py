@@ -5,19 +5,22 @@
 # 1. Crear un nuevo cliente airflows-admin
 #    - Access type: confidential
 #    - Service account enabled
-#    - Root url: https://experis.flows.ninja
+#    - Root url: https://{{server}}
 # 2. En la pestaña "Service account roles"
 #    - En Client roles, seleccionar realm-management
 #    - Asignar el rol realm-admin
 # 3. En la pestaña "Credentials"
 #    - Copiar el client-secret
 
+
 # ###################################################
 # Imports
 # ###################################################
 
 import requests
+import json
 import os
+
 
 # ###################################################
 # Constants
@@ -32,7 +35,7 @@ SECRET = str(os.environ.get('COTOWN_SECRET'))
 # Create user
 # ###################################################
 
-def createUser(firstName, lastName, email, username):
+def create_user(id, firstName, lastName, email, username):
 
     # Get access token
     auth_data = {
@@ -41,6 +44,7 @@ def createUser(firstName, lastName, email, username):
         'client_secret': SECRET
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
+    print('keycloak token ', response)
     if response.status_code != 200:
         return False
 
@@ -52,8 +56,8 @@ def createUser(firstName, lastName, email, username):
         'Content-Type': 'application/json'
     }
     user_data = {
-        'firstName': firstName,
-        'lastName': lastName, 
+        'firstName': (str(firstName) + ' ' + str(lastName or '')).strip(),
+        'lastName': id, 
         'email': email, 
         'enabled': 'true', 
         'username': username,
@@ -66,10 +70,53 @@ def createUser(firstName, lastName, email, username):
         ]
     }
     response = requests.post(api_url, json=user_data, headers=headers)
+    print('keycloak response ', response)
 
     # Error
     if response.status_code > 201:
         return False
     
+    # Ok
+    return True
+
+
+# ###################################################
+# Delete user
+# ###################################################
+
+def delete_user(username):
+
+    # Get access token
+    auth_data = {
+        'grant_type': 'client_credentials',
+        'client_id': 'airflows-admin',
+        'client_secret': SECRET
+    }
+    response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
+    print('keycloak token ', response, flush=True)
+    if response.status_code != 200:
+        return False
+
+    # Get user
+    access_token = response.json()['access_token']
+    api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users?lastName=' + username
+    headers = {
+        'Authorization': f'Bearer { access_token }',
+        'Content-Type': 'application/json'
+    }
+    response = requests.get(api_url, headers=headers)
+    print('keycloak response ', response.json(), flush=True)
+   
+    # Delete user
+    id = response.json()[0]['id']
+    print('keycloak id ', id, flush=True)
+    api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users/' + id
+    headers = {
+        'Authorization': f'Bearer { access_token }',
+        'Content-Type': 'application/json'
+    }
+    response = requests.delete(api_url, headers=headers)
+    print('keycloak response ', response, flush=True)
+   
     # Ok
     return True

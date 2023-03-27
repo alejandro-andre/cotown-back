@@ -217,7 +217,7 @@ def do_contracts(apiClient, id):
     # Generate rent contract
     file = generate_doc_file(context, template.content)
     response = requests.post(
-      'https://experis.flows.ninja/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
+      'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
       files={'file': file}
     )
     oid_rent = response.content
@@ -235,7 +235,7 @@ def do_contracts(apiClient, id):
     # Generate services contract
     file = generate_doc_file(context, template.content)
     response = requests.post(
-      'https://experis.flows.ninja/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+      'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
       files={'file': file}
     )
     oid_svcs = response.content

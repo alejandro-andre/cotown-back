@@ -129,7 +129,7 @@ def do_bill(apiClient, id):
     # Generate rent contract
     file = generate_bill_file(context, 'templates/bill.html')
     response = requests.post(
-      'https://experis.flows.ninja/document/Billing/Invoice/' + str(id) + '/Document/contents?access_token=' + apiClient.token, 
+      'https://' + apiClient.server + '/document/Billing/Invoice/' + str(id) + '/Document/contents?access_token=' + apiClient.token, 
       files={'file': file}
     )
     oid = response.content
