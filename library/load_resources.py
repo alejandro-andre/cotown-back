@@ -104,6 +104,15 @@ def load_resources(dbClient, data):
             else:
                 record[column] = cell.value
 
+        # Building
+        dbClient.select('SELECT id FROM "Building"."Building" WHERE "Code"=%s', (record['Code'][:6],))
+        aux = dbClient.fetch()
+        if aux is None:
+            log += 'Fila: ' + str(irow+2).zfill(4) + '.Edificio "' + record['Code'][:6] + '" no encontrado\n'
+            ok = False
+        else:    
+            record['Building_id'] = aux['id']
+
         # Flat
         record['Flat_id'] = None
         record['Room_id'] = None
