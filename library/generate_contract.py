@@ -68,7 +68,7 @@ query BookingById ($id: Int!) {
           Owner_signer_id_type: Name
         }
         Owner_signer_id: Signer_document
-        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
       }
       ProviderViaService_id {
         Id_typeViaId_type_id {
@@ -88,7 +88,7 @@ query BookingById ($id: Int!) {
           Service_signer_id_type: Name
         }
         Service_signer_id: Signer_document
-        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
+        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
       }
     }
     CustomerViaCustomer_id {
@@ -195,6 +195,34 @@ def generate_doc_file(context, template):
 # Generate (rent and services) contracts
 # ######################################################
 
+def get_template(apiClient, template, rtype, name, ctype):
+
+
+    # No templates
+    if template is None:
+      print(name, 'no tiene plantilla de contrato de', ctype)
+      return None
+    
+    # Look for proper template
+    fid = None
+    for c in template:
+      if rtype == 'piso' and c['Type'] == 'piso':
+        fid = c['id']
+        break
+      if rtype != 'piso' and c['Type'] != 'piso':
+        fid = c['id']
+        break
+    if fid is None:
+      print(name, 'no tiene plantilla de contrato de', ctype, 'para', rtype)
+      return None
+    
+    # Get template
+    template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
+    if template is None:
+      print(name, 'no tiene plantilla de contrato de', ctype)
+    return template
+    
+
 def do_contracts(apiClient, id):
 
   try:
@@ -205,13 +233,8 @@ def do_contracts(apiClient, id):
     context = flatten_json(result['data'][0])
 
     # Get rent template
-    if context.get('Owner_template') is None:
-      print(context['Owner_name'], 'no tiene plantilla de contrato de renta')
-      return False
-    fid = context['Owner_template'][0]['id']
-    template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
+    template = get_template(apiClient, context.get('Owner_template'), context['Resource_type'], context['Owner_name'], 'renta')
     if template is None:
-      print(context['Owner_name'], 'no tiene plantilla de contrato de renta')
       return False
 
     # Generate rent contract
@@ -223,13 +246,8 @@ def do_contracts(apiClient, id):
     oid_rent = response.content
 
     # Get services template
-    if context.get('Service_template') is None:
-      print(context['Owner_name'], 'no tiene plantilla de contrato de servicios')
-      return False
-    fid = context['Service_template'][0]['id']
-    template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
+    template = get_template(apiClient, context.get('Service_template'), context['Resource_type'], context['Service_name'], 'servicios')
     if template is None:
-      print(context['Owner_name'], 'no tiene plantilla de contrato de servicios')
       return False
 
     # Generate services contract
