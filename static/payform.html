@@ -1,0 +1,19 @@
+<html>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Flex">
+<style>
+body{font-family: 'Roboto Flex',sans-serif; font-weight: 400; margin: 0; padding: 0;}
+h1{font-size: 1.25rem; font-weight: 500; padding: 20px 15px 15px 25px;}
+a{color: #000; text-decoration: none;}
+.row{width: 100%; border-bottom: 1px solid #ddd; padding: 15px 15px 15px 30px; font-size: 0.9rem; }
+</style>
+<body>
+    <h1>Pago online</h1>
+    <div class="row">
+    <form name="pay" action="/pay" method="POST">
+    <input type="text" name="amount" value="100.00"/>
+    <input type="text" name="order" value="0000AAAA0001"/>
+    <input type="submit">
+    </form>
+    </div>
+</body>
+</html>

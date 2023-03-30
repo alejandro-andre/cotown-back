@@ -13,6 +13,7 @@ from library.apiclient import APIClient
 from library.keycloak import create_user, delete_user
 from library.export import export_to_excel
 from library.queries import get_customer, get_provider
+from library.redsys import pay
 from bill import do_bill
 from contract import do_contracts
 
@@ -43,21 +44,15 @@ def runapp():
 
     # graphQL API
     apiClient = APIClient(SERVER)
-    apiClient.auth(user=GQLUSER, password=GQLPASS)
 
     # DB API
     dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
-    dbClient.connect()
-
-    # Flask
-    app = Flask(__name__)
 
 
     # ###################################################
     # Hi
     # ###################################################
 
-    @app.route('/hello')
     def get_hello():
 
         print('Hi')
@@ -68,7 +63,6 @@ def runapp():
     # Static files
     # ###################################################
 
-    @app.route('/html/<path:filename>')
     def get_html(filename):
 
         print('HTML ', filename)
@@ -79,16 +73,17 @@ def runapp():
     # Bill (trigger)
     # ###################################################
 
-    @app.route('/bill/<int:id>', methods=['GET'])
     def get_bill(id):
 
         # Debug
         print('Bill ', id)
 
-        # Get token
+        # Auth
         token = request.args.get('access_token')
         if token is not None:
             apiClient.auth(token)
+        else:
+            apiClient.auth(user=GQLUSER, password=GQLPASS)
 
         # Generate bill
         p = Process(target=do_bill, args=(apiClient, id))
@@ -100,22 +95,56 @@ def runapp():
     # Contracts (trigger)
     # ###################################################
 
-    @app.route('/contracts/<int:id>', methods=['GET'])
     def get_contracts(id):
 
         # Debug
         print('Contracts ', id)
 
-        # Get token
+        # Auth
         token = request.args.get('access_token')
         if token is not None:
             apiClient.auth(token)
+        else:
+            apiClient.auth(user=GQLUSER, password=GQLPASS)
 
         # Generate contracts
         p = Process(target=do_contracts, args=(apiClient, id))
         p.start()
         return 'ok'
     
+
+    # ###################################################
+    # Export to excel
+    # ###################################################
+
+    def get_export(name):
+
+        # Debug
+        print('Excel ', name)
+
+        # Auth
+        token = request.args.get('access_token')
+        if token is not None:
+            apiClient.auth(token)
+        else:
+            apiClient.auth(user=GQLUSER, password=GQLPASS)
+       
+        # Querystring variables
+        vars = {}
+        for item in dict(request.args).keys():
+            try:
+                vars[item] = int(request.args[item])
+            except:
+                vars[item] = request.args[item]
+    
+        # Export
+        result = export_to_excel(apiClient, name, vars)
+
+        # Response
+        response = send_file(result, mimetype='application/vnd.ms-excel')
+        response.headers['Content-Disposition'] = 'inline; filename="' + name + '.xlsx"'
+        return response        
+
 
     # ###################################################
     # Create provider user
@@ -132,9 +161,9 @@ def runapp():
         # Create keycloak account
         if create_user('P' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'P' + data['Document']):
             print('provider created')
+
         return
         
-    @app.route('/provideruser/add/<int:id>', methods=['GET'])
     def get_provider_user_add(id):
 
         print('Provider user add', id)
@@ -160,7 +189,6 @@ def runapp():
             print('customer created')
         return
 
-    @app.route('/customeruser/add/<int:id>', methods=['GET'])
     def get_customer_user_add(id):
 
         print('Customer user add', id)
@@ -180,7 +208,6 @@ def runapp():
             print('provider deleted')
         return
 
-    @app.route('/provideruser/del/<int:id>', methods=['GET'])
     def get_provider_user_del(id):
 
         print('Provider user del', id)
@@ -200,7 +227,6 @@ def runapp():
             print('customer deleted')
         return
 
-    @app.route('/customeruser/del/<int:id>', methods=['GET'])
     def get_customer_user_del(id):
 
         print('Customer user del', id)
@@ -210,36 +236,66 @@ def runapp():
 
 
     # ###################################################
-    # Export to excel
+    # Payments
     # ###################################################
 
-    @app.route('/export/<string:name>', methods=['GET'])
-    def get_export(name):
+    # Payment Ok
+    def get_ok():
 
-        # Debug
-        print('Excel ', name)
+        print('recibido OK', flush=True)
+        values = request.values
+        print(values.to_dict())
+        return 'ok ' + str(values.to_dict())
 
-        # Get token
-        token = request.args.get('access_token')
-        if token is not None:
-            apiClient.auth(token)
-       
-        # Querystring variables
-        vars = {}
-        for item in dict(request.args).keys():
-            try:
-                vars[item] = int(request.args[item])
-            except:
-                vars[item] = request.args[item]
+    # Payment fail
+    def get_ko():
+
+        print('recibido KO', flush=True)
+        values = request.values
+        print(values.to_dict())
+        return 'ko ' + str(values.to_dict())
+
+    # Notification
+    def get_notification():
+
+        print('recibido Notificacion', flush=True)
+        values = request.values
+        print(values.to_dict())
+        return 'notificacion'
+
+    # Payment
+    def post_pay():
+
+        # Data
+        amount = int(100 * float(request.form.get("amount")))
+        order = request.form.get("order")
+        return pay(amount, order)
     
-        # Export
-        result = export_to_excel(apiClient, name, vars)
 
-        # Response
-        response = send_file(result, mimetype='application/vnd.ms-excel')
-        response.headers['Content-Disposition'] = 'inline; filename="' + name + '.xlsx"'
-        return response        
+    # ###################################################
+    # Flask
+    # ###################################################
 
+    # Flask
+    app = Flask(__name__)
+    
+    # Payment
+    app.add_url_rule('/notificacion', view_func=get_notification, methods=['GET'])
+    app.add_url_rule('/ok', view_func=get_ok, methods=['GET'])
+    app.add_url_rule('/ko', view_func=get_ko, methods=['GET'])
+    app.add_url_rule('/pay/', view_func=post_pay, methods=['POST'])
+
+    # Keycloak functions
+    app.add_url_rule('/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
+    app.add_url_rule('/provideruser/del/<int:id>', view_func=get_provider_user_del, methods=['GET'])
+    app.add_url_rule('/customeruser/add/<int:id>', view_func=get_customer_user_add, methods=['GET'])
+    app.add_url_rule('/customeruser/del/<int:id>', view_func=get_customer_user_del, methods=['GET'])
+
+    # Main functions
+    app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
+    app.add_url_rule('/bill/<int:id>', view_func=get_bill, methods=['GET'])
+    app.add_url_rule('/contracts/<int:id>', view_func=get_contracts, methods=['GET'])
+    app.add_url_rule('/export/<string:name>', view_func=get_export, methods=['GET'])
 
     # Return app
     return app
