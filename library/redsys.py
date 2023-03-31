@@ -24,8 +24,8 @@ MERCHANT_URLKO           = 'https://' + SERVER + '/ko?op='
 MERCHANT_KEY             = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'
 
 # Test
-#MERCHANT_URLOK           = 'https://experis.flows.ninja/admin/Test.PagoOK/external?op='
-#MERCHANT_URLKO           = 'https://experis.flows.ninja/admin/Test.PagoOK/external?op='
+MERCHANT_URLOK           = 'https://experis.flows.ninja/admin/Test.PagoOK/external?op='
+MERCHANT_URLKO           = 'https://experis.flows.ninja/admin/Test.PagoKO/external?op='
 
 data = {
  'DS_MERCHANT_CURRENCY': MERCHANT_CURRENCY,
@@ -76,7 +76,7 @@ def pay(amount, order):
 
     return '''
     <html>
-    <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST">
+    <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
     <input type="hidden" name="Ds_SignatureVersion" value="HMAC_SHA256_V1"/>
     <input type="hidden" name="Ds_MerchantParameters" value="{}"/>
     <input type="hidden" name="Ds_Signature" value="{}"/>

@@ -12,7 +12,7 @@ from library.dbclient import DBClient
 from library.apiclient import APIClient
 from library.keycloak import create_user, delete_user
 from library.export import export_to_excel
-from library.queries import get_customer, get_provider
+from library.queries import get_customer, get_provider, availability
 from library.redsys import pay
 from bill import do_bill
 from contract import do_contracts
@@ -236,6 +236,17 @@ def runapp():
 
 
     # ###################################################
+    # Special queries
+    # ###################################################
+
+    # Availability
+    def get_availability(date_from, date_to, place_type):
+
+        print('recibido Availability', flush=True)
+        return availability(dbClient, date_from, date_to, place_type)
+
+
+    # ###################################################
     # Payments
     # ###################################################
 
@@ -290,6 +301,13 @@ def runapp():
     app.add_url_rule('/provideruser/del/<int:id>', view_func=get_provider_user_del, methods=['GET'])
     app.add_url_rule('/customeruser/add/<int:id>', view_func=get_customer_user_add, methods=['GET'])
     app.add_url_rule('/customeruser/del/<int:id>', view_func=get_customer_user_del, methods=['GET'])
+
+    # Special queries
+    app.add_url_rule(
+        '/availability/<string:date_from>/<string:date_to>/<string:place_type>', 
+        view_func=get_availability, 
+        methods=['GET']
+    )
 
     # Main functions
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
