@@ -240,11 +240,17 @@ def runapp():
     # ###################################################
 
     # Availability
-    def get_availability(date_from, date_to, place_type):
+    def post_availability():
 
         print('recibido Availability', flush=True)
-        return availability(dbClient, date_from, date_to, place_type)
-
+        data = request.get_json()
+        return availability(
+            dbClient, 
+            date_from=data.get('date_from'), 
+            date_to=data.get('date_to'), 
+            building=data.get('building'), 
+            place_type=data.get('place_type')
+        )
 
     # ###################################################
     # Payments
@@ -303,11 +309,7 @@ def runapp():
     app.add_url_rule('/customeruser/del/<int:id>', view_func=get_customer_user_del, methods=['GET'])
 
     # Special queries
-    app.add_url_rule(
-        '/availability/<string:date_from>/<string:date_to>/<string:place_type>', 
-        view_func=get_availability, 
-        methods=['GET']
-    )
+    app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
 
     # Main functions
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
