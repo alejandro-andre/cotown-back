@@ -4,7 +4,7 @@
 
 # System includes
 import os
-from flask import Flask, request, abort, send_file, send_from_directory
+from flask import Flask, request, send_file, send_from_directory
 from multiprocessing import Process
 
 # Cotown includes
@@ -13,7 +13,7 @@ from library.apiclient import APIClient
 from library.keycloak import create_user, delete_user
 from library.export import export_to_excel
 from library.queries import get_customer, get_provider, availability
-from library.redsys import pay
+from library.redsys import pay, validate
 from bill import do_bill
 from contract import do_contracts
 
@@ -28,6 +28,7 @@ def runapp():
     # Environment variables
     # ###################################################
 
+    BACK     = str(os.environ.get('COTOWN_BACK'))
     SERVER   = str(os.environ.get('COTOWN_SERVER'))
     DATABASE = str(os.environ.get('COTOWN_DATABASE'))
     DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
@@ -55,7 +56,7 @@ def runapp():
 
     def get_hello():
 
-        print('Hi')
+        print('Hi', flush=True)
         return 'Hi!'
 
 
@@ -65,7 +66,7 @@ def runapp():
 
     def get_html(filename):
 
-        print('HTML ', filename)
+        print('HTML ', filename, flush=True)
         return send_from_directory('static', filename + '.html')
 
 
@@ -76,7 +77,7 @@ def runapp():
     def get_bill(id):
 
         # Debug
-        print('Bill ', id)
+        print('Bill ', id, flush=True)
 
         # Auth
         token = request.args.get('access_token')
@@ -98,7 +99,7 @@ def runapp():
     def get_contracts(id):
 
         # Debug
-        print('Contracts ', id)
+        print('Contracts ', id, flush=True)
 
         # Auth
         token = request.args.get('access_token')
@@ -120,7 +121,7 @@ def runapp():
     def get_export(name):
 
         # Debug
-        print('Excel ', name)
+        print('Excel ', name, flush=True)
 
         # Auth
         token = request.args.get('access_token')
@@ -154,19 +155,19 @@ def runapp():
         
         # Get customer
         data = get_provider(dbClient, id)
-        print('provider ', data)
+        print('provider ', data, flush=True)
         if data is not  None:
-            print('provider found')
+            print('provider found', flush=True)
     
         # Create keycloak account
         if create_user('P' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'P' + data['Document']):
-            print('provider created')
+            print('provider created', flush=True)
 
         return
         
     def get_provider_user_add(id):
 
-        print('Provider user add', id)
+        print('Provider user add', id, flush=True)
         p = Process(target=provider_user_add, args=(id,))
         p.start()
         return 'ok'
@@ -180,18 +181,18 @@ def runapp():
 
         # Get customer
         data = get_customer(dbClient, id)
-        print('customer ', data)
+        print('customer ', data, flush=True)
         if data is not None:
-            print('customer found')
+            print('customer found', flush=True)
     
         # Create keycloak account
         if create_user('C' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'C' + data['Document']):
-            print('customer created')
+            print('customer created', flush=True)
         return
 
     def get_customer_user_add(id):
 
-        print('Customer user add', id)
+        print('Customer user add', id, flush=True)
         p = Process(target=customer_user_add, args=(id,))
         p.start()
         return 'ok'
@@ -205,12 +206,12 @@ def runapp():
 
         # Delete provider
         if delete_user('P' + str(id)):
-            print('provider deleted')
+            print('provider deleted', flush=True)
         return
 
     def get_provider_user_del(id):
 
-        print('Provider user del', id)
+        print('Provider user del', id, flush=True)
         p = Process(target=provider_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -224,12 +225,12 @@ def runapp():
 
         # Delete provider
         if delete_user('C' + str(id)):
-            print('customer deleted')
+            print('customer deleted', flush=True)
         return
 
     def get_customer_user_del(id):
 
-        print('Customer user del', id)
+        print('Customer user del', id, flush=True)
         p = Process(target=customer_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -248,8 +249,8 @@ def runapp():
             dbClient, 
             date_from=data.get('date_from'), 
             date_to=data.get('date_to'), 
-            building=data.get('building'), 
-            place_type=data.get('place_type')
+            building=data.get('building', ''), 
+            place_type=data.get('place_type', '')
         )
 
     # ###################################################
@@ -261,7 +262,7 @@ def runapp():
 
         print('recibido OK', flush=True)
         values = request.values
-        print(values.to_dict())
+        print(values.to_dict(), flush=True)
         return 'ok ' + str(values.to_dict())
 
     # Payment fail
@@ -269,16 +270,17 @@ def runapp():
 
         print('recibido KO', flush=True)
         values = request.values
-        print(values.to_dict())
+        print(values.to_dict(), flush=True)
         return 'ko ' + str(values.to_dict())
 
     # Notification
-    def get_notification():
+    def post_notification():
 
         print('recibido Notificacion', flush=True)
-        values = request.values
-        print(values.to_dict())
-        return 'notificacion'
+        print(request.values, flush=True)
+        response = validate(request.values)
+        print('[', response, ']', flush=True)
+        return 'OK'
 
     # Payment
     def post_pay():
@@ -286,7 +288,7 @@ def runapp():
         # Data
         amount = int(100 * float(request.form.get("amount")))
         order = request.form.get("order")
-        return pay(amount, order)
+        return pay(BACK, amount, order)
     
 
     # ###################################################
@@ -297,10 +299,10 @@ def runapp():
     app = Flask(__name__)
     
     # Payment
-    app.add_url_rule('/notificacion', view_func=get_notification, methods=['GET'])
+    app.add_url_rule('/notify', view_func=post_notification, methods=['POST'])
+    app.add_url_rule('/pay', view_func=post_pay, methods=['POST'])
     app.add_url_rule('/ok', view_func=get_ok, methods=['GET'])
     app.add_url_rule('/ko', view_func=get_ko, methods=['GET'])
-    app.add_url_rule('/pay/', view_func=post_pay, methods=['POST'])
 
     # Keycloak functions
     app.add_url_rule('/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])

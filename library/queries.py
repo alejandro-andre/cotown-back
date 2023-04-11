@@ -50,6 +50,12 @@ def get_customer(dbClient, id):
 
 def availability(dbClient, date_from, date_to, building, place_type):
 
+  if building is None:
+    building = ''
+
+  if place_type is None:
+    place_type = ''
+    
   try:
     dbClient.connect()
     dbClient.select('''
