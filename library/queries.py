@@ -3,7 +3,39 @@
 # ######################################################
 
 # System includes
-import requests
+import datetime
+
+
+# ######################################################
+# Get payment
+# ######################################################
+
+def get_payment(dbClient, id):
+
+  try:
+    # Get payment
+    dbClient.connect()
+    dbClient.select('SELECT id, "Issued_date", "Concept", "Amount" FROM "Billing"."Payment" WHERE id=%s', (id,))
+    aux = dict(dbClient.fetch())
+
+    # Get order num
+    dbClient.select('SELECT nextval(\'"Auxiliar"."Secuence_Payment_order_seq"\')')
+    val = dbClient.fetch()
+    order = "{:04d}CTWN{:08d}".format(datetime.datetime.now().year, val[0])
+    aux['Order'] = order
+
+    # Update payment
+    dbClient.execute('UPDATE "Billing"."Payment" SET "Order_num"=%s', (order,))
+    dbClient.commit()
+    dbClient.disconnect()
+
+    # Prepare response
+    print(aux)
+    return aux
+
+  except Exception as error:
+    print(error)
+    return None
 
 
 # ######################################################

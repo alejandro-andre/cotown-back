@@ -4,7 +4,7 @@
 
 # System includes
 import os
-from flask import Flask, request, redirect, send_file, send_from_directory
+from flask import Flask, g, request, redirect, send_file, send_from_directory, make_response
 from multiprocessing import Process
 
 # Cotown includes
@@ -12,10 +12,10 @@ from library.dbclient import DBClient
 from library.apiclient import APIClient
 from library.keycloak import create_user, delete_user
 from library.export import export_to_excel
-from library.queries import get_customer, get_provider, availability
+from library.queries import get_customer, get_provider, get_payment, availability
 from library.redsys import pay, validate
-from bill import do_bill
-from contract import do_contracts
+from library.generate_bill import do_bill
+from library.generate_contract import do_contracts
 
 
 # #####################################
@@ -45,6 +45,7 @@ def runapp():
 
     # graphQL API
     apiClient = APIClient(SERVER)
+    token = ''
 
     # DB API
     dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
@@ -79,13 +80,6 @@ def runapp():
         # Debug
         print('Bill ', id, flush=True)
 
-        # Auth
-        token = request.args.get('access_token')
-        if token is not None:
-            apiClient.auth(token)
-        else:
-            apiClient.auth(user=GQLUSER, password=GQLPASS)
-
         # Generate bill
         p = Process(target=do_bill, args=(apiClient, id))
         p.start()
@@ -100,13 +94,6 @@ def runapp():
 
         # Debug
         print('Contracts ', id, flush=True)
-
-        # Auth
-        token = request.args.get('access_token')
-        if token is not None:
-            apiClient.auth(token)
-        else:
-            apiClient.auth(user=GQLUSER, password=GQLPASS)
 
         # Generate contracts
         p = Process(target=do_contracts, args=(apiClient, id))
@@ -123,13 +110,6 @@ def runapp():
         # Debug
         print('Excel ', name, flush=True)
 
-        # Auth
-        token = request.args.get('access_token')
-        if token is not None:
-            apiClient.auth(token)
-        else:
-            apiClient.auth(user=GQLUSER, password=GQLPASS)
-       
         # Querystring variables
         vars = {}
         for item in dict(request.args).keys():
@@ -241,9 +221,14 @@ def runapp():
     # ###################################################
 
     # Redirect
-    def get_go(path):
+    def get_go():
 
-        return redirect(path, code=302)
+        url = request.args.get('url')
+        if url is not None:
+            response = make_response(redirect(url + '?access_token=' + token, code=200))
+            response.headers['Access-Control-Expose-Headers'] = '*'
+            return response
+        return 'OK'
 
 
     # ###################################################
@@ -283,6 +268,17 @@ def runapp():
         print(values.to_dict(), flush=True)
         return 'ko ' + str(values.to_dict())
 
+    # Payment
+    def get_pay(id):
+
+        # Get payment
+        payment = get_payment(dbClient, id)
+    
+        # Prepare request
+        request = pay(BACK, int(100 * float(payment['Amount'])), payment['Order'], payment['id'])
+        print(request)
+        return request
+    
     # Notification
     def post_notification():
 
@@ -292,14 +288,6 @@ def runapp():
         print('[', response, ']', flush=True)
         return 'OK'
 
-    # Payment
-    def post_pay():
-
-        # Data
-        amount = int(100 * float(request.form.get("amount")))
-        order = request.form.get("order")
-        return pay(BACK, amount, order)
-    
 
     # ###################################################
     # Flask
@@ -308,9 +296,18 @@ def runapp():
     # Flask
     app = Flask(__name__)
     
+    # Before each request
+    @app.before_request
+    def extract_token():
+        token = request.args.get('token')    
+        if token is not None:
+            apiClient.auth(token)
+        else:
+            apiClient.auth(user=GQLUSER, password=GQLPASS)
+        
     # Payment
     app.add_url_rule('/notify', view_func=post_notification, methods=['POST'])
-    app.add_url_rule('/pay', view_func=post_pay, methods=['POST'])
+    app.add_url_rule('/pay/<int:id>', view_func=get_pay, methods=['GET'])
     app.add_url_rule('/ok', view_func=get_ok, methods=['GET'])
     app.add_url_rule('/ko', view_func=get_ko, methods=['GET'])
 
@@ -324,7 +321,7 @@ def runapp():
     app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
 
     # Utils
-    app.add_url_rule('/go/<path:path>', view_func=get_go, methods=['GET'])
+    app.add_url_rule('/go', view_func=get_go, methods=['GET'])
 
     # Main functions
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])

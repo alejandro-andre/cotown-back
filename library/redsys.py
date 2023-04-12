@@ -47,10 +47,11 @@ def calc_signature(order, params):
 # Payment form
 # #####################################
 
-def pay(server, amount, order):
+def pay(server, amount, order, id):
 
     # Transaction data
     data = {
+        'DS_MERCHANT_MERCHANTDATA'   : str(id),
         'DS_MERCHANT_CURRENCY'       : MERCHANT_CURRENCY,
         'DS_MERCHANT_MERCHANTCODE'   : MERCHANT_MERCHANTCODE,
         'DS_MERCHANT_TERMINAL'       : MERCHANT_TERMINAL,
@@ -72,16 +73,22 @@ def pay(server, amount, order):
     signature = calc_signature(order, params)
     print(signature.decode('utf-8'), flush=True)
 
-    return '''
-    <html>
-    <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
-    <input type="hidden" name="Ds_SignatureVersion" value="HMAC_SHA256_V1"/>
-    <input type="hidden" name="Ds_MerchantParameters" value="{}"/>
-    <input type="hidden" name="Ds_Signature" value="{}"/>
-    <input type="submit">
-    </form>
-    </html>
-    '''.format(params.decode('utf-8'), signature.decode('utf-8'))
+    #return '''
+    #<html>
+    #<form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
+    #<input type="hidden" name="Ds_SignatureVersion" value="HMAC_SHA256_V1"/>
+    #<input type="hidden" name="Ds_MerchantParameters" value="{}"/>
+    #<input type="hidden" name="Ds_Signature" value="{}"/>
+    #<input type="submit">
+    #</form>
+    #</html>
+    #'''.format(params.decode('utf-8'), signature.decode('utf-8'))
+    
+    return {
+        'Ds_MerchantParameters': params.decode('utf-8'), 
+        'Ds_Signature': signature.decode('utf-8'), 
+        'Ds_SignatureVersion': 'HMAC_SHA256_V1'
+    }
 
 
 # #####################################
