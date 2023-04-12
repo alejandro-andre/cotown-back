@@ -4,7 +4,7 @@
 
 # System includes
 import os
-from flask import Flask, request, send_file, send_from_directory
+from flask import Flask, request, redirect, send_file, send_from_directory
 from multiprocessing import Process
 
 # Cotown includes
@@ -240,6 +240,16 @@ def runapp():
     # Special queries
     # ###################################################
 
+    # Redirect
+    def get_go(path):
+
+        return redirect(path, code=302)
+
+
+    # ###################################################
+    # Special queries
+    # ###################################################
+
     # Availability
     def post_availability():
 
@@ -312,6 +322,9 @@ def runapp():
 
     # Special queries
     app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
+
+    # Utils
+    app.add_url_rule('/go/<path:path>', view_func=get_go, methods=['GET'])
 
     # Main functions
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
