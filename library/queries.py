@@ -17,6 +17,7 @@ def get_payment(dbClient, id):
     dbClient.connect()
     dbClient.select('SELECT id, "Issued_date", "Concept", "Amount" FROM "Billing"."Payment" WHERE id=%s', (id,))
     aux = dict(dbClient.fetch())
+    aux['Issued_date'] = aux['Issued_date'].strftime("%Y-%m-%d")
 
     # Get order num
     dbClient.select('SELECT nextval(\'"Auxiliar"."Secuence_Payment_order_seq"\')')

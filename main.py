@@ -273,11 +273,14 @@ def runapp():
 
         # Get payment
         payment = get_payment(dbClient, id)
+        print(payment, flush=True)
     
-        # Prepare request
-        request = pay(BACK, int(100 * float(payment['Amount'])), payment['Order'], payment['id'])
-        print(request)
-        return request
+        # Redsys data
+        params = pay(BACK, int(100 * float(payment['Amount'])), payment['Order'], payment['id'])
+        print(params, flush=True)
+
+        # Return both information
+        return payment | params
     
     # Notification
     def post_notification():
