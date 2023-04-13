@@ -9,7 +9,7 @@ import io
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.dbclient import DBClient

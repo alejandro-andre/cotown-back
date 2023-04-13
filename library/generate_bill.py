@@ -11,7 +11,7 @@ from weasyprint import HTML
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.utils import flatten_json
@@ -166,5 +166,5 @@ def do_bill(apiClient, id):
     return True
   
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return False

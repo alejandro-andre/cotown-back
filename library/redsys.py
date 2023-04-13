@@ -11,7 +11,7 @@ import hashlib
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 
 # #############################################
@@ -72,12 +72,12 @@ def pay(order, amount, id, urlok, urlko, urlnotify):
     # Merchant parameters
     text = json.dumps(data).replace(' ', '').replace('\n', '')
     params = base64.b64encode(text.encode('utf-8'))
-    logging.debug(data)
-    logging.debug(params.decode('utf-8'))
+    logger.debug(data)
+    logger.debug(params.decode('utf-8'))
 
     # Signature
     signature = calc_signature(order, params)
-    logging.debug(signature.decode('utf-8'))
+    logger.debug(signature.decode('utf-8'))
 
     #<html>
     #<form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
@@ -103,21 +103,21 @@ def validate(response):
 
     # Received params
     params = response['Ds_MerchantParameters']
-    logging.debug(params)
+    logger.debug(params)
 
     # Get DS_ORDER
     result = json.loads(base64.b64decode(params).decode('utf-8'))
-    logging.debug(result)
+    logger.debug(result)
 
     # Calc signatures
     calculated_signature = calc_signature(result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
     received_signature = response['Ds_Signature'].replace('/', '_').replace('+', '_')
-    logging.debug(calculated_signature)
-    logging.debug(received_signature)
+    logger.debug(calculated_signature)
+    logger.debug(received_signature)
     
     # Check signature
     if calculated_signature != received_signature:
-        logging.debug('Dont match')
+        logger.debug('Dont match')
         return None
     
     # Return response

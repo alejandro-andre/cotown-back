@@ -22,7 +22,7 @@ import os
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
@@ -47,7 +47,7 @@ def create_user(id, firstName, lastName, email, username):
         'client_secret': SECRET
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
-    logging.debug('keycloak token ', response)
+    logger.debug('keycloak token ', response)
     if response.status_code != 200:
         return False
 
@@ -73,7 +73,7 @@ def create_user(id, firstName, lastName, email, username):
         ]
     }
     response = requests.post(api_url, json=user_data, headers=headers)
-    logging.debug('keycloak response ', response)
+    logger.debug('keycloak response ', response)
 
     # Error
     if response.status_code > 201:
@@ -96,7 +96,7 @@ def delete_user(username):
         'client_secret': SECRET
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
-    logging.debug('keycloak token ', response)
+    logger.debug('keycloak token ', response)
     if response.status_code != 200:
         return False
 
@@ -108,18 +108,18 @@ def delete_user(username):
         'Content-Type': 'application/json'
     }
     response = requests.get(api_url, headers=headers)
-    logging.debug('keycloak response ', response.json())
+    logger.debug('keycloak response ', response.json())
    
     # Delete user
     id = response.json()[0]['id']
-    logging.debug('keycloak id ', id)
+    logger.debug('keycloak id ', id)
     api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users/' + id
     headers = {
         'Authorization': f'Bearer { access_token }',
         'Content-Type': 'application/json'
     }
     response = requests.delete(api_url, headers=headers)
-    logging.debug('keycloak response ', response)
+    logger.debug('keycloak response ', response)
    
     # Ok
     return True

@@ -12,7 +12,7 @@ import datetime
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.utils import flatten_json
@@ -164,7 +164,7 @@ def part(p):
     n, s = ('una ', '') if p[0] == '1' else ('dos ', 's')
     return n + part + s + ' parte' + s +' (' + p + ' parte' + s + ')'
   except Exception as error:
-    logging.error(p, error)
+    logger.error(p, error)
     return p
 
 
@@ -205,7 +205,7 @@ def get_template(apiClient, template, rtype, name, ctype):
 
     # No templates
     if template is None:
-      logging.warning(name, 'no tiene plantilla de contrato de', ctype)
+      logger.warning(name, 'no tiene plantilla de contrato de', ctype)
       return None
     
     # Look for proper template
@@ -218,13 +218,13 @@ def get_template(apiClient, template, rtype, name, ctype):
         fid = c['id']
         break
     if fid is None:
-      logging.warning(name, 'no tiene plantilla de contrato de', ctype, 'para', rtype)
+      logger.warning(name, 'no tiene plantilla de contrato de', ctype, 'para', rtype)
       return None
     
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
-      logging.warning(name, 'no tiene plantilla de contrato de', ctype)
+      logger.warning(name, 'no tiene plantilla de contrato de', ctype)
     return template
     
 
@@ -296,5 +296,5 @@ def do_contracts(apiClient, id):
     return True
   
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return False

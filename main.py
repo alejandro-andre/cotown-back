@@ -9,7 +9,7 @@ from multiprocessing import Process
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.dbclient import DBClient
@@ -28,6 +28,19 @@ from library.generate_contract import do_contracts
 # #####################################
 
 def runapp():
+
+    # ###################################################
+    # Logging
+    # ###################################################
+
+    logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(levelname)s] %(message)s')
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    logger.info('Started')
+
 
     # ###################################################
     # Environment variables
@@ -360,15 +373,6 @@ def runapp():
 
 if __name__ == '__main__':
 
-    # Logging    
-    logger.setLevel(logging.DEBUG)
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
-
     # Run app
     app = runapp()
-    logger.info('Started')
     app.run(host='0.0.0.0', port=5000, debug=True)

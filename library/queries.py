@@ -8,7 +8,7 @@ import datetime
 
 # Logging
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('COTOWN')
 
 
 # ######################################################
@@ -38,11 +38,11 @@ def get_payment(dbClient, id, generate_order=False):
 
     # Prepare response
     dbClient.disconnect()
-    logging.debug(aux)
+    logger.debug(aux)
     return aux
 
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return None
 
 
@@ -60,7 +60,7 @@ def put_payment(dbClient, id, auth, date):
     return True
 
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return False
 
 
@@ -75,11 +75,11 @@ def get_provider(dbClient, id):
     dbClient.select('SELECT id, "Name", "Last_name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
     aux = dbClient.fetch()
     dbClient.disconnect()
-    logging.debug(aux)
+    logger.debug(aux)
     return aux
 
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return None
 
 
@@ -94,11 +94,11 @@ def get_customer(dbClient, id):
     dbClient.select('SELECT id, "Name", "Last_name", "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
     aux = dbClient.fetch()
     dbClient.disconnect()
-    logging.debug(aux)
+    logger.debug(aux)
     return aux
 
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return None
 
 
@@ -127,12 +127,13 @@ def availability(dbClient, date_from, date_to, building, place_type):
     WHERE bd.id IS NULL 
     AND rpt."Code" LIKE %s
     AND b."Code" LIKE %s
-    ORDER BY r."Code";''', (date_from, date_to, place_type + '%', building + '%'))
+    ORDER BY r."Code";''', (date_to, date_from, place_type + '%', building + '%'))
     aux = dbClient.fetchall()
     dbClient.disconnect()
     list = [item for sub_list in aux for item in sub_list]
+    logger.debug(list)
     return list
 
   except Exception as error:
-    logging.error(error)
+    logger.error(error)
     return None
