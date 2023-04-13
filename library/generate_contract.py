@@ -3,12 +3,13 @@
 # ###################################################
 
 # System includes
-from docxtpl import DocxTemplate
-from io import BytesIO
+import markdown
 import logging
 import requests
 import jinja2
 import datetime
+from weasyprint import HTML
+from io import BytesIO
 
 # Logging
 import logging
@@ -16,6 +17,27 @@ logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.utils import flatten_json
+
+
+# ######################################################
+# Base template for HTML
+# ######################################################
+
+BASE = '''
+<html>
+<head>
+<style>
+@page {{ size: A4; margin: 1.4cm; }}
+body {{ font-size: 12px; font-weight: 400; font-family: Arial, Helvetica, sans-serif; 
+}}
+table {{ width: 100%; }}
+p {{ margin-top: 6px; margin-bottom: 6px; text-align: justify; text-justify: inter-word; }}
+ol, ul {{ padding-left: 10px; margin-top: 0; }}
+</style>
+</head>
+<body>{}</body>
+</html>
+'''
 
 
 # ######################################################
@@ -164,7 +186,8 @@ def part(p):
     n, s = ('una ', '') if p[0] == '1' else ('dos ', 's')
     return n + part + s + ' parte' + s +' (' + p + ' parte' + s + ')'
   except Exception as error:
-    logger.error(p, error)
+    logger.error(p)
+    logger.error(error)
     return p
 
 
@@ -181,18 +204,27 @@ def generate_doc_file(context, template):
   context['Today_year'] = now.year
 
   # Add custom functions
-  jinja_env = jinja2.Environment()
-  jinja_env.filters['month'] = month
-  jinja_env.filters['part'] = part
+  env = jinja2.Environment()
+  env.filters['month'] = month
+  env.filters['part'] = part
 
   # Render contract
-  doc = DocxTemplate(BytesIO(template))
-  doc.render(context, jinja_env)
+  text = template.decode('utf-8').replace('\r\n\r\n', '\r\n\r\n<br>\r\n')
+  md = env.from_string(text).render(context)
 
-  # Convert to bytes
+  # Convert markdown to HTML
+  doc = BASE.format(markdown.markdown(md, extensions=['tables', 'attr_list']))
+
+  # Return file
   file = BytesIO()
-  doc.save(file)
+  html = HTML(string=doc)
+  html.write_pdf(file)
   file.seek(0)
+
+  # Render docx contract
+  #doc = DocxTemplate(BytesIO(template))
+  #doc.render(context, env)
+
   return file
 
 
@@ -205,7 +237,7 @@ def get_template(apiClient, template, rtype, name, ctype):
 
     # No templates
     if template is None:
-      logger.warning(name, 'no tiene plantilla de contrato de', ctype)
+      logger.warning(name + ' no tiene plantilla de contrato de ' + ctype)
       return None
     
     # Look for proper template
@@ -218,13 +250,13 @@ def get_template(apiClient, template, rtype, name, ctype):
         fid = c['id']
         break
     if fid is None:
-      logger.warning(name, 'no tiene plantilla de contrato de', ctype, 'para', rtype)
+      logger.warning(name + ' no tiene plantilla de contrato de ' + ctype + ' para ' + rtype)
       return None
     
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
-      logger.warning(name, 'no tiene plantilla de contrato de', ctype)
+      logger.warning(name + ' no tiene plantilla de contrato de ' + ctype)
     return template
     
 
@@ -280,14 +312,14 @@ def do_contracts(apiClient, id):
     variables = {
       'id': id, 
       'rent': { 
-        'name': 'Contrato de renta.docx', 
+        'name': 'Contrato de renta.pdf', 
         'oid': int(oid_rent), 
-        'type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+        'type': 'application/pdf' 
       },
       'svcs': { 
-        'name': 'Contrato de servicios.docx', 
+        'name': 'Contrato de servicios.pdf', 
         'oid': int(oid_svcs), 
-        'type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+        'type': 'application/pdf' 
       } 
     }
 
