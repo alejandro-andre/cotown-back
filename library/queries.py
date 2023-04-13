@@ -10,33 +10,53 @@ import datetime
 # Get payment
 # ######################################################
 
-def get_payment(dbClient, id):
+def get_payment(dbClient, id, generate_order=False):
 
   try:
     # Get payment
     dbClient.connect()
-    dbClient.select('SELECT id, "Issued_date", "Concept", "Amount" FROM "Billing"."Payment" WHERE id=%s', (id,))
+    dbClient.select('SELECT id, "Issued_date", "Concept", "Amount", "Payment_order" FROM "Billing"."Payment" WHERE id=%s', (id,))
     aux = dict(dbClient.fetch())
     aux['Issued_date'] = aux['Issued_date'].strftime("%Y-%m-%d")
 
-    # Get order num
-    dbClient.select('SELECT nextval(\'"Auxiliar"."Secuence_Payment_order_seq"\')')
-    val = dbClient.fetch()
-    order = "{:04d}CT{:06d}".format(datetime.datetime.now().year, val[0])
-    aux['Order'] = order
+    if generate_order:
 
-    # Update payment
-    dbClient.execute('UPDATE "Billing"."Payment" SET "Order_num"=%s', (order,))
-    dbClient.commit()
-    dbClient.disconnect()
+      # Get next order num
+      dbClient.select('SELECT nextval(\'"Auxiliar"."Secuence_Payment_order_seq"\')')
+      val = dbClient.fetch()
+      order = "{:02d}{:05d}{:05d}".format(datetime.datetime.now().year - 2000, id, val[0])
+      aux['Payment_order'] = order
+
+      # Update payment
+      dbClient.execute('UPDATE "Billing"."Payment" SET "Payment_order"=%s WHERE id=%s', (order, id))
+      dbClient.commit()
 
     # Prepare response
+    dbClient.disconnect()
     print(aux)
     return aux
 
   except Exception as error:
     print(error)
     return None
+
+
+# ######################################################
+# Update payment
+# ######################################################
+
+def put_payment(dbClient, id, auth, date):
+
+  try:
+    dbClient.connect()
+    dbClient.execute('UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
+    dbClient.commit()
+    dbClient.disconnect()
+    return True
+
+  except Exception as error:
+    print(error)
+    return False
 
 
 # ######################################################

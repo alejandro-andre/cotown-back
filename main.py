@@ -4,15 +4,16 @@
 
 # System includes
 import os
-from flask import Flask, g, request, redirect, send_file, send_from_directory, make_response
+from flask import Flask, request, send_file, send_from_directory
 from multiprocessing import Process
 
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
+
 from library.keycloak import create_user, delete_user
 from library.export import export_to_excel
-from library.queries import get_customer, get_provider, get_payment, availability
+from library.queries import get_customer, get_provider, get_payment, put_payment, availability
 from library.redsys import pay, validate
 from library.generate_bill import do_bill
 from library.generate_contract import do_contracts
@@ -80,7 +81,7 @@ def runapp():
         # Debug
         print('Bill ', id, flush=True)
 
-        # Generate bill
+        # Generate bill in background
         p = Process(target=do_bill, args=(apiClient, id))
         p.start()
         return 'ok'
@@ -95,7 +96,7 @@ def runapp():
         # Debug
         print('Contracts ', id, flush=True)
 
-        # Generate contracts
+        # Generate contracts in background
         p = Process(target=do_contracts, args=(apiClient, id))
         p.start()
         return 'ok'
@@ -110,7 +111,7 @@ def runapp():
         # Debug
         print('Excel ', name, flush=True)
 
-        # Querystring variables
+        # Querystring variables, try int by default
         vars = {}
         for item in dict(request.args).keys():
             try:
@@ -136,7 +137,7 @@ def runapp():
         # Get customer
         data = get_provider(dbClient, id)
         print('provider ', data, flush=True)
-        if data is not  None:
+        if data is not None:
             print('provider found', flush=True)
     
         # Create keycloak account
@@ -220,25 +221,9 @@ def runapp():
     # Special queries
     # ###################################################
 
-    # Redirect
-    def get_go():
-
-        url = request.args.get('url')
-        if url is not None:
-            response = make_response(redirect(url + '?access_token=' + token, code=200))
-            response.headers['Access-Control-Expose-Headers'] = '*'
-            return response
-        return 'OK'
-
-
-    # ###################################################
-    # Special queries
-    # ###################################################
-
     # Availability
     def post_availability():
 
-        print('recibido Availability', flush=True)
         data = request.get_json()
         return availability(
             dbClient, 
@@ -247,6 +232,7 @@ def runapp():
             building=data.get('building', ''), 
             place_type=data.get('place_type', '')
         )
+    
 
     # ###################################################
     # Payments
@@ -255,7 +241,6 @@ def runapp():
     # Payment Ok
     def get_ok():
 
-        print('recibido OK', flush=True)
         values = request.values
         print(values.to_dict(), flush=True)
         return 'ok ' + str(values.to_dict())
@@ -263,20 +248,19 @@ def runapp():
     # Payment fail
     def get_ko():
 
-        print('recibido KO', flush=True)
         values = request.values
         print(values.to_dict(), flush=True)
         return 'ko ' + str(values.to_dict())
 
-    # Payment
+    # Prepare payment params
     def get_pay(id):
 
         # Get payment
-        payment = get_payment(dbClient, id)
+        payment = get_payment(dbClient, id, generate_order=True)
         print(payment, flush=True)
     
         # Redsys data
-        params = pay(BACK, int(100 * float(payment['Amount'])), payment['Order'], payment['id'])
+        params = pay(BACK, BACK, int(100 * float(payment['Amount'])), payment['Payment_order'], payment['id'])
         print(params, flush=True)
 
         # Return both information
@@ -285,10 +269,28 @@ def runapp():
     # Notification
     def post_notification():
 
-        print('recibido Notificacion', flush=True)
-        print(request.values, flush=True)
+        # Validate response
         response = validate(request.values)
-        print('[', response, ']', flush=True)
+        if response is None:
+            return 'OK'
+
+        # Transaction denied
+        if response['Ds_Response'][:2] != '00':
+            return 'KO'
+
+        # Get payment
+        id = int(response['Ds_MerchantData'])
+        payment = get_payment(dbClient, id)
+        print(payment, flush=True)
+
+        # Update payment
+        date = response['Ds_Date']
+        hour = response['Ds_Hour']
+        ts = date[6:] + '-' + date[3:5] + '-' + date[:2] + ' ' + hour + ':00'
+        print(ts)
+        put_payment(dbClient, id, response['Ds_AuthorisationCode'], ts)
+
+        # Ok
         return 'OK'
 
 
@@ -301,7 +303,12 @@ def runapp():
     
     # Before each request
     @app.before_request
-    def extract_token():
+    def before_request():
+
+        # Debug
+        print ('Recibido', request.path, flush=True)
+
+        # Get token if present
         token = request.args.get('token')    
         if token is not None:
             apiClient.auth(token)
@@ -322,9 +329,6 @@ def runapp():
 
     # Special queries
     app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
-
-    # Utils
-    app.add_url_rule('/go', view_func=get_go, methods=['GET'])
 
     # Main functions
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])

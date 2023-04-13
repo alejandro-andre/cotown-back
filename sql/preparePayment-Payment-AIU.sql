@@ -1,20 +1,15 @@
 -- Prepara la funcionalidad de pago por TPV
+DECLARE
+	pay VARCHAR = '';
+
 BEGIN
-	IF pg_trigger_depth() > 1 THEN
-		RETURN NEW;
+	IF NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL THEN
+		pay := CONCAT('/functions/Auxiliar.go?url=/admin/Auxiliar.Segment/', NEW.id, '/view');
 	END IF;
 
-	IF NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL THEN
-		UPDATE "Billing"."Payment" 
-		SET "Pay" = CONCAT('https://dev.cotown.ciber.es/go?url=/admin/Auxiliar.Segment/', NEW.id, '/view')
-		WHERE id = NEW.id;
-	ELSE
-		UPDATE "Billing"."Payment" 
-		SET "Pay" = ''
-		WHERE id = NEW.id;
+	IF COALESCE(NEW."Pay", '') <> pay THEN
+		UPDATE "Billing"."Payment" SET "Pay" = pay WHERE id = NEW.id;
 	END IF;
 
 	RETURN NEW;
-
 END;
-

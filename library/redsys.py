@@ -47,18 +47,18 @@ def calc_signature(order, params):
 # Payment form
 # #####################################
 
-def pay(server, amount, order, id):
+def pay(front, back, amount, order, id):
 
     # Transaction data
     data = {
-        'DS_MERCHANT_MERCHANTDATA'   : str(id),
         'DS_MERCHANT_CURRENCY'       : MERCHANT_CURRENCY,
         'DS_MERCHANT_MERCHANTCODE'   : MERCHANT_MERCHANTCODE,
         'DS_MERCHANT_TERMINAL'       : MERCHANT_TERMINAL,
         'DS_MERCHANT_TRANSACTIONTYPE': MERCHANT_TRANSACTION_PAY,
-        'DS_MERCHANT_URLOK'          : 'https://' + server + '/ok?op=' + str(order),
-        'DS_MERCHANT_URLKO'          : 'https://' + server + '/ko?op=' + str(order),
-        'DS_MERCHANT_MERCHANTURL'    : 'https://' + server + '/notify',
+        'DS_MERCHANT_URLOK'          : 'https://' + front + '/ok?op=' + str(order),
+        'DS_MERCHANT_URLKO'          : 'https://' + front + '/ko?op=' + str(order),
+        'DS_MERCHANT_MERCHANTURL'    : 'https://' + back  + '/notify',
+        'DS_MERCHANT_MERCHANTDATA'   : str(id),
         'DS_MERCHANT_ORDER'          : str(order),
         'DS_MERCHANT_AMOUNT'         : str(amount)
     }
@@ -73,7 +73,6 @@ def pay(server, amount, order, id):
     signature = calc_signature(order, params)
     print(signature.decode('utf-8'), flush=True)
 
-    #return '''
     #<html>
     #<form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
     #<input type="hidden" name="Ds_SignatureVersion" value="HMAC_SHA256_V1"/>
@@ -82,7 +81,6 @@ def pay(server, amount, order, id):
     #<input type="submit">
     #</form>
     #</html>
-    #'''.format(params.decode('utf-8'), signature.decode('utf-8'))
     
     return {
         'Ds_MerchantParameters': params.decode('utf-8'), 
@@ -106,8 +104,8 @@ def validate(response):
     print(result, flush=True)
 
     # Calc signatures
-    calculated_signature = calc_signature(result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
-    received_signature = response['Ds_Signature'].replace('_', '/').replace('-', '+')
+    calculated_signature = calc_signature(result['Ds_Order'], params.encode('utf-8')).decode('utf-8').replace('_', '/').replace('-', '+')
+    received_signature = response['Ds_Signature']
     print(calculated_signature, flush=True)
     print(received_signature, flush=True)
     
