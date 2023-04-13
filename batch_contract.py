@@ -5,6 +5,10 @@
 # System includes
 import os
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
@@ -67,7 +71,7 @@ def main():
     if bookings is not None:
       for booking in bookings.get('data'):
           id = booking['id']
-          print(id)
+          logging.debug(id)
           do_contracts(apiClient, id)
 
 

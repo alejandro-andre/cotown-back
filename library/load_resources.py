@@ -2,6 +2,10 @@
 # Imports
 # ###################################################
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 
 # ###################################################
 # Load resources

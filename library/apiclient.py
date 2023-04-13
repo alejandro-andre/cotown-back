@@ -6,6 +6,10 @@ from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 import requests
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 
 # ###################################################
 # Class APIClient

@@ -7,6 +7,10 @@ from openpyxl import load_workbook
 import os
 import io
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient

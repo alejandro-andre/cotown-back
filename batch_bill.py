@@ -5,6 +5,10 @@
 # System includes
 import os
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
@@ -66,7 +70,7 @@ def main():
     if bills  is not None:
       for b in bills.get('data'):
           id = b['id']
-          print(id)
+          logging.debug(id)
           do_bill(apiClient, id)
 
 

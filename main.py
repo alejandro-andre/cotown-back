@@ -7,6 +7,10 @@ import os
 from flask import Flask, request, send_file, send_from_directory
 from multiprocessing import Process
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
@@ -58,7 +62,7 @@ def runapp():
 
     def get_hello():
 
-        print('Hi', flush=True)
+        logger.debug('Hi')
         return 'Hi!'
 
 
@@ -68,7 +72,7 @@ def runapp():
 
     def get_html(filename):
 
-        print('HTML ', filename, flush=True)
+        logger.debug('HTML ' + filename)
         return send_from_directory('static', filename + '.html')
 
 
@@ -79,7 +83,7 @@ def runapp():
     def get_bill(id):
 
         # Debug
-        print('Bill ', id, flush=True)
+        logger.debug('Bill ' + id)
 
         # Generate bill in background
         p = Process(target=do_bill, args=(apiClient, id))
@@ -94,7 +98,7 @@ def runapp():
     def get_contracts(id):
 
         # Debug
-        print('Contracts ', id, flush=True)
+        logger.debug('Contracts ' + id)
 
         # Generate contracts in background
         p = Process(target=do_contracts, args=(apiClient, id))
@@ -109,7 +113,7 @@ def runapp():
     def get_export(name):
 
         # Debug
-        print('Excel ', name, flush=True)
+        logger.debug('Excel ' + name)
 
         # Querystring variables, try int by default
         vars = {}
@@ -136,19 +140,20 @@ def runapp():
         
         # Get customer
         data = get_provider(dbClient, id)
-        print('provider ', data, flush=True)
+        logger.debug('Provider->')
+        logger.debug(data)
         if data is not None:
-            print('provider found', flush=True)
+            logger.debug('Provider found')
     
         # Create keycloak account
         if create_user('P' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'P' + data['Document']):
-            print('provider created', flush=True)
+            logger.debug('Provider created')
 
         return
         
     def get_provider_user_add(id):
 
-        print('Provider user add', id, flush=True)
+        logger.debug('Provider user add' + id)
         p = Process(target=provider_user_add, args=(id,))
         p.start()
         return 'ok'
@@ -162,18 +167,19 @@ def runapp():
 
         # Get customer
         data = get_customer(dbClient, id)
-        print('customer ', data, flush=True)
+        logger.debug('Customer->')
+        logger.debug(data)
         if data is not None:
-            print('customer found', flush=True)
+            logger.debug('Customer found')
     
         # Create keycloak account
         if create_user('C' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'C' + data['Document']):
-            print('customer created', flush=True)
+            logger.debug('Customer created')
         return
 
     def get_customer_user_add(id):
 
-        print('Customer user add', id, flush=True)
+        logger.debug('Customer user add ' + id)
         p = Process(target=customer_user_add, args=(id,))
         p.start()
         return 'ok'
@@ -187,12 +193,12 @@ def runapp():
 
         # Delete provider
         if delete_user('P' + str(id)):
-            print('provider deleted', flush=True)
+            logger.debug('Provider deleted')
         return
 
     def get_provider_user_del(id):
 
-        print('Provider user del', id, flush=True)
+        logger.debug('Provider user del' + id)
         p = Process(target=provider_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -206,12 +212,12 @@ def runapp():
 
         # Delete provider
         if delete_user('C' + str(id)):
-            print('customer deleted', flush=True)
+            logger.debug('Customer deleted')
         return
 
     def get_customer_user_del(id):
 
-        print('Customer user del', id, flush=True)
+        logger.debug('Customer user del' + id)
         p = Process(target=customer_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -242,14 +248,14 @@ def runapp():
     def get_ok():
 
         values = request.values
-        print(values.to_dict(), flush=True)
+        logger.debug(values.to_dict())
         return 'ok ' + str(values.to_dict())
 
     # Payment fail
     def get_ko():
 
         values = request.values
-        print(values.to_dict(), flush=True)
+        logger.debug(values.to_dict())
         return 'ko ' + str(values.to_dict())
 
     # Prepare payment params
@@ -257,11 +263,18 @@ def runapp():
 
         # Get payment
         payment = get_payment(dbClient, id, generate_order=True)
-        print(payment, flush=True)
+        logger.debug(payment)
     
         # Redsys data
-        params = pay(BACK, BACK, int(100 * float(payment['Amount'])), payment['Payment_order'], payment['id'])
-        print(params, flush=True)
+        params = pay(
+            order     = payment['Payment_order'], 
+            amount    = int(100 * float(payment['Amount'])), 
+            id        = payment['id'],
+            urlok     = 'https://' + SERVER + '/admin/Billing.PaymentOK/external?id=' + payment['Payment_order'],
+            urlko     = 'https://' + SERVER + '/admin/Billing.PaymentKO/external?id=' + payment['Payment_order'],
+            urlnotify = 'https://' + BACK   + '/notify'
+        )
+        logger.debug(params)
 
         # Return both information
         return payment | params
@@ -281,13 +294,13 @@ def runapp():
         # Get payment
         id = int(response['Ds_MerchantData'])
         payment = get_payment(dbClient, id)
-        print(payment, flush=True)
+        logger.debug(payment)
 
         # Update payment
         date = response['Ds_Date']
         hour = response['Ds_Hour']
         ts = date[6:] + '-' + date[3:5] + '-' + date[:2] + ' ' + hour + ':00'
-        print(ts)
+        logger.debug(ts)
         put_payment(dbClient, id, response['Ds_AuthorisationCode'], ts)
 
         # Ok
@@ -306,7 +319,7 @@ def runapp():
     def before_request():
 
         # Debug
-        print ('Recibido', request.path, flush=True)
+        logger.info('Recibido ' + request.path)
 
         # Get token if present
         token = request.args.get('token')    
@@ -331,6 +344,7 @@ def runapp():
     app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
 
     # Main functions
+    app.add_url_rule('/hi', view_func=get_hello, methods=['GET'])
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
     app.add_url_rule('/bill/<int:id>', view_func=get_bill, methods=['GET'])
     app.add_url_rule('/contracts/<int:id>', view_func=get_contracts, methods=['GET'])
@@ -345,7 +359,16 @@ def runapp():
 # #####################################
 
 if __name__ == '__main__':
-    
+
+    # Logging    
+    logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+
     # Run app
     app = runapp()
+    logger.info('Started')
     app.run(host='0.0.0.0', port=5000, debug=True)

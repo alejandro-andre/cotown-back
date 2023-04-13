@@ -4,9 +4,14 @@
 
 # System includes
 import requests
+import logging
 from io import BytesIO
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
+
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 # Cotown includes
 from library.utils import flatten_json
@@ -161,5 +166,5 @@ def do_bill(apiClient, id):
     return True
   
   except Exception as error:
-    print(error)
+    logging.error(error)
     return False

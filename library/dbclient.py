@@ -6,6 +6,10 @@ from sshtunnel import SSHTunnelForwarder
 import psycopg2
 import psycopg2.extras
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 
 # #####################################
 # Database class

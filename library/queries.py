@@ -3,7 +3,12 @@
 # ######################################################
 
 # System includes
+import logging
 import datetime
+
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 
 # ######################################################
@@ -33,11 +38,11 @@ def get_payment(dbClient, id, generate_order=False):
 
     # Prepare response
     dbClient.disconnect()
-    print(aux)
+    logging.debug(aux)
     return aux
 
   except Exception as error:
-    print(error)
+    logging.error(error)
     return None
 
 
@@ -55,7 +60,7 @@ def put_payment(dbClient, id, auth, date):
     return True
 
   except Exception as error:
-    print(error)
+    logging.error(error)
     return False
 
 
@@ -70,11 +75,11 @@ def get_provider(dbClient, id):
     dbClient.select('SELECT id, "Name", "Last_name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
     aux = dbClient.fetch()
     dbClient.disconnect()
-    print(aux)
+    logging.debug(aux)
     return aux
 
   except Exception as error:
-    print(error)
+    logging.error(error)
     return None
 
 
@@ -89,11 +94,11 @@ def get_customer(dbClient, id):
     dbClient.select('SELECT id, "Name", "Last_name", "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
     aux = dbClient.fetch()
     dbClient.disconnect()
-    print(aux)
+    logging.debug(aux)
     return aux
 
   except Exception as error:
-    print(error)
+    logging.error(error)
     return None
 
 
@@ -129,5 +134,5 @@ def availability(dbClient, date_from, date_to, building, place_type):
     return list
 
   except Exception as error:
-    print(error)
+    logging.error(error)
     return None

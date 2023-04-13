@@ -3,10 +3,16 @@
 # #############################################
 
 from Crypto.Cipher import DES3
+import logging
 import json
 import base64
 import hmac
 import hashlib
+
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 
 # #############################################
 # Constants
@@ -47,7 +53,7 @@ def calc_signature(order, params):
 # Payment form
 # #####################################
 
-def pay(front, back, amount, order, id):
+def pay(order, amount, id, urlok, urlko, urlnotify):
 
     # Transaction data
     data = {
@@ -55,9 +61,9 @@ def pay(front, back, amount, order, id):
         'DS_MERCHANT_MERCHANTCODE'   : MERCHANT_MERCHANTCODE,
         'DS_MERCHANT_TERMINAL'       : MERCHANT_TERMINAL,
         'DS_MERCHANT_TRANSACTIONTYPE': MERCHANT_TRANSACTION_PAY,
-        'DS_MERCHANT_URLOK'          : 'https://' + front + '/ok?op=' + str(order),
-        'DS_MERCHANT_URLKO'          : 'https://' + front + '/ko?op=' + str(order),
-        'DS_MERCHANT_MERCHANTURL'    : 'https://' + back  + '/notify',
+        'DS_MERCHANT_URLOK'          : urlok,
+        'DS_MERCHANT_URLKO'          : urlko,
+        'DS_MERCHANT_MERCHANTURL'    : urlnotify,
         'DS_MERCHANT_MERCHANTDATA'   : str(id),
         'DS_MERCHANT_ORDER'          : str(order),
         'DS_MERCHANT_AMOUNT'         : str(amount)
@@ -66,12 +72,12 @@ def pay(front, back, amount, order, id):
     # Merchant parameters
     text = json.dumps(data).replace(' ', '').replace('\n', '')
     params = base64.b64encode(text.encode('utf-8'))
-    print(data, flush=True)
-    print(params.decode('utf-8'), flush=True)
+    logging.debug(data)
+    logging.debug(params.decode('utf-8'))
 
     # Signature
     signature = calc_signature(order, params)
-    print(signature.decode('utf-8'), flush=True)
+    logging.debug(signature.decode('utf-8'))
 
     #<html>
     #<form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
@@ -97,21 +103,21 @@ def validate(response):
 
     # Received params
     params = response['Ds_MerchantParameters']
-    print(params, flush=True)
+    logging.debug(params)
 
     # Get DS_ORDER
     result = json.loads(base64.b64decode(params).decode('utf-8'))
-    print(result, flush=True)
+    logging.debug(result)
 
     # Calc signatures
-    calculated_signature = calc_signature(result['Ds_Order'], params.encode('utf-8')).decode('utf-8').replace('_', '/').replace('-', '+')
-    received_signature = response['Ds_Signature']
-    print(calculated_signature, flush=True)
-    print(received_signature, flush=True)
+    calculated_signature = calc_signature(result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
+    received_signature = response['Ds_Signature'].replace('/', '_').replace('+', '_')
+    logging.debug(calculated_signature)
+    logging.debug(received_signature)
     
     # Check signature
     if calculated_signature != received_signature:
-        print('Dont match')
+        logging.debug('Dont match')
         return None
     
     # Return response

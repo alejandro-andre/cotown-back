@@ -9,6 +9,10 @@ from io import BytesIO
 import pandas as pd
 import json
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 
 # ###################################################
 # Export to excel

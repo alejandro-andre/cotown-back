@@ -5,9 +5,14 @@
 # System includes
 from docxtpl import DocxTemplate
 from io import BytesIO
+import logging
 import requests
 import jinja2
 import datetime
+
+# Logging
+import logging
+logger = logging.getLogger(__name__)
 
 # Cotown includes
 from library.utils import flatten_json
@@ -159,7 +164,7 @@ def part(p):
     n, s = ('una ', '') if p[0] == '1' else ('dos ', 's')
     return n + part + s + ' parte' + s +' (' + p + ' parte' + s + ')'
   except Exception as error:
-    print(p, error)
+    logging.error(p, error)
     return p
 
 
@@ -200,7 +205,7 @@ def get_template(apiClient, template, rtype, name, ctype):
 
     # No templates
     if template is None:
-      print(name, 'no tiene plantilla de contrato de', ctype)
+      logging.warning(name, 'no tiene plantilla de contrato de', ctype)
       return None
     
     # Look for proper template
@@ -213,13 +218,13 @@ def get_template(apiClient, template, rtype, name, ctype):
         fid = c['id']
         break
     if fid is None:
-      print(name, 'no tiene plantilla de contrato de', ctype, 'para', rtype)
+      logging.warning(name, 'no tiene plantilla de contrato de', ctype, 'para', rtype)
       return None
     
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
-      print(name, 'no tiene plantilla de contrato de', ctype)
+      logging.warning(name, 'no tiene plantilla de contrato de', ctype)
     return template
     
 
@@ -291,5 +296,5 @@ def do_contracts(apiClient, id):
     return True
   
   except Exception as error:
-    print(error)
+    logging.error(error)
     return False

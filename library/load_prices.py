@@ -2,6 +2,10 @@
 # Imports
 # ###################################################
 
+# Logging
+import logging
+logger = logging.getLogger(__name__)
+
 
 # ###################################################
 # Load prices
@@ -80,7 +84,7 @@ def load_prices(dbClient, data):
         try:
             dbClient.execute(sql, values)
         except Exception as error:
-            print(error)
+            logging.error(error)
             dbClient.rollback()
             log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'
             ok = False
