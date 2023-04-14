@@ -1,12 +1,15 @@
 -- Calcula las partes de un piso que supone una plaza o habitación
 DECLARE 
-    reg RECORD;
-    num INTEGER;
+
+  reg RECORD;
+  num INTEGER;
   parts INTEGER;
   resource_id INTEGER;
   room_id INTEGER;
-    res VARCHAR;
+  res VARCHAR;
+
 BEGIN
+
   IF pg_trigger_depth() = 1 THEN
   
     -- Parts in the flat
@@ -35,6 +38,7 @@ BEGIN
 
   END IF;
 
-    -- Return
+  -- Return
   RETURN NEW;
+
 END;

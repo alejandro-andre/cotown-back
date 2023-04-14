@@ -1,5 +1,6 @@
 -- Almacena las reservas en tabla auxiliar
 DECLARE
+
   code VARCHAR;
   reg RECORD;
   cur CURSOR FOR 
@@ -9,6 +10,7 @@ DECLARE
     OR code LIKE CONCAT("Code", '%');
 
 BEGIN
+
   -- Delete all records related to that lock
   DELETE FROM "Booking"."Booking_detail" WHERE "Availability_id" = NEW.id;
   IF NEW."Resource_id" IS NULL THEN
@@ -48,4 +50,5 @@ BEGIN
   
   -- Return
   RETURN NEW;
+
 END;

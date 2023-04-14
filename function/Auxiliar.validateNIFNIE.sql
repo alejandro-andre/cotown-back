@@ -1,9 +1,11 @@
 -- Valida el DNI/NIE
 DECLARE
+
   letters TEXT[] := ARRAY['T','R','W','A','G','M','Y','F','P','D','X','B','N','J','Z','S','Q','V','H','L','C','K','E'];
-    valid_letter TEXT;
+  valid_letter TEXT;
 
 BEGIN
+
   -- '1' Document type identifier "DNI" from table "Id_type".
   IF NEW."Id_type_id" = 1 THEN
     IF length(NEW."Document") = 9 AND NEW."Document" ~ '^[0-9]{8}[A-Za-z]$' THEN

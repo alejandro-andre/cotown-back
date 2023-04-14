@@ -1,5 +1,6 @@
 -- Acepta una alternativa y modifica la solicitud
 BEGIN
+  
   -- Update request with accepted option
   IF NEW."Accepted" THEN
     UPDATE "Booking"."Booking"
@@ -9,4 +10,5 @@ BEGIN
 
   -- Return
   RETURN NEW;
+
 END;

@@ -163,7 +163,8 @@ def load_resources(dbClient, data):
         sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
         try:
             dbClient.execute(sql, values)
-        except:
+        except Exception as error:
+            logger.error(error)
             dbClient.rollback()
             log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'
             ok = False

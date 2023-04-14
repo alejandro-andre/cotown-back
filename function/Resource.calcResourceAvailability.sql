@@ -1,5 +1,6 @@
--- Almacena las reservas en tabla auxiliar
+-- Almacena los bloqueos de un piso en tabla auxiliar
 DECLARE
+
   status VARCHAR;
   reg RECORD;
   cur CURSOR FOR 
@@ -8,6 +9,7 @@ DECLARE
     WHERE "Flat_id" = NEW."Resource_id";
 
 BEGIN
+
   -- Delete all records related to that lock
   DELETE FROM "Booking"."Booking_detail" WHERE "Availability_id" = NEW.id;
 

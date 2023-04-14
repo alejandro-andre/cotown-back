@@ -1,8 +1,10 @@
 -- Añade el importe a la factura
 DECLARE 
+
   total NUMERIC;
 
 BEGIN
+
   -- Sum all lines
   SELECT SUM("Amount")
   INTO total
@@ -16,4 +18,5 @@ BEGIN
 
   -- Return
   RETURN NEW; 
+
 END;

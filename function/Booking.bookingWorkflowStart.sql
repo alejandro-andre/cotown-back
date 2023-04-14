@@ -1,9 +1,20 @@
+-- Inicio del workflow de reserva
 DECLARE
-  current_booking INTEGER;
+
+  booking_fee_amount INTEGER;
+
 BEGIN
-  SELECT MAX(id) INTO current_booking FROM "Booking"."Booking";  
-  UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = current_booking;
-  INSERT INTO "Booking"."Booking_log"("Booking_id", "Log") VALUES (current_booking, 'Solicitud de recurso');
-  INSERT INTO "Billing"."Payment"("Payment_method_id", "Booking_id", "Amount", "Issued_date", "Concept" ) VALUES ('1',current_booking, 100, CURRENT_DATE, 'Booking fee');
+
+  -- Estado solicitud
+  UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = NEW.id;
+
+  -- Obtiene crea un pago con el booking dee
+  SELECT "Booking_fee" INTO booking_fee_amount FROM "Building"."Building" WHERE id = NEW."Building_id";
+  INSERT INTO "Billing"."Payment"("Payment_method_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1', NEW.id, booking_fee_amount, CURRENT_DATE, 'Booking fee', 'booking');
+
+  -- Log
+  INSERT INTO "Booking"."Booking_log"("Booking_id", "Log") VALUES (NEW.id, 'Solicitud de recurso');
+
   RETURN NEW;
+
 END;

@@ -1,5 +1,6 @@
 -- Calcula los precios de la reserva
 DECLARE
+
   dt_to DATE;
   dt_curr DATE;
   dt_next DATE;

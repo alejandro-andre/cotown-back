@@ -1,5 +1,6 @@
 -- Genera el nº de factura o recibo cuando la factura es definitiva
 DECLARE
+
   format VARCHAR;
   prefix VARCHAR;
   building VARCHAR;

@@ -1,9 +1,11 @@
 -- Verifica si el residente es menor y necesita un tutor
 DECLARE
+
   tutor_id INTEGER;
   customer_age INTEGER;
 
 BEGIN
+
   -- Select customer
   SELECT DATE_PART('year', AGE(NOW(), NEW."Birth_date")) INTO customer_age;
 
@@ -24,4 +26,5 @@ BEGIN
 
   -- Ok
   RETURN NEW;
+  
 END;

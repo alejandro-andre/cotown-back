@@ -1,11 +1,13 @@
 -- Verifica los datos de la reserva
 DECLARE
+
   days INTEGER;
   months INTEGER;
   years INTEGER;
   duration INTERVAL;
 
 BEGIN
+
   -- Payer
   IF NEW."Payer_id" IS NULL THEN
     NEW."Payer_id" = NEW."Customer_id";
@@ -67,4 +69,5 @@ BEGIN
 
   -- Return record
   RETURN NEW;
+
 END;

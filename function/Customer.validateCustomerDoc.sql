@@ -1,7 +1,9 @@
 DECLARE
+
   num INTEGER;
   
 BEGIN
+
   -- Verifica que se adjunta el numero de imágenes necesarias
   SELECT "Images"
   INTO num

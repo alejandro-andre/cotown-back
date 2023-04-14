@@ -12,7 +12,6 @@ logger = logging.getLogger('COTOWN')
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
-from library.generate_bill import do_bill
 
 
 # ###################################################
@@ -52,26 +51,28 @@ def main():
     # Main
     # ###################################################
 
-    # Get pending bills
-    bills = apiClient.call('''
+    # Get pending emails
+    emails = apiClient.call('''
     {
-      data: Billing_InvoiceList ( 
+      data: Customer_Customer_emailList ( 
         where: { 
           AND: [
-            { Issued: { EQ: true } }, 
-            { Document: { IS_NULL: true } } 
+            { Template: { IS_NULL: false } }
+            { Subject: { IS_NULL: true } }
           ] 
         }
-      ) { id }
+      ) {
+        id
+        Template
+        Entity_id
+      }
     }
     ''')
 
     # Loop thru contracts
-    if bills  is not None:
-      for b in bills.get('data'):
-          id = b['id']
-          logger.debug(id)
-          do_bill(apiClient, id)
+    if emails is not None:
+      for e in emails.get('data'):
+          logger.debug(e)
 
 
 # #####################################
