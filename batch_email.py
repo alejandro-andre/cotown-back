@@ -118,7 +118,10 @@ def main():
       apiClient.call(query, variables)
 
       # Send email
-      smtp_mail('alejandroandref@gmail.com', subject, body)
+      logger.debug(email['Customer']['Email'])
+      logger.debug(subject)
+      logger.debug(body)
+      smtp_mail(email['Customer']['Email'], subject, body)
 
 
 # #####################################

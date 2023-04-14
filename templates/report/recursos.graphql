@@ -1,0 +1,27 @@
+{
+  data: Resource_ResourceList (
+    orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
+  ) {
+    Owner: ProviderViaOwner_id { Name }
+    Code
+    Address
+    Resource_flat_type: Resource_flat_typeViaFlat_type_id { Code }
+    Resource_place_type: Resource_place_typeViaPlace_type_id { Code }
+    Billing_type
+    Sale_type	
+    Pricing_rate: Pricing_rateViaRate_id { Code	}
+    Description	
+    Description_en	
+    Area	
+    Contract_expenses	
+    Baths	
+    Places	
+    Orientation	
+    Wifi_ssid	
+    Wifi_key	
+    Gate_mac	
+    Gate_url	
+    Gate_phone	
+    Notes
+  }
+}

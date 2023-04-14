@@ -86,7 +86,7 @@ def generate_bill_file(context):
 
   # Jinja environment
   env = Environment(
-      loader=FileSystemLoader('./templates'),
+      loader=FileSystemLoader('./templates/other'),
       autoescape=select_autoescape(['html', 'xml'])
   )
 

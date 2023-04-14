@@ -21,7 +21,7 @@ logger = logging.getLogger('COTOWN')
 def export_to_excel(apiClient, name, variables=None):
 
     # Get template
-    fi = open('templates/' + name + '.xlsx', 'rb')
+    fi = open('templates/report/' + name + '.xlsx', 'rb')
     template = BytesIO(fi.read())
        
     # Open template
@@ -29,12 +29,12 @@ def export_to_excel(apiClient, name, variables=None):
     for sheet in wb.sheetnames:
 
         # Get query
-        fi = open('templates/' + sheet.lower() + '.graphql', 'r')
+        fi = open('templates/report/' + sheet.lower() + '.graphql', 'r')
         query = fi.read()
         fi.close()
 
         # Get columns
-        fi = open('templates/' + sheet.lower() + '.json', 'r')
+        fi = open('templates/report/' + sheet.lower() + '.json', 'r')
         columns = json.load(fi)
         fi.close()
 

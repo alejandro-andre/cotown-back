@@ -20,28 +20,26 @@ from library.utils import flatten_json
 
 def do_email(apiClient, email):
 
-  # Template
+  # Template and entity id
   template = email['Template'].lower()
-
-  # Entity id
-  id = int(email.get('Entity_id', 0))
-  id = 900
+  id = email['Entity_id']
 
   # Context
   context = email
+  if id is not None:
+    try:
 
-  try:
-    # Get query, if exists
-    fi = open('templates/email/' + template + '.graphql', 'r')
-    query = fi.read()
-    fi.close()
+      # Get query, if exists
+      fi = open('templates/email/' + template + '.graphql', 'r')
+      query = fi.read()
+      fi.close()
 
-    # Call graphQL endpoint
-    result = apiClient.call(query, {'id': id})
-    context |= flatten_json(result['data'][0])
+      # Call graphQL endpoint
+      result = apiClient.call(query, {'id': id})
+      context |= flatten_json(result['data'][0])
 
-  except:
-    pass
+    except:
+      pass
 
   # Jinja environment
   env = Environment(
@@ -56,10 +54,6 @@ def do_email(apiClient, email):
   # Generate body
   tpl = env.get_template(template + '.body')
   body = tpl.render(context)
-
-  print(email['Customer']['Email'])
-  print(subject)
-  print(body)
 
   # Return
   return subject, body
