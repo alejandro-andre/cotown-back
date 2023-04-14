@@ -82,17 +82,17 @@ query BillById ($id: Int!) {
 # Generate file
 # ######################################################
 
-def generate_bill_file(context, template):
+def generate_bill_file(context):
 
   # Jinja environment
   env = Environment(
-      loader=FileSystemLoader('./'),
+      loader=FileSystemLoader('./templates'),
       autoescape=select_autoescape(['html', 'xml'])
   )
 
   # Generate HTML
-  tpl = env.get_template(template)
-  result = tpl.render(data=context)
+  tpl = env.get_template('bill.html')
+  result = tpl.render(context)
 
   # Generate PDF
   file = BytesIO()
@@ -132,7 +132,7 @@ def do_bill(apiClient, id):
     context['Taxes'] = list(taxes.values())
 
     # Generate rent contract
-    file = generate_bill_file(context, 'templates/bill.html')
+    file = generate_bill_file(context)
     response = requests.post(
       'https://' + apiClient.server + '/document/Billing/Invoice/' + str(id) + '/Document/contents?access_token=' + apiClient.token, 
       files={'file': file}

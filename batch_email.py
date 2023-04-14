@@ -4,6 +4,7 @@
 
 # System includes
 import os
+import datetime
 
 # Logging
 import logging
@@ -12,6 +13,8 @@ logger = logging.getLogger('COTOWN')
 # Cotown includes
 from library.dbclient import DBClient
 from library.apiclient import APIClient
+from library.email import smtp_mail
+from library.generate_email import do_email
 
 
 # ###################################################
@@ -59,20 +62,63 @@ def main():
           AND: [
             { Template: { IS_NULL: false } }
             { Subject: { IS_NULL: true } }
+            { Sent_at: { IS_NULL: true } }
           ] 
         }
       ) {
         id
+        Customer: CustomerViaCustomer_id {
+          Name
+          Last_name
+          Address
+          Email
+        }
         Template
         Entity_id
       }
     }
     ''')
 
-    # Loop thru contracts
-    if emails is not None:
-      for e in emails.get('data'):
-          logger.debug(e)
+    # No emails
+    if emails is None:
+      return
+
+    # Loop thru emails
+    for email in emails.get('data'):
+
+      # Debug
+      logger.debug(email)
+
+      # Generate email body
+      subject, body = do_email(apiClient, email)
+
+      # Update query
+      query = '''
+      mutation ($id: Int! $subject: String! $body: String! $sent: String!) {
+        Customer_Customer_emailUpdate (
+          where:  { id: {EQ: $id} }
+          entity: { 
+            Subject: $subject 
+            Body: $body
+            Sent_at: $sent
+          }
+        ) { id }
+      }
+      '''
+
+      # Update variables
+      variables = {
+        'id': email['id'], 
+        'subject': subject,
+        'body': body,
+        'sent': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+      }
+
+      # Call graphQL endpoint
+      apiClient.call(query, variables)
+
+      # Send email
+      smtp_mail('alejandroandref@gmail.com', subject, body)
 
 
 # #####################################

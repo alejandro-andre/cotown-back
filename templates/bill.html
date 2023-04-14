@@ -37,21 +37,21 @@ p{margin:0.3em;}
   <tbody>
   <tr class="row">
     <td class="cell" width="50%">
-      <h2>{{data.Provider_name}}</h2>
-      <p>{{data.Provider_id}}</p>
-      <p>{{data.Provider_address}}</p>
-      <p>{{data.Provider_zip}} {{data.Provider_city}}</p>
-      <p>{{data.Provider_country}}</p>
+      <h2>{{Provider_name}}</h2>
+      <p>{{Provider_id}}</p>
+      <p>{{Provider_address}}</p>
+      <p>{{Provider_zip}} {{Provider_city}}</p>
+      <p>{{Provider_country}}</p>
       <p>&nbsp;</p>
     </td>
     <td style="background-color:white;width:1%;"></td>
     <td class="cell" width="49%">
-      <h2>{{data.Customer_name}} {{data.Customer_last_name}}</h2>
-      <p>{{data.Customer_id}}</p>
-      <p>{{data.Customer_address}}</p>
-      <p>{{data.Customer_zip}} {{data.Customer_city}}</p>
-      <p>{{data.Customer_country}}</p>
-      <p class="right">Plaza Nº: {{data.Resource_code}}</p>
+      <h2>{{Customer_name}} {{Customer_last_name}}</h2>
+      <p>{{Customer_id}}</p>
+      <p>{{Customer_address}}</p>
+      <p>{{Customer_zip}} {{Customer_city}}</p>
+      <p>{{Customer_country}}</p>
+      <p class="right">Plaza Nº: {{Resource_code}}</p>
     </td>
   </tr>
   </tbody>
@@ -61,8 +61,8 @@ p{margin:0.3em;}
   <tbody>
   <tr class="row">
     <td class="cell">
-      <h2>{{data.Bill_type|upper}}: {{data.Bill_code}}</h2>
-      <p>FECHA: {{data.Bill_issue_date}}</p>
+      <h2>{{Bill_type|upper}}: {{Bill_code}}</h2>
+      <p>FECHA: {{Bill_issue_date}}</p>
     </td>
   </tr>
   </tbody>
@@ -80,7 +80,7 @@ p{margin:0.3em;}
   <tbody>
     {% for line in data.Lines %} 
     <tr class="row">
-      <td class="cell"><p>{{data.Bill_issue_date}}</p></td>
+      <td class="cell"><p>{{Bill_issue_date}}</p></td>
       <td class="cell"><p>{{line.Line_product}}</p></td>
       <td class="cell"><p>{{line.Line_tax_name}} {{'{0:0,.0f}'.format(line.Line_tax_value)}}%</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Line_amount)}} €</p></td>
