@@ -1,38 +1,57 @@
 <html>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Flex">
 <style>
-body{font-family: 'Roboto Flex',sans-serif; font-weight: 400; margin: 0; padding: 0;}
-h1{font-size: 1.25rem; font-weight: 500; padding: 20px 15px 15px 25px;}
-a{color: #000; text-decoration: none;}
-.row{width: 100%; border-bottom: 1px solid #ddd; padding: 15px 15px 15px 30px; font-size: 0.9rem; }
+body{ font-family:'Roboto Flex',sans-serif; font-size: 0.9rem; font-weight: 400; margin: 0; padding: 0; }
+h1{ font-size: 1.25rem; font-weight: 500; }
+button { background-color: #00BFB2; border-radius: 5px; border: none; color: white; padding: 12px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; }
+.container { padding: 25px; }
+.label { font-size: 12px; color: #444; padding-bottom: 10px;}
+.data { font-size: 16px; min-height: 20px; padding-bottom: 5px; border-bottom: 1px solid gray; margin-bottom: 20px; }
+.c10 { width: 10%; }
+.c20 { width: 20%; }
+.c30 { width: 30%; }
+.c40 { width: 40%; }
+.c50 { width: 50%; }
 </style>
 <body>
-    <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
-        <input id="id"/><br/>
-        <input id="Concept"/><br/>
-        <input id="Amount"/><br/>
-        <input id="Order"/><br/>
-        <input id="Issued_date"/><br/>
-        <input type="hidden" id="Ds_SignatureVersion"   name="Ds_SignatureVersion"/><br/>
-        <input type="hidden" id="Ds_MerchantParameters" name="Ds_MerchantParameters"/><br/>
-        <input type="hidden" id="Ds_Signature"          name="Ds_Signature"/><br/>
-        <input type="submit"><br/>
-    </form>
-	<script>
-        var params = new URLSearchParams(window.location.search);
-        var id = params.get('id');
-		var xhr = new XMLHttpRequest();
-		xhr.open('GET', 'https://dev.cotown.ciber.es/pay/' + id, true);
-		xhr.onload = function() {
-			if (xhr.status === 200) {
-                const datos = JSON.parse(xhr.responseText);
-                for (let k in datos) {
-                    document.getElementById(k).value = datos[k];    
-                };
-			}
-		};
-		xhr.send();
-	</script>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get("access_token");
+</script>
+<div class="container">
+  <h1>Datos de pago</h1>
+  <p>Información de detalle del pago a realizar</p><br/>
+  <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
+    <div class="label">Identificador</div><div class="data c10" id="id"></div>
+    <div class="label">Nº de orden</div><div class="data c20" id="order"></div>
+    <div class="label">Concepto</div><div class="data c20" id="concept"></div>
+    <div class="label">Importe</div><div class="data c20" id="amount"></div>
+    <button id="submit" disabled class="primary" type="submit">Pagar</button>
+    <input type="hidden" id="Ds_SignatureVersion" name="Ds_SignatureVersion"/>
+    <input type="hidden" id="Ds_MerchantParameters" name="Ds_MerchantParameters"/>
+    <input type="hidden" id="Ds_Signature" name="Ds_Signature"/>
+  </form>
+</div>
+<script>
+var params = new URLSearchParams(window.location.search);
+var id = params.get('id');
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://dev.cotown.ciber.es/pay/' + id, true);
+xhr.onload = function() {
+  if (xhr.status === 200) {
+    const datos = JSON.parse(xhr.responseText);
+    document.getElementById('id').innerHTML = datos['id'];
+    document.getElementById('concept').innerHTML = datos['Concept'];
+    document.getElementById('amount').innerHTML = datos['Amount'];
+    document.getElementById('order').innerHTML = datos['Payment_order'];
+    document.getElementById('Ds_Signature').value = datos['Ds_Signature'];
+    document.getElementById('Ds_MerchantParameters').value = datos['Ds_MerchantParameters'];
+    document.getElementById('Ds_SignatureVersion').value = datos['Ds_SignatureVersion'];
+    document.getElementById('submit').disabled = false;
+  }
+};
+xhr.send();
+</script>
 </body>
 </html>
 
