@@ -14,7 +14,7 @@ BEGIN
   
   IF (total_records = 1) THEN
     UPDATE "Booking"."Booking" SET "Status" ='solicitudpagada' WHERE id=NEW."Booking_id";
-    UPDATE "Booking"."Booking_log" SET "Log" = 'Solicitud pagada'  WHERE "Booking_id" = NEW."Booking_id";
+    UPDATE "Booking"."Booking_log" SET "Log" = 'Solicitud pagada' WHERE "Booking_id" = NEW."Booking_id";
   END IF;
 
   RETURN NEW;
