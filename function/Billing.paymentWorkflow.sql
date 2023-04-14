@@ -5,6 +5,10 @@ DECLARE
 
 BEGIN
 
+  IF pg_trigger_depth() > 1
+    RETURN NEW;
+  END IF;
+  
   SELECT count(*) 
   INTO total_records 
   FROM "Billing"."Payment"

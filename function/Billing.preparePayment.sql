@@ -6,7 +6,7 @@ DECLARE
 BEGIN
 
   IF NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL THEN
-    pay := CONCAT('/functions/Auxiliar.go?url=/admin/Auxiliar.Segment/', NEW.id, '/view');
+    pay := CONCAT('/functions/Auxiliar.goin?url=/admin/Billing.Pay/external?id=', NEW.id);
   END IF;
 
   IF COALESCE(NEW."Pay", '') <> pay THEN
