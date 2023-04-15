@@ -38,7 +38,7 @@ const token = urlParams.get("access_token");
 var params = new URLSearchParams(window.location.search);
 var id = params.get('id');
 var xhr = new XMLHttpRequest();
-xhr.open('GET', 'https://dev.cotown.ciber.es/pay/' + id, true);
+xhr.open('GET', window.location.origin + '/pay/' + id, true);
 xhr.onload = function() {
   if (xhr.status === 200) {
     const datos = JSON.parse(xhr.responseText);
