@@ -12,8 +12,13 @@ BEGIN
   END IF;
 
   -- Comprobamos si el pago se ha llevado a cabo correctamente 
-  IF (NEW."Payment_auth" IS NULL OR NEW."Payment_date" IS NULL) THEN 
+  IF (NEW."Payment_date" IS NULL) THEN 
     RETURN NEW;
+  END IF;
+
+  -- Pago manual (sin auth code)
+  IF (NEW."Payment_auth" IS NULL) THEN 
+    NEW."Payment_auth" := 'MANUAL';
   END IF;
 
   -- Pago realizado, quita el botón
