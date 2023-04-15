@@ -40,7 +40,7 @@ query BillById ($id: Int!) {
         Bill_code: Code
         Bill_details: Details
         Issued
-        Bill_issue_date: Issue_date
+        Bill_issued_date: Issued_date
         Bill_total: Total
         CustomerViaCustomer_id {
             Customer_id: Document

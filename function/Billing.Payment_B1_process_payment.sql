@@ -1,6 +1,8 @@
 -- Procesa cambios en los pagos
 DECLARE
 
+  invoice_id INTEGER;
+  customer_id INTEGER;
   status_record VARCHAR;
 
 BEGIN
@@ -32,6 +34,14 @@ BEGIN
 
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Booking fee pagado');
+
+    -- Crea la factura
+    SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+    INSERT INTO "Billing"."Invoice" 
+    ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Details", "Payment_method_id", "Payment_id") 
+    VALUES 
+    ('factura', TRUE, CURRENT_DATE, 1, customer_id, NEW."Booking_id", 'Booking fee', NEW."Payment_method_id", NEW.id)
+    RETURNING id INTO invoice_id;
 
     -- Comprobamos si el estado es 'solicitud'
     IF (status_record = 'solicitud') THEN

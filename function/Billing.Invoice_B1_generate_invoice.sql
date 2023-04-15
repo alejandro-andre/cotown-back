@@ -44,7 +44,7 @@ BEGIN
   END IF;
 
   -- Issue year
-  SELECT EXTRACT(YEAR FROM NEW."Issue_date") INTO yy;
+  SELECT EXTRACT(YEAR FROM NEW."Issued_date") INTO yy;
 
   -- Get bill code format
   SELECT
