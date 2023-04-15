@@ -13,7 +13,7 @@ DECLARE
 BEGIN
 
   -- Delete all records related to that lock
-  DELETE FROM "Booking"."Booking_detail" WHERE "Availability_id" = NEW.id;
+  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
   IF NEW."Resource_id" IS NULL THEN
     RETURN NEW;
   END IF;
