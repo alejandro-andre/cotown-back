@@ -4,7 +4,7 @@
 
 # System includes
 import os
-from flask import Flask, request, send_file, send_from_directory
+from flask import Flask, request, abort, send_file, send_from_directory
 from multiprocessing import Process
 
 # Logging
@@ -86,7 +86,10 @@ def runapp():
     def get_html(filename):
 
         logger.debug('HTML ' + filename)
-        return send_from_directory('static', filename + '.html')
+        try:
+            return send_from_directory('static', filename + '.html')
+        except:
+            return send_from_directory('static', filename)
 
 
     # ###################################################
@@ -262,14 +265,14 @@ def runapp():
 
         values = request.values
         logger.debug(values.to_dict())
-        return 'ok ' + str(values.to_dict())
+        return 'OK ' + str(values.to_dict())
 
     # Payment fail
     def get_ko():
 
         values = request.values
         logger.debug(values.to_dict())
-        return 'ko ' + str(values.to_dict())
+        return 'KO ' + str(values.to_dict())
 
     # Prepare payment params
     def get_pay(id):
@@ -277,6 +280,9 @@ def runapp():
         # Get payment
         payment = get_payment(dbClient, id, generate_order=True)
         logger.debug(payment)
+        logger.debug(payment)
+        if payment is None:
+            abort(404)
     
         # Redsys data
         params = pay(
@@ -308,6 +314,8 @@ def runapp():
         id = int(response['Ds_MerchantData'])
         payment = get_payment(dbClient, id)
         logger.debug(payment)
+        if payment is None:
+            return 'KO'
 
         # Update payment
         date = response['Ds_Date']

@@ -21,7 +21,13 @@ def get_payment(dbClient, id, generate_order=False):
     # Get payment
     dbClient.connect()
     dbClient.select('SELECT id, "Issued_date", "Concept", "Amount", "Payment_order" FROM "Billing"."Payment" WHERE id=%s', (id,))
-    aux = dict(dbClient.fetch())
+    result = dbClient.fetch()
+    if result is None:
+      dbClient.disconnect()
+      return None
+    
+    # Get data
+    aux = dict(result)
     aux['Issued_date'] = aux['Issued_date'].strftime("%Y-%m-%d")
 
     if generate_order:
