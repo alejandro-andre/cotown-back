@@ -9,6 +9,7 @@ DECLARE
     WHERE "Code" LIKE CONCAT(code, '%')
     OR code LIKE CONCAT("Code", '%');
 
+-- Actualiza la tabla auxiliar de disponibilidades
 BEGIN
 
   -- Delete all records related to that lock

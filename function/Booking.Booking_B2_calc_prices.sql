@@ -139,8 +139,6 @@ BEGIN
     m_limit:= ny_limit;
   END IF;  
 
-
-
   -- Insert base values
   IF m_deposit < m_rent + m_services THEN
     m_deposit := m_rent + m_services;
@@ -149,7 +147,6 @@ BEGIN
   NEW."Services" := m_services;
   NEW."Deposit" := m_deposit;
   NEW."Limit" := m_limit;
-
 
   -- Insert prices
   WHILE dt_curr < dt_to LOOP
@@ -188,7 +185,7 @@ BEGIN
     END IF;
   
     -- Insert price
-      INSERT INTO "Booking"."Booking_price"
+    INSERT INTO "Booking"."Booking_price"
     ("Booking_id", "Rent_date", "Rent", "Services")
     VALUES (NEW.id, dt_curr, m_rent, m_services);
   

@@ -1,4 +1,4 @@
--- Valida que el correo o el telefono este relleno validateContactPhoneEmail
+-- Valida que el correo o el telefono este relleno
 BEGIN
 
   IF NEW."Email" IS NULL and NEW."Phones" IS NULL THEN

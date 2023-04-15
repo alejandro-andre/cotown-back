@@ -1,4 +1,4 @@
--- bookingWorkflow
+-- Workflow de reserva
 BEGIN
 
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso

@@ -1,4 +1,4 @@
--- Prepara la funcionalidad de pago por TPV
+-- Asigna el link del boton para el pago por TPV
 DECLARE
 
   pay VARCHAR = '';

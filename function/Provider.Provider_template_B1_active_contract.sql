@@ -1,3 +1,4 @@
+-- Selecciona un solo contrato activo
 BEGIN
 
   IF pg_trigger_depth() = 1 AND NEW."Active" = TRUE THEN

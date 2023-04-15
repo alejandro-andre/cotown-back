@@ -1,14 +1,23 @@
--- paymentWorkflow
+-- Procesa cambios en los pagos
 DECLARE
 
   status_record VARCHAR;
 
 BEGIN
 
+  -- Asigna el link del boton para el pago por TPV
+  IF (NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL) THEN
+    NEW."Pay" := CONCAT('/functions/Auxiliar.goin?url=/admin/Billing.Pay/external?id=', NEW.id);
+    RETURN NEW;
+  END IF;
+
   -- Comprobamos si el pago se ha llevado a cabo correctamente 
   IF (NEW."Payment_auth" IS NULL OR NEW."Payment_date" IS NULL) THEN 
     RETURN NEW;
   END IF;
+
+  -- Pago realizado, quita el botón
+  NEW."Pay" := NULL;
 
   -- Seleccionamos el estado actual de la reserva
   SELECT "Status" INTO status_record FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
