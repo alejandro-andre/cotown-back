@@ -26,13 +26,13 @@ BEGIN
 
     -- Pendiente de pago, envía mail
     IF (NEW."Status" = 'confirmada' ) THEN
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.Customer_id, 'pendientepago', NEW.id);
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
     END IF;
 
     -- Confirmada, inserta pago de garantía pendiente y envía mail
     IF (NEW."Status" = 'confirmada' ) THEN
       INSERT INTO "Billing"."Payment" ("Payment_method_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES ('1', NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.Customer_id, 'confirmada', NEW.id);
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
     END IF;
 
   END IF;
