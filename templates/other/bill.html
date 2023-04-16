@@ -78,7 +78,7 @@ p{margin:0.3em;}
     </tr>
   </thead>
   <tbody>
-    {% for line in data.Lines %} 
+    {% for line in Lines %} 
     <tr class="row">
       <td class="cell"><p>{{Bill_issued_date}}</p></td>
       <td class="cell"><p>{{line.Line_product}}</p></td>
@@ -106,9 +106,9 @@ p{margin:0.3em;}
       <td class="cell right"><h2>Importe</h2></td>
       <td style="background-color:white;width:1%;"></td>
       <td rowspan="4" class="row cell center"><h1>TOTAL</h1></td>
-      <td rowspan="4" class="row cell center"><h1>{{'{0:0,.2f}'.format(data.Bill_total)}} €</h1></td>
+      <td rowspan="4" class="row cell center"><h1>{{'{0:0,.2f}'.format(Bill_total)}} €</h1></td>
     </tr>
-    {% for line in data.Taxes %}
+    {% for line in Taxes %}
     <tr class="row">
       <td class="cell">{{line.Tax_name}} {{'{0:0,.0f}'.format(line.Tax_value)}}%</td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Base)}} €</p></td>

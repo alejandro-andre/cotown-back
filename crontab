@@ -1,0 +1,8 @@
+*/5 * * * * cd /home/azureuser/cotown/dev/app; sh dobatch.sh bill dev     >> log/batch_bill.log 2>&1
+*/5 * * * * cd /home/azureuser/cotown/pre/app; sh dobatch.sh bill pre     >> log/batch_bill.log 2>&1
+
+*/5 * * * * cd /home/azureuser/cotown/dev/app; sh dobatch.sh contract dev >> log/batch_contract.log 2>&1
+*/5 * * * * cd /home/azureuser/cotown/pre/app; sh dobatch.sh contract pre >> log/batch_contract.log 2>&1
+
+*/5 * * * * cd /home/azureuser/cotown/dev/app; sh dobatch.sh email dev    >> log/batch_email.log 2>&1
+*/5 * * * * cd /home/azureuser/cotown/pre/app; sh dobatch.sh email pre    >> log/batch_email.log 2>&1

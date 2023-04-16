@@ -59,7 +59,7 @@ def main():
         orderBy: [{ attribute: id }]
         where: { 
           AND: [
-            { Status: { EQ: confirmada } }, 
+            { Status: { EQ: firmacontrato } }, 
             { Contract_rent: { IS_NULL: true } } 
           ] 
         }
