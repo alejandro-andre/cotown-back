@@ -11,7 +11,10 @@ DECLARE
   code VARCHAR;
   
 BEGIN
-    -- Get provider SAP prefix
+
+  RESET ROLE;
+  
+  -- Get provider SAP prefix
   SELECT "Prefix_SAP"
   INTO prefix
   FROM "Provider"."Provider" p

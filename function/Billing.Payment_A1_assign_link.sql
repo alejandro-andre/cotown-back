@@ -5,6 +5,8 @@ DECLARE
 
 BEGIN
 
+  RESET ROLE; 
+
   IF NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL THEN
     pay := CONCAT('/functions/Auxiliar.goin?url=/admin/Billing.Pay/external?id=', NEW.id);
   END IF;

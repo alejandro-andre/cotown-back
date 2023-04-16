@@ -12,6 +12,8 @@ DECLARE
 -- Actualiza la tabla auxiliar de disponibilidades
 BEGIN
 
+  RESET ROLE;
+  
   -- Delete all records related to that lock
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
   IF NEW."Resource_id" IS NULL THEN

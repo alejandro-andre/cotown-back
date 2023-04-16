@@ -5,6 +5,8 @@ DECLARE
 
 BEGIN
 
+  RESET ROLE;
+  
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" :='pendientepago';

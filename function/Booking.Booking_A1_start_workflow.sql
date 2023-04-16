@@ -5,6 +5,8 @@ DECLARE
 
 BEGIN
 
+  RESET ROLE;
+  
   -- Estado solicitud
   UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = NEW.id;
 

@@ -38,6 +38,9 @@ DECLARE
   num INTEGER;
 
 BEGIN
+
+  RESET ROLE;
+  
   -- Null resource, delete prices
   IF NEW."Resource_id" IS NULL THEN
     DELETE FROM "Booking"."Booking_price"

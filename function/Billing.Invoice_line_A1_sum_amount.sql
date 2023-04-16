@@ -5,6 +5,8 @@ DECLARE
 
 BEGIN
 
+  RESET ROLE;
+  
   -- Sum all lines
   SELECT SUM("Amount")
   INTO total
