@@ -16,10 +16,6 @@ button:active{background-color:#00EFE2;}
 .c50 { width: 50%; }
 </style>
 <body>
-<script>
-const urlParams = new URLSearchParams(window.location.search);
-const token = urlParams.get("access_token");
-</script>
 <div class="container">
   <h1>Datos de pago</h1>
   <p>Información de detalle del pago a realizar</p><br/>
@@ -35,6 +31,8 @@ const token = urlParams.get("access_token");
   </form>
 </div>
 <script>
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get("access_token");
 var params = new URLSearchParams(window.location.search);
 var id = params.get('id');
 var xhr = new XMLHttpRequest();
@@ -56,5 +54,3 @@ xhr.send();
 </script>
 </body>
 </html>
-
-
