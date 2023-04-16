@@ -170,7 +170,10 @@ query BookingById ($id: Int!) {
 
 def month(m):
 
-  return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][m]
+  try:
+    return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][m-1]
+  except:
+    return '--'
 
 
 def part(p):
