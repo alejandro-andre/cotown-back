@@ -99,7 +99,7 @@ def runapp():
     def get_bill(id):
 
         # Debug
-        logger.debug('Bill ' + id)
+        logger.debug('Bill ' + str(id))
 
         # Generate bill in background
         p = Process(target=do_bill, args=(apiClient, id))
@@ -114,7 +114,7 @@ def runapp():
     def get_contracts(id):
 
         # Debug
-        logger.debug('Contracts ' + id)
+        logger.debug('Contracts ' + str(id))
 
         # Generate contracts in background
         p = Process(target=do_contracts, args=(apiClient, id))
@@ -169,7 +169,7 @@ def runapp():
         
     def get_provider_user_add(id):
 
-        logger.debug('Provider user add' + id)
+        logger.debug('Provider user add' + str(id))
         p = Process(target=provider_user_add, args=(id,))
         p.start()
         return 'ok'
@@ -195,7 +195,7 @@ def runapp():
 
     def get_customer_user_add(id):
 
-        logger.debug('Customer user add ' + id)
+        logger.debug('Customer user add ' + str(id))
         p = Process(target=customer_user_add, args=(id,))
         p.start()
         return 'ok'
@@ -214,7 +214,7 @@ def runapp():
 
     def get_provider_user_del(id):
 
-        logger.debug('Provider user del' + id)
+        logger.debug('Provider user del' + str(id))
         p = Process(target=provider_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -233,7 +233,7 @@ def runapp():
 
     def get_customer_user_del(id):
 
-        logger.debug('Customer user del' + id)
+        logger.debug('Customer user del' + str(id))
         p = Process(target=customer_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -261,18 +261,18 @@ def runapp():
     # ###################################################
 
     # Payment Ok
-    def get_ok():
+    #! def get_ok():
 
-        values = request.values
-        logger.debug(values.to_dict())
-        return 'OK ' + str(values.to_dict())
+    #!     values = request.values
+    #!     logger.debug(values.to_dict())
+    #!     return 'OK ' + str(values.to_dict())
 
     # Payment fail
-    def get_ko():
+    #! def get_ko():
 
-        values = request.values
-        logger.debug(values.to_dict())
-        return 'KO ' + str(values.to_dict())
+    #!     values = request.values
+    #!     logger.debug(values.to_dict())
+    #!     return 'KO ' + str(values.to_dict())
 
     # Prepare payment params
     def get_pay(id):
@@ -352,8 +352,8 @@ def runapp():
     # Payment
     app.add_url_rule('/notify', view_func=post_notification, methods=['POST'])
     app.add_url_rule('/pay/<int:id>', view_func=get_pay, methods=['GET'])
-    app.add_url_rule('/ok', view_func=get_ok, methods=['GET'])
-    app.add_url_rule('/ko', view_func=get_ko, methods=['GET'])
+    #! app.add_url_rule('/ok', view_func=get_ok, methods=['GET'])
+    #! app.add_url_rule('/ko', view_func=get_ko, methods=['GET'])
 
     # Keycloak functions
     app.add_url_rule('/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
