@@ -1,3 +1,4 @@
+-- Procesa los pagos
 DECLARE
 
   invoice_id INTEGER;

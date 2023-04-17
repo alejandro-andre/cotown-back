@@ -1,3 +1,4 @@
+-- Valida los documentos de cliente
 DECLARE
 
   num INTEGER;
