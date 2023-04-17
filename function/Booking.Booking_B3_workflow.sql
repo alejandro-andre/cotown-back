@@ -18,7 +18,7 @@ BEGIN
   END IF;
 
   -- Actualiza al estado 'Checkin confirmado' cuando se asigna la fecha de checkin
-  IF (NEW."Status" = 'contrato'AND NEW."Check_in" IS NOT NULL) THEN
+  IF (NEW."Status" = 'contrato' AND NEW."Check_in" IS NOT NULL) THEN
     NEW."Status" := 'checkinconfirmado';
   END IF;
   
