@@ -76,6 +76,10 @@ BEGIN
 
     IF (status_record = 'confirmada') THEN
       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato' WHERE id=NEW."Booking_id";
+     
+      -- Borramos las alternativas asociadas a la solicitud
+      DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."Booking_id";
+
       RETURN NEW;
     END IF;
 

@@ -21,13 +21,14 @@ BEGIN
   IF (NEW."Status" = 'contrato'AND NEW."Check_in" IS NOT NULL) THEN
     NEW."Status" := 'checkinconfirmado';
   END IF;
+  
 
   -- Cambios de estado
   IF (NEW."Status" <> OLD."Status") THEN
 
     -- Alternativas, envía mail
-    IF (OLD."Status" = 'solicitud' AND NEW."Status" = 'alternativa') OR
-       (OLD."Status" = 'solicitudpagada' AND NEW."Status" = 'alternativapagada') THEN
+    IF ((OLD."Status" = 'solicitud' AND NEW."Status" = 'alternativas') OR
+       (OLD."Status" = 'solicitudpagada' AND NEW."Status" = 'alternativaspagada')) THEN
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativa', NEW.id);
       change := 'Revisar alternativas';
     END IF;
@@ -36,10 +37,10 @@ BEGIN
     IF (NEW."Status" = 'pendientepago' ) THEN
 
       -- Actualiza la fecha de expiracion
-      IF NEW."Expiry_date" IS NULL
+      IF (NEW."Expiry_date" IS NULL) THEN
         NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
       ELSE
-        IF NEW."Expiry_date" < (CURRENT_DATE + INTERVAL '2 days') THEN
+        IF (NEW."Expiry_date" < (CURRENT_DATE + INTERVAL '2 days')) THEN
           NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
         END IF;
       END IF;
@@ -65,6 +66,9 @@ BEGIN
 
       -- Log
       change := 'Reserva confirmada';
+
+      -- Borramos las alternativas asociadas a la solicitud
+      DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
 
     END IF;
 
