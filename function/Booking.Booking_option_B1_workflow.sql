@@ -12,11 +12,11 @@ BEGIN
       UPDATE "Booking"."Booking"
       SET "Building_id" = NEW."Building_id", 
           "Flat_type_id" = NEW."Flat_type_id", 
-          "Place_type_id" = NEW."Place_type_id"
+          "Place_type_id" = NEW."Place_type_id",
           "Status" = CASE
             WHEN "Status" = 'alternativas' THEN 'solicitud'
             WHEN "Status" = 'alternativaspagada' THEN 'solicitudpagada'
-            ELSE "Status" = "Status"
+            ELSE "Status"
           END
     WHERE id = NEW."Booking_id";
     RETURN NEW;

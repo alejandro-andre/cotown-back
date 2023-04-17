@@ -36,7 +36,7 @@ BEGIN
     IF (NEW."Status" = 'pendientepago' ) THEN
 
       -- Actualiza la fecha de expiracion
-      IF NEW."Expiry_date" IS NULL
+      IF NEW."Expiry_date" IS NULL THEN
         NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
       ELSE
         IF NEW."Expiry_date" < (CURRENT_DATE + INTERVAL '2 days') THEN
