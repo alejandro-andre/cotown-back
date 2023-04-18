@@ -21,6 +21,17 @@ BEGIN
   IF (NEW."Status" = 'contrato' AND NEW."Check_in" IS NOT NULL) THEN
     NEW."Status" := 'checkinconfirmado';
   END IF;
+
+
+ -- Actualiza el estado a "devolvergarantia" cuando se cancela una reserva en estado 'solicitudpagada'
+  IF (NEW."Status" = 'solicitudpagada' AND NEW."Cancel_date" IS NOT NULL AND NEW."Cancelation_fee" IS NOT NULL AND NEW."Resource_id" IS NULL) THEN
+    NEW."Status" := 'devolvergarantia';
+  END IF; 
+
+  -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'firmacontrato'
+  IF (NEW."Status" = 'firmacontrato' AND NEW."Cancel_date" IS NOT NULL AND NEW."Cancelation_fee" IS NOT NULL AND NEW."Resource_id" IS NULL) THEN
+    NEW."Status" := 'cancelada';
+  END IF;
   
 
   -- Cambios de estado
@@ -70,6 +81,30 @@ BEGIN
       -- Borramos las alternativas asociadas a la solicitud
       DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
 
+    END IF;
+
+
+    IF(NEW."Status" = 'devolvergarantia') THEN
+        -- GENERAR REGISTRO DE DEVOLUCION ¿?
+
+        -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+        --INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+
+        -- Log
+        change := 'Solicitud cancelada.';   
+    END IF;
+
+    -- Confirmada, inserta pago de garantía pendiente y envía mail
+    IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'firmacontrato') THEN              
+              -- crea un registro de pago de la penalización (HE PUESTO 'servicos' porque PENALIZACION no existe.)
+              INSERT INTO "Billing"."Payment"("Payment_method_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1',NEW."id", NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
+
+              -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+              --INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+
+              -- Log
+              change := 'Reserva cancelada';   
+ 
     END IF;
 
   END IF;
