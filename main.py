@@ -162,7 +162,7 @@ def runapp():
             logger.debug('Provider found')
     
         # Create keycloak account
-        if create_user('P' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'P' + data['Document']):
+        if create_user('P' + str(data['id']), data['Name'], data['Last_name'], data['Email'], data['User_name']):
             logger.debug('Provider created')
 
         return
@@ -189,7 +189,7 @@ def runapp():
             logger.debug('Customer found')
     
         # Create keycloak account
-        if create_user('C' + str(data['id']), data['Name'], data['Last_name'], data['Email'], 'C' + data['Document']):
+        if create_user('C' + str(data['id']), data['Name'], data['Last_name'], data['Email'], data['User_name']):
             logger.debug('Customer created')
         return
 
