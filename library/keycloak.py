@@ -38,7 +38,7 @@ SECRET = str(os.environ.get('COTOWN_SECRET'))
 # Create user
 # ###################################################
 
-def create_user(id, firstName, lastName, email, username):
+def create_user(id, firstName, email, username):
 
     # Get access token
     auth_data = {
@@ -47,7 +47,8 @@ def create_user(id, firstName, lastName, email, username):
         'client_secret': SECRET
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
-    logger.debug('keycloak token ', response)
+    logger.debug('keycloak response->')
+    logger.debug(response)
     if response.status_code != 200:
         return False
 
@@ -59,7 +60,7 @@ def create_user(id, firstName, lastName, email, username):
         'Content-Type': 'application/json'
     }
     user_data = {
-        'firstName': (str(firstName) + ' ' + str(lastName or '')).strip(),
+        'firstName': str(firstName).strip(),
         'lastName': id, 
         'email': email, 
         'enabled': 'true', 
@@ -73,7 +74,8 @@ def create_user(id, firstName, lastName, email, username):
         ]
     }
     response = requests.post(api_url, json=user_data, headers=headers)
-    logger.debug('keycloak response ', response)
+    logger.debug('keycloak response->')
+    logger.debug(response)
 
     # Error
     if response.status_code > 201:

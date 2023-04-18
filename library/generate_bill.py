@@ -45,7 +45,6 @@ query BillById ($id: Int!) {
         CustomerViaCustomer_id {
             Customer_id: Document
             Customer_name: Name
-            Customer_last_name: Last_name
             Customer_address: Address
             Customer_zip: Zip
             Customer_city: City

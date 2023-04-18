@@ -76,7 +76,6 @@ query BookingById ($id: Int) {
       }
       Customer_id: Document
       Customer_name: Name
-      Customer_last_name: Last_name
       Customer_address: Address
       Customer_zip: Zip
       Customer_city: City
@@ -93,7 +92,6 @@ query BookingById ($id: Int) {
       }
       Payer_id: Document
       Payer_name: Name
-      Payer_last_name: Last_name
       Payer_address: Address
       Payer_zip: Zip
       Payer_city: City
