@@ -14,7 +14,7 @@ BEGIN
   INSERT INTO "Models"."UserRole" ("user", "role") VALUES (userid, roleid);
 
   -- Send email
-  INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.id, 'welcome', NEW.id);
+  INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.id, 'bienvenida', NEW.id);
 
   RETURN NEW;
 
