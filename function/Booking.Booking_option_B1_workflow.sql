@@ -29,11 +29,13 @@ BEGIN
   -- Actualiza la solicitud
   IF booking_status = 'solicitud' THEN
     UPDATE "Booking"."Booking" SET "Status" = 'alternativas' WHERE id = NEW."Booking_id";
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW."Booking_id");
   END IF;
 
   -- Actualiza la solicitud pagada
   IF booking_status = 'solicitudpagada' THEN
     UPDATE "Booking"."Booking" SET "Status" = 'alternativaspagada' WHERE id = NEW."Booking_id";
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW."Booking_id");
   END IF;
 
   -- Return
