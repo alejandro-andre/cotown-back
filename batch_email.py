@@ -82,7 +82,6 @@ def main():
         id
         Customer: CustomerViaCustomer_id {
           Name
-          Last_name
           Address
           Email
         }

@@ -38,7 +38,7 @@ SECRET = str(os.environ.get('COTOWN_SECRET'))
 # Create user
 # ###################################################
 
-def create_user(id, firstName, lastName, email, username):
+def create_user(id, firstName, email, username):
 
     # Get access token
     auth_data = {
@@ -60,7 +60,7 @@ def create_user(id, firstName, lastName, email, username):
         'Content-Type': 'application/json'
     }
     user_data = {
-        'firstName': (str(firstName) + ' ' + str(lastName or '')).strip(),
+        'firstName': str(firstName).strip(),
         'lastName': id, 
         'email': email, 
         'enabled': 'true', 
