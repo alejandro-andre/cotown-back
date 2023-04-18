@@ -36,6 +36,11 @@ const token = urlParams.get("access_token");
 var params = new URLSearchParams(window.location.search);
 var id = params.get('id');
 var xhr = new XMLHttpRequest();
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted) {
+    window.location.reload(); 
+  }
+});
 xhr.open('GET', window.location.origin + '/pay/' + id, true);
 xhr.onload = function() {
   if (xhr.status === 200) {
