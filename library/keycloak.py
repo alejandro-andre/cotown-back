@@ -47,7 +47,8 @@ def create_user(id, firstName, lastName, email, username):
         'client_secret': SECRET
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
-    logger.debug('keycloak token ', response)
+    logger.debug('keycloak response->')
+    logger.debug(response)
     if response.status_code != 200:
         return False
 
@@ -73,7 +74,8 @@ def create_user(id, firstName, lastName, email, username):
         ]
     }
     response = requests.post(api_url, json=user_data, headers=headers)
-    logger.debug('keycloak response ', response)
+    logger.debug('keycloak response->')
+    logger.debug(response)
 
     # Error
     if response.status_code > 201:

@@ -78,7 +78,7 @@ def get_provider(dbClient, id):
 
   try:
     dbClient.connect()
-    dbClient.select('SELECT id, "Name", "Last_name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
+    dbClient.select('SELECT id, "Name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
     aux = dbClient.fetch()
     dbClient.disconnect()
     logger.debug(aux)
@@ -97,7 +97,7 @@ def get_customer(dbClient, id):
 
   try:
     dbClient.connect()
-    dbClient.select('SELECT id, "Name", "Last_name", "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
+    dbClient.select('SELECT id, "Name",  "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
     aux = dbClient.fetch()
     dbClient.disconnect()
     logger.debug(aux)

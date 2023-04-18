@@ -214,7 +214,7 @@ def runapp():
 
     def get_provider_user_del(id):
 
-        logger.debug('Provider user del' + str(id))
+        logger.debug('Provider user del ' + str(id))
         p = Process(target=provider_user_del, args=(id,))
         p.start()
         return 'ok'
@@ -352,8 +352,6 @@ def runapp():
     # Payment
     app.add_url_rule('/notify', view_func=post_notification, methods=['POST'])
     app.add_url_rule('/pay/<int:id>', view_func=get_pay, methods=['GET'])
-    #! app.add_url_rule('/ok', view_func=get_ok, methods=['GET'])
-    #! app.add_url_rule('/ko', view_func=get_ko, methods=['GET'])
 
     # Keycloak functions
     app.add_url_rule('/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
