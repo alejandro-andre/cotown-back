@@ -71,13 +71,7 @@ def main():
     emails = apiClient.call('''
     {
       data: Customer_Customer_emailList ( 
-        where: { 
-          AND: [
-            { Template: { IS_NULL: false } }
-            { Subject: { IS_NULL: true } }
-            { Sent_at: { IS_NULL: true } }
-          ] 
-        }
+        where: { Sent_at: { IS_NULL: true } }
       ) {
         id
         Customer: CustomerViaCustomer_id {
@@ -87,6 +81,8 @@ def main():
         }
         Template
         Entity_id
+        Subject
+        Body
       }
     }
     ''')
@@ -101,8 +97,14 @@ def main():
       # Debug
       logger.debug(email)
 
-      # Generate email body
-      subject, body = do_email(apiClient, email)
+      # Template? generate email body
+      if email['Template'] is not None:
+        subject, body = do_email(apiClient, email)
+        
+      # Manual email?
+      else:
+        subject = email['Subject']
+        body = email['Body']
 
       # Update query
       query = '''
@@ -130,10 +132,11 @@ def main():
       apiClient.call(query, variables)
 
       # Send email
-      logger.debug(email['Customer']['Email'])
-      logger.debug(subject)
-      logger.debug(body)
-      smtp_mail(email['Customer']['Email'], subject, body)
+      if subject != 'ERROR' and email['Customer']['Email'] == 'alejandroandref@gmail.com':
+        logger.debug(email['Customer']['Email'])
+        logger.debug(subject)
+        logger.debug(body)
+        smtp_mail(email['Customer']['Email'], subject, body)
 
 
 # #####################################

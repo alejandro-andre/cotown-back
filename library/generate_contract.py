@@ -6,8 +6,8 @@
 import markdown
 import logging
 import requests
-import jinja2
 import datetime
+from jinja2 import Environment
 from weasyprint import HTML
 from io import BytesIO
 
@@ -205,7 +205,7 @@ def generate_doc_file(context, template):
   context['Today_year'] = now.year
 
   # Add custom functions
-  env = jinja2.Environment()
+  env = Environment()
   env.filters['month'] = month
   env.filters['part'] = part
 

@@ -15,45 +15,54 @@ from library.utils import flatten_json
 
 
 # ######################################################
+# Query to retrieve the email template
+# ######################################################
+
+TEMPLATE = '''
+query EmailByCode ($code: String!) {
+    data: Auxiliar_EmailList (
+        where: { Name: { EQ: $code } }
+    ) { 
+      Name
+      Subject
+      Body
+      Query
+    }
+}'''
+
+
+# ######################################################
 # Generate email
 # ######################################################
 
 def do_email(apiClient, email):
 
   # Template and entity id
-  template = email['Template'].lower()
   id = email['Entity_id']
+  variables = { 'code': email['Template'].lower() }
+  result = apiClient.call(TEMPLATE, variables)
+  if len(result['data']) == 0:
+      return 'ERROR', 'ERROR'
+  template = flatten_json(result['data'][0])
 
   # Context
   context = email
-  if id is not None:
-    try:
 
-      # Get query, if exists
-      fi = open('templates/email/' + template + '.graphql', 'r')
-      query = fi.read()
-      fi.close()
-
-      # Call graphQL endpoint
-      result = apiClient.call(query, {'id': id})
-      context |= flatten_json(result['data'][0])
-
-    except:
-      pass
+  # Call graphQL endpoint
+  if id is not None and template['Query'] != '':
+    result = apiClient.call(template['Query'], {'id': id})
+    context |= flatten_json(result['data'][0])
 
   # Jinja environment
-  env = Environment(
-      loader=FileSystemLoader('./templates/email'),
-      autoescape=select_autoescape(['html', 'xml'])
-  )
+  env = Environment()
 
   # Generate subject
-  tpl = env.get_template(template + '.subject')
-  subject = tpl.render(context)
+  text = template['Subject']
+  subject = env.from_string(text).render(context)
 
   # Generate body
-  tpl = env.get_template(template + '.body')
-  body = tpl.render(context)
+  text = template['Body']
+  body = env.from_string(text).render(context)
 
   # Return
   return subject, body
