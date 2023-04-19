@@ -6,10 +6,19 @@ DECLARE
 
 BEGIN
 
-  -- Create Role
   RESET ROLE;
+
+  -- Assign username
+  NEW."User_name" := 'C' || LPAD(NEW.id::TEXT, 6, '0');
+  UPDATE "Customer"."Customer" SET "User_name" = NEW."User_name" WHERE id = NEW.id;
+
+  -- Create DB User
+  EXECUTE 'CREATE ROLE "' || NEW."User_name" || '" PASSWORD ''' || NEW."User_name" || 'p4$$w0rd'' NOSUPERUSER';
+  INSERT INTO "Models"."User" ("username", "email", "password") VALUES (NEW."User_name", NEW."Email", NEW."User_name" || 'p4$$w0rd')
+  RETURNING id INTO userid;
+
+  -- Create DB Role
   SELECT "id" INTO STRICT roleid FROM "Models"."Role" WHERE name = 'customer';
-  SELECT "id" INTO STRICT userid FROM "Models"."User" WHERE username = NEW."User_name";
   EXECUTE 'GRANT "user" TO "' || NEW."User_name" || '"';
   INSERT INTO "Models"."UserRole" ("user", "role") VALUES (userid, roleid);
 
