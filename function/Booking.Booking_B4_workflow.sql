@@ -12,6 +12,12 @@ BEGIN
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" :='pendientepago';
   END IF;
+
+-- Actualiza al estado 'Pendiente de pago' cuando la solicitud esta caducada
+   IF (NEW."Status" = 'caducada' AND NEW."Expiry_date" >= CURRENT_DATE)  THEN
+    NEW."Status" :='pendientepago';
+  END IF;
+
   
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
@@ -24,26 +30,43 @@ BEGIN
   END IF;
 
 
+
  -- Actualiza el estado a "devolvergarantia" cuando se cancela una reserva en estado 'solicitudpagada'
   IF (NEW."Status" = 'solicitudpagada' AND NEW."Cancel_date" IS NOT NULL  AND NEW."Resource_id" IS NULL) THEN
     NEW."Status" := 'devolvergarantia';
   END IF; 
 
-  -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'confirmada'
+  -- * Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'confirmada'
   IF (NEW."Status" = 'confirmada' AND NEW."Cancel_date" IS NOT NULL AND  NEW."Resource_id" IS NULL) THEN
     NEW."Status" := 'cancelada';
   END IF;
 
-  -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'firmacontrato'
-  IF (NEW."Status" = 'firmacontrato' AND NEW."Cancel_date" IS NOT NULL AND NEW."Cancelation_fee" IS NOT NULL AND NEW."Resource_id" IS NULL) THEN
+  -- * Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'firmacontrato'
+  IF (NEW."Status" = 'firmacontrato' AND NEW."Cancel_date" IS NOT NULL  AND NEW."Resource_id" IS NULL) THEN
+    NEW."Status" := 'cancelada';
+  END IF;
+
+ -- * Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'contrato'
+  IF (NEW."Status" = 'contrato' AND NEW."Cancel_date" IS NOT NULL  AND NEW."Resource_id" IS NULL) THEN
+    NEW."Status" := 'cancelada';
+  END IF;
+
+   -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'check in'
+  IF (NEW."Status" = 'checkin' AND NEW."Cancel_date" IS NOT NULL ) THEN
     NEW."Status" := 'cancelada';
   END IF;
 
   -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'check in'
-  IF (NEW."Status" = 'checkin' AND NEW."Cancel_date" IS NOT NULL) THEN
+  IF (NEW."Status" = 'inhouse' AND NEW."Cancel_date" IS NOT NULL AND NEW."Cancelation_fee" IS NOT NULL) THEN
     NEW."Status" := 'cancelada';
   END IF;
-  
+
+
+
+
+
+
+ 
 
   -- Cambios de estado
   IF (NEW."Status" <> OLD."Status") THEN
@@ -81,7 +104,7 @@ BEGIN
       NEW."Expiry_date" = NULL;
 
       -- Depósito
-      INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES ('1', NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
+      -- INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES ('1', NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
 
       -- EMail
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
@@ -99,7 +122,7 @@ BEGIN
         -- GENERAR REGISTRO DE DEVOLUCION ¿?
 
         -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-        --INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'devolvergarantia', NEW.id);
 
         -- Log
         change := 'Solicitud cancelada. Hay que devolver la garantia';   
@@ -120,36 +143,42 @@ BEGIN
               END IF;
 
               -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-              --INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+              INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
 
               -- Log
               change := 'Reserva cancelada antes de pagar la garantia';   
  
     END IF;
 
-    -- Cancelada, antes de hacer chekcin. envía mail
+    -- Cancelada antes de firmar el contrato
     IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'firmacontrato') THEN              
-              -- crea un registro de pago de la penalización. ESTO ES CUANDO EL ESTADO ESTE EN CKECK IN
-              -- INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1', NEW."Customer_id", NEW.id, NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
-
-              -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-              --INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
-
+             INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
+              -- Elimina el contrato
+              -- DELETE CONTRATO....
               -- Log
-              change := 'Reserva cancelada despues de pagar el depósito';   
+              change := 'Reserva cancelada despues de pagar el depósito, antes de firmar el contrato';   
  
     END IF;
 
-    -- Cancelada, crea pago de penalización y envía mail
-    IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'checkin') THEN  
-        -- crea un registro de pago de la penalización. 
-        INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1', NEW."Customer_id", NEW.id, NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
-
+ -- Cancelada despues de firmar el contrato
+    IF (NEW."Status" = 'cancelada' AND (OLD."Status" = 'contrato' OR OLD."Status" = 'checkinconfirmado' OLD."Status" = 'checkin')) THEN              
               -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-              --INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
-
+              INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
               -- Log
-              change := 'Reserva cancelada despues de hacer checkin';   
+              change := 'Reserva cancelada despues de pagar el depósito, despues de firmar el contrato';   
+    END IF;
+
+
+    -- Cancelada una vez realizado ckeckin. Crea pago de penalización y envía mail
+    IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'inhouse') THEN  
+        -- crea un registro de pago de la penalización. 
+        -- INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1', NEW."Customer_id", NEW.id, NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
+
+         -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'canceladapenalizacion', NEW.id);
+
+         -- Log
+         change := 'Reserva cancelada despues de hacer checkin';   
     END IF;
 
   END IF;
