@@ -132,7 +132,8 @@ def main():
       apiClient.call(query, variables)
 
       # Send email
-      if subject != 'ERROR' and email['Customer']['Email'] == 'alejandroandref@gmail.com':
+      if subject != 'ERROR' and email['Customer']['Email'] == 'alejandroandref@gmail.com' or \
+         subject != 'ERROR' and email['Customer']['Email'] == 'cesar.ramos@experis.es':
         logger.debug(email['Customer']['Email'])
         logger.debug(subject)
         logger.debug(body)
