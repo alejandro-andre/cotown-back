@@ -65,6 +65,7 @@ def create_user(id, firstName, email, username):
         'email': email, 
         'enabled': 'true', 
         'username': username,
+        'emailVerified': True,
         'credentials': [
             {
             'type': 'password',

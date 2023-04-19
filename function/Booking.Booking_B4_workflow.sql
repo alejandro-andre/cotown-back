@@ -141,7 +141,7 @@ BEGIN
     END IF;
 
     -- Cancelada, crea pago de penalización y envía mail
-    IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'chekin') THEN  
+    IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'checkin') THEN  
         -- crea un registro de pago de la penalización. 
         INSERT INTO "Billing"."Payment"("Payment_method_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1',NEW."id", NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
 
