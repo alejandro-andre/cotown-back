@@ -1,29 +1,37 @@
 <html>
 <head>
   <script>
-    // Prepare response
     function do_select() {
+
+      // Get params
       var pairs = location.hash.substring(1).split('&');
       var fragment = {};
       pairs.forEach(function(pair) {
         pair = pair.split('=');
         fragment[pair[0]] = decodeURIComponent(pair[1] || '');
       });
+
+      // Prepare response
       const hashParams = {
         entity: fragment['entity'],
         entityId: parseInt(fragment['entityId'], 10),
         attribute: fragment['attribute'],
+        value: {
+          id: parseInt(document.getElementById("sel-id").value, 10),
+          Code: document.getElementById("sel-name").value
+        }
       }
-
+      
       // Respond
-      hashParams['value'] = document.getElementById("sel").value
+      console.log(window.opener);
       window.opener.postMessage(hashParams, "*");
       window.close();
     }
   </script>
 </head>
 <body>
-  <input id="sel" type="text" value="1">
+  <input id="sel-id" type="text" value="4">
+  <input id="sel-name" type="text" value="ART030.AT.00.H02">
   <button onclick="do_select();">Seleccionar</button>
 </body>
 </html>
