@@ -55,15 +55,19 @@ BEGIN
   WHERE "Booking_id" = NEW.id;
 
   -- Prices already calculated but resource and dates not changed? Ignore
-  --IF num > 0 
-  --AND NEW."Resource_id" = OLD."Resource_id" 
-  --AND NEW."Date_from" = OLD."Date_from" 
-  --AND NEW."Date_to" = OLD."Date_to" 
-  --THEN
-  --  RETURN NEW;
-  --END IF;
+  IF num > 0 
+    AND NEW."Resource_id" = OLD."Resource_id" 
+    AND NEW."Date_from" = OLD."Date_from" 
+    AND NEW."Date_to" = OLD."Date_to" 
+    THEN
+      RETURN NEW;
+    END IF;
 
   -- Delete old prices
+  NEW."Rent" := 0;
+  NEW."Services" := 0;
+  NEW."Deposit" := 0;
+  NEW."Limit" := 0;
   DELETE FROM "Booking"."Booking_price"
   WHERE "Booking_id" = NEW.id;
 
