@@ -3,6 +3,7 @@ DECLARE
 
   booking_status VARCHAR;
   deposit_paid INTEGER;
+  customer_id INTEGER;
 
 BEGIN
   
@@ -24,18 +25,18 @@ BEGIN
   END IF;
 
   -- Estado actual de la reserva
-  SELECT "Status" into booking_status FROM "Booking"."Booking" WHERE "Booking".id = NEW."Booking_id";
+  SELECT "Status", "Customer_id" into booking_status, customer_id FROM "Booking"."Booking" WHERE "Booking".id = NEW."Booking_id";
 
   -- Actualiza la solicitud
   IF booking_status = 'solicitud' THEN
     UPDATE "Booking"."Booking" SET "Status" = 'alternativas' WHERE id = NEW."Booking_id";
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW."Booking_id");
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'alternativas', NEW."Booking_id");
   END IF;
 
   -- Actualiza la solicitud pagada
   IF booking_status = 'solicitudpagada' THEN
     UPDATE "Booking"."Booking" SET "Status" = 'alternativaspagada' WHERE id = NEW."Booking_id";
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW."Booking_id");
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'alternativas', NEW."Booking_id");
   END IF;
 
   -- Return
