@@ -17,4 +17,3 @@
 # Billing process
 0 * * * *    cd /home/azureuser/cotown/dev/app; sh dobatch.sh billing dev       >> log/billing.log       2>&1
 0 * * * *    cd /home/azureuser/cotown/pre/app; sh dobatch.sh billing pre       >> log/billing.log       2>&1
-
