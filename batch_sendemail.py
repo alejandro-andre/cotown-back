@@ -17,9 +17,8 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
-from library.business.send_email import do_email
+from library.business.send_email import do_email, smtp_mail
 
 
 # ###################################################
@@ -46,26 +45,17 @@ def main():
     # ###################################################
 
     SERVER   = str(os.environ.get('COTOWN_SERVER'))
-    DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-    DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-    DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
     GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
     GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
-    SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-    SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
 
 
     # ###################################################
-    # GraphQL and DB client
+    # GraphQL client
     # ###################################################
 
     # graphQL API
     apiClient = APIClient(SERVER)
     apiClient.auth(user=GQLUSER, password=GQLPASS)
-
-    # DB API
-    dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
-    dbClient.connect()
 
 
     # ###################################################
