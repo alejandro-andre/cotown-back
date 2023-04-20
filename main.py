@@ -253,13 +253,17 @@ def runapp():
     def post_availability():
 
         data = request.get_json()
-        return availability(
+        result = availability(
             dbClient, 
             date_from=data.get('date_from'), 
             date_to=data.get('date_to'), 
             building=data.get('building', ''), 
+            flat_type=data.get('flat_type', ''),
             place_type=data.get('place_type', '')
         )
+        if result is None:
+            return {}
+        return result
     
 
     # ###################################################

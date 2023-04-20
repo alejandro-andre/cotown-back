@@ -112,7 +112,7 @@ def get_customer(dbClient, id):
 # Availability
 # ######################################################
 
-def availability(dbClient, date_from, date_to, building, place_type):
+def availability(dbClient, date_from, date_to, building, flat_type, place_type):
 
   if building is None:
     building = ''
@@ -120,20 +120,25 @@ def availability(dbClient, date_from, date_to, building, place_type):
   if place_type is None:
     place_type = ''
     
+  if flat_type is None:
+    flat_type = ''
+
   try:
     dbClient.connect()
     dbClient.select('''
     SELECT r."Code"
     FROM "Resource"."Resource" r
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
+    INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
     INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
     LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
     AND bd."Date_from" <= %s 
     AND bd."Date_to" >= %s
     WHERE bd.id IS NULL 
+    AND rft."Code" LIKE %s
     AND rpt."Code" LIKE %s
     AND b."Code" LIKE %s
-    ORDER BY r."Code";''', (date_to, date_from, place_type + '%', building + '%'))
+    ORDER BY r."Code";''', (date_to, date_from, flat_type + '%', place_type + '%', building + '%'))
     aux = dbClient.fetchall()
     dbClient.disconnect()
     list = [item for sub_list in aux for item in sub_list]
@@ -142,4 +147,5 @@ def availability(dbClient, date_from, date_to, building, place_type):
 
   except Exception as error:
     logger.error(error)
+    dbClient.rollback()
     return None
