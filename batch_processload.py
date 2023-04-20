@@ -1,4 +1,10 @@
 # ###################################################
+# Batch process
+# ---------------------------------------------------
+# Process excel file load requests
+# ###################################################
+
+# ###################################################
 # Imports
 # ###################################################
 
@@ -12,10 +18,10 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
-from library.load_prices import load_prices
-from library.load_resources import load_resources
+from library.services.dbclient import DBClient
+from library.services.apiclient import APIClient
+from library.business.load_prices import load_prices
+from library.business.load_resources import load_resources
 
 
 # ###################################################

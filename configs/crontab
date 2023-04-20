@@ -1,0 +1,19 @@
+# Process load requests
+*/5 * * * *  cd /home/azureuser/cotown/dev/app; sh dobatch.sh processload dev   >> log/processload.log   2>&1
+*/5 * * * *  cd /home/azureuser/cotown/pre/app; sh dobatch.sh processload pre   >> log/processload.log   2>&1
+
+# Prints (PDF) issued bils
+*/15 * * * * cd /home/azureuser/cotown/dev/app; sh dobatch.sh printbill dev     >> log/printbill.log     2>&1
+*/15 * * * * cd /home/azureuser/cotown/pre/app; sh dobatch.sh printbill pre     >> log/printbill.log     2>&1
+
+# Prints (PDF) issued contracts
+*/15 * * * * cd /home/azureuser/cotown/dev/app; sh dobatch.sh printcontract dev >> log/printcontract.log 2>&1
+*/15 * * * * cd /home/azureuser/cotown/pre/app; sh dobatch.sh printcontract pre >> log/printcontract.log 2>&1
+
+# Sends pending emails
+*/5 * * * *  cd /home/azureuser/cotown/dev/app; sh dobatch.sh sendemail dev     >> log/sendemail.log     2>&1
+*/5 * * * *  cd /home/azureuser/cotown/pre/app; sh dobatch.sh sendemail pre     >> log/sendemail.log     2>&1
+
+# Billing process
+0 * * * *    cd /home/azureuser/cotown/dev/app; sh dobatch.sh billing dev       >> log/billing.log       2>&1
+0 * * * *    cd /home/azureuser/cotown/pre/app; sh dobatch.sh billing pre       >> log/billing.log       2>&1

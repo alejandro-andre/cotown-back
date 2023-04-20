@@ -87,7 +87,10 @@ BEGIN
   IF (NEW."Status" = 'inhouse' AND NEW."Cancel_date" IS NOT NULL AND NEW."Cancelation_fee" IS NOT NULL) THEN
     NEW."Status" := 'cancelada';
   END IF;
+<<<<<<< HEAD
  
+=======
+>>>>>>> 43160c47d41fb90ef3ddf04935374ebbd06e010b
 
   -- Cambios de estado
   IF (NEW."Status" <> OLD."Status") THEN
@@ -95,8 +98,13 @@ BEGIN
     -- SOLICITUD, SOLICITUDPAGADA a ALTERNATIVA, ALTERNATIVASPAGADA
     IF ((OLD."Status" = 'solicitud' AND NEW."Status" = 'alternativas') OR
        (OLD."Status" = 'solicitudpagada' AND NEW."Status" = 'alternativaspagada')) THEN
+
+      -- Email
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativa', NEW.id);
+
+      -- Log
       change := 'Revisar alternativas';
+
     END IF;
 
     -- SOLICITUD a PENDIENTEDEPAGO.
@@ -117,6 +125,7 @@ BEGIN
 
       -- Log
       change := 'Pendiente de pago';
+
     END IF;
 
     -- CONTRATO a CHECKINCONFIRMADO
@@ -217,18 +226,13 @@ BEGIN
          change := 'Reserva cancelada con penalización';   
     END IF;
 
-
-    
-
- 
-
-
-
   END IF;
 
   -- Registra el cambio
   IF change IS NOT NULL THEN
+
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);
+
   END IF;
 
   RETURN NEW;

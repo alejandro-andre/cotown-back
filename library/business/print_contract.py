@@ -16,7 +16,7 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.utils import flatten_json
+from library.services.utils import flatten_json
 
 
 # ######################################################

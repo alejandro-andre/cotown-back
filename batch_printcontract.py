@@ -1,4 +1,10 @@
 # ###################################################
+# Batch process
+# ---------------------------------------------------
+# Generates PDF files from contracts
+# ###################################################
+
+# ###################################################
 # Imports
 # ###################################################
 
@@ -10,9 +16,8 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
-from library.generate_bill import do_bill
+from library.services.apiclient import APIClient
+from library.business.print_contract import do_contracts
 
 
 # ###################################################
@@ -39,40 +44,32 @@ def main():
     # ###################################################
 
     SERVER   = str(os.environ.get('COTOWN_SERVER'))
-    DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-    DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-    DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
     GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
     GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
-    SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-    SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
 
 
     # ###################################################
-    # GraphQL and DB client
+    # GraphQL client
     # ###################################################
 
     # graphQL API
     apiClient = APIClient(SERVER)
     apiClient.auth(user=GQLUSER, password=GQLPASS)
 
-    # DB API
-    dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
-    dbClient.connect()
-
 
     # ###################################################
     # Main
     # ###################################################
 
-    # Get pending bills
-    bills = apiClient.call('''
+    # Get pending contracts
+    bookings = apiClient.call('''
     {
-      data: Billing_InvoiceList ( 
+      data: Booking_BookingList ( 
+        orderBy: [{ attribute: id }]
         where: { 
           AND: [
-            { Issued: { EQ: true } }, 
-            { Document: { IS_NULL: true } } 
+            { Status: { EQ: firmacontrato } }, 
+            { Contract_rent: { IS_NULL: true } } 
           ] 
         }
       ) { id }
@@ -80,11 +77,11 @@ def main():
     ''')
 
     # Loop thru contracts
-    if bills  is not None:
-      for b in bills.get('data'):
-          id = b['id']
+    if bookings is not None:
+      for booking in bookings.get('data'):
+          id = booking['id']
           logger.debug(id)
-          do_bill(apiClient, id)
+          do_contracts(apiClient, id)
 
 
 # #####################################

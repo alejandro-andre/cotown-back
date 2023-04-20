@@ -1,4 +1,11 @@
 # ###################################################
+# Batch process
+# ---------------------------------------------------
+# Generates PDF files from invoice records (bills  
+# & receipts)
+# ###################################################
+
+# ###################################################
 # Imports
 # ###################################################
 
@@ -10,13 +17,12 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
-from library.generate_contract import do_contracts
+from library.services.apiclient import APIClient
+from library.business.print_bill import do_bill
 
 
 # ###################################################
-# Contract generator function
+# Bill generator function
 # ###################################################
 
 def main():
@@ -39,13 +45,8 @@ def main():
     # ###################################################
 
     SERVER   = str(os.environ.get('COTOWN_SERVER'))
-    DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-    DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-    DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
     GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
     GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
-    SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-    SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
 
 
     # ###################################################
@@ -56,24 +57,19 @@ def main():
     apiClient = APIClient(SERVER)
     apiClient.auth(user=GQLUSER, password=GQLPASS)
 
-    # DB API
-    dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
-    dbClient.connect()
-
 
     # ###################################################
     # Main
     # ###################################################
 
-    # Get pending contracts
-    bookings = apiClient.call('''
+    # Get pending bills
+    bills = apiClient.call('''
     {
-      data: Booking_BookingList ( 
-        orderBy: [{ attribute: id }]
+      data: Billing_InvoiceList ( 
         where: { 
           AND: [
-            { Status: { EQ: firmacontrato } }, 
-            { Contract_rent: { IS_NULL: true } } 
+            { Issued: { EQ: true } }, 
+            { Document: { IS_NULL: true } } 
           ] 
         }
       ) { id }
@@ -81,11 +77,11 @@ def main():
     ''')
 
     # Loop thru contracts
-    if bookings is not None:
-      for booking in bookings.get('data'):
-          id = booking['id']
+    if bills  is not None:
+      for b in bills.get('data'):
+          id = b['id']
           logger.debug(id)
-          do_contracts(apiClient, id)
+          do_bill(apiClient, id)
 
 
 # #####################################
