@@ -48,18 +48,21 @@ BEGIN
     --   RETURNING id INTO invoice_id;
     -- INSERT INTO "Billing"."Invoice_line" ("Invoice_id", "Product_id", "Amount", "Tax_id", "Details") VALUES (invoice_id, 1, NEW."Amount", 1, 'Booking fee');
 
+    -- SOLICITUD a SOLICITUDPAGADA
     -- Comprobamos si el estado es 'solicitud'
     IF (status_record = 'solicitud') THEN
       UPDATE "Booking"."Booking" SET "Status" ='solicitudpagada' WHERE id = NEW."Booking_id";
       RETURN NEW;
     END IF;
   
+    -- ALTERNATIVAS a ALTERNATIVASPAGADAS
     -- Comprobamos si el estado es 'alternativas'
     IF (status_record = 'alternativas') THEN
       UPDATE "Booking"."Booking" SET "Status" ='alternativaspagada' WHERE id = NEW."Booking_id";
       RETURN NEW;
     END IF;
   
+    -- PENDIENTEPAGO a CONFIRMADA
     -- Comprobamos si el estado es 'pendientepago'
     IF (status_record = 'pendientepago') THEN
       UPDATE "Booking"."Booking" SET "Status" ='confirmada' WHERE id = NEW."Booking_id";
@@ -68,6 +71,7 @@ BEGIN
 
   END IF;
 
+  -- CONFIRMADA a FIRMACONTRATO
   -- Comprobamos si el tipo de pago es 'deposito'
   IF (NEW."Payment_type" = 'deposito') THEN
 

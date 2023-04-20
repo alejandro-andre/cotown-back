@@ -9,6 +9,8 @@ BEGIN
   
   RESET ROLE;
   
+  -- ALTERNATIVAS a SOLICITUD
+  -- ALTERNATIVASPAGADA A SOLICITUDPAGADA
   -- Aceptada, actualiza la petición
   IF NEW."Accepted" THEN
       UPDATE "Booking"."Booking"
@@ -27,12 +29,15 @@ BEGIN
   -- Estado actual de la reserva
   SELECT "Status", "Customer_id" into booking_status, customer_id FROM "Booking"."Booking" WHERE "Booking".id = NEW."Booking_id";
 
+
+  -- SOLICITUD a ALTERNATIVAS 
   -- Actualiza la solicitud
   IF booking_status = 'solicitud' THEN
-    UPDATE "Booking"."Booking" SET "Status" = 'alternativas' WHERE id = NEW."Booking_id";
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'alternativas', NEW."Booking_id");
+     UPDATE "Booking"."Booking" SET "Status" = 'alternativas' WHERE id = NEW."Booking_id";
+     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'alternativas', NEW."Booking_id");
   END IF;
 
+  -- SOLICITUDPAGADA a ALTERNATIVASPAGADA 
   -- Actualiza la solicitud pagada
   IF booking_status = 'solicitudpagada' THEN
     UPDATE "Booking"."Booking" SET "Status" = 'alternativaspagada' WHERE id = NEW."Booking_id";
