@@ -1,25 +1,27 @@
 # ###################################################
+# Batch process
+# ---------------------------------------------------
+# Billing process
+# ###################################################
+
+# ###################################################
 # Imports
 # ###################################################
 
 # System includes
-from openpyxl import load_workbook
 import os
-import io
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
-from library.load_prices import load_prices
-from library.load_resources import load_resources
+from library.services.dbclient import DBClient
+from library.services.apiclient import APIClient
 
 
 # ###################################################
-# Loader function
+# Bill generator function
 # ###################################################
 
 def main():
@@ -68,57 +70,17 @@ def main():
     # Main
     # ###################################################
 
-    # Get upload requests
-    dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
-    data = dbClient.fetchall()
+    # 1. Generate invoice for each booking fee payment 
+    #    Get every booking fee payment without bill
+    pass
 
-    # Loop thru files
-    for file in data:
+    # 2. Generate recepit for each deposit payment 
+    #    Get every deposit payment without bill
+    pass
 
-        # Result
-        ok = False
-        log = ''
-
-        # Get request files
-        entity = 'Batch/Upload'
-        id = str(file['id'])
-        data = apiClient.getFile(id, entity, 'File')
-
-        # Load excel book
-        file = io.BytesIO(data.content)
-        workbook = load_workbook(filename=file, read_only=True, data_only=True)
-
-        # Log
-        log = ''
-
-        # Process each sheet
-        for sheet in workbook.sheetnames:
-
-            # Processing
-            log += sheet + '\n'
-            sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-            dbClient.execute(sql, ('Procesando...', '', id))
-            dbClient.commit()               
-
-            # Resources
-            if sheet == 'Recursos':
-                ok, l = load_resources(dbClient, workbook[sheet])
-
-            # Prices
-            elif sheet == 'Precios':
-                ok, l = load_prices(dbClient, workbook[sheet])
-
-            # Other
-            else:
-                ok, l = False, 'Error: Tipo de carga desconcida.'
-
-            # Append log
-            log += l + '\n'
-
-        # Save result
-        sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-        dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
-        dbClient.commit()               
+    # 3. Monthly billing process
+    #    Process each inhouse booking
+    pass
 
 
 # #####################################

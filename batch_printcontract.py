@@ -1,4 +1,10 @@
 # ###################################################
+# Batch process
+# ---------------------------------------------------
+# Generates PDF files from contracts
+# ###################################################
+
+# ###################################################
 # Imports
 # ###################################################
 
@@ -10,9 +16,9 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
-from library.generate_bill import do_bill
+from library.services.dbclient import DBClient
+from library.services.apiclient import APIClient
+from library.business.print_contract import do_contracts
 
 
 # ###################################################
@@ -65,14 +71,15 @@ def main():
     # Main
     # ###################################################
 
-    # Get pending bills
-    bills = apiClient.call('''
+    # Get pending contracts
+    bookings = apiClient.call('''
     {
-      data: Billing_InvoiceList ( 
+      data: Booking_BookingList ( 
+        orderBy: [{ attribute: id }]
         where: { 
           AND: [
-            { Issued: { EQ: true } }, 
-            { Document: { IS_NULL: true } } 
+            { Status: { EQ: firmacontrato } }, 
+            { Contract_rent: { IS_NULL: true } } 
           ] 
         }
       ) { id }
@@ -80,11 +87,11 @@ def main():
     ''')
 
     # Loop thru contracts
-    if bills  is not None:
-      for b in bills.get('data'):
-          id = b['id']
+    if bookings is not None:
+      for booking in bookings.get('data'):
+          id = booking['id']
           logger.debug(id)
-          do_bill(apiClient, id)
+          do_contracts(apiClient, id)
 
 
 # #####################################

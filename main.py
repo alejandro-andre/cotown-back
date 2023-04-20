@@ -1,3 +1,9 @@
+# ###################################################
+# API REST
+# ---------------------------------------------------
+# Business back office logic for Cotown
+# ###################################################
+
 # #####################################
 # Imports
 # #####################################
@@ -12,15 +18,15 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
+from library.services.dbclient import DBClient
+from library.services.apiclient import APIClient
 
-from library.keycloak import create_user, delete_user
-from library.export import export_to_excel
-from library.queries import get_customer, get_provider, get_payment, put_payment, availability
-from library.redsys import pay, validate
-from library.generate_bill import do_bill
-from library.generate_contract import do_contracts
+from library.services.keycloak import create_user, delete_user
+from library.business.export import export_to_excel
+from library.business.queries import get_customer, get_provider, get_payment, put_payment, availability
+from library.services.redsys import pay, validate
+from library.business.print_bill import do_bill
+from library.business.print_contract import do_contracts
 
 
 # #####################################

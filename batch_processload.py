@@ -1,24 +1,31 @@
 # ###################################################
+# Batch process
+# ---------------------------------------------------
+# Process excel file load requests
+# ###################################################
+
+# ###################################################
 # Imports
 # ###################################################
 
 # System includes
+from openpyxl import load_workbook
 import os
-import datetime
+import io
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.dbclient import DBClient
-from library.apiclient import APIClient
-from library.email import smtp_mail
-from library.generate_email import do_email
+from library.services.dbclient import DBClient
+from library.services.apiclient import APIClient
+from library.business.load_prices import load_prices
+from library.business.load_resources import load_resources
 
 
 # ###################################################
-# Contract generator function
+# Loader function
 # ###################################################
 
 def main():
@@ -67,77 +74,57 @@ def main():
     # Main
     # ###################################################
 
-    # Get pending emails
-    emails = apiClient.call('''
-    {
-      data: Customer_Customer_emailList ( 
-        where: { Sent_at: { IS_NULL: true } }
-      ) {
-        id
-        Customer: CustomerViaCustomer_id {
-          Name
-          Address
-          Email
-        }
-        Template
-        Entity_id
-        Subject
-        Body
-      }
-    }
-    ''')
+    # Get upload requests
+    dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
+    data = dbClient.fetchall()
 
-    # No emails
-    if emails is None:
-      return
+    # Loop thru files
+    for file in data:
 
-    # Loop thru emails
-    for email in emails.get('data'):
+        # Result
+        ok = False
+        log = ''
 
-      # Debug
-      logger.debug(email)
+        # Get request files
+        entity = 'Batch/Upload'
+        id = str(file['id'])
+        data = apiClient.getFile(id, entity, 'File')
 
-      # Template? generate email body
-      if email['Template'] is not None:
-        subject, body = do_email(apiClient, email)
-        
-      # Manual email?
-      else:
-        subject = email['Subject']
-        body = email['Body']
+        # Load excel book
+        file = io.BytesIO(data.content)
+        workbook = load_workbook(filename=file, read_only=True, data_only=True)
 
-      # Update query
-      query = '''
-      mutation ($id: Int! $subject: String! $body: String! $sent: String!) {
-        Customer_Customer_emailUpdate (
-          where:  { id: {EQ: $id} }
-          entity: { 
-            Subject: $subject 
-            Body: $body
-            Sent_at: $sent
-          }
-        ) { id }
-      }
-      '''
+        # Log
+        log = ''
 
-      # Update variables
-      variables = {
-        'id': email['id'], 
-        'subject': subject,
-        'body': body,
-        'sent': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-      }
+        # Process each sheet
+        for sheet in workbook.sheetnames:
 
-      # Call graphQL endpoint
-      apiClient.call(query, variables)
+            # Processing
+            log += sheet + '\n'
+            sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
+            dbClient.execute(sql, ('Procesando...', '', id))
+            dbClient.commit()               
 
-      # Send email
-      if subject != 'ERROR' and email['Customer']['Email'] == 'alejandroandref@gmail.com' or \
-         subject != 'ERROR' and email['Customer']['Email'] == 'cesar.ramos@experis.es':
-        logger.debug(email['Customer']['Email'])
-        logger.debug(subject)
-        logger.debug(body)
-        smtp_mail(email['Customer']['Email'], subject, body)
+            # Resources
+            if sheet == 'Recursos':
+                ok, l = load_resources(dbClient, workbook[sheet])
+
+            # Prices
+            elif sheet == 'Precios':
+                ok, l = load_prices(dbClient, workbook[sheet])
+
+            # Other
+            else:
+                ok, l = False, 'Error: Tipo de carga desconcida.'
+
+            # Append log
+            log += l + '\n'
+
+        # Save result
+        sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
+        dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
+        dbClient.commit()               
 
 
 # #####################################
