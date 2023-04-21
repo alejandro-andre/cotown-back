@@ -87,10 +87,7 @@ BEGIN
   IF (NEW."Status" = 'inhouse' AND NEW."Cancel_date" IS NOT NULL AND NEW."Cancelation_fee" IS NOT NULL) THEN
     NEW."Status" := 'cancelada';
   END IF;
-<<<<<<< HEAD
  
-=======
->>>>>>> 43160c47d41fb90ef3ddf04935374ebbd06e010b
 
   -- Cambios de estado
   IF (NEW."Status" <> OLD."Status") THEN
