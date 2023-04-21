@@ -21,12 +21,12 @@ logger = logging.getLogger('COTOWN')
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
 
-from library.services.keycloak import create_user, delete_user
-from library.business.export import export_to_excel
-from library.business.queries import get_customer, get_provider, get_payment, put_payment, availability
+from library.services.keycloak import create_keycloak_user, delete_keycloak_user
 from library.services.redsys import pay, validate
+from library.business.export import export_to_excel
 from library.business.print_bill import do_bill
 from library.business.print_contract import do_contracts
+from library.business.queries import *
 
 
 # #####################################
@@ -158,26 +158,31 @@ def runapp():
     # Create provider user
     # ###################################################
 
-    def provider_user_add(id):
+    def get_provider_user_add(id):
         
-        # Get customer
+        # Get provider
         data = get_provider(dbClient, id)
         logger.debug('Provider->')
         logger.debug(data)
         if data is not None:
             logger.debug('Provider found')
+        else:
+            return 'ko'
     
+        # Create airflows account
+        data['User_name'] = 'p' + data['Document']
+        if create_airflows_user(dbClient, data, 200):
+            logger.debug('Provider created in Airflows')
+        else:
+            return 'ko'
+
         # Create keycloak account
-        if create_user('P' + str(data['id']), data['Name'], data['Email'], data['User_name']):
-            logger.debug('Provider created')
+        if create_keycloak_user('p' + str(data['id']), data['Name'], data['Email'], data['User_name']):
+            logger.debug('Provider created in Keycloak')
+        else:
+            return 'ko'
 
-        return
-        
-    def get_provider_user_add(id):
-
-        logger.debug('Provider user add' + str(id))
-        p = Process(target=provider_user_add, args=(id,))
-        p.start()
+        # Ok
         return 'ok'
 
 
@@ -185,7 +190,7 @@ def runapp():
     # Create customer user
     # ###################################################
 
-    def customer_user_add(id):
+    def get_customer_user_add(id):
 
         # Get customer
         data = get_customer(dbClient, id)
@@ -193,17 +198,23 @@ def runapp():
         logger.debug(data)
         if data is not None:
             logger.debug('Customer found')
+        else:
+            return 'ko'
     
+        # Create airflows account
+        data['User_name'] = 'c' + str(id).zfill(6)
+        if create_airflows_user(dbClient, data, 300):
+            logger.debug('Customer created in Airflows')
+        else:
+            return 'ko'
+
         # Create keycloak account
-        if create_user('C' + str(data['id']), data['Name'], data['Email'], data['User_name']):
-            logger.debug('Customer created')
-        return
+        if create_keycloak_user('c' + str(data['id']), data['Name'], data['Email'], data['User_name']):
+            logger.debug('Customer created in Keycloak')
+        else:
+            return 'ko'
 
-    def get_customer_user_add(id):
-
-        logger.debug('Customer user add ' + str(id))
-        p = Process(target=customer_user_add, args=(id,))
-        p.start()
+        # Ok
         return 'ok'
 
 
@@ -211,39 +222,26 @@ def runapp():
     # Delete provider user
     # ###################################################
 
-    def provider_user_del(id):
-
-        # Delete provider
-        if delete_user('P' + str(id)):
-            logger.debug('Provider deleted')
-        return
 
     def get_provider_user_del(id):
 
-        logger.debug('Provider user del ' + str(id))
-        p = Process(target=provider_user_del, args=(id,))
-        p.start()
-        return 'ok'
-
+        if delete_keycloak_user('p' + str(id)):
+            logger.debug('Provider deleted in keycloak')
+            return 'ok'
+        return 'ko'
+        
 
     # ###################################################
     # Delete customer user
     # ###################################################
 
-    def customer_user_del(id):
-
-        # Delete provider
-        if delete_user('C' + str(id)):
-            logger.debug('Customer deleted')
-        return
-
     def get_customer_user_del(id):
 
-        logger.debug('Customer user del' + str(id))
-        p = Process(target=customer_user_del, args=(id,))
-        p.start()
-        return 'ok'
-
+        if delete_airflows_user(dbClient, id):
+            logger.debug('Customer deleted in airflows')
+            return 'ok'
+        return 'ko'
+               
 
     # ###################################################
     # Special queries

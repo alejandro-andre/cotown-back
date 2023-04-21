@@ -38,7 +38,7 @@ SECRET = str(os.environ.get('COTOWN_SECRET'))
 # Create user
 # ###################################################
 
-def create_user(id, firstName, email, username):
+def create_keycloak_user(id, firstName, email, username):
 
     # Get access token
     auth_data = {
@@ -90,7 +90,7 @@ def create_user(id, firstName, email, username):
 # Delete user
 # ###################################################
 
-def delete_user(username):
+def delete_keycloak_user(username):
 
     # Get access token
     auth_data = {
@@ -99,7 +99,8 @@ def delete_user(username):
         'client_secret': SECRET
     }
     response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
-    logger.debug('keycloak token ', response)
+    logger.debug('keycloak token->')
+    logger.debug(response)
     if response.status_code != 200:
         return False
 
@@ -111,7 +112,10 @@ def delete_user(username):
         'Content-Type': 'application/json'
     }
     response = requests.get(api_url, headers=headers)
-    logger.debug('keycloak response ', response.json())
+    logger.debug('keycloak response->')
+    logger.debug(response.json())
+    if response.json() == []:
+        return
    
     # Delete user
     id = response.json()[0]['id']
@@ -122,7 +126,8 @@ def delete_user(username):
         'Content-Type': 'application/json'
     }
     response = requests.delete(api_url, headers=headers)
-    logger.debug('keycloak response ', response)
+    logger.debug('keycloak response->')
+    logger.debug(response)
    
     # Ok
     return True

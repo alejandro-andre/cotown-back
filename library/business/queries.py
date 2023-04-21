@@ -88,8 +88,69 @@ def get_provider(dbClient, id):
     logger.error(error)
     return None
 
+# ######################################################
+# Create user
+# ######################################################
+
+def create_airflows_user(dbClient, user, role):
+
+  # Provider fields
+  id = user['id']
+  email = user['Email']
+  username = user['User_name'].lower()
+  password = username + 'p4$$w0rd'
+
+  try:
+    # Connect
+    dbClient.connect()
+
+    # Update table
+    if role == 200:
+      dbClient.execute('UPDATE "Provider"."Provider" SET "User_name" = %s WHERE id = %s', (username, id))
+    if role == 300:
+      dbClient.execute('UPDATE "Customer"."Customer" SET "User_name" = %s WHERE id = %s', (username, id))
+    
+    # Create user
+    dbClient.execute('CREATE ROLE ' + username + ' PASSWORD %s NOSUPERUSER''', (password,)) 
+    dbClient.execute('INSERT INTO "Models"."User" ("username", "email", "password") VALUES (%s, %s, %s) RETURNING id', (username, email, password) )
+    userid = dbClient.returning()[0]
+
+    # Create role
+    dbClient.execute('GRANT "user" TO ' + username)
+    dbClient.execute('INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
+
+    # Commit
+    dbClient.commit()
+    dbClient.disconnect()
+    return userid
+
+  except Exception as error:
+    dbClient.rollback()
+    logger.error(error)
+    return None
+
 
 # ######################################################
+# Delete user
+# ######################################################
+
+def delete_airflows_user(dbClient, id):
+
+  try:
+    # Connect
+    dbClient.connect()
+    dbClient.execute('DELETE FROM "Models"."User" WHERE id = %s', (id,) )
+    dbClient.commit()
+    dbClient.disconnect()
+    return id
+
+  except Exception as error:
+    dbClient.rollback()
+    logger.error(error)
+    return None
+  
+  
+  # ######################################################
 # Get customer
 # ######################################################
 
