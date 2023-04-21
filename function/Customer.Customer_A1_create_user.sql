@@ -8,9 +8,10 @@ BEGIN
 
   RESET ROLE;
 
-  -- Assign username
-  NEW."User_name" := 'C' || LPAD(NEW.id::TEXT, 6, '0');
-  UPDATE "Customer"."Customer" SET "User_name" = NEW."User_name" WHERE id = NEW.id;
+  -- Check if has username
+  IF NEW."User_name" IS NULL THEN
+    RETURN NEW;
+  END IF;
 
   -- Create DB User
   EXECUTE 'CREATE ROLE "' || NEW."User_name" || '" PASSWORD ''' || NEW."User_name" || 'p4$$w0rd'' NOSUPERUSER';
