@@ -184,7 +184,7 @@ BEGIN
       NEW."Expiry_date" = NULL;
 
       -- Depósito
-      INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES ('1', NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
+      INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
 
       -- EMail
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
@@ -216,7 +216,7 @@ BEGIN
     -- Cancelada una vez habitando el recurso. Crea pago de penalización y envía mail
     IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'inhouse') THEN  
         -- crea un registro de pago de la penalización. 
-        INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES ('1', NEW."Customer_id", NEW.id, NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
+        INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Cancelation_fee", CURRENT_DATE, 'Booking cancel', 'penalizacion');
          -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
         INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'canceladapenalizacion', NEW.id);
          -- Log
