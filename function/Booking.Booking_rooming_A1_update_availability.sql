@@ -3,6 +3,7 @@ DECLARE
 
   code VARCHAR;
   reg RECORD;
+  booking RECORD;
   cur CURSOR FOR 
     SELECT *
     FROM "Resource"."Resource"
@@ -14,11 +15,14 @@ BEGIN
   RESET ROLE;
   
   -- Delete all records related to that lock
-  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
+  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
   IF NEW."Resource_id" IS NULL THEN
     RETURN NEW;
   END IF;
   
+  -- Get booking
+  SELECT * INTO booking FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
+
   -- Get resource code
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
@@ -37,10 +41,9 @@ BEGIN
       "Resource_type", "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (
-      NULL, NEW.id, NULL, reg.id, reg."Building_id", reg."Flat_type_id", reg."Place_type_id",
-      reg."Resource_type", NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
+      NULL, NULL, NEW.id, reg.id, reg."Building_id", reg."Flat_type_id", reg."Place_type_id",
+      reg."Resource_type", 'grupo', booking."Date_from", booking."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
     );
-
 
     -- Next record
      FETCH cur INTO reg;
