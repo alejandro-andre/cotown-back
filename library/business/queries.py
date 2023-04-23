@@ -33,7 +33,7 @@ def get_payment(dbClient, id, generate_order=False):
     if generate_order:
 
       # Get next order num
-      dbClient.select('SELECT nextval(\'"Auxiliar"."Secuence_Payment_order_seq"\')')
+      dbClient.select('SELECT nextval(\'"Auxiliar"."Sequence_Payment_order_seq"\')')
       val = dbClient.fetch()
       order = "{:02d}{:05d}{:05d}".format(datetime.datetime.now().year - 2000, id, val[0])
       aux['Payment_order'] = order
