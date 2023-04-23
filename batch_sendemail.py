@@ -126,9 +126,13 @@ def main():
       # Call graphQL endpoint
       apiClient.call(query, variables)
 
+      # Debug
+      if email['Customer']['Email'] != 'alejandroandref@gmail.com' and \
+         email['Customer']['Email'] != 'cesar.ramos@experis.es':
+         return
+
       # Send email
-      if subject != 'ERROR' and email['Customer']['Email'] == 'alejandroandref@gmail.com' or \
-         subject != 'ERROR' and email['Customer']['Email'] == 'cesar.ramos@experis.es':
+      if subject != 'ERROR':
         logger.debug(email['Customer']['Email'])
         logger.debug(subject)
         logger.debug(body)

@@ -17,7 +17,6 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.services.apiclient import APIClient
 from library.services.dbclient import DBClient
 
 
