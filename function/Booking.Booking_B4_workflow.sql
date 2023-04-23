@@ -20,7 +20,7 @@ BEGIN
     NEW."Status" :='pendientepago';
   END IF;
 
-  -- SOLICITUDGADA, ALTERNATIVAPAGADA a CONFIRMADA
+  -- SOLICITUDPAGADA, ALTERNATIVAPAGADA a CONFIRMADA
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" := 'confirmada';
@@ -97,7 +97,7 @@ BEGIN
        (OLD."Status" = 'solicitudpagada' AND NEW."Status" = 'alternativaspagada')) THEN
 
       -- Email
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativa', NEW.id);
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW.id);
 
       -- Log
       change := 'Revisar alternativas';
@@ -125,11 +125,21 @@ BEGIN
 
     END IF;
 
+    -- CONFIRMADA a FIRMACONTRATO
+     IF (NEW."Status" = 'firmacontrato' AND OLD."Status" = 'confirmada') THEN 
+     -- EMail 
+        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
+        -- Log 
+        change := CONCAT('Pendiente de firmar el contrato de la reserva ', NEW.id) ; 
+     END IF;
+
     -- CONTRATO a CHECKINCONFIRMADO
     -- Confirmación de la fecha de checkin 
      IF (NEW."Status" = 'checkinconfirmado' AND OLD."Status" = 'contrato') THEN 
         -- Log 
         change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in") ; 
+        -- Email
+        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
      END IF;
 
      -- SOLICITUDPAGADA a DESCARTADAPAGADA
@@ -173,7 +183,7 @@ BEGIN
      -- Nueva disponsicion para firmar el contrato 
      IF (NEW."Status" = 'firmacontrato' AND OLD."Status" = 'contrato') THEN 
         -- Log 
-        change := 'Nueco contrato pendiente para ser firmado firmado '; 
+        change := 'Nuevo contrato pendiente para ser firmado firmado '; 
      END IF;
 
 
@@ -227,9 +237,7 @@ BEGIN
 
   -- Registra el cambio
   IF change IS NOT NULL THEN
-
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);
-
   END IF;
 
   RETURN NEW;

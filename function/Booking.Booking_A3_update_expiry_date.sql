@@ -1,7 +1,7 @@
 BEGIN
 
   RESET ROLE;
-    -- Exite una funcion 'Booking_caducar_solicitud' que cambiará el estado a 'caducadas' a todas las solicitudes caducadas 
+    -- Exite una funcion 'Booking_CRON_expire_request' que cambiará el estado a 'caducadas' a todas las solicitudes caducadas 
 
     -- PENDIENTEPAGO a CADUCADA
 	IF (NEW."Status" = 'caducada') THEN
