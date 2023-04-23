@@ -99,36 +99,6 @@ def runapp():
 
 
     # ###################################################
-    # Bill (trigger)
-    # ###################################################
-
-    def get_bill(id):
-
-        # Debug
-        logger.debug('Bill ' + str(id))
-
-        # Generate bill in background
-        p = Process(target=do_bill, args=(apiClient, id))
-        p.start()
-        return 'ok'
-    
-
-    # ###################################################
-    # Contracts (trigger)
-    # ###################################################
-
-    def get_contracts(id):
-
-        # Debug
-        logger.debug('Contracts ' + str(id))
-
-        # Generate contracts in background
-        p = Process(target=do_contracts, args=(apiClient, id))
-        p.start()
-        return 'ok'
-    
-
-    # ###################################################
     # Export to excel
     # ###################################################
 
@@ -268,20 +238,6 @@ def runapp():
     # Payments
     # ###################################################
 
-    # Payment Ok
-    #! def get_ok():
-
-    #!     values = request.values
-    #!     logger.debug(values.to_dict())
-    #!     return 'OK ' + str(values.to_dict())
-
-    # Payment fail
-    #! def get_ko():
-
-    #!     values = request.values
-    #!     logger.debug(values.to_dict())
-    #!     return 'KO ' + str(values.to_dict())
-
     # Prepare payment params
     def get_pay(id):
 
@@ -305,6 +261,7 @@ def runapp():
 
         # Return both information
         return payment | params
+    
     
     # Notification
     def post_notification():
@@ -357,11 +314,11 @@ def runapp():
         else:
             apiClient.auth(user=GQLUSER, password=GQLPASS)
         
-    # Payment
+    # Payment functions
     app.add_url_rule('/notify', view_func=post_notification, methods=['POST'])
     app.add_url_rule('/pay/<int:id>', view_func=get_pay, methods=['GET'])
 
-    # Keycloak functions
+    # User management functions
     app.add_url_rule('/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
     app.add_url_rule('/provideruser/del/<int:id>', view_func=get_provider_user_del, methods=['GET'])
     app.add_url_rule('/customeruser/add/<int:id>', view_func=get_customer_user_add, methods=['GET'])
@@ -370,11 +327,9 @@ def runapp():
     # Special queries
     app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
 
-    # Main functions
+    # Other functions
     app.add_url_rule('/hi', view_func=get_hello, methods=['GET'])
     app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
-    app.add_url_rule('/bill/<int:id>', view_func=get_bill, methods=['GET'])
-    app.add_url_rule('/contracts/<int:id>', view_func=get_contracts, methods=['GET'])
     app.add_url_rule('/export/<string:name>', view_func=get_export, methods=['GET'])
 
     # Return app
