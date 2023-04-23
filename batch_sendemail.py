@@ -10,7 +10,7 @@
 
 # System includes
 import os
-import datetime
+import markdown
 
 # Logging
 import logging
@@ -99,7 +99,7 @@ def main():
       # Manual email?
       else:
         subject = email['Subject']
-        body = email['Body']
+        body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list'])  
 
       # Update query
       query = '''
