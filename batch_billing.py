@@ -106,7 +106,7 @@ def bill_rent(dbClient):
 
         # Get all prices not already billed
         dbClient.select('''
-        SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_date", b."Customer_id", b."Payment_method_id", r."Code", r."Owner_id", r."Service_id"
+        SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", b."Customer_id", b."Payment_method_id", r."Code", r."Owner_id", r."Service_id"
         FROM "Booking"."Booking_price" p
         INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
         INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
@@ -122,8 +122,12 @@ def bill_rent(dbClient):
             # Debug
             logger.debug(item)
 
+            # Amounts
+            rent = int(item['Rent'] or 0) + int(item['Rent_discount'] or 0)
+            services = int(item['Services'] or 0) + int(item['Services_discount'] or 0)
+
             # Create payment
-            if item['Rent'] > 0 or item['Services'] > 0:
+            if rent > 0 or services > 0:
 
                 dbClient.execute('''
                     INSERT INTO "Billing"."Payment" 
@@ -135,7 +139,7 @@ def bill_rent(dbClient):
                         item['Payment_method_id'] if item['Payment_method_id'] is not None else 1,
                         item['Customer_id'], 
                         item['Booking_id'], 
-                        item['Rent'] + item['Services'],
+                        rent + services,
                         datetime.now(), 
                         'Renta y servicios ' + item['Code'] + ' ' + str(item['Rent_date']),
                         'servicios'
@@ -144,7 +148,7 @@ def bill_rent(dbClient):
                 paymentid = dbClient.returning()[0]
 
             # Create rent invoice
-            if item['Rent'] > 0:
+            if rent > 0:
 
                 dbClient.execute('''
                     INSERT INTO "Billing"."Invoice" 
@@ -174,7 +178,7 @@ def bill_rent(dbClient):
                     ''', 
                     (
                         rentid, 
-                        item['Rent'], 
+                        rent, 
                         3, 
                         1 
                     )
@@ -184,7 +188,7 @@ def bill_rent(dbClient):
                 dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
 
             # Create services invoice
-            if item['Services'] > 0:
+            if services > 0:
                 
                 dbClient.execute('''
                     INSERT INTO "Billing"."Invoice" 
@@ -214,7 +218,7 @@ def bill_rent(dbClient):
                     ''', 
                     (
                         servid, 
-                        item['Services'], 
+                        services, 
                         4, 
                         1 
                     )
