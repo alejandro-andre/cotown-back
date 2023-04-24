@@ -1,37 +1,60 @@
 <html>
 <head>
-  <script>
-    function do_select() {
+<script>
 
-      // Get params
-      var pairs = location.hash.substring(1).split('&');
-      var fragment = {};
-      pairs.forEach(function(pair) {
-        pair = pair.split('=');
-        fragment[pair[0]] = decodeURIComponent(pair[1] || '');
-      });
+  // Simula un click en el menu
+  function do_click() {
+    el = window.opener.document.querySelector('[data-qa="Building.Building-menu"]');
+    console.log(el);
+    el.click();
+  }
 
-      // Prepare response
-      const hashParams = {
-        entity: fragment['entity'],
-        entityId: parseInt(fragment['entityId'], 10),
-        attribute: fragment['attribute'],
-        value: {
-          id: parseInt(document.getElementById("sel-id").value, 10),
-          Code: document.getElementById("sel-name").value
-        }
+  // Hack, navega a una pagina concreta
+  function do_nav() {
+    window.opener.history.pushState("","","/admin/Booking.Booking/222/View");
+    window.opener.history.go(-1);
+    window.opener.history.go(1);
+    window.opener.history.pushState("","","/admin/Booking.Booking/222/View");
+    window.opener.history.go(-1);
+    window.opener.history.go(1);
+  }
+
+  // Devuelve el elemento seleccionadp
+  function do_select() {
+
+    // Get params
+    var pairs = location.hash.substring(1).split('&');
+    var fragment = {};
+    pairs.forEach(function(pair) {
+      pair = pair.split('=');
+      fragment[pair[0]] = decodeURIComponent(pair[1] || '');
+    });
+
+    // Prepare response
+    const hashParams = {
+      entity: fragment['entity'],
+      entityId: parseInt(fragment['entityId'], 10),
+      attribute: fragment['attribute'],
+      value: {
+        id: parseInt(document.getElementById("sel-id").value, 10),
+        Code: document.getElementById("sel-name").value
       }
-      
-      // Respond
-      console.log(window.opener);
-      window.opener.postMessage(hashParams, "*");
-      window.close();
     }
-  </script>
+    
+    // Respond
+    console.log(window.opener);
+    window.opener.postMessage(hashParams, "*");
+    window.close();
+  }
+</script>
 </head>
+
 <body>
   <input id="sel-id" type="text" value="4">
   <input id="sel-name" type="text" value="ART030.AT.00.H02">
+  <button onclick="do_click();">Simula click</button>
+  <button onclick="do_nav();">Simula navegacion</button>
   <button onclick="do_select();">Seleccionar</button>
 </body>
+
 </html>

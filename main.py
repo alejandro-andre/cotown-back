@@ -24,8 +24,6 @@ from library.services.apiclient import APIClient
 from library.services.keycloak import create_keycloak_user, delete_keycloak_user
 from library.services.redsys import pay, validate
 from library.business.export import export_to_excel
-from library.business.print_bill import do_bill
-from library.business.print_contract import do_contracts
 from library.business.queries import *
 
 
@@ -192,7 +190,6 @@ def runapp():
     # Delete provider user
     # ###################################################
 
-
     def get_provider_user_del(id):
 
         if delete_keycloak_user('p' + str(id)):
@@ -232,6 +229,13 @@ def runapp():
         if result is None:
             return {}
         return result
+    
+    # Change booking status
+    def get_booking_status(id, status):
+
+        if booking_status(dbClient, id, status):
+            return 'ok'
+        return 'ko'
     
 
     # ###################################################
@@ -326,6 +330,7 @@ def runapp():
 
     # Special queries
     app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
+    app.add_url_rule('/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
     # Other functions
     app.add_url_rule('/hi', view_func=get_hello, methods=['GET'])

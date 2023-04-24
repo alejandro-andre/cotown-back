@@ -89,7 +89,26 @@ def get_provider(dbClient, id):
     return None
 
 # ######################################################
-# Create user
+# Get customer
+# ######################################################
+
+def get_customer(dbClient, id):
+
+  try:
+    dbClient.connect()
+    dbClient.select('SELECT id, "Name",  "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
+    aux = dbClient.fetch()
+    dbClient.disconnect()
+    logger.debug(aux)
+    return aux
+
+  except Exception as error:
+    logger.error(error)
+    return None
+
+
+# ######################################################
+# Create airflows user
 # ######################################################
 
 def create_airflows_user(dbClient, user, role):
@@ -134,7 +153,7 @@ def create_airflows_user(dbClient, user, role):
 
 
 # ######################################################
-# Delete user
+# Delete airflows user
 # ######################################################
 
 def delete_airflows_user(dbClient, id):
@@ -152,24 +171,24 @@ def delete_airflows_user(dbClient, id):
     logger.error(error)
     return None
   
-  
-  # ######################################################
-# Get customer
+
+# ######################################################
+# Booking status
 # ######################################################
 
-def get_customer(dbClient, id):
+def booking_status(dbClient, id, status):
 
   try:
     dbClient.connect()
-    dbClient.select('SELECT id, "Name",  "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
-    aux = dbClient.fetch()
+    dbClient.execute('UPDATE "Booking"."Booking" SET "Status" = %s WHERE id = %s', (status, id))
+    dbClient.commit()
     dbClient.disconnect()
-    logger.debug(aux)
-    return aux
+    return True
 
   except Exception as error:
+    dbClient.rollback()
     logger.error(error)
-    return None
+    return False
 
 
 # ######################################################

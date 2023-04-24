@@ -1,0 +1,17 @@
+<script>
+    function doclick() {
+        el = parent.document.querySelector('[data-qa="Building.Building-menu"]');
+        console.log(el);
+        el.click();
+    }
+    function donav() {
+        parent.history.pushState("","","/admin/Booking.Booking/222/View");
+        parent.history.go(-1);
+        parent.history.go(1);
+        parent.history.pushState("","","/admin/Booking.Booking/111/View");
+        parent.history.go(-1);
+        parent.history.go(1);
+    }
+</script>
+<a onclick="doclick();">click</a><br>
+<a onclick="donav();">nav</a><br>
