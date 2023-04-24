@@ -121,6 +121,27 @@ def bill_rent(dbClient):
             # Debug
             logger.debug(item)
 
+            # Create payment
+            if item['Rent'] > 0 or item['Services'] > 0:
+
+                dbClient.execute('''
+                    INSERT INTO "Billing"."Payment" 
+                    ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    RETURNING id
+                    ''', 
+                    (
+                        item['Payment_method_id'] if item['Payment_method_id'] is not None else 1,
+                        item['Customer_id'], 
+                        item['Booking_id'], 
+                        item['Rent'] + item['Services'],
+                        datetime.now(), 
+                        'Renta y servicios ' + item['Code'] + ' ' + str(item['Rent_date']),
+                        'servicios'
+                    )
+                )
+                paymentid = dbClient.returning()[0]
+
             # Create rent invoice
             if item['Rent'] > 0:
 
@@ -138,7 +159,7 @@ def bill_rent(dbClient):
                         item['Customer_id'], 
                         item['Booking_id'], 
                         item['Payment_method_id'] if item['Payment_method_id'] is not None else 1, 
-                        None, 
+                        paymentid, 
                         'Renta ' + item['Code'] + ' ' + str(item['Rent_date'])
                     )
                 )
@@ -175,7 +196,7 @@ def bill_rent(dbClient):
                         item['Customer_id'], 
                         item['Booking_id'], 
                         item['Payment_method_id'] if item['Payment_method_id'] is not None else 1, 
-                        None, 
+                        paymentid, 
                         'Servicios ' + item['Code'] + ' ' + str(item['Rent_date'])
                     )
                 )
