@@ -46,7 +46,7 @@ BEGIN
   INTO num
   FROM "Booking"."Booking_price"
   WHERE "Booking_id" = NEW.id
-  AND "Invoices" IS NOT NULL;
+  AND ("Invoice_rent_id" IS NOT NULL OR "Invoice_services_id" IS NOT NULL);
   IF num > 0 THEN
     RETURN NEW;
   END IF;
@@ -58,8 +58,12 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Resource or dates not changed? Ignore
-  IF NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
+  -- Prices already calculated and resource or dates not changed? Ignore
+  SELECT COUNT(*)
+  INTO num
+  FROM "Booking"."Booking_price"
+  WHERE "Booking_id" = NEW.id;
+  IF num > 0 AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
     RETURN NEW;
   END IF;
 

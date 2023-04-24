@@ -110,7 +110,8 @@ def bill_rent(dbClient):
         FROM "Booking"."Booking_price" p
         INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
         INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
-        WHERE "Invoices" IS NULL
+        WHERE "Invoice_rent_id" IS NULL 
+        AND "Invoice_services_id" IS NULL
         AND "Rent_date" <= %s
         ''', (datetime.now(),))
         data = dbClient.fetchall()
@@ -179,6 +180,9 @@ def bill_rent(dbClient):
                     )
                 )
 
+                # Update price
+                dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
+
             # Create services invoice
             if item['Services'] > 0:
                 
@@ -217,7 +221,7 @@ def bill_rent(dbClient):
                 )
 
                 # Update price
-                dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoices" = %s WHERE id = %s', (str(rentid) + ',' + str(servid), item['id']))
+                dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (rentid, item['id']))
 
         # End
         dbClient.commit()
