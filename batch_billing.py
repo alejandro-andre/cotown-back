@@ -30,6 +30,7 @@ def bill_payments(dbClient):
     try:
 
         # Get all bookings without bill
+        # TO DO: ordenar
         dbClient.select('''
             SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id" 
             FROM "Billing"."Payment" p
@@ -38,6 +39,7 @@ def bill_payments(dbClient):
             LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = b.id
             WHERE "Payment_date" IS NOT NULL
             AND i.id IS NULL
+            ORDER BY p."Booking_id"
         ''')
         data = dbClient.fetchall()
 
@@ -105,6 +107,7 @@ def bill_rent(dbClient):
     try:
 
         # Get all prices not already billed
+        # TO DO: ordenar
         dbClient.select('''
         SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", b."Customer_id", b."Payment_method_id", r."Code", r."Owner_id", r."Service_id"
         FROM "Booking"."Booking_price" p
@@ -113,6 +116,7 @@ def bill_rent(dbClient):
         WHERE "Invoice_rent_id" IS NULL 
         AND "Invoice_services_id" IS NULL
         AND "Rent_date" <= %s
+        ORDER BY p."Booking_id", p."Rent_date"
         ''', (datetime.now(),))
         data = dbClient.fetchall()
 
