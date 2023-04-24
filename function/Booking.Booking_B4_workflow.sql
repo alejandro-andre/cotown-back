@@ -44,6 +44,12 @@ BEGIN
     NEW."Status" := 'cancelada';
   END IF;
 
+  -- CONFIRMADA a SOLICITUDPAGADA
+  -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'confirmada'
+  IF (NEW."Status" = 'confirmada' AND  NEW."Resource_id" IS NULL) THEN
+    NEW."Status" := 'solicitudpagada';
+  END IF;
+
   
 
   -- CONTRATO a FIRMACONTRATO
@@ -148,8 +154,30 @@ BEGIN
         -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
         INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
         -- Log
-        change := 'Solicitud cancelada. Hay que devolver la garantia';   
+        change := 'Solicitud descartada. Hay que devolver el pago del booking';   
     END IF;
+
+ -- SOLICITUD, ALTERNATIVAS, PENDIENTEPAGO a DESCARTADA
+    IF (NEW."Status" = 'descartada') THEN
+        -- Comprobamos si el booking esta pagado
+        SELECT "id" INTO record_id 
+        FROM "Billing"."Payment" 
+        WHERE "Booking_id" = NEW."id" 
+        AND "Payment_type" = 'booking'
+        AND "Payment_auth" IS NOT NULL 
+        AND "Payment_date" IS NOT NULL;
+        IF(record_id = 1) THEN
+            -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
+            DELETE FROM "Billing"."Payment" WHERE id=record_id;
+        END IF;
+        -- Eliminamos el recurso asignado
+        UPDATE "Booking"."Booking" SET NEW."Resource_id" = NULL WHERE "Booking".id = NEW.id;
+        -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
+        -- Log
+        change := 'Solicitud descartada.';   
+    END IF;
+
 
     -- CONFIRMADA a CANCELADA
     -- Cancelada, elimina pago pendiente de garantia y envía mail
@@ -170,6 +198,12 @@ BEGIN
               -- Log
               change := 'Reserva cancelada antes de pagar la garantia';   
  
+    END IF;
+
+    -- CONFIRMADA a SOLICITUDPAGADA
+    IF (NEW."Status" = 'solicitudpagada' AND OLD."Status" = 'confirmada') THEN 
+      -- Log
+      change := CONCAT('Se ha desasignado el recurso de la solicitud ', NEW.id);   
     END IF;
 
     
@@ -232,6 +266,27 @@ BEGIN
          -- Log
          change := 'Reserva cancelada con penalización';   
     END IF;
+
+    -- CHECKIN a INHOUSE
+    -- Se confirma la llegada del usuario al alojamiento
+    IF (NEW."Status" = 'inhouse') THEN  
+      -- EMail
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'inhouse', NEW.id);
+      -- Log
+      change := 'Se confirma que el usuario ha llegado al alojamiento.';   
+    END IF;
+
+    -- CHECKOUT a DEVOLVERGARANTIA
+    -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
+    IF (NEW."Status" = 'devolvergarantia') THEN 
+      -- GENERAR REGISTRO DE DEVOLUCION (¿COMO SE HACE?)  
+      -- EMail ¿Enviar email?
+      -- Log
+      change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW.id);   
+    END IF;
+
+
+
 
   END IF;
 
