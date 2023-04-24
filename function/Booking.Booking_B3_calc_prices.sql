@@ -41,27 +41,27 @@ BEGIN
 
   RESET ROLE;
   
-  -- Null resource, delete prices
+  -- Prices already billed? Ignore
+  SELECT COUNT(*)
+  INTO num
+  FROM "Booking"."Booking_price"
+  WHERE "Booking_id" = NEW.id
+  AND "Invoices" IS NOT NULL;
+  IF num > 0 THEN
+    RETURN NEW;
+  END IF;
+
+  -- Null resource? Delete prices
   IF NEW."Resource_id" IS NULL THEN
     DELETE FROM "Booking"."Booking_price"
     WHERE "Booking_id" = NEW.id;
     RETURN NEW;
   END IF;
 
-  -- No prices? Force calculation
-  SELECT COUNT(*)
-  INTO num
-  FROM "Booking"."Booking_price"
-  WHERE "Booking_id" = NEW.id;
-
-  -- Prices already calculated but resource and dates not changed? Ignore
-  IF num > 0 
-    AND NEW."Resource_id" = OLD."Resource_id" 
-    AND NEW."Date_from" = OLD."Date_from" 
-    AND NEW."Date_to" = OLD."Date_to" 
-    THEN
-      RETURN NEW;
-    END IF;
+  -- Resource or dates not changed? Ignore
+  IF NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
+    RETURN NEW;
+  END IF;
 
   -- Delete old prices
   NEW."Rent" := 0;
