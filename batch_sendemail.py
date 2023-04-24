@@ -130,7 +130,7 @@ def main():
       # Debug
       if email['Customer']['Email'] != 'alejandroandref@gmail.com' and \
          email['Customer']['Email'] != 'cesar.ramos@experis.es':
-         return
+         continue
 
       # Send email
       if subject != 'ERROR':
