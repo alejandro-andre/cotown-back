@@ -229,7 +229,7 @@ def bill_rent(dbClient):
                 )
 
                 # Update price
-                dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (rentid, item['id']))
+                dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
 
         # End
         dbClient.commit()
