@@ -40,7 +40,7 @@ BEGIN
     IF NEW."Check_out" < NEW."Check_in"THEN
       RAISE exception '!!!Check-out date cannot be earlier than the check-in date!!!Fecha de check out no puede ser anterior al check-in!!!';
     END IF;
-    IF NEW."Check_out" >= NEW."Date_to"THEN
+    IF NEW."Check_out" > NEW."Date_to"THEN
       RAISE exception '!!!Check-out date cannot be later than the end of the reservation!!!Fecha de check out no puede ser posterior al final de la reserva!!!';
     END IF;
   END IF;
