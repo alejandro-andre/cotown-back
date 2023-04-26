@@ -41,7 +41,7 @@ ol, ul {{ padding-left: 10px; margin-top: 0; }}
 
 
 # ######################################################
-# Query to retrieve the booking
+# Querys to retrieve the bookings
 # ######################################################
 
 BOOKING = '''
@@ -161,6 +161,22 @@ query BookingById ($id: Int!) {
 }
 '''
 
+GROUP_BOOKING = '''
+query Booking_groupById ($id: Int!) {
+  data: Booking_Booking_groupList (
+    where: { id: { EQ: $id } }
+  ) {
+    Booking_id: id
+    Booking_status: Status
+    Booking_date_from_day: Date_from_day
+    Booking_date_from_month: Date_from_month
+    Booking_date_from_year: Date_from_year
+    Booking_date_to_day: Date_to_day
+    Booking_date_to_month: Date_to_month
+    Booking_date_to_year: Date_to_year
+  }
+}
+'''
 
 # ######################################################
 # Additional functions
@@ -331,3 +347,8 @@ def do_contracts(apiClient, id):
   except Exception as error:
     logger.error(error)
     return False
+
+
+def do_group_contracts(apiClient, id):
+
+  pass

@@ -1,4 +1,5 @@
 -- Genera el nº de factura o recibo cuando la factura es definitiva
+-- BEFORE INSERT/UPDATE
 DECLARE
 
   format VARCHAR;
@@ -15,30 +16,35 @@ BEGIN
 
   RESET ROLE;
   
-  -- Draft
+  -- No se tiene que emitir aún?
   IF NOT NEW."Issued" THEN   
     RETURN NEW;
   END IF;
 
-  -- Already issued
+  -- Ya emitida?
   IF NEW."Code" IS NOT NULL THEN 
     NEW."Issued" := TRUE;
     RETURN NEW;
   END IF;
 
-  -- Select resource info
+  -- Lee la info del recurso
   SELECT r.id, r."Code", r."Building_id"
   INTO r_id, code, b_id
   FROM "Resource"."Resource" r
   INNER JOIN "Booking"."Booking" b ON b.id = NEW."Booking_id";
 
-  -- Get provider SAP prefix
-  SELECT "Prefix_SAP"
-  INTO prefix
-  FROM "Provider"."Provider" p
-  WHERE p.id = NEW."Provider_id";
+  -- Lee el formato de numeración y prefijo SAP del proveedor
+  SELECT
+    "Prefix_SAP",
+    CASE NEW."Bill_type"
+      WHEN 'factura' THEN "Bill_pattern" 
+      ELSE "Receipt_pattern" 
+    END
+  INTO prefix, format
+  FROM "Provider"."Provider"
+  WHERE id = NEW."Provider_id";
 
-  -- Get building SAP code
+  -- Lee el código SAP del edificio
   SELECT "Code_SAP"
   INTO building
   FROM "Building"."Building" b
@@ -47,20 +53,10 @@ BEGIN
   -- SAP Code
   NEW."SAP_code" := CONCAT(prefix, building, '_', SUBSTRING (code, 8, 5));
   
-  -- Issue year
+  -- Año de emisión
   SELECT EXTRACT(YEAR FROM NEW."Issued_date") INTO yy;
 
-  -- Get bill code format
-  SELECT
-    CASE NEW."Bill_type"
-      WHEN 'factura' THEN "Bill_pattern" 
-      ELSE "Receipt_pattern" 
-    END
-  INTO format
-  FROM "Provider"."Provider"
-  WHERE id = NEW."Provider_id";
-
-  -- Get next number
+  -- Calcula el siguiente número
   SELECT
     id,
     CASE NEW."Bill_type"
@@ -70,14 +66,12 @@ BEGIN
   INTO n_id, num
   FROM "Provider"."Provider_bill" pb
   WHERE pb."Provider_id" = NEW."Provider_id" AND "Year" = yy;
-
-  -- Next num
   num := 1 + COALESCE(num, 0);
 
-  -- Invoice number format
+  -- Formatea el número de factura
   SELECT REPLACE (REPLACE (format, '[N]', LPAD(num::TEXT, 5, '0')), '[Y]', yy::text) INTO NEW."Code";
 
-  -- Update number
+  -- Actualiza el número
   IF n_id IS NULL THEN 
     IF NEW."Bill_type" = 'factura' THEN 
       INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Receipt_number") VALUES (NEW."Provider_id", yy, 1, 0);
@@ -92,7 +86,7 @@ BEGIN
     END IF;
   END IF;
 
-  -- Return code
+  -- Return
   RETURN NEW;
 
 END;

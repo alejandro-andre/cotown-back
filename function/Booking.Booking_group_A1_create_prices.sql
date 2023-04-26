@@ -11,7 +11,7 @@ BEGIN
   -- Delete old prices
   DELETE FROM "Booking"."Booking_group_price"
   WHERE "Booking_id" = NEW.id
-  AND ("Rent_date" < NEW."Date_from" OR "Rent_date" > NEW."Date_to" );
+  AND ("Rent_date" < NEW."Date_from" OR "Rent_date" > NEW."Date_to");
 
   -- Insert prices
   dt_curr = NEW."Date_from";
@@ -27,9 +27,5 @@ BEGIN
 
   -- Return
   RETURN NEW;
-
-EXCEPTION
-  WHEN OTHERS THEN
-    RETURN OLD;
 
 END;

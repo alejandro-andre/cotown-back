@@ -63,6 +63,7 @@ p{margin:0.3em;}
     <td class="cell">
       <h2>{{Bill_type|upper}}: {{Bill_code}}</h2>
       <p>FECHA: {{Bill_issued_date}}</p>
+      <p>CONCEPTO: {{Bill_details}}</p>
     </td>
   </tr>
   </tbody>
@@ -81,7 +82,7 @@ p{margin:0.3em;}
     {% for line in Lines %} 
     <tr class="row">
       <td class="cell"><p>{{Bill_issued_date}}</p></td>
-      <td class="cell"><p>{{line.Line_product}}</p></td>
+      <td class="cell"><p>{{line.Line_details}}</p></td>
       <td class="cell"><p>{{line.Line_tax_name}} {{'{0:0,.0f}'.format(line.Line_tax_value)}}%</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Line_amount)}} €</p></td>
     </tr>

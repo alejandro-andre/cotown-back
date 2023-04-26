@@ -42,7 +42,7 @@ BEGIN
     )
     VALUES (
       NULL, NULL, NEW."Booking_id", NEW.id, reg.id, reg."Building_id", reg."Flat_type_id", reg."Place_type_id",
-      reg."Resource_type", 'grupo', booking."Date_from", booking."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
+      reg."Resource_type", NEW."Status", booking."Date_from", booking."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
     );
 
     -- Next record

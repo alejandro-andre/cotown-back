@@ -1,4 +1,4 @@
-// Redirige a una pagina externa
+// Redirige a una pagina externa (con token)
 var url = routingContext.request().getParam("url");
 var token = routingContext.request().getParam("access_token");
 if (token != "") url += "?access_token=" + token;

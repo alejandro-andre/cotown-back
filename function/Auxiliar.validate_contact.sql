@@ -1,4 +1,4 @@
--- Valida que el correo o el telefono este relleno
+-- Valida que o el correo o el telefono esten rellenos
 BEGIN
 
   IF NEW."Email" IS NULL and NEW."Phones" IS NULL THEN

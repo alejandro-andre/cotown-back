@@ -169,7 +169,7 @@ def bill_rent(dbClient):
                         item['Booking_id'], 
                         item['Payment_method_id'] if item['Payment_method_id'] is not None else 1, 
                         paymentid, 
-                        'Renta ' + item['Code'] + ' ' + str(item['Rent_date'])
+                        'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
                     )
                 )
                 rentid = dbClient.returning()[0]
@@ -177,13 +177,14 @@ def bill_rent(dbClient):
                 # Create invoice line
                 dbClient.execute('''
                     INSERT INTO "Billing"."Invoice_line" 
-                    ("Invoice_id", "Amount", "Product_id", "Tax_id")
-                    VALUES (%s, %s, %s, %s)
+                    ("Invoice_id", "Amount", "Product_id", "Details", "Tax_id")
+                    VALUES (%s, %s, %s, %s, %s)
                     ''', 
                     (
                         rentid, 
                         rent, 
                         3, 
+                        'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7],
                         1 
                     )
                 )
@@ -209,7 +210,7 @@ def bill_rent(dbClient):
                         item['Booking_id'], 
                         item['Payment_method_id'] if item['Payment_method_id'] is not None else 1, 
                         paymentid, 
-                        'Servicios ' + item['Code'] + ' ' + str(item['Rent_date'])
+                        'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
                     )
                 )
                 servid = dbClient.returning()[0]
@@ -217,13 +218,14 @@ def bill_rent(dbClient):
                 # Create invoice line
                 dbClient.execute('''
                     INSERT INTO "Billing"."Invoice_line" 
-                    ("Invoice_id", "Amount", "Product_id", "Tax_id")
-                    VALUES (%s, %s, %s, %s)
+                    ("Invoice_id", "Amount", "Product_id", "Details", "Tax_id")
+                    VALUES (%s, %s, %s, %s, %s)
                     ''', 
                     (
                         servid, 
                         services, 
                         4, 
+                        'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7],
                         1 
                     )
                 )

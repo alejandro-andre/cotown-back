@@ -13,25 +13,25 @@ BEGIN
 
   RESET ROLE;
   
-  -- Delete all records related to that lock
+  -- Borra todos los registros relacionados con ese bloqueo
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
   IF NEW."Resource_id" IS NULL THEN
     RETURN NEW;
   END IF;
   
-  -- Get resource code
+  -- Obtiene el código del recurso
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
-  -- Open cursor
+  -- Abre el cursor
   OPEN cur;
 
-  -- Next record
+  -- Siguiente registro
   FETCH cur INTO reg;
 
-  -- Loop thru all parents and children
+  -- Recorre todos los padres e hijos del recurso
   WHILE (FOUND) LOOP
   
-    -- Insert booking
+    -- Inserta la reserva
     INSERT INTO "Booking"."Booking_detail" (
       "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
       "Resource_type", "Status", "Date_from", "Date_to", "Lock"
@@ -42,12 +42,12 @@ BEGIN
     );
 
 
-    -- Next record
+    -- Siguiente registro
      FETCH cur INTO reg;
   
   END LOOP;
 
-  -- Close cursor
+  -- Cierra el cursor
   CLOSE cur;
   
   -- Return
