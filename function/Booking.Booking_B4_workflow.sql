@@ -32,7 +32,7 @@ BEGIN
     NEW."Status" := 'checkinconfirmado';
   END IF;
 
-   -- CONTRATO a FIRMACONTRATO 
+   -- FIRMACONTRATO a CONTRATO // CHECKINCONFIRMADO
   -- Actualiza el estado a "ckeckinconfirmado" desde 'firmacontrato' cuando firma el contrado e introduce la fecha de checkin 
   IF (NEW."Status" = 'firmacontrato' AND (NEW."Contract_signed" IS NOT NULL AND NEW."Check_in" IS NOT NULL)) THEN
        NEW."Status" := 'checkinconfirmado';
@@ -115,11 +115,7 @@ BEGIN
 
     -- CONFIRMADA a FIRMACONTRATO
      IF (NEW."Status" = 'firmacontrato' AND OLD."Status" = 'confirmada') THEN 
-      -- Actualizamos la fecha de la firma del contrato
-         UPDATE "Booking"."Booking" SET "Contract_signed" = CURRENT_DATE WHERE "Booking".id = NEW.id;
-      -- Borramos las alternativas asociadas a la solicitud
-         DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."Booking_id";
-      -- EMail 
+         -- EMail 
          INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
         -- Log 
         change := CONCAT('Pendiente de firmar el contrato de la reserva ', NEW.id) ; 

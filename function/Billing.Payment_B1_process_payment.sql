@@ -40,6 +40,14 @@ BEGIN
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Booking fee pagado');
 
+    -- Crea la factura - Pasar al proceso de facturación
+    -- SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+    -- INSERT INTO "Billing"."Invoice" 
+    --   ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Details", "Payment_method_id", "Payment_id") 
+    --   VALUES ('factura', TRUE, CURRENT_DATE, 1, customer_id, NEW."Booking_id", 'Booking fee', NEW."Payment_method_id", NEW.id)
+    --   RETURNING id INTO invoice_id;
+    -- INSERT INTO "Billing"."Invoice_line" ("Invoice_id", "Product_id", "Amount", "Tax_id", "Details") VALUES (invoice_id, 1, NEW."Amount", 1, 'Booking fee');
+
     -- SOLICITUD a SOLICITUDPAGADA
     -- Comprobamos si el estado es 'solicitud'
     IF (status_record = 'solicitud') THEN
@@ -71,7 +79,7 @@ BEGIN
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
 
     IF (status_record = 'confirmada') THEN
-      UPDATE "Booking"."Booking" SET "Status" ='firmacontrato' WHERE id=NEW."Booking_id";
+       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato' WHERE id=NEW."Booking_id";
      
       -- Borramos las alternativas asociadas a la solicitud
       DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."Booking_id";
