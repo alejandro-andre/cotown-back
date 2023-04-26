@@ -15,9 +15,8 @@ BEGIN
     RAISE exception '!!!Locked booking!!!Reserva bloqueada!!!';
   END IF;
 
-  -- Se ha quitado el recurso y ya está confirmada?
-  IF NEW."Status" NOT IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada') AND
-    NEW."Resource_id" IS NULL THEN
+  -- Se ha intentado quitar el recurso?
+  IF OLD."Resource_id" IS NOT NULL AND NEW."Resource_id" IS NULL THEN
     RAISE exception '!!!Resource cannot be removed!!!El recurso no se puede quitar!!!';
   END IF;
 
