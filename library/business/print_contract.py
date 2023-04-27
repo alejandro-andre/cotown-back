@@ -348,7 +348,6 @@ def generate_doc_file(context, template):
 
 def get_template(apiClient, template, rtype, name):
 
-
     # No templates
     if template is None:
       logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
@@ -357,16 +356,13 @@ def get_template(apiClient, template, rtype, name):
     # Look for proper template
     fid = None
     for c in template:
-      if rtype == 'piso' and c['Type'] == 'piso':
-        fid = c['id']
-        break
-      if rtype != 'piso' and c['Type'] != 'piso':
+      if rtype == c['Type']:
         fid = c['id']
         break
     if fid is None:
       logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
       return None
-    
+
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
@@ -438,11 +434,10 @@ def do_group_contracts(apiClient, id):
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten_json(result['data'][0])
     room = context['Room'][0]
-    print(room)
 
     # Generate rent contract
-    json_rent = {}
-    template = get_template(apiClient, room['Owner_template'], room['Resource_type'], room['Owner_name'])
+    json_rent = None
+    template = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -452,8 +447,8 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': 'Contrato de renta.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    json_svcs = {}
-    template = get_template(apiClient, room['Service_template'], room['Resource_type'], room['Service_name'])
+    json_svcs = None
+    template = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
