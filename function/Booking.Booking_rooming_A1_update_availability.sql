@@ -2,7 +2,7 @@
 DECLARE
 
   code VARCHAR;
-  
+  booking RECORD;
   re RECORD;
   res CURSOR FOR 
     SELECT *
@@ -17,6 +17,9 @@ BEGIN
   -- Delete all records related to that room
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
   
+  -- Get group booking
+  SELECT * INTO booking FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
+
   -- Get resource code
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
@@ -32,7 +35,7 @@ BEGIN
     )
     VALUES (
       NULL, NULL, NEW."Booking_id", NEW.id, re.id, re."Building_id", re."Flat_type_id", re."Place_type_id",
-      re."Resource_type", NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN re.id = room."Resource_id" THEN FALSE ELSE TRUE END)
+      re."Resource_type", booking."Status", booking."Date_from", booking."Date_to", (CASE WHEN re.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
     );
 
     FETCH res INTO re;

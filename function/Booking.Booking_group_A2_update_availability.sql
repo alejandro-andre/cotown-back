@@ -21,13 +21,16 @@ BEGIN
   RESET ROLE;
   
   -- Delete all records related to that group
-  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
+  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
   
   -- Open rooming cursor
   OPEN rooms;
   FETCH rooms INTO room;
   WHILE (FOUND) LOOP
 
+	  -- Get resource code
+  	SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = room."Resource_id";
+  
     -- Open resource cursor
     OPEN res;
     FETCH res INTO re;
