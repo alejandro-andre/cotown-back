@@ -178,6 +178,7 @@ query Booking_groupById ($id: Int!) {
 }
 '''
 
+
 # ######################################################
 # Additional functions
 # ######################################################
@@ -249,12 +250,12 @@ def generate_doc_file(context, template):
 # Generate (rent and services) contracts
 # ######################################################
 
-def get_template(apiClient, template, rtype, name, ctype):
+def get_template(apiClient, template, rtype, name):
 
 
     # No templates
     if template is None:
-      logger.warning(name + ' no tiene plantilla de contrato de ' + ctype)
+      logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
       return None
     
     # Look for proper template
@@ -267,13 +268,13 @@ def get_template(apiClient, template, rtype, name, ctype):
         fid = c['id']
         break
     if fid is None:
-      logger.warning(name + ' no tiene plantilla de contrato de ' + ctype + ' para ' + rtype)
+      logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
       return None
     
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
-      logger.warning(name + ' no tiene plantilla de contrato de ' + ctype)
+      logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
     return template
     
 
@@ -286,31 +287,27 @@ def do_contracts(apiClient, id):
     result = apiClient.call(BOOKING, variables)
     context = flatten_json(result['data'][0])
 
-    # Get rent template
-    template = get_template(apiClient, context.get('Owner_template'), context['Resource_type'], context['Owner_name'], 'renta')
-    if template is None:
-      return False
-
     # Generate rent contract
-    file = generate_doc_file(context, template.content)
-    response = requests.post(
-      'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
-      files={'file': file}
-    )
-    oid_rent = response.content
-
-    # Get services template
-    template = get_template(apiClient, context.get('Service_template'), context['Resource_type'], context['Service_name'], 'servicios')
-    if template is None:
-      return False
+    json_rent = None
+    template = get_template(apiClient, context.get('Owner_template'), context['Resource_type'], context['Owner_name'])
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_rent = { 'name': 'Contrato de renta.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    file = generate_doc_file(context, template.content)
-    response = requests.post(
-      'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
-      files={'file': file}
-    )
-    oid_svcs = response.content
+    json_svcs = None
+    template = get_template(apiClient, context.get('Service_template'), context['Resource_type'], context['Service_name'])
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_svcs = { 'name': 'Contrato de servicios.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''
@@ -325,24 +322,11 @@ def do_contracts(apiClient, id):
     }
     '''
 
-    # Update variables
-    variables = {
-      'id': id, 
-      'rent': { 
-        'name': 'Contrato de renta.pdf', 
-        'oid': int(oid_rent), 
-        'type': 'application/pdf' 
-      },
-      'svcs': { 
-        'name': 'Contrato de servicios.pdf', 
-        'oid': int(oid_svcs), 
-        'type': 'application/pdf' 
-      } 
-    }
-
     # Call graphQL endpoint
-    apiClient.call(query, variables)
-    return True
+    if json_rent is not None or json_svcs is not None:
+      apiClient.call(query, { 'id': id, 'rent': json_rent, 'svcs': json_svcs })
+      return True
+    return False
   
   except Exception as error:
     logger.error(error)
@@ -351,4 +335,54 @@ def do_contracts(apiClient, id):
 
 def do_group_contracts(apiClient, id):
 
-  pass
+  try:
+    
+    # Get booking info
+    variables = { 'id': id }
+    result = apiClient.call(GROUP_BOOKING, variables)
+    context = flatten_json(result['data'][0])
+
+    # Generate rent contract
+    json_rent = {}
+    template = get_template(apiClient, context.get('Owner_template'), context['Resource_type'], context['Owner_name'])
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_rent = { 'name': 'Contrato de renta.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+
+    # Generate services contract
+    json_svcs = {}
+    template = get_template(apiClient, context.get('Service_template'), context['Resource_type'], context['Service_name'])
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_svcs = { 'name': 'Contrato de servicios.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+
+    # Update query
+    query = '''
+    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+      Booking_Booking_groupUpdate (
+        where:  { id: {EQ: $id} }
+        entity: { 
+          Contract_rent: $rent 
+          Contract_services: $svcs
+        }
+      ) { id }
+    }
+    '''
+
+    # Call graphQL endpoint
+    if json_rent != '{}' or json_svcs != '{}':
+      apiClient.call(query, { 'id': id, 'rent': json_rent, 'svcs': json_svcs })
+      return True
+    return False
+  
+  except Exception as error:
+    logger.error(error)
+    return False
