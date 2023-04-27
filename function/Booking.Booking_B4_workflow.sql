@@ -159,8 +159,6 @@ BEGIN
             -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
             DELETE FROM "Billing"."Payment" WHERE id=record_id;
         END IF;
-        -- Eliminamos el recurso asignado
-        UPDATE "Booking"."Booking" SET NEW."Resource_id" = NULL WHERE "Booking".id = NEW.id;
         -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
         INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
         -- Log
