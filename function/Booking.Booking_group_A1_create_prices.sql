@@ -18,7 +18,7 @@ BEGIN
   dt_to = NEW."Date_to" + INTERVAL '1 day';
   WHILE dt_curr < dt_to LOOP
     BEGIN
-      INSERT INTO "Booking"."Booking_group_price" ("Booking_id", "Rent_date", "Rent", "Services") VALUES (NEW.id, dt_curr, 0, 0);
+      INSERT INTO "Booking"."Booking_group_price" ("Booking_id", "Rent_date", "Rent", "Services") VALUES (NEW.id, dt_curr, NEW."Rent", NEW."Services");
     EXCEPTION WHEN unique_violation THEN
       NULL;
     END;

@@ -174,6 +174,102 @@ query Booking_groupById ($id: Int!) {
     Booking_date_to_day: Date_to_day
     Booking_date_to_month: Date_to_month
     Booking_date_to_year: Date_to_year
+    Booking_rent: Rent
+    Booking_services: Services
+    Booking_limit: Limit
+    Booking_deposit: Deposit
+    Booking_limit: Limit
+    CustomerViaPayer_id {
+      Id_typeViaId_type_id {
+        Payer_id_type: Name
+      }
+      Payer_id: Document
+      Payer_name: Name
+      Payer_address: Address
+      Payer_zip: Zip
+      Payer_city: City
+      Payer_prvince: Province
+      CountryViaCountry_id {
+        Payer_country: Name
+      }
+      Payer_email: Email
+      Payer_bank_account: Bank_account
+    }
+    Room: Booking_roomingListViaBooking_id {
+        ResourceViaResource_id {
+            Resource_code: Code
+            Resource_type
+            Resource_part: Part
+            Resource_address: Address
+            Building: BuildingViaBuilding_id {
+                Building_code: Code
+                Building_address: Address
+                DistrictViaDistrict_id {
+                LocationViaLocation_id {
+                    Building_city: Name
+                }
+                }
+            }
+            ProviderViaOwner_id {
+                Id_typeViaId_type_id {
+                Owner_id_type: Name
+                }
+                Owner_id: Document
+                Owner_name: Name
+                Owner_address: Address
+                Owner_zip: Zip
+                Owner_city: City
+                Owner_province: Province
+                CountryViaCountry_id {
+                Owner_country: Name
+                }
+                Owner_signer_name: Signer_name
+                Id_typeViaSigner_Id_type_id {
+                Owner_signer_id_type: Name
+                }
+                Owner_signer_id: Signer_document
+                Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
+            }
+            ProviderViaService_id {
+                Id_typeViaId_type_id {
+                Service_id_type: Name
+                }
+                Service_id: Document
+                Service_name: Name
+                Service_address: Address
+                Service_zip: Zip
+                Service_city: City
+                Service_province: Province
+                CountryViaCountry_id {
+                Service_country: Name
+                }
+                Service_signer_name: Signer_name
+                Id_typeViaSigner_Id_type_id {
+                Service_signer_id_type: Name
+                }
+                Service_signer_id: Signer_document
+                Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
+            }
+        }
+          Id_typeViaId_type_id {
+            Customer_id_type: Name
+        }
+        Customer_id: Document
+        Customer_name: Name
+        Customer_address: Address
+        Customer_zip: Zip
+        Customer_city: City
+        Customer_province: Province
+        CountryViaCountry_id {
+            Customer_country: Name
+        }
+        Customer_email: Email
+    }
+    Prices: Booking_group_priceListViaBooking_id {
+      Rent_date
+      Rent
+      Services
+    }
   }
 }
 '''
@@ -289,7 +385,7 @@ def do_contracts(apiClient, id):
 
     # Generate rent contract
     json_rent = None
-    template = get_template(apiClient, context.get('Owner_template'), context['Resource_type'], context['Owner_name'])
+    template = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -300,7 +396,7 @@ def do_contracts(apiClient, id):
 
     # Generate services contract
     json_svcs = None
-    template = get_template(apiClient, context.get('Service_template'), context['Resource_type'], context['Service_name'])
+    template = get_template(apiClient, context['Service_template'], context['Resource_type'], context['Service_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -341,10 +437,12 @@ def do_group_contracts(apiClient, id):
     variables = { 'id': id }
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten_json(result['data'][0])
+    room = context['Room'][0]
+    print(room)
 
     # Generate rent contract
     json_rent = {}
-    template = get_template(apiClient, context.get('Owner_template'), context['Resource_type'], context['Owner_name'])
+    template = get_template(apiClient, room['Owner_template'], room['Resource_type'], room['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -355,7 +453,7 @@ def do_group_contracts(apiClient, id):
 
     # Generate services contract
     json_svcs = {}
-    template = get_template(apiClient, context.get('Service_template'), context['Resource_type'], context['Service_name'])
+    template = get_template(apiClient, room['Service_template'], room['Resource_type'], room['Service_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
