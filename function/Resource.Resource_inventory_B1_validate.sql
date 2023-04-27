@@ -1,4 +1,5 @@
 -- Valida que las fechas de compra sea menor o igual a la fecha en curso y que la fecha de garnatia sea mayor que la fecha de compra
+-- BEFORE INSERT/UPDATE
 BEGIN
 
   IF NEW."Purchase_date" IS NOT NULL THEN

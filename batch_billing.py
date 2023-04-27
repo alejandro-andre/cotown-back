@@ -35,7 +35,7 @@ def bill_payments(dbClient):
             SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id" 
             FROM "Billing"."Payment" p
             INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
-            INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+            LEFT JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
             LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = b.id
             WHERE "Payment_date" IS NOT NULL
             AND i.id IS NULL
@@ -291,7 +291,7 @@ def main():
     # ###################################################
 
     # 1. Generate invoice for each booking fee and deposit payment 
-    #bill_payments(dbClient)
+    bill_payments(dbClient)
 
     # 2. Monthly billing process
     bill_rent(dbClient)

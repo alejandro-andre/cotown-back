@@ -1,12 +1,15 @@
 -- Almacena los bloqueos de un piso en tabla auxiliar
+-- AFTER INSERT/UPDATE
 DECLARE
 
   status VARCHAR;
-  reg RECORD;
-  cur CURSOR FOR 
+
+  re RECORD;
+  res CURSOR FOR 
     SELECT *
     FROM "Resource"."Resource"
-    WHERE "Flat_id" = NEW."Resource_id";
+    WHERE "Flat_id" = NEW."Resource_id"
+    OR id = NEW."Resource_id";
 
 BEGIN
 
@@ -19,28 +22,23 @@ BEGIN
   SELECT "Name" INTO status FROM "Resource"."Resource_status" WHERE id = NEW."Status_id";
 
   -- Open cursor
-  OPEN cur;
-
-  -- Next record
-  FETCH cur INTO reg;
-
-  -- Loop thru all parents and children
+  OPEN res;
+  FETCH res INTO re;
   WHILE (FOUND) LOOP
   
-    -- Insert booking
+    -- Insert lock
     INSERT INTO "Booking"."Booking_detail" (
       "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
       "Resource_type", "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (
-      NEW.id, NULL, NULL, NULL, reg.id, reg."Building_id", reg."Flat_type_id", reg."Place_type_id",
-      reg."Resource_type", status, NEW."Date_from", NEW."Date_to", TRUE
+      NEW.id, NULL, NULL, NULL, re.id, re."Building_id", re."Flat_type_id", re."Place_type_id",
+      re."Resource_type", status, NEW."Date_from", NEW."Date_to", TRUE
     );
 
-    -- Next record
-     FETCH cur INTO reg;
-  
+     FETCH res INTO re;
   END LOOP;
+  CLOSE res;
 
   -- Return
   RETURN NEW;

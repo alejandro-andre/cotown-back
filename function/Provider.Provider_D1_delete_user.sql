@@ -1,4 +1,5 @@
 -- Borra el usuario y rol de BD del proveedor
+-- AFTER DELETE
 BEGIN
 
   RESET ROLE;

@@ -1,4 +1,5 @@
 -- Calcula las partes de un piso que supone una plaza o habitación
+-- AFTER INSERT/UPDATE
 DECLARE 
 
   reg RECORD;

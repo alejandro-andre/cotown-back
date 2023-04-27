@@ -1,4 +1,5 @@
 -- Selecciona un solo contrato activo
+-- BEFORE INSERT/UPDATE
 BEGIN
 
   RESET ROLE;
