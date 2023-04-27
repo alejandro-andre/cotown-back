@@ -32,11 +32,11 @@ def bill_payments(dbClient):
         # Get all bookings without bill
         # TO DO: ordenar
         dbClient.select('''
-            SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id" 
+            SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code"
             FROM "Billing"."Payment" p
             INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
             LEFT JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
-            LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = b.id
+            LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
             WHERE "Payment_date" IS NOT NULL
             AND i.id IS NULL
             ORDER BY p."Booking_id"
@@ -73,20 +73,20 @@ def bill_payments(dbClient):
             # Create invoice line
             dbClient.execute('''
                 INSERT INTO "Billing"."Invoice_line" 
-                ("Invoice_id", "Amount", "Product_id", "Tax_id")
-                VALUES (%s, %s, %s, %s)
+                ("Invoice_id", "Amount", "Product_id", "Tax_id", "Details")
+                VALUES (%s, %s, %s, %s, %s)
                 ''', 
                 (
                     billid, 
                     item['Amount'], 
                     1 if item['Payment_type'] == 'booking' else 2, 
                     1 if item['Payment_type'] == 'booking' else 2, 
+                    'Booking fee' if item['Payment_type'] == 'booking' else 'Garantía ' + item['Code'],
                 )
             )
 
         # End
         dbClient.commit()
-        dbClient.disconnect()
         return
 
     # Process exception
@@ -102,7 +102,7 @@ def bill_payments(dbClient):
 # ###################################################
 
 def bill_rent(dbClient):
-    
+
     # Capture exceptions
     try:
 
@@ -177,15 +177,15 @@ def bill_rent(dbClient):
                 # Create invoice line
                 dbClient.execute('''
                     INSERT INTO "Billing"."Invoice_line" 
-                    ("Invoice_id", "Amount", "Product_id", "Details", "Tax_id")
+                    ("Invoice_id", "Amount", "Product_id", "Tax_id", "Details")
                     VALUES (%s, %s, %s, %s, %s)
                     ''', 
                     (
                         rentid, 
                         rent, 
                         3, 
-                        'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7],
-                        1 
+                        1,
+                        'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
                     )
                 )
 
@@ -218,15 +218,15 @@ def bill_rent(dbClient):
                 # Create invoice line
                 dbClient.execute('''
                     INSERT INTO "Billing"."Invoice_line" 
-                    ("Invoice_id", "Amount", "Product_id", "Details", "Tax_id")
+                    ("Invoice_id", "Amount", "Product_id", "Tax_id", "Details")
                     VALUES (%s, %s, %s, %s, %s)
                     ''', 
                     (
                         servid, 
                         services, 
                         4, 
-                        'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7],
-                        1 
+                        1,
+                        'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
                     )
                 )
 
@@ -294,7 +294,7 @@ def main():
     bill_payments(dbClient)
 
     # 2. Monthly billing process
-    bill_rent(dbClient)
+    #bill_rent(dbClient)
 
 
 # #####################################
