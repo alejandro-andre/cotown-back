@@ -37,8 +37,13 @@ query BillById ($id: Int!) {
                 Resource_code: Code
             }
         }
+        Booking_groupViaBooking_group_id {
+            BuildingViaBuilding_id {
+                Building_code: Code
+            }
+        }
         Bill_code: Code
-        Bill_details: Details
+        Bill_concept: Concept
         Issued
         Bill_issued_date: Issued_date
         Bill_total: Total
@@ -63,7 +68,7 @@ query BillById ($id: Int!) {
             }
         }
         Lines: Invoice_lineListViaInvoice_id {
-            Line_details: Details
+            Line_concept: Concept
             ProductViaProduct_id {
                 Line_product: Name
             }
