@@ -74,6 +74,7 @@ def main():
           Name
           Address
           Email
+          Lang
         }
         Template
         Entity_id
