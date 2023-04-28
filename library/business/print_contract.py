@@ -28,11 +28,15 @@ BASE = '''
 <head>
 <style>
 @page {{ size: A4; margin: 1.4cm; }}
-body {{ font-size: 12px; font-weight: 400; font-family: Arial, Helvetica, sans-serif; 
+body {{ font-size: 14px; font-weight: 400; font-family:"Calibri", Arial, Helvetica, sans-serif; 
 }}
 table {{ width: 100%; }}
-p {{ margin-top: 6px; margin-bottom: 6px; text-align: justify; text-justify: inter-word; }}
+p {{ margin-top: 18px; margin-bottom: 18px; text-align: justify; text-justify: inter-word; }}
 ol, ul {{ padding-left: 10px; margin-top: 0; }}
+li {{ list-style-position: outside; }}
+h1 {{ font-size: 1em; font-weight: 600; text-align: center; }}
+h2 {{ font-size: 1em; font-weight: 600; }}
+h3 {{ font-size: 1em; font-weight: 600; }}
 </style>
 </head>
 <body>{}</body>
@@ -131,8 +135,12 @@ query BookingById ($id: Int!) {
       CountryViaCountry_id {
         Customer_country: Name
       }
+      CountryViaNationality_id {
+          Customer_nationality: Name
+      }
       Customer_email: Email
       Customer_birth_date: Birth_date
+      Customer_tutor_id: Tutor_id
     }
     CustomerViaPayer_id {
       Id_typeViaId_type_id {
@@ -323,7 +331,7 @@ def generate_doc_file(context, template):
   env.filters['part'] = part
 
   # Render contract
-  text = template.decode('utf-8').replace('\r\n\r\n', '\r\n\r\n<br>\r\n')
+  text = template.decode('utf-8').replace('\r\n\r\n\r\n', '\r\n\r\n&nbsp;\r\n\r\n')
   md = env.from_string(text).render(context)
 
   # Convert markdown to HTML
@@ -383,7 +391,14 @@ def do_contracts(apiClient, id):
     json_rent = None
     template = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'])
     if template is not None:
-      file = generate_doc_file(context, template.content)
+
+      # Debug
+      #file = generate_doc_file(context, template.content)
+      with open('condiciones particulares.md', 'rb') as archivo:
+        contenido = archivo.read()
+        file = generate_doc_file(context, contenido)
+      # Debug
+
       response = requests.post(
         'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
         files={'file': file}
