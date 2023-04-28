@@ -11,7 +11,6 @@
 # System includes
 import os
 from flask import Flask, request, abort, send_file, send_from_directory
-from multiprocessing import Process
 
 # Logging
 import logging
@@ -24,6 +23,7 @@ from library.services.apiclient import APIClient
 from library.services.keycloak import create_keycloak_user, delete_keycloak_user
 from library.services.redsys import pay, validate
 from library.business.export import export_to_excel
+from library.business.send_email import smtp_mail
 from library.business.queries import *
 
 
@@ -181,6 +181,11 @@ def runapp():
             logger.debug('Customer created in Keycloak')
         else:
             return 'ko'
+
+        # Send email
+        subject = 'Bienvenido'
+        body = 'Accede a https://' + SERVER
+        smtp_mail(data['Email'], subject, body)
 
         # Ok
         return 'ok'
