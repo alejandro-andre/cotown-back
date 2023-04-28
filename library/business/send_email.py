@@ -91,11 +91,11 @@ def do_email(apiClient, email):
   env = Environment()
 
   # Generate subject
-  text = template['Subject'] if email['Lang'] == 'es' else template['Subject_en']
+  text = template['Subject'] if email['Customer']['Lang'] == 'es' else template['Subject_en']
   subject = env.from_string(text).render(context)
 
   # Generate body
-  text = template['Body'] if email['Lang'] == 'es' else template['Body_en']
+  text = template['Body'] if email['Customer']['Lang'] == 'es' else template['Body_en']
   md = env.from_string(text).render(context)
   body = BASE.format(subject, markdown.markdown(md, extensions=['tables', 'attr_list']))
 
