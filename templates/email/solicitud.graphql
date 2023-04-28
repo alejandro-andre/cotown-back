@@ -1,0 +1,21 @@
+query BookingById ($id: Int) {
+  data: Booking_BookingList (
+    where: { id: { EQ: $id } }
+  ) {
+    Booking_id: id
+    Booking_status: Status
+    Booking_date_from_day: Date_from_day
+    Booking_date_from_month: Date_from_month
+    Booking_date_from_year: Date_from_year
+    Booking_date_to_day: Date_to_day
+    Booking_date_to_month: Date_to_month
+    Booking_date_to_year: Date_to_year
+    BuildingViaBuilding_id { 
+        Building_code: Code
+        Building_name: Name 
+        Building_address: Address
+        DistrictViaDistrict_id { LocationViaLocation_id { Building_city: Name } } }
+    Resource_flat_typeViaFlat_type_id { Flat_type: Name }
+    Resource_place_typeViaPlace_type_id { Place_type: Name }
+  }
+}
