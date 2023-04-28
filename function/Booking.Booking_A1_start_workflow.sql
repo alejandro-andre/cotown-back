@@ -17,6 +17,9 @@ BEGIN
   -- Log
   INSERT INTO "Booking"."Booking_log"("Booking_id", "Log") VALUES (NEW.id, 'Solicitud de recurso');
 
+  -- Email
+  INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
+
   RETURN NEW;
 
 END;
