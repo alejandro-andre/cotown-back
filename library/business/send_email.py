@@ -47,6 +47,21 @@ query EmailByCode ($code: String!) {
 
 
 # ######################################################
+# Base template for HTML
+# ######################################################
+
+BASE = '''
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body  style="font-family: Arial, sans-serif; font-size: 16px;">{}</body>
+</html>
+'''
+
+
+# ######################################################
 # Generate email
 # ######################################################
 
@@ -77,7 +92,7 @@ def do_email(apiClient, email):
 
   # Generate body
   text = template['Body']
-  body = env.from_string(text).render(context)
+  body = BASE.format(env.from_string(text).render(context))
 
   # Return
   return subject, body
