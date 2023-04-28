@@ -128,16 +128,16 @@ def create_airflows_user(dbClient, user, role):
     dbClient.execute('INSERT INTO "Models"."User" ("username", "email", "password") VALUES (%s, %s, %s) RETURNING id', (username, email, password) )
     userid = dbClient.returning()[0]
 
-    # Create role
-    dbClient.execute('GRANT "user" TO ' + username)
-    dbClient.execute('INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
-
-    # Update table
+    # Create role provider
     if role == 200:
+      dbClient.execute('GRANT "provider" TO ' + username)
+      dbClient.execute('INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
       dbClient.execute('UPDATE "Provider"."Provider" SET "User_name" = %s WHERE id = %s', (username, id))
 
-    # Update table and send mail
+    # Create role customer
     if role == 300:
+      dbClient.execute('GRANT "customer" TO ' + username)
+      dbClient.execute('INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
       dbClient.execute('UPDATE "Customer"."Customer" SET "User_name" = %s WHERE id = %s', (username, id))
       dbClient.execute('INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (%s, %s, %s)', (id, 'bienvenida', id))
     
