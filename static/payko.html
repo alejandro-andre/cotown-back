@@ -27,8 +27,16 @@ button:active{background-color:#00EFE2;}
   const params = new URLSearchParams(window.location.search);
   const token = params.get("access_token");
   const id = params.get('id');
-  const url = document.location.ancestorOrigins[0] + "/admin/Billing.Payment";
-  document.getElementById("return").action=url;
+  const goto = "/admin/Billing.Payment";
+  //parent.history.pushState("", "", goto);
+  //parent.history.go(-1);
+  //parent.history.go(1);
+  //parent.history.pushState("", "", goto);
+  //parent.history.go(-1);
+  //parent.history.go(1);
+  //el = parent.document.querySelector('[data-qa="' + goto + '"]');
+  //el.click();
+  document.getElementById("return").action = document.location.ancestorOrigins[0] + goto;
 </script>
 </body>
 </html>
