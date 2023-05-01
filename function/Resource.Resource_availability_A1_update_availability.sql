@@ -15,18 +15,18 @@ BEGIN
 
   RESET ROLE;
 
-  -- Delete all records related to that lock
+  -- Borra todos las reservas relacionadas con ese bloqueo
   DELETE FROM "Booking"."Booking_detail" WHERE "Availability_id" = NEW.id;
 
-  -- Get statusdata
+  -- Lee el status
   SELECT "Name" INTO status FROM "Resource"."Resource_status" WHERE id = NEW."Status_id";
 
-  -- Open cursor
+  -- Abre el cursor
   OPEN res;
   FETCH res INTO re;
   WHILE (FOUND) LOOP
   
-    -- Insert lock
+    -- Inserta el bloqueo
     INSERT INTO "Booking"."Booking_detail" (
       "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
       "Resource_type", "Status", "Date_from", "Date_to", "Lock"
