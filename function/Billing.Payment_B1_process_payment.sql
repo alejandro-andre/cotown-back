@@ -63,19 +63,15 @@ BEGIN
 
   END IF;
 
-  -- CONFIRMADA a FIRMACONTRATO
   -- Comprobamos si el tipo de pago es 'deposito'
   IF (NEW."Payment_type" = 'deposito') THEN
 
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
 
+    -- CONFIRMADA a FIRMACONTRATO
     IF (status_record = 'confirmada') THEN
        UPDATE "Booking"."Booking" SET "Status" ='firmacontrato' WHERE id=NEW."Booking_id";
-     
-      -- Borramos las alternativas asociadas a la solicitud
-      DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."Booking_id";
-
       RETURN NEW;
     END IF;
 

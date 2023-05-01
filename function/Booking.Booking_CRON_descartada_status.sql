@@ -2,6 +2,8 @@
 -- con la fecha de caducidad 5 dias menor que la fecha en curso.
 BEGIN
   RESET ROLE;
-  UPDATE "Booking"."Booking" SET "Status"='descartada' 
-  WHERE "Booking"."Status"='caducada' AND ("Booking"."Expiry_date" IS NULL OR "Booking"."Expiry_date" < (CURRENT_DATE + INTERVAL '5 days'));
+  UPDATE "Booking"."Booking" 
+  SET "Status"='descartada' 
+  WHERE "Booking"."Status"='caducada' 
+  AND ("Booking"."Expiry_date" IS NULL OR "Booking"."Expiry_date" < (CURRENT_DATE + INTERVAL '5 days'));
 END;

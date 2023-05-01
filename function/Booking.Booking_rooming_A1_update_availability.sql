@@ -14,21 +14,21 @@ BEGIN
 
   RESET ROLE;
   
-  -- Delete all records related to that room
+  -- Borra todas reservasd de esa plaza
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
   
-  -- Get group booking
+  -- Obtiene la reserva padre/grupo
   SELECT * INTO booking FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
 
-  -- Get resource code
+  -- Obtiene el código de la plaza
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
-  -- Open resource cursor
+  -- Recorre todos los recursos padres e hijos de la plaza
   OPEN res;
   FETCH res INTO re;
   WHILE (FOUND) LOOP
   
-    -- Insert booking
+    -- Inserta bloqueo
     INSERT INTO "Booking"."Booking_detail" (
       "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
       "Resource_type", "Status", "Date_from", "Date_to", "Lock"

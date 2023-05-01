@@ -22,13 +22,9 @@ BEGIN
   -- Obtiene el código del recurso
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
-  -- Abre el cursor
-  OPEN cur;
-
-  -- Siguiente registro
-  FETCH cur INTO reg;
-
   -- Recorre todos los padres e hijos del recurso
+  OPEN cur;
+  FETCH cur INTO reg;
   WHILE (FOUND) LOOP
   
     -- Inserta la reserva
@@ -41,13 +37,9 @@ BEGIN
       reg."Resource_type", NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
     );
 
-
     -- Siguiente registro
      FETCH cur INTO reg;
-  
   END LOOP;
-
-  -- Cierra el cursor
   CLOSE cur;
   
   -- Return

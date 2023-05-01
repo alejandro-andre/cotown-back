@@ -8,7 +8,7 @@ BEGIN
 
   RESET ROLE;
   
-  -- SOLICITUD a PENDIENTEDEPAGO. 
+  -- SOLICITUD a PENDIENTEDEPAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" :='pendientepago';
@@ -26,36 +26,32 @@ BEGIN
     NEW."Status" := 'confirmada';
   END IF;
 
+  -- FIRMACONTRATO a CONTRATO
+  -- Actualiza el estado a "contrato" desde 'firmacontrato' cuando firma el contrado (Fecha contract_signed rellena)
+  IF (NEW."Status" = 'firmacontrato' AND NEW."Contract_signed" IS NOT NULL) THEN
+    NEW."Status" := 'contrato';
+  END IF;
+
+  -- CONTRATO a FIRMACONTRATO
+  -- Actualiza el estado a "firmacontrato" cuando se quita la firma, tiene que firmarse el contrato nuevamente
+  IF (NEW."Status" = 'contrato' AND NEW."Contract_signed" IS NULL) THEN
+    NEW."Status" := 'firmacontrato';
+  END IF;
+  
   -- CONTRATO a CHECKINCONFIRMADO
   -- Actualiza al estado 'Checkin confirmado' cuando se asigna la fecha de checkin
   IF (NEW."Status" = 'contrato' AND NEW."Check_in" IS NOT NULL) THEN
     NEW."Status" := 'checkinconfirmado';
   END IF;
 
-   -- FIRMACONTRATO a CONTRATO // CHECKINCONFIRMADO
-  -- Actualiza el estado a "ckeckinconfirmado" desde 'firmacontrato' cuando firma el contrado e introduce la fecha de checkin 
-  IF (NEW."Status" = 'firmacontrato' AND (NEW."Contract_signed" IS NOT NULL AND NEW."Check_in" IS NOT NULL)) THEN
-       NEW."Status" := 'checkinconfirmado';
-  END IF;
-  -- Actualiza el estado a "contrato" desde 'firmacontrato' cuando firma el contrado (Fecha contract_signed rellena)
-  IF (NEW."Status" = 'firmacontrato' AND (NEW."Contract_signed" IS NOT NULL AND NEW."Check_in" IS  NULL)) THEN
-       NEW."Status" := 'contrato';
-  END IF;
-
-
-  -- FIRMACONTRATO a CONTRATO
-  -- Actualiza el estado a "firmacontrato" cuando se pasa a estado 'contrato'. Tiene que firmarse el contrato nuevamente
-  IF (NEW."Status" = 'contrato' AND NEW."Contract_signed" IS NULL) THEN
-    NEW."Status" := 'firmacontrato';
-  END IF;
-  
-
--- FIRMACONTRATO a CANCELADA
+  -- ??Esto no deberia suceder
+  -- FIRMACONTRATO a CANCELADA 
   -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'firmacontrato'
   IF (NEW."Status" = 'firmacontrato' AND NEW."Cancel_date" IS NOT NULL AND NEW."Resource_id" IS NULL) THEN
     NEW."Status" := 'cancelada';
   END IF;
 
+  -- ??Esto no deberia suceder
   -- CONTRATO a CANCELADA
   -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'contrato'
   IF (NEW."Status" = 'contrato' AND NEW."Cancel_date" IS NOT NULL AND NEW."Resource_id" IS NULL) THEN
@@ -63,7 +59,7 @@ BEGIN
   END IF;
 
   -- CHECKINCONFIRMADO a CANCELADA
-  -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'check in'
+  -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'check in confirmado'
   IF (NEW."Status" = 'checkinconfirmado' AND NEW."Cancel_date" IS NOT NULL ) THEN
     NEW."Status" := 'cancelada';
   END IF;
@@ -74,193 +70,173 @@ BEGIN
     NEW."Status" := 'cancelada';
   END IF;
 
-  
- 
+  -- No ha habido cambios de estado
+  IF (NEW."Status" = OLD."Status") THEN
+    RETURN NEW;
+  END IF;
 
-  -- Cambios de estado
-  IF (NEW."Status" <> OLD."Status") THEN
+  -- SOLICITUD, SOLICITUDPAGADA a ALTERNATIVA, ALTERNATIVASPAGADA
+  IF ((OLD."Status" = 'solicitud' AND NEW."Status" = 'alternativas') OR
+      (OLD."Status" = 'solicitudpagada' AND NEW."Status" = 'alternativaspagada')) THEN
+    -- Email
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW.id);
+    -- Log
+    change := 'Revisar alternativas';
+  END IF;
 
-    -- SOLICITUD, SOLICITUDPAGADA a ALTERNATIVA, ALTERNATIVASPAGADA
-    IF ((OLD."Status" = 'solicitud' AND NEW."Status" = 'alternativas') OR
-       (OLD."Status" = 'solicitudpagada' AND NEW."Status" = 'alternativaspagada')) THEN
-
-      -- Email
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW.id);
-
-      -- Log
-      change := 'Revisar alternativas';
-
-    END IF;
-
-    -- SOLICITUD a PENDIENTEDEPAGO.
-    -- Pendiente de pago, envía mail
-    IF (NEW."Status" = 'pendientepago' ) THEN
-
-      -- Actualiza la fecha de expiracion
-      IF (NEW."Expiry_date" IS NULL) THEN
+  -- PENDIENTEDEPAGO.
+  IF (NEW."Status" = 'pendientepago' ) THEN
+    -- Actualiza la fecha de expiracion
+    IF (NEW."Expiry_date" IS NULL) THEN
+      NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
+    ELSE
+      IF (NEW."Expiry_date" < (CURRENT_DATE + INTERVAL '2 days')) THEN
         NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
-      ELSE
-        IF (NEW."Expiry_date" < (CURRENT_DATE + INTERVAL '2 days')) THEN
-          NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
-        END IF;
       END IF;
+    END IF;
+    -- Email
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
+    -- Log
+    change := 'Pendiente de pago';
+  END IF;
 
-      -- Email
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
+  -- CONFIRMADA a FIRMACONTRATO
+  IF (NEW."Status" = 'firmacontrato') THEN 
+    -- EMail 
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
+    -- Log 
+    change := CONCAT('Pendiente de firmar el contrato de la reserva ', NEW.id) ; 
+  END IF;
 
+  -- CHECKINCONFIRMADO
+  IF (NEW."Status" = 'checkinconfirmado') THEN 
+    -- Email
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
+    -- Log 
+    change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in") ; 
+  END IF;
+
+  --?? Update??
+  -- DESCARTADAPAGADA
+  IF (NEW."Status" = 'descartadapagada') THEN
+    -- GENERAR REGISTRO DE DEVOLUCION ¿?
+    -- Actualiza la fecha de cancelación
+    UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE WHERE "Booking".id = NEW.id;
+    -- EMail 
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
+    -- Log
+    change := 'Solicitud descartada. Hay que devolver el pago del booking';   
+  END IF;
+
+  --?? no debería ocurrir una descartada que haya sido pagada??
+  -- SOLICITUD, ALTERNATIVAS, PENDIENTEPAGO a DESCARTADA
+  IF (NEW."Status" = 'descartada') THEN
+      -- Comprobamos si el booking esta pagado
+      SELECT "id" INTO record_id 
+      FROM "Billing"."Payment" 
+      WHERE "Booking_id" = NEW."id" 
+      AND "Payment_type" = 'booking'
+      AND "Payment_auth" IS NOT NULL 
+      AND "Payment_date" IS NOT NULL;
+      IF (record_id = 1) THEN
+        -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
+        DELETE FROM "Billing"."Payment" WHERE id=record_id;
+      END IF;
+      -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
       -- Log
-      change := 'Pendiente de pago';
+      change := 'Solicitud descartada.';   
+  END IF;
 
+  --?? no debería ocurrir
+  -- CONFIRMADA a SOLICITUDPAGADA
+  IF (NEW."Status" = 'solicitudpagada' AND OLD."Status" = 'confirmada') THEN 
+    -- Log
+    change := CONCAT('Se ha desasignado el recurso de la solicitud ', NEW.id);   
+  END IF;
+  
+  --?? por que preguntar por OLD
+  -- FIRMACONTRATO a CONTRATO
+  IF (NEW."Status" = 'contrato' AND OLD."Status" = 'firmacontrato') THEN 
+      -- Log 
+      change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed") ; 
+  END IF;
+
+  --??
+  -- CONTRATO a FIRMACONTRATO
+  -- Nueva disponsicion para firmar el contrato 
+  IF (NEW."Status" = 'firmacontrato' AND OLD."Status" = 'contrato') THEN 
+    -- Log 
+    change := 'Nuevo contrato pendiente para ser firmado firmado '; 
+  END IF;
+
+  -- Confirmada, inserta pago de garantía pendiente y envía mail
+  IF (NEW."Status" = 'confirmada' ) THEN
+    -- Borra fecha expiración
+    NEW."Expiry_date" = NULL;
+    -- Borramos las alternativas asociadas a la solicitud
+    DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
+    -- Depósito
+    INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
+    -- EMail
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+    -- Log
+    change := 'Reserva confirmada';
+  END IF;
+
+  --?? por que preguntar por OLD
+  -- CONFIRMADA a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
+  -- Cancelada, elimina pago pendiente de garantia y envía mail
+  IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'confirmada') THEN              
+    -- Comprobamos si la garantia/deposito esta pagada
+    SELECT "id" INTO record_id 
+    FROM "Billing"."Payment" 
+    WHERE "Booking_id" = NEW."id" 
+    AND "Payment_type" = 'deposito'
+    AND "Payment_auth" IS NOT NULL 
+    AND "Payment_date" IS NOT NULL;
+    IF(record_id = 1) THEN
+      -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
+      DELETE FROM "Billing"."Payment" WHERE id=record_id;
     END IF;
+    -- Actualizamos la fecha de cancelación
+    UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE, "Resource_id" = NULL WHERE "Booking".id = NEW.id;
+    -- EMail 
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+    -- Log
+    change := 'Reserva cancelada antes de pagar la garantia';   
+  END IF;
 
-    -- CONFIRMADA a FIRMACONTRATO
-     IF (NEW."Status" = 'firmacontrato' AND OLD."Status" = 'confirmada') THEN 
-         -- EMail 
-         INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
-        -- Log 
-        change := CONCAT('Pendiente de firmar el contrato de la reserva ', NEW.id) ; 
-     END IF;
-
-    -- CONTRATO a CHECKINCONFIRMADO
-    -- Confirmación de la fecha de checkin 
-     IF (NEW."Status" = 'checkinconfirmado') THEN 
-        -- Log 
-        change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in") ; 
-        -- Email
-        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
-     END IF;
-
-    
-
-
-    
-
-    -- SOLICITUDPAGADA a DESCARTADAPAGADA
-    IF (NEW."Status" = 'descartadapagada') THEN
-        -- GENERAR REGISTRO DE DEVOLUCION ¿?
-        -- Actualiza la fecha de cancelación
-        UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE WHERE "Booking".id = NEW.id;
-        -- EMail 
-        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
-        -- Log
-        change := 'Solicitud descartada. Hay que devolver el pago del booking';   
-    END IF;
-
-    -- SOLICITUD, ALTERNATIVAS, PENDIENTEPAGO a DESCARTADA
-    IF (NEW."Status" = 'descartada') THEN
-        -- Comprobamos si el booking esta pagado
-        SELECT "id" INTO record_id 
-        FROM "Billing"."Payment" 
-        WHERE "Booking_id" = NEW."id" 
-        AND "Payment_type" = 'booking'
-        AND "Payment_auth" IS NOT NULL 
-        AND "Payment_date" IS NOT NULL;
-        IF(record_id = 1) THEN
-            -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
-            DELETE FROM "Billing"."Payment" WHERE id=record_id;
-        END IF;
-        -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-        INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
-        -- Log
-        change := 'Solicitud descartada.';   
-    END IF;
-
-    -- CONFIRMADA a SOLICITUDPAGADA
-    IF (NEW."Status" = 'solicitudpagada' AND OLD."Status" = 'confirmada') THEN 
+  --??  
+  -- FIRMACONTRATO, CONTRATO, CHECKINCONFIRMADO, CHECKIN a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
+  -- Cancelada antes de firmar el contrato, despues de firmar el contrato, despues de confirmar el checkin, una vez realizado el checkin
+  IF (NEW."Status" = 'cancelada'
+    AND (OLD."Status" = 'firmacontrato'
+    OR OLD."Status" = 'contrato' 
+    OR OLD."Status" = 'checkinconfirmado' 
+    OR OLD."Status" = 'checkin')) THEN              
+      -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
       -- Log
-      change := CONCAT('Se ha desasignado el recurso de la solicitud ', NEW.id);   
-    END IF;
+      change := 'Reserva cancelada despues de pagar el depósito, despues de firmar el contrato';   
+  END IF;
 
-    
-    -- FIRMACONTRATO a CONTRATO
-    IF (NEW."Status" = 'contrato' AND OLD."Status" = 'firmacontrato') THEN 
-       -- Log 
-        change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed") ; 
-    END IF;
+  -- CHECKIN a INHOUSE (BOTON 'CHECK IN OK')
+  -- Se confirma la llegada del usuario al alojamiento
+  IF (NEW."Status" = 'inhouse') THEN  
+    -- EMail
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'inhouse', NEW.id);
+    -- Log
+    change := 'Se confirma que el usuario ha llegado al alojamiento.';   
+  END IF;
 
-     -- CONTRATO a FIRMACONTRATO
-     -- Nueva disponsicion para firmar el contrato 
-     IF (NEW."Status" = 'firmacontrato' AND OLD."Status" = 'contrato') THEN 
-        -- Log 
-        change := 'Nuevo contrato pendiente para ser firmado firmado '; 
-     END IF;
-
-
-    -- Confirmada, inserta pago de garantía pendiente y envía mail
-    IF (NEW."Status" = 'confirmada' ) THEN
-
-      -- Borra fecha expiración
-      NEW."Expiry_date" = NULL;
-
-      -- Depósito
-      INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
-
-      -- EMail
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
-
-      -- Log
-      change := 'Reserva confirmada';
-
-      -- Borramos las alternativas asociadas a la solicitud
-      DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
-
-    END IF;
-
-   
-    -- CONFIRMADA a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
-    -- Cancelada, elimina pago pendiente de garantia y envía mail
-    IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'confirmada') THEN              
-              -- Comprobamos si la garantia/deposito esta pagada
-              SELECT "id" INTO record_id 
-              FROM "Billing"."Payment" 
-              WHERE "Booking_id" = NEW."id" 
-              AND "Payment_type" = 'deposito'
-              AND "Payment_auth" IS NOT NULL 
-              AND "Payment_date" IS NOT NULL;
-              IF(record_id = 1) THEN
-                    -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
-                    DELETE FROM "Billing"."Payment" WHERE id=record_id;
-              END IF;
-              -- Actualizamos la fecha de cancelación
-              UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE, "Resource_id" = NULL WHERE "Booking".id = NEW.id;
-              -- EMail 
-              INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
-              -- Log
-              change := 'Reserva cancelada antes de pagar la garantia';   
- 
-    END IF;
-    
-    -- FIRMACONTRATO, CONTRATO, CHECKINCONFIRMADO, CHECKIN a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
-    -- Cancelada antes de firmar el contrato, despues de firmar el contrato, despues de confirmar el checkin, una vez realizado el checkin
-    IF (NEW."Status" = 'cancelada'
-      AND (OLD."Status" = 'firmacontrato'
-      OR OLD."Status" = 'contrato' 
-      OR OLD."Status" = 'checkinconfirmado' 
-      OR OLD."Status" = 'checkin')) THEN              
-              -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-              INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
-              -- Log
-              change := 'Reserva cancelada despues de pagar el depósito, despues de firmar el contrato';   
-    END IF;
-
-    -- CHECKIN a INHOUSE (BOTON 'CHECK IN OK')
-    -- Se confirma la llegada del usuario al alojamiento
-    IF (NEW."Status" = 'inhouse') THEN  
-      -- EMail
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'inhouse', NEW.id);
-      -- Log
-      change := 'Se confirma que el usuario ha llegado al alojamiento.';   
-    END IF;
-
-    -- CHECKOUT a DEVOLVERGARANTIA (BOTON 'CHECKOUT OK')
-    -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
-    IF (NEW."Status" = 'devolvergarantia') THEN 
-      -- GENERAR REGISTRO DE DEVOLUCION (¿COMO SE HACE?)  
-      -- EMail ¿Enviar email?
-      -- Log
-      change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW.id);   
-    END IF;
-
+  -- CHECKOUT a DEVOLVERGARANTIA (BOTON 'CHECKOUT OK')
+  -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
+  IF (NEW."Status" = 'devolvergarantia') THEN 
+    -- GENERAR REGISTRO DE DEVOLUCION (¿COMO SE HACE?)  
+    -- EMail ¿Enviar email?
+    -- Log
+    change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW.id);   
   END IF;
 
   -- Registra el cambio

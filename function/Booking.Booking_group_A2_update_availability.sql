@@ -20,18 +20,18 @@ BEGIN
 
   RESET ROLE;
   
-  -- Delete all records related to that group
+  -- Borra las reservas del grupo
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
   
-  -- Open rooming cursor
+  -- Recorre todas las plazas de la reserva
   OPEN rooms;
   FETCH rooms INTO room;
   WHILE (FOUND) LOOP
 
-	  -- Get resource code
+	  -- Código de la plaza
   	SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = room."Resource_id";
   
-    -- Open resource cursor
+    -- Recorre todos los recursos padres e hijos de la plaza
     OPEN res;
     FETCH res INTO re;
     WHILE (FOUND) LOOP
@@ -49,7 +49,6 @@ BEGIN
       FETCH res INTO re;
     END LOOP;
     CLOSE res;
-
 
     FETCH rooms INTO room;
   END LOOP;
