@@ -21,6 +21,13 @@ from library.services.dbclient import DBClient
 
 
 # ###################################################
+# Constants
+# ###################################################
+
+START_DATE = '2023-04-01'
+
+
+# ###################################################
 # Generate booking fee and deposit payment bills
 # ###################################################
 
@@ -29,7 +36,7 @@ def bill_payments(dbClient):
     # Capture exceptions
     try:
 
-        # Get all bookings without bill
+        # Get all payments without bill
         dbClient.select('''
             SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code"
             FROM "Billing"."Payment" p
@@ -114,8 +121,9 @@ def bill_rent(dbClient):
         WHERE "Invoice_rent_id" IS NULL 
         AND "Invoice_services_id" IS NULL
         AND "Rent_date" <= %s
+        AND "Rent_date" >= %s
         ORDER BY p."Booking_id", p."Rent_date"
-        ''', (datetime.now(),))
+        ''', (datetime.now(), START_DATE))
         data = dbClient.fetchall()
 
         # Loop thru payments
@@ -262,9 +270,10 @@ def bill_group_rent(dbClient):
         INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id" 
         WHERE bgp."Invoice_rent_id" IS NULL
         AND bgp."Rent_date" <= %s
+        AND bgp."Rent_date" >= %s
         GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id"
         ORDER BY bgp."Booking_id", bgp."Rent_date"
-        ''', (datetime.now(),))
+        ''', (datetime.now(), START_DATE, ))
         data = dbClient.fetchall()
 
         # Loop thru payments
@@ -438,10 +447,10 @@ def main():
     # ###################################################
 
     # 1. Generate invoice for each booking fee and deposit payment 
-    #bill_payments(dbClient)
+    bill_payments(dbClient)
 
     # 2. Monthly billing process
-    #bill_rent(dbClient)
+    bill_rent(dbClient)
     bill_group_rent(dbClient)
 
 
