@@ -112,7 +112,7 @@ def load_resources(dbClient, data):
         dbClient.select('SELECT id FROM "Building"."Building" WHERE "Code"=%s', (record['Code'][:6],))
         aux = dbClient.fetch()
         if aux is None:
-            log += 'Fila: ' + str(irow+2).zfill(4) + '.Edificio "' + record['Code'][:6] + '" no encontrado\n'
+            log += 'Fila: ' + str(irow+2).zfill(4) + '. Edificio "' + record['Code'][:6] + '" no encontrado\n'
             ok = False
         else:    
             record['Building_id'] = aux['id']
@@ -129,7 +129,7 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
             aux = dbClient.fetch()
             if aux is None:
-                log += 'Fila: ' + str(irow+2).zfill(4) + '.Piso "' + record['Code'][:12] + '" no encontrado\n'
+                log += 'Fila: ' + str(irow+2).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
                 ok = False
             else:    
                 record['Flat_id'] = aux['id']
@@ -140,14 +140,14 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
             aux = dbClient.fetch()
             if aux is None:
-                log += 'Fila: ' + str(irow+2).zfill(4) + '.Piso "' + record['Code'][:12] + '" no encontrado\n'
+                log += 'Fila: ' + str(irow+2).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
                 ok = False
             else:    
                 record['Flat_id'] = aux['id']
             dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:16],))
             aux = dbClient.fetch()
             if aux is None:
-                log += 'Fila: ' + str(irow+2).zfill(4) + '.Habitación "' + record['Code'][:12] + '" no encontrada\n'
+                log += 'Fila: ' + str(irow+2).zfill(4) + '. Habitación "' + record['Code'][:12] + '" no encontrada\n'
                 ok = False
             else:    
                 record['Room_id'] = aux['id']
@@ -167,6 +167,7 @@ def load_resources(dbClient, data):
             logger.error(error)
             dbClient.rollback()
             log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'
+            log += error + '\n'
             ok = False
 
         # Count oks and errors
