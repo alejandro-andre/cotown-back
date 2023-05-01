@@ -5,8 +5,24 @@ DECLARE
   months INTEGER;
   years INTEGER;
   duration INTERVAL;
+  customer_id INTEGER;
+  id_type_id INTEGER;
+  reason_id INTEGER;
+  reg RECORD;
 
 BEGIN
+	
+  -- Get customer id type
+  SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
+ 
+  -- Documentos obligatorios
+  DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
+  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
+    SELECT NEW."Customer_id", id
+    FROM "Customer"."Customer_doc_type" cdt
+    WHERE "Mandatory" = TRUE
+    AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
+  ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
 
   -- Reserva bloqueada?
   IF NEW."Lock" AND 
