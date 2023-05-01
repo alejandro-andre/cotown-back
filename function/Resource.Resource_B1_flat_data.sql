@@ -9,8 +9,8 @@ BEGIN
 
   -- Piso?
   IF NEW."Resource_type" = 'piso' THEN
-    IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\d{2}$' THEN
-      RAISE EXCEPTION '!!!Wrogn flat code, must have XXXnnn.nn.nn format!!!Código de piso incorrecto, debe formato XXXnnn.nn.nn!!!';
+    IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}$' THEN
+      RAISE EXCEPTION '!!!Wrong flat code, must have XXXnnn.nn.nn format!!!Código de piso incorrecto, debe formato XXXnnn.nn.nn!!!';
     END IF;
     RETURN NEW;
   END IF;
@@ -20,22 +20,22 @@ BEGIN
 
   -- Habitacion
   IF NEW."Resource_type" = 'habitacion' THEN
-    IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\d{2}\.H\d{2}$' THEN
-      RAISE EXCEPTION '!!!Wrogn room code, must have XXXnnn.nn.nn.Hnn format!!!Código de habitacion incorrecto, debe formato XXXnnn.nn.nn.Hnn!!!';
+    IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}\.H\d{2}$' THEN
+      RAISE EXCEPTION '!!!Wrong room code, must have XXXnnn.nn.nn.Hnn format!!!Código de habitacion incorrecto, debe formato XXXnnn.nn.nn.Hnn!!!';
     END IF;
   END IF;
 
  -- Plaza
   IF NEW."Resource_type" = 'plaza' THEN
-    IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\d{2}\.H\d{2}\.P\d$' THEN
-      RAISE EXCEPTION '!!!Wrogn room code, must have XXXnnn.nn.nn.Hnn.Pn format!!!Código de habitacion incorrecto, debe formato XXXnnn.nn.nn.Hnn.Pn!!!';
+    IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}\.H\d{2}\.P\d$' THEN
+      RAISE EXCEPTION '!!!Wrong room code, must have XXXnnn.nn.nn.Hnn.Pn format!!!Código de habitacion incorrecto, debe formato XXXnnn.nn.nn.Hnn.Pn!!!';
     END IF;
   	SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Room_id";
   END IF;
 
   -- Valida el codigo del recurso
   IF code <> SUBSTRING(NEW."Code", 1, LENGTH(code)) THEN
-    RAISE EXCEPTION '%', CONCAT('!!!Wrogn resource code, must start with ', code, '!!!Código de recurso incorrecto, debe comenzar por ', code, '!!!');
+    RAISE EXCEPTION '%', CONCAT('!!!Wrong resource code, must start with ', code, '!!!Código de recurso incorrecto, debe comenzar por ', code, '!!!');
   END IF;
 
   -- Asigna los datos
