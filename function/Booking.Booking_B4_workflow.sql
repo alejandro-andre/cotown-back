@@ -117,11 +117,12 @@ BEGIN
   END IF;
 
   --?? Update??
-  -- SOLICITUDPAGADA a DESCARTADAPAGADA
+  -- SOLICITUDPAGADA, ALTERNATIVASPAGADA a DESCARTADAPAGADA
   IF (NEW."Status" = 'descartadapagada') THEN
     -- GENERAR REGISTRO DE DEVOLUCION ¿?
     -- Actualiza la fecha de cancelación
     -- UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE WHERE "Booking".id = NEW.id;
+    NEW."Cancel_date" := CURRENT_DATE;
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
     -- Log
@@ -142,6 +143,8 @@ BEGIN
         -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
         DELETE FROM "Billing"."Payment" WHERE id=record_id;
       END IF;
+      --  Actualiza la fecha de cancelación
+      NEW."Cancel_date" := CURRENT_DATE;
       -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
       -- Log
@@ -173,7 +176,9 @@ BEGIN
   -- Confirmada, inserta pago de garantía pendiente y envía mail
   IF (NEW."Status" = 'confirmada' ) THEN
     -- Borra fecha expiración
-    NEW."Expiry_date" = NULL;
+    NEW."Expiry_date" := NULL;
+    -- Actualiza la fecha de confirmación
+    NEW."Confirmation_date" := CURRENT_DATE;
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- Depósito
@@ -200,7 +205,8 @@ BEGIN
       DELETE FROM "Billing"."Payment" WHERE id=record_id;
     END IF;
     -- Actualizamos la fecha de cancelación
-    UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE, "Resource_id" = NULL WHERE "Booking".id = NEW.id;
+    -- UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE, "Resource_id" = NULL WHERE "Booking".id = NEW.id;
+    NEW."Cancel_date" := CURRENT_DATE;
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
     -- Log
