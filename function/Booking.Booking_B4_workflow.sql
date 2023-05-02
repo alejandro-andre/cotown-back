@@ -2,7 +2,7 @@
 DECLARE
 
   change VARCHAR = NULL;
-  record_id INTEGER;
+  record_id INTEGER = 0;
 
 BEGIN
 
@@ -139,7 +139,7 @@ BEGIN
       AND "Payment_type" = 'booking'
       AND "Payment_auth" IS NULL 
       AND "Payment_date" IS NULL;
-      IF (record_id = 1) THEN
+      IF (record_id > 0) THEN
         -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
         DELETE FROM "Billing"."Payment" WHERE id=record_id;
       END IF;
@@ -200,7 +200,7 @@ BEGIN
     AND "Payment_type" = 'deposito'
     AND "Payment_auth" IS NULL 
     AND "Payment_date" IS NULL;
-    IF(record_id = 1) THEN
+    IF(record_id > 0) THEN
       -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
       DELETE FROM "Billing"."Payment" WHERE id=record_id;
     END IF;
