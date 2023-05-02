@@ -117,11 +117,11 @@ BEGIN
   END IF;
 
   --?? Update??
-  -- DESCARTADAPAGADA
+  -- SOLICITUDPAGADA a DESCARTADAPAGADA
   IF (NEW."Status" = 'descartadapagada') THEN
     -- GENERAR REGISTRO DE DEVOLUCION ¿?
     -- Actualiza la fecha de cancelación
-    UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE WHERE "Booking".id = NEW.id;
+    -- UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE WHERE "Booking".id = NEW.id;
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
     -- Log
@@ -136,8 +136,8 @@ BEGIN
       FROM "Billing"."Payment" 
       WHERE "Booking_id" = NEW."id" 
       AND "Payment_type" = 'booking'
-      AND "Payment_auth" IS NOT NULL 
-      AND "Payment_date" IS NOT NULL;
+      AND "Payment_auth" IS NULL 
+      AND "Payment_date" IS NULL;
       IF (record_id = 1) THEN
         -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
         DELETE FROM "Billing"."Payment" WHERE id=record_id;
@@ -150,10 +150,10 @@ BEGIN
 
   --?? no debería ocurrir
   -- CONFIRMADA a SOLICITUDPAGADA
-  IF (NEW."Status" = 'solicitudpagada' AND OLD."Status" = 'confirmada') THEN 
+  -- IF (NEW."Status" = 'solicitudpagada' AND OLD."Status" = 'confirmada') THEN 
     -- Log
-    change := CONCAT('Se ha desasignado el recurso de la solicitud ', NEW.id);   
-  END IF;
+  --   change := CONCAT('Se ha desasignado el recurso de la solicitud ', NEW.id);   
+  -- END IF;
   
   --?? por que preguntar por OLD
   -- FIRMACONTRATO a CONTRATO
@@ -187,14 +187,14 @@ BEGIN
   --?? por que preguntar por OLD
   -- CONFIRMADA a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
   -- Cancelada, elimina pago pendiente de garantia y envía mail
-  IF (NEW."Status" = 'cancelada' AND OLD."Status" = 'confirmada') THEN              
+  IF (NEW."Status" = 'cancelada') THEN              
     -- Comprobamos si la garantia/deposito esta pagada
     SELECT "id" INTO record_id 
     FROM "Billing"."Payment" 
     WHERE "Booking_id" = NEW."id" 
     AND "Payment_type" = 'deposito'
-    AND "Payment_auth" IS NOT NULL 
-    AND "Payment_date" IS NOT NULL;
+    AND "Payment_auth" IS NULL 
+    AND "Payment_date" IS NULL;
     IF(record_id = 1) THEN
       -- Eliminamos el registro de pago del deposito ya que no ha sido pagado.
       DELETE FROM "Billing"."Payment" WHERE id=record_id;
@@ -202,7 +202,7 @@ BEGIN
     -- Actualizamos la fecha de cancelación
     UPDATE "Booking"."Booking" SET "Cancel_date" = CURRENT_DATE, "Resource_id" = NULL WHERE "Booking".id = NEW.id;
     -- EMail 
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
     -- Log
     change := 'Reserva cancelada antes de pagar la garantia';   
   END IF;
@@ -210,16 +210,16 @@ BEGIN
   --??  
   -- FIRMACONTRATO, CONTRATO, CHECKINCONFIRMADO, CHECKIN a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
   -- Cancelada antes de firmar el contrato, despues de firmar el contrato, despues de confirmar el checkin, una vez realizado el checkin
-  IF (NEW."Status" = 'cancelada'
-    AND (OLD."Status" = 'firmacontrato'
-    OR OLD."Status" = 'contrato' 
-    OR OLD."Status" = 'checkinconfirmado' 
-    OR OLD."Status" = 'checkin')) THEN              
+  -- IF (NEW."Status" = 'cancelada'
+  -- AND (OLD."Status" = 'firmacontrato'
+  --  OR OLD."Status" = 'contrato' 
+  --  OR OLD."Status" = 'checkinconfirmado' 
+  --  OR OLD."Status" = 'checkin')) THEN              
       -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
+  --    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
       -- Log
-      change := 'Reserva cancelada despues de pagar el depósito, despues de firmar el contrato';   
-  END IF;
+  --    change := 'Reserva cancelada despues de pagar el depósito, despues de firmar el contrato';   
+  -- END IF;
 
   -- CHECKIN a INHOUSE (BOTON 'CHECK IN OK')
   -- Se confirma la llegada del usuario al alojamiento
