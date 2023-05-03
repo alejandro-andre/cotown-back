@@ -9,7 +9,7 @@ BEGIN
   RESET ROLE;
 
   -- Username
-  user_name := CONCAT('C', NEW.id);
+  user_name := CONCAT('C', LPAD(NEW.id::text, 6, '0'));
 
   -- Inserta el usuario en Airflows
   INSERT INTO "Models"."User" ("username", "email", "password") 
@@ -22,8 +22,9 @@ BEGIN
   ON CONFLICT ("user", "role") DO NOTHING;
 
   -- Crea el rol en Postgres
-  EXECUTE 'CREATE ROLE "' || user_name || '" PASSWORD ''Passw0rd!'' NOSUPERUSER';
-  EXCEPTION WHEN duplicate_object THEN NULL;
+  IF NOT EXISTS (SELECT * FROM pg_roles WHERE rolname = user_name) THEN
+    EXECUTE 'CREATE ROLE "' || user_name || '" PASSWORD ''Passw0rd!'' NOSUPERUSER';
+  END IF;
   EXECUTE 'GRANT "customer" TO "' || user_name || '"';
 
   -- Fin
