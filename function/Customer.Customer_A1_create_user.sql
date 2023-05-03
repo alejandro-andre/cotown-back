@@ -1,20 +1,32 @@
--- Botón de creación de usuario
+-- Creación de usuario
+DECLARE
+
+  user_name VARCHAR;
+  user_id INTEGER;
+
 BEGIN
 
-  -- Asigna botón
-  IF NEW."User_name" IS NULL AND NEW."Create_user" IS NULL THEN
-    UPDATE "Customer"."Customer"
-    SET "Create_user" = CONCAT('https://dev.cotown.ciber.es/customeruser/add/', NEW.id)
-    WHERE id = NEW.id;
-  END IF;
+  RESET ROLE;
 
-  -- Borra botón
-  IF NEW."User_name" IS NOT NULL AND NEW."Create_user" IS NOT NULL THEN
-    UPDATE "Customer"."Customer"
-    SET "Create_user" = NULL
-    WHERE id = NEW.id;
-  END IF;
+  -- Username
+  user_name := CONCAT('C', NEW.id);
 
+  -- Inserta el usuario en Airflows
+  INSERT INTO "Models"."User" ("username", "email", "password") 
+  VALUES (user_name, NEW."Email", 'Passw0rd!') 
+  ON CONFLICT ("username") DO UPDATE SET "email" = NEW."Email"
+  RETURNING id INTO user_id;
+ 
+  -- Inserta el rol en Airflows
+  INSERT INTO "Models"."UserRole" ("user", "role") VALUES (user_id, 300)
+  ON CONFLICT ("user", "role") DO NOTHING;
+
+  -- Crea el rol en Postgres
+  EXECUTE 'CREATE ROLE "' || user_name || '" PASSWORD ''Passw0rd!'' NOSUPERUSER';
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  EXECUTE 'GRANT "customer" TO "' || user_name || '"';
+
+  -- Fin
   RETURN NEW;
 
 END;

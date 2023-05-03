@@ -1,14 +1,16 @@
 -- Borra el usuario y rol de BD del proveedor
 -- AFTER DELETE
+DECLARE
+
+  user_name VARCHAR;
+  
 BEGIN
 
   RESET ROLE;
-  EXECUTE 'DROP ROLE "' || old."User_name" || '"';
-  DELETE FROM "Models"."User" WHERE "username" = old."User_name";
+  user_name := CONCAT('P', OLD.id);
+  EXECUTE 'DROP ROLE "' || user_name || '"';
+  EXCEPTION WHEN OTHERS THEN NULL;
+  DELETE FROM "Models"."User" WHERE "username" = user_name;
   RETURN OLD;
-
-EXCEPTION
-  WHEN OTHERS THEN
-    RETURN OLD;
 
 END;
