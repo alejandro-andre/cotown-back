@@ -24,7 +24,7 @@ from library.services.dbclient import DBClient
 # Constants
 # ###################################################
 
-START_DATE = '2023-04-01'
+START_DATE = '2023-05-01'
 
 
 # ###################################################

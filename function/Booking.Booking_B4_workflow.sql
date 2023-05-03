@@ -123,6 +123,8 @@ BEGIN
   IF (NEW."Status" = 'descartadapagada') THEN
     --?? GENERAR REGISTRO DE DEVOLUCION
 
+    -- Quita el recurso
+    NEW."Resource_id" := NULL;
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
     -- Log
@@ -131,12 +133,14 @@ BEGIN
 
   -- A DESCARTADA
   IF (NEW."Status" = 'descartada') THEN
-      -- Eliminamos el registro de pago del booking, si existe, ya que no ha sido pagado.
-      DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id;
-      -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
-      -- Log
-      change := 'Solicitud descartada.';   
+    -- Quita el recurso
+    NEW."Resource_id" := NULL;
+    -- Eliminamos el registro de pago del booking, si existe, ya que no ha sido pagado.
+    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id;
+    -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
+    -- Log
+    change := 'Solicitud descartada.';   
   END IF;
 
   -- A FIRMACONTRATO
