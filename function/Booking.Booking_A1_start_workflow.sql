@@ -8,7 +8,7 @@ BEGIN
   RESET ROLE;
   
   -- Alta en otro estado
-  IF NEW."Status" IS NOT NULL AND NEW."Status" <> "solicitud" THEN
+  IF NEW."Status" IS NOT NULL AND NEW."Status" <> 'solicitud' THEN
     RETURN NEW;
   END IF;
   

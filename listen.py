@@ -1,31 +1,30 @@
 # ###################################################
-# Batch process
+# Listen to new emails
 # ---------------------------------------------------
-# Process excel file load requests
+# Listen to 'email' channel to send new emails
 # ###################################################
 
-# ###################################################
+# #####################################
 # Imports
-# ###################################################
+# #####################################
 
 # System includes
-from openpyxl import load_workbook
+import psycopg2
+import time
 import os
-import io
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
-from library.business.load_prices import load_prices
-from library.business.load_resources import load_resources
+from library.services.dbclient import DBClient
+from library.business.send_email import do_email
 
 
 # ###################################################
-# Loader function
+# Email generator function
 # ###################################################
 
 def main():
@@ -74,57 +73,58 @@ def main():
   # Main
   # ###################################################
 
-  # Get upload requests
-  dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
-  data = dbClient.fetchall()
+  # Listen to 'canal'
+  psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+  dbClient.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+  dbClient.execute("LISTEN email")
+  logger.info('Listening to ''email''...')
 
-  # Loop thru files
-  for file in data:
+  # Infinite loop
+  while dbClient.con.poll() == psycopg2.extensions.POLL_OK:
 
-    # Result
-    ok = False
-    log = ''
+    # Wait for notification
+    while dbClient.con.notifies:
 
-    # Get request files
-    entity = 'Batch/Upload'
-    id = str(file['id'])
-    data = apiClient.getFile(id, entity, 'File')
+      try:
+        # Notification received
+        notify = dbClient.con.notifies.pop(0)
+        print(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
 
-    # Load excel book
-    file = io.BytesIO(data.content)
-    workbook = load_workbook(filename=file, read_only=True, data_only=True)
+        # Get email
+        email = apiClient.call('''
+          query EmailById ($id: Int!) {
+            data: Customer_Customer_emailList ( 
+              where: { id: { EQ: $id } }
+            ) {
+              id
+              Customer: CustomerViaCustomer_id {
+                Name
+                Address
+                Email
+                Lang
+              }
+              Template
+              Entity_id
+              Subject
+              Body
+            }
+          }
+          ''',
+          { 'id': int(notify.payload) }
+        )
 
-    # Log
-    log = ''
+        # Send email
+        do_email(apiClient, email['data'][0])
 
-    # Process each sheet
-    for sheet in workbook.sheetnames:
+      # Error
+      except Exception as error:
+        logger.error(error)
 
-      # Processing
-      log += sheet + '\n'
-      sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-      dbClient.execute(sql, ('Procesando...', '', id))
-      dbClient.commit()         
+    # Wait X seconds
+    time.sleep(5)
 
-      # Resources
-      if sheet == 'Recursos':
-        ok, l = load_resources(dbClient, workbook[sheet])
-
-      # Prices
-      elif sheet == 'Precios':
-        ok, l = load_prices(dbClient, workbook[sheet])
-
-      # Other
-      else:
-        ok, l = False, 'Error: Tipo de carga desconcida.'
-
-      # Append log
-      log += l + '\n'
-
-    # Save result
-    sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-    dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
-    dbClient.commit()         
+  # Close connection and tunnel
+  dbClient.disconnect()
 
 
 # #####################################
