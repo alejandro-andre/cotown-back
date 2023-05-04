@@ -8,9 +8,9 @@ BEGIN
 
   RESET ROLE;
   user_name := CONCAT('C', OLD.id);
+  DELETE FROM "Models"."User" WHERE "username" = user_name;
   EXECUTE 'DROP ROLE "' || user_name || '"';
   EXCEPTION WHEN OTHERS THEN NULL;
-  DELETE FROM "Models"."User" WHERE "username" = user_name;
   RETURN OLD;
 
 END;
