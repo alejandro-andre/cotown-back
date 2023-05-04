@@ -140,6 +140,10 @@ def do_email(apiClient, email):
     # Debug
     logger.debug(email)
 
+    # Already sent?
+    if email['Sent_at'] is not None:
+      return
+      
     # Template? generate email body
     if email['Template'] is not None:
       subject, body = generate_email(apiClient, email)

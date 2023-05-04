@@ -78,6 +78,7 @@ def main():
         Entity_id
         Subject
         Body
+        Sent_at
       }
     }
     ''')
