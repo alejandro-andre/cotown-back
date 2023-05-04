@@ -34,6 +34,9 @@ BEGIN
   END IF;
   EXECUTE 'GRANT "provider" TO "' || user_name || '"';
 
+  -- Email
+  INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.id, 'bienvenida', NEW.id);
+
   -- Fin
   RETURN NEW;
 
