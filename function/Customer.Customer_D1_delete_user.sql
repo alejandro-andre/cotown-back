@@ -1,4 +1,4 @@
--- Borra el usuario y rol de BD del proveedor
+-- Borra el usuario y rol de BD
 -- AFTER DELETE
 DECLARE
 
@@ -7,10 +7,11 @@ DECLARE
 BEGIN
 
   RESET ROLE;
-  user_name := CONCAT('C', OLD.id);
+  user_name := CONCAT('C', LPAD(OLD.id::text, 6, '0'));
   DELETE FROM "Models"."User" WHERE "username" = user_name;
-  EXECUTE 'DROP ROLE "' || user_name || '"';
-  EXCEPTION WHEN OTHERS THEN NULL;
+  IF EXISTS (SELECT * FROM pg_roles WHERE rolname = user_name) THEN
+    EXECUTE 'DROP ROLE "' || user_name || '"';
+  END IF;
   RETURN OLD;
 
 END;

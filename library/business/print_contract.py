@@ -395,14 +395,7 @@ def do_contracts(apiClient, id):
     json_rent = None
     template = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'])
     if template is not None:
-
-      # Debug
-      #file = generate_doc_file(context, template.content)
-      with open('condiciones particulares.md', 'rb') as archivo:
-        contenido = archivo.read()
-        file = generate_doc_file(context, contenido)
-      # Debug
-
+      file = generate_doc_file(context, template.content)
       response = requests.post(
         'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
         files={'file': file}
