@@ -7,6 +7,11 @@ BEGIN
 
   RESET ROLE;
   
+  -- Alta en otro estado
+  IF NEW."Status" IS NOT NULL AND NEW."Status" <> "solicitud" THEN
+    RETURN NEW;
+  END IF;
+  
   -- Estado solicitud
   UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = NEW.id;
 

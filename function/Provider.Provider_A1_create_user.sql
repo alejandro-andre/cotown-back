@@ -8,6 +8,10 @@ BEGIN
 
   RESET ROLE;
 
+  IF NEW."User_name" IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
+
   -- Username
   user_name := CONCAT('P', LPAD(NEW.id::text, 6, '0'));
 
@@ -21,29 +25,16 @@ BEGIN
   INSERT INTO "Models"."UserRole" ("user", "role") VALUES (user_id, 200)
   ON CONFLICT ("user", "role") DO NOTHING;
 
+  -- Asigna el usuario
+  UPDATE "Provider"."Provider" SET "User_name" = user_name WHERE id = NEW.id;
+
   -- Crea el rol en Postgres
   IF NOT EXISTS (SELECT * FROM pg_roles WHERE rolname = user_name) THEN
-    EXECUTE 'CREATE ROLE "' || user_name || '" PASSWORD ''Passw0rd!'' NOSUPERUSER';
+    EXECUTE 'CREATE ROLE "' || user_name || '" PASSWORD ''UNK0WN_P4$$W0RD'' NOSUPERUSER';
   END IF;
   EXECUTE 'GRANT "provider" TO "' || user_name || '"';
 
   -- Fin
-  RETURN NEW;
-
-  -- Asigna botón
-  --IF NEW."User_name" IS NULL AND NEW."Create_user" IS NULL THEN
-  --  UPDATE "Provider"."Provider"
-  --  SET "Create_user" = CONCAT('https://pre.cotown.ciber.es/provideruser/add/', NEW.id)
-  --  WHERE id = NEW.id;
-  --END IF;
-
-  -- Borra botón
-  --IF NEW."User_name" IS NOT NULL AND NEW."Create_user" IS NOT NULL THEN
-  --  UPDATE "Provider"."Provider"
-  --  SET "Create_user" = NULL
-  --  WHERE id = NEW.id;
-  --END IF;
-
   RETURN NEW;
 
 END;

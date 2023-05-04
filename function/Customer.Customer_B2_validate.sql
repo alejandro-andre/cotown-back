@@ -1,4 +1,4 @@
--- Verifica si el residente es menor y necesita un tutor
+-- Verifica el cliente
 DECLARE
 
   tutor_id INTEGER;
@@ -6,10 +6,15 @@ DECLARE
 
 BEGIN
 
-  -- Select customer
+  -- No permite cambiar el email
+  IF (OLD."Email" IS NOT NULL AND OLD."Email" <> NEW."Email") THEN
+    RAISE EXCEPTION '!!!Email cannot be changed!!!No se puede cambiar el email!!!';
+  END IF;
+
+  -- Obtiene la edad
   SELECT DATE_PART('year', AGE(NOW(), NEW."Birth_date")) INTO customer_age;
 
-  -- Minor?
+  -- Menor?
   IF customer_age < 18 THEN
     IF NEW."Tutor_id" IS NULL THEN 
       RAISE EXCEPTION '!!!Minor require tutor!!!Menores requieren tutor!!!';
