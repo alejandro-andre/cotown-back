@@ -6,6 +6,7 @@ DECLARE
   dt_next DATE;
   dt_intr INTERVAL;
 
+  building_id INTEGER;
   flat_type INTEGER;
   place_type INTEGER;
   billing_type VARCHAR;
@@ -75,8 +76,8 @@ BEGIN
   DELETE FROM "Booking"."Booking_price"
   WHERE "Booking_id" = NEW.id;
 
-  -- Get resource tipology and rate
-  SELECT "Flat_type_id", "Place_type_id", "Billing_type", "Rate_id"
+  -- Get resource building, tipology and rate
+  SELECT "Building_id", "Flat_type_id", "Place_type_id", "Billing_type", "Rate_id"
   INTO flat_type, place_type, billing_type, rate
   FROM "Resource"."Resource"
   WHERE id = NEW."Resource_id";
@@ -106,7 +107,8 @@ BEGIN
     "Final_cleaning"
   INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit, final_cleaning
   FROM "Billing"."Pricing_detail"
-  WHERE "Flat_type_id" = flat_type
+  WHERE "Building_id" = building_id
+  AND "Flat_type_id" = flat_type
   AND ("Place_type_id" = place_type OR ("Place_type_id" IS NULL AND place_type IS NULL))
   AND "Year" = EXTRACT(YEAR FROM dt_curr);
   
@@ -123,7 +125,8 @@ BEGIN
     "Limit"
   INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit
   FROM "Billing"."Pricing_detail"
-  WHERE "Flat_type_id" = flat_type
+  WHERE "Building_id" = building_id
+  AND "Flat_type_id" = flat_type
   AND ("Place_type_id" = place_type OR ("Place_type_id" IS NULL AND place_type IS NULL))
   AND "Year" = 1 + EXTRACT(YEAR FROM dt_curr);
 
