@@ -13,6 +13,7 @@ DECLARE
   rate INTEGER;
   resource INTEGER;
   multiplier NUMERIC;
+  incpct NUMERIC;
 
   months INTEGER;
   days INTEGER;
@@ -82,6 +83,14 @@ BEGIN
   FROM "Resource"."Resource"
   WHERE id = NEW."Resource_id";
 
+  -- Get amenities
+  SELECT COALESCE(SUM("Increment"), 0)
+  INTO incpct
+  FROM "Resource"."Resource_amenity" ra
+  INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id"
+  WHERE ra."Resource_id" = NEW.id
+  AND rat."Increment" > 0;
+ 
   -- Get rate multiplier
   SELECT "Multiplier"
   INTO multiplier
@@ -141,16 +150,21 @@ BEGIN
     ny_rent = ny_rent + ny_second; 
   END IF;
 
+  -- Increment factor
+  multiplier := multiplier * (1 + (incpct / 100.0));
+  cy_rent := cy_rent * multiplier;
+  ny_rent := ny_rent * multiplier;
+ 
   -- Current year prices
   m_rent := cy_rent;
   m_services := cy_services;
   m_deposit := cy_deposit;
-  m_limit:= cy_limit;
+  m_limit := cy_limit;
   IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
     m_rent := ny_rent;
     m_services := ny_services;
     m_deposit := ny_deposit;
-    m_limit:= ny_limit;
+    m_limit := ny_limit;
   END IF;  
 
   -- Insert base values
