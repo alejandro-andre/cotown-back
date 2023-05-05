@@ -78,7 +78,7 @@ BEGIN
 
   -- Get resource building, tipology and rate
   SELECT "Building_id", "Flat_type_id", "Place_type_id", "Billing_type", "Rate_id"
-  INTO flat_type, place_type, billing_type, rate
+  INTO building_id, flat_type, place_type, billing_type, rate
   FROM "Resource"."Resource"
   WHERE id = NEW."Resource_id";
 
