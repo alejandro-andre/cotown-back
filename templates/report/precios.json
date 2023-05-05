@@ -1,5 +1,7 @@
 [
 	"Year",
+	"Building.Code",
+	"Building.Name",
     "Flat_type.Code", 
     "Flat_type.Name", 
     "Place_type.Code", 
