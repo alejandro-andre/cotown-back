@@ -12,6 +12,7 @@ BEGIN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}$' THEN
       RAISE EXCEPTION '!!!Wrong flat code, must have XXXnnn.nn.nn format!!!Código de piso incorrecto, debe formato XXXnnn.nn.nn!!!';
     END IF;
+    UPDATE "Resource"."Resource" SET id=id WHERE "Flat_id" = NEW.id;
     RETURN NEW;
   END IF;
 
