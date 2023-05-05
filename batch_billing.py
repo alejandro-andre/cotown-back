@@ -148,6 +148,11 @@ def bill_rent(dbClient):
       rent = int(item['Rent'] or 0) + int(item['Rent_discount'] or 0)
       services = int(item['Services'] or 0) + int(item['Services_discount'] or 0)
 
+      # Same issuer
+      if item['Owner_id'] == item['Service_id']:
+        rent += services
+        services = 0
+        
       # Create payment
       if rent > 0 or services > 0:
 
@@ -202,7 +207,7 @@ def bill_rent(dbClient):
             rentid, 
             rent, 
             PR_RENT, 
-            VAT_21,
+            VAT_0,
             'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
           )
         )
