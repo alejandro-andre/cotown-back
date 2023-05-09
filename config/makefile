@@ -12,6 +12,13 @@ loki:
 		grafana/loki
 	docker plugin install grafana/loki-docker-driver --alias lokidriver --grant-all-permissions
 
+promtail:
+	docker run -d --name promtail --link=loki --net=cotownnet \
+		-v $(HOME)/cotown/config:/mnt/config \
+		-v ${HOME}/cotown/dev/log:/var/log/dev \
+		-v ${HOME}/cotown/pre/log:/var/log/pre \
+		grafana/promtail -config.file=/mnt/config/promtail-config.yaml
+
 monitor:
 	docker run -d -p 9100:9100 --name=nodexp --privileged --net="host" --pid="host" \
 		-v "/:/host:ro,rslave" \
@@ -44,7 +51,6 @@ prometheus:
 
 nginx:
 	docker run -d -p 80:80 -p 443:443 --name nginx --net=cotownnet \
-		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
         	-v ${HOME}/cotown:/usr/share/nginx:ro \
         	-v ${HOME}/cotown/config/nginx.conf:/etc/nginx/nginx.conf:ro \
         	-v /etc/letsencrypt:/certs \
