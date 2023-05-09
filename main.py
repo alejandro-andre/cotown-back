@@ -243,6 +243,21 @@ def runapp():
     return 'ko'
   
 
+  # Dashboard
+  def get_dashboard():
+
+    result = dashboard(dbClient)
+    return result
+  
+  
+  # Change booking status
+  def get_booking_status(id, status):
+
+    if booking_status(dbClient, id, status):
+      return 'ok'
+    return 'ko'
+  
+
   # ###################################################
   # Payments
   # ###################################################
@@ -335,6 +350,7 @@ def runapp():
 
   # Special queries
   app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
+  app.add_url_rule('/dashboard', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule('/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
   # Other functions

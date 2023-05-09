@@ -12,6 +12,30 @@ logger = logging.getLogger('COTOWN')
 
 
 # ######################################################
+# Dashboard
+# ######################################################
+
+def dashboard(dbClient):
+
+  result = {}
+  
+  dbClient.connect()
+
+  dbClient.select('SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
+  rows = dbClient.fetchall()
+  for row in rows:
+    result[row[0]] = row[1]
+
+  dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Check_in" BETWEEN CURRENT_DATE - INTERVAL \'7 days\' AND CURRENT_DATE')
+  row = dbClient.fetch()
+  result['next'] = row[0]
+
+  dbClient.disconnect()
+
+  return result
+
+
+# ######################################################
 # Get payment
 # ######################################################
 
