@@ -32,7 +32,7 @@ BEGIN
   IF NOT EXISTS (SELECT * FROM pg_roles WHERE rolname = user_name) THEN
     EXECUTE 'CREATE ROLE "' || user_name || '" PASSWORD ''UNK0WN_P4$$W0RD'' NOSUPERUSER';
   END IF;
-  EXECUTE 'GRANT "provider" TO "' || user_name || '"';
+  EXECUTE 'GRANT "customer" TO "' || user_name || '"';
 
   -- Email
   INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.id, 'bienvenida', NEW.id);
