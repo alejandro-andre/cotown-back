@@ -111,7 +111,6 @@ def bill_payments(dbClient):
   except Exception as error:
     logger.error(error)
     dbClient.rollback()
-    dbClient.disconnect()
     return
 
 
@@ -258,14 +257,12 @@ def bill_rent(dbClient):
 
     # End
     dbClient.commit()
-    dbClient.disconnect()
     return
 
   # Process exception
   except Exception as error:
     logger.error(error)
     dbClient.rollback()
-    dbClient.disconnect()
     return
 
 
@@ -408,14 +405,12 @@ def bill_group_rent(dbClient):
         
     # End
     dbClient.commit()
-    dbClient.disconnect()
     return
 
   # Process exception
   except Exception as error:
     logger.error(error)
     dbClient.rollback()
-    dbClient.disconnect()
     return
 
 
@@ -469,6 +464,9 @@ def main():
   # 2. Monthly billing process
   bill_rent(dbClient)
   bill_group_rent(dbClient)
+
+  # Disconnect
+  dbClient.connect()
 
 
 # #####################################
