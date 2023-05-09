@@ -277,7 +277,7 @@ def bill_group_rent(dbClient):
 
     # Get all prices not already billed
     dbClient.select('''
-    SELECT bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax, COUNT(r."Code") as num, MAX(r."Owner_id") as "Owner_id", MAX(r."Service_id") as "Service_id"
+    SELECT bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", COUNT(r."Code") as num, MAX(r."Owner_id") as "Owner_id", MAX(r."Service_id") as "Service_id"
     FROM "Booking"."Booking_group_price" bgp
     INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
     INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
