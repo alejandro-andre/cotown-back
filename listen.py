@@ -88,7 +88,7 @@ def main():
       try:
         # Notification received
         notify = dbClient.con.notifies.pop(0)
-        print(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
+        logger.info(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
 
         # Get email
         email = apiClient.call('''
