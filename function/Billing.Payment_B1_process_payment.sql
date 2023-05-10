@@ -40,21 +40,21 @@ BEGIN
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Booking fee pagado');
 
-    -- SOLICITUD a SOLICITUDPAGADA
+    -- SOLICITUD a SOLICITUD PAGADA
     -- Comprobamos si el estado es 'solicitud'
     IF (status_record = 'solicitud') THEN
       UPDATE "Booking"."Booking" SET "Status" ='solicitudpagada' WHERE id = NEW."Booking_id";
       RETURN NEW;
     END IF;
   
-    -- ALTERNATIVAS a ALTERNATIVASPAGADAS
+    -- ALTERNATIVAS a ALTERNATIVAS PAGADA
     -- Comprobamos si el estado es 'alternativas'
     IF (status_record = 'alternativas') THEN
       UPDATE "Booking"."Booking" SET "Status" ='alternativaspagada' WHERE id = NEW."Booking_id";
       RETURN NEW;
     END IF;
   
-    -- PENDIENTEPAGO a CONFIRMADA
+    -- PENDIENTE PAGO a CONFIRMADA
     -- Comprobamos si el estado es 'pendientepago'
     IF (status_record = 'pendientepago') THEN
       UPDATE "Booking"."Booking" SET "Status" ='confirmada' WHERE id = NEW."Booking_id";
@@ -69,9 +69,9 @@ BEGIN
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
 
-    -- CONFIRMADA a FIRMACONTRATO
+    -- CONFIRMADA a FIRMA CONTRATO
     IF (status_record = 'confirmada') THEN
-       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato' WHERE id=NEW."Booking_id";
+      UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
       RETURN NEW;
     END IF;
 
