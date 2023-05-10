@@ -37,7 +37,7 @@ PASS = 'Suq97716'
 
 TEMPLATE = '''
 query EmailByCode ($code: String!) {
-    data: Auxiliar_EmailList (
+    data: Admin_EmailList (
         where: { Name: { EQ: $code } }
     ) { 
       Name
