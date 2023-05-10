@@ -8,25 +8,31 @@ BEGIN
 
   RESET ROLE;
   
-  -- SOLICITUD a PENDIENTEDEPAGO
+  -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" :='pendientepago';
   END IF;
 
   -- PENDIENTE DE PAGO A CADUCADA
+  -- Actualiza al estado 'Pendiente de pago' cuando la solicitud ya no esta caducada
+   IF (NEW."Status" = 'pendientepago' AND NEW."Expiry_date" < CURRENT_DATE)  THEN
+    NEW."Status" :='caducada';
+  END IF;
+
+  -- CADUCADA A PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando la solicitud esta caducada
    IF (NEW."Status" = 'caducada' AND NEW."Expiry_date" >= CURRENT_DATE)  THEN
     NEW."Status" :='pendientepago';
   END IF;
 
-  -- SOLICITUDPAGADA, ALTERNATIVAPAGADA a CONFIRMADA
+  -- SOLICITUD PAGADA o ALTERNATIVA PAGADA a CONFIRMADA
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" := 'confirmada';
   END IF;
 
-  -- FIRMACONTRATO a CONTRATO
+  -- FIRMA CONTRATO a CONTRATO
   -- Actualiza el estado a "contrato" desde 'firmacontrato' cuando firma el contrado (Fecha contract_signed rellena)
   IF (NEW."Status" = 'firmacontrato' AND NEW."Contract_signed" IS NOT NULL) THEN
     NEW."Status" := 'contrato';
@@ -38,13 +44,13 @@ BEGIN
     NEW."Status" := 'firmacontrato';
   END IF;
   
-  -- CONTRATO a CHECKINCONFIRMADO
+  -- CONTRATO a CHECK IN CONFIRMADO
   -- Actualiza al estado 'Checkin confirmado' cuando se asigna la fecha de checkin
   IF (NEW."Status" = 'contrato' AND NEW."Check_in" IS NOT NULL) THEN
     NEW."Status" := 'checkinconfirmado';
   END IF;
 
-  -- FIRMACONTRATO a CANCELADA 
+  -- FIRMA CONTRATO a CANCELADA 
   -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'firmacontrato'
   IF (NEW."Status" = 'firmacontrato' AND NEW."Cancel_date" IS NOT NULL) THEN
     NEW."Status" := 'cancelada';
@@ -56,7 +62,7 @@ BEGIN
     NEW."Status" := 'cancelada';
   END IF;
 
-  -- CHECKINCONFIRMADO a CANCELADA
+  -- CHECK IN CONFIRMADO a CANCELADA
   -- Actualiza el estado a "cancelada" cuando se cancela una reserva en estado 'check in confirmado'
   IF (NEW."Status" = 'checkinconfirmado' AND NEW."Cancel_date" IS NOT NULL) THEN
     NEW."Status" := 'cancelada';
@@ -68,15 +74,22 @@ BEGIN
     NEW."Status" := 'cancelada';
   END IF;
 
+  -- DEVOLVER GARANTIA a FINALIZAD
+  -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
+  IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
+    NEW."Status" := 'finalizada';
+  END IF;
+
   -- No ha habido cambios de estado
   IF (NEW."Status" = OLD."Status") THEN
     RETURN NEW;
   END IF;
 
+  -- ######################################################
+  -- Procesa los cambios
+  -- ######################################################
 
-
-
-  -- ALTERNATIVA o ALTERNATIVASPAGADA
+  -- A ALTERNATIVA o ALTERNATIVAS PAGADA
   IF (NEW."Status" = 'alternativas' OR NEW."Status" = 'alternativaspagada') THEN
     -- Email
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW.id);
@@ -84,7 +97,7 @@ BEGIN
     change := 'Revisar alternativas';
   END IF;
 
-  -- A PENDIENTEDEPAGO
+  -- A PENDIENTE DE PAGO
   IF (NEW."Status" = 'pendientepago' ) THEN
     -- Actualiza la fecha de expiracion
     IF (NEW."Expiry_date" IS NULL) THEN
@@ -100,7 +113,15 @@ BEGIN
     change := 'Pendiente de pago';
   END IF;
 
-  -- CONFIRMADA 
+  -- A CADUCADA
+	IF (NEW."Status" = 'caducada') THEN
+		-- Envia email informando de la caducidad
+		INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'caducada', NEW.id);
+		-- Log
+		change := CONCAT('La solicitud ha caducado el día ', NEW."Expiry_date");
+	END IF;
+
+  -- A CONFIRMADA 
   -- Inserta pago de garantía pendiente y envía mail
   IF (NEW."Status" = 'confirmada' ) THEN
     -- Borra fecha expiración
@@ -119,10 +140,8 @@ BEGIN
     change := 'Reserva confirmada';
   END IF;
 
-  -- A DESCARTADAPAGADA
+  -- A DESCARTADA PAGADA
   IF (NEW."Status" = 'descartadapagada') THEN
-    --?? GENERAR REGISTRO DE DEVOLUCION
-
     -- Quita el recurso
     NEW."Resource_id" := NULL;
     -- EMail 
@@ -137,18 +156,18 @@ BEGIN
     NEW."Resource_id" := NULL;
     -- Eliminamos el registro de pago del booking, si existe, ya que no ha sido pagado.
     DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id;
-    -- EMail (AÑADIR LA PLANTILLA CORRESPONDIENTE)
+    -- EMail
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
     -- Log
     change := 'Solicitud descartada.';   
   END IF;
 
-  -- A FIRMACONTRATO
+  -- A FIRMA CONTRATO
   IF (NEW."Status" = 'firmacontrato') THEN 
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
     -- Log 
-    change := CONCAT('Pendiente de firmar el contrato de la reserva ', NEW.id) ; 
+    change := 'Pendiente de firmar el contrato de la reserva' ; 
   END IF;
 
   -- A CONTRATO
@@ -157,7 +176,7 @@ BEGIN
       change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed") ; 
   END IF;
 
-  -- A CHECKINCONFIRMADO
+  -- A CHECK IN CONFIRMADO
   IF (NEW."Status" = 'checkinconfirmado') THEN 
     -- Email
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
@@ -165,7 +184,7 @@ BEGIN
     change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in") ; 
   END IF;
 
-  -- CONFIRMADA a CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
+  -- A CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
   -- Cancelada, elimina pago pendiente de garantia y envía mail
   IF (NEW."Status" = 'cancelada') THEN              
     -- Eliminamos cualquier registro de pago no ha pagado.
@@ -180,7 +199,7 @@ BEGIN
     change := 'Reserva cancelada antes de pagar la garantia';   
   END IF;
 
-  -- AINHOUSE (BOTON 'CHECK IN OK')
+  -- A IN HOUSE (BOTON 'CHECK IN OK')
   -- Se confirma la llegada del usuario al alojamiento
   IF (NEW."Status" = 'inhouse') THEN  
     -- EMail
@@ -189,13 +208,18 @@ BEGIN
     change := 'Se confirma que el usuario ha llegado al alojamiento.';   
   END IF;
 
-  -- A DEVOLVERGARANTIA (BOTON 'CHECKOUT OK')
+  -- A DEVOLVER GARANTIA (BOTON 'CHECK OUT OK')
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'devolvergarantia') THEN 
-    --?? GENERAR REGISTRO DE DEVOLUCION
-
     -- Log
-    change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW.id);   
+    change := 'El checkout ha sido correcto. Se puede devolver la garantia de la reserva ';   
+  END IF;
+
+  -- A FINALIZADA
+  -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
+  IF (NEW."Status" = 'finalizada') THEN 
+    -- Log
+    change := 'Reserva finalizada';   
   END IF;
 
   -- Registra el cambio

@@ -55,7 +55,7 @@ def dashboard(dbClient, status = None):
     result['ok'] = row[0]
 
     # Count nearest checkins
-    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Check_in" BETWEEN CURRENT_DATE - INTERVAL \'7 days\' AND CURRENT_DATE')
+    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Check_in" BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL \'7 days\'')
     row = dbClient.fetch()
     result['next'] = row[0]
 
@@ -73,7 +73,7 @@ def dashboard(dbClient, status = None):
     if status == 'ok':
       dbClient.select(sql + '"Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
     elif status == 'next':
-      dbClient.select(sql + '"Check_in" BETWEEN CURRENT_DATE - INTERVAL \'7 days\' AND CURRENT_DATE')
+      dbClient.select(sql + '"Check_in" BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL \'7 days\'')
     else:
       dbClient.select(sql + '"Status" = %s', (status,))
 

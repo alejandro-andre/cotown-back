@@ -37,6 +37,18 @@ BEGIN
   END IF;
 
   -- Verifica las fechas
+  IF NEW."Check_in" < '2000-01-01' THEN
+    NEW."Check_in" = NULL;
+  END IF;
+  IF NEW."Check_out" < '2000-01-01' THEN
+    NEW."Check_out" = NULL;
+  END IF;
+  IF NEW."Contract_signed" < '2000-01-01' THEN
+    NEW."Contract_signed" = NULL;
+  END IF;
+  IF NEW."Expiry_date" < '2000-01-01' THEN
+    NEW."Expiry_date" = NULL;
+  END IF;
   IF NEW."Date_from" > NEW."Date_to" THEN
     RAISE exception '!!!Wrong dates!!!Fechas incorrectas!!!';
   END IF;
