@@ -244,10 +244,15 @@ def runapp():
   
 
   # Dashboard
-  def get_dashboard():
+  def get_dashboard(status = None):
 
-    result = dashboard(dbClient)
-    return result
+    return dashboard(dbClient, status)
+
+
+  # Labels
+  def get_labels(id, locale):
+
+    return labels(dbClient, id, locale)
   
   
   # Change booking status
@@ -351,7 +356,9 @@ def runapp():
   # Special queries
   app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
   app.add_url_rule('/dashboard', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule('/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule('/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
+  app.add_url_rule('/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Other functions
   app.add_url_rule('/hi', view_func=get_hello, methods=['GET'])

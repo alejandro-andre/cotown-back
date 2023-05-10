@@ -5,33 +5,85 @@
 # System includes
 import logging
 import datetime
+import json
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
+
+# ######################################################
+# Dashboard
+# ######################################################
+
+def labels(dbClient, id, locale):
+
+  # Get labels
+  dbClient.connect()
+  dbClient.select('''
+  SELECT "values", "labels" 
+  FROM "Models"."EnumType" et 
+  INNER JOIN "Models"."EnumTypeLabel" ON container = et.id 
+  WHERE et.id = %s AND locale = %s;
+  ''', (id, locale,))
+  result = dbClient.fetch()
+  print(result)
+  dbClient.disconnect()
+  return json.dumps(result, default=str)
 
 
 # ######################################################
 # Dashboard
 # ######################################################
 
-def dashboard(dbClient):
+def dashboard(dbClient, status = None):
 
-  result = {}
-  
+  # Connect
   dbClient.connect()
 
-  dbClient.select('SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
-  rows = dbClient.fetchall()
-  for row in rows:
-    result[row[0]] = row[1]
+  # Counters
+  if status is None:
+    result = {}   
 
-  dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Check_in" BETWEEN CURRENT_DATE - INTERVAL \'7 days\' AND CURRENT_DATE')
-  row = dbClient.fetch()
-  result['next'] = row[0]
+    # Count by status
+    dbClient.select('SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
+    for row in dbClient.fetchall():
+      result[row[0]] = row[1]
 
+    # Count all confirmed
+    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
+    row = dbClient.fetch()
+    result['ok'] = row[0]
+
+    # Count nearest checkins
+    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Check_in" BETWEEN CURRENT_DATE - INTERVAL \'7 days\' AND CURRENT_DATE')
+    row = dbClient.fetch()
+    result['next'] = row[0]
+
+  # Rows
+  else:
+
+    # Get bookings
+    sql = '''
+    SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
+    FROM "Booking"."Booking" b 
+    INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
+    INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id" 
+    LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+    WHERE'''
+    if status == 'ok':
+      dbClient.select(sql + '"Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
+    elif status == 'next':
+      dbClient.select(sql + '"Check_in" BETWEEN CURRENT_DATE - INTERVAL \'7 days\' AND CURRENT_DATE')
+    else:
+      dbClient.select(sql + '"Status" = %s', (status,))
+
+    # Result
+    result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
+
+  # Disconnect
   dbClient.disconnect()
 
+  # Return
   return result
 
 
