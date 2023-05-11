@@ -154,7 +154,8 @@ def load_resources(dbClient, data):
           record['Room_id'] = aux['id']
 
       # Resource address
-      record['Address'] = record['Address'] + ' ' + record['Code'][12:].replace('.', ' ')
+      record['Address'] = record['Address']
+      #record['Address'] = record['Address']  + ' ' + record['Code'][12:].replace('.', ' ')
 
       # Insert records
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
