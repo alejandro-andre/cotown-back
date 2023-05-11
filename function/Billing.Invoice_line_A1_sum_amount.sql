@@ -15,7 +15,7 @@ BEGIN
   ELSE
   	invoice_id = NEW."Invoice_id";
   END IF;
- 
+
   -- Suma todas las líneas
   SELECT SUM("Amount")
   INTO total

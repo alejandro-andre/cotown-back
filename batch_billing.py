@@ -70,13 +70,14 @@ def bill_payments(dbClient):
       # Create invoice
       dbClient.execute('''
         INSERT INTO "Billing"."Invoice" 
-        ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING id
         ''', 
         (
           'factura' if item['Payment_type'] == 'booking' else 'recibo', 
-          True, 
+          False, 
+          False,
           datetime.now(), 
           ID_COTOWN if item['Payment_type'] == 'booking' else item['Owner_id'], 
           item['Customer_id'], 
@@ -102,6 +103,9 @@ def bill_payments(dbClient):
           'Booking fee' if item['Payment_type'] == 'booking' else 'Garantía ' + item['Code'],
         )
       )
+
+      # Update bill
+      dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
     # End
     dbClient.commit()
@@ -178,13 +182,14 @@ def bill_rent(dbClient):
 
         dbClient.execute('''
           INSERT INTO "Billing"."Invoice" 
-          ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''', 
           (
             'factura', 
-            True, 
+            False, 
+            False,
             datetime.now(), 
             item['Owner_id'], 
             item['Customer_id'], 
@@ -211,6 +216,9 @@ def bill_rent(dbClient):
           )
         )
 
+        # Update bill
+        dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
+
         # Update price
         dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
 
@@ -219,13 +227,14 @@ def bill_rent(dbClient):
         
         dbClient.execute('''
           INSERT INTO "Billing"."Invoice" 
-          ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''', 
           (
             'factura', 
-            True, 
+            False, 
+            False,
             datetime.now(), 
             item['Service_id'], 
             item['Customer_id'], 
@@ -251,6 +260,9 @@ def bill_rent(dbClient):
             'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
           )
         )
+
+        # Update bill
+        dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
         # Update price
         dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
@@ -326,13 +338,14 @@ def bill_group_rent(dbClient):
 
         dbClient.execute('''
           INSERT INTO "Billing"."Invoice" 
-          ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''', 
           (
             'factura', 
-            True, 
+            False, 
+            False,
             datetime.now(), 
             item['Owner_id'], 
             item['Payer_id'], 
@@ -359,6 +372,9 @@ def bill_group_rent(dbClient):
           )
         )
 
+        # Update bill
+        dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
+
         # Update price
         dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
 
@@ -367,13 +383,14 @@ def bill_group_rent(dbClient):
         
         dbClient.execute('''
           INSERT INTO "Billing"."Invoice" 
-          ("Bill_type", "Issued", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''', 
           (
             'factura', 
-            True, 
+            False, 
+            False,
             datetime.now(), 
             item['Service_id'], 
             item['Payer_id'], 
@@ -399,6 +416,9 @@ def bill_group_rent(dbClient):
             'Servicios mensuales (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
           )
         )
+
+        # Update bill
+        dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
         # Update price
         dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
