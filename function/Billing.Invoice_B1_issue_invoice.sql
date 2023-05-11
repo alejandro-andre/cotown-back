@@ -20,7 +20,7 @@ DECLARE
   lines CURSOR FOR 
     SELECT *
     FROM "Billing"."Invoice_line"
-    WHERE "Invoice_id" = i_id;
+    WHERE "Invoice_id" = NEW.id;
    
 BEGIN
 
@@ -45,14 +45,14 @@ BEGIN
      
       -- Inserta lineas
       OPEN lines;
-       FETCH lines INTO reg;
-       WHILE (FOUND) LOOP
-         INSERT INTO "Billing"."Invoice_line" 
-           ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept") 
-         VALUES
-           (i_id, -reg."Amount", reg."Product_id", reg."Tax_id", reg."Concept");
-         FETCH lines INTO reg;
-       END LOOP;     
+      FETCH lines INTO reg;
+      WHILE (FOUND) LOOP
+        INSERT INTO "Billing"."Invoice_line" 
+          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept") 
+        VALUES
+          (i_id, -reg."Amount", reg."Product_id", reg."Tax_id", reg."Concept");
+        FETCH lines INTO reg;
+      END LOOP;     
       CLOSE lines;
 
       -- Emite factura

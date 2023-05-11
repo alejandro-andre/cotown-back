@@ -273,6 +273,7 @@ def bill_rent(dbClient):
 
   # Process exception
   except Exception as error:
+    print(erro  r)
     logger.error(error)
     dbClient.rollback()
     return
