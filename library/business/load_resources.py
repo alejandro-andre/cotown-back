@@ -22,17 +22,17 @@ def load_resources(dbClient, data):
 
   # Loop thru all rows skipping two first rows
   for irow, row in enumerate(data.iter_rows(min_row=3)):
+    try:
 
-    # Empty record
-    record = {}
+      # Empty record
+      record = {}
 
-    # Ok by default
-    ok = True
+      # Ok by default
+      ok = True
 
-    # Loop thru each column
-    for icol, cell in enumerate(row):
+      # Loop thru each column
+      for icol, cell in enumerate(row):
 
-      try:
         # Column
         column = header[icol]
 
@@ -91,7 +91,7 @@ def load_resources(dbClient, data):
             else:  
               id = aux['id']
           record['Place_type_id'] = id
-  
+
         # Pricing_rate.Code
         elif column == 'Pricing_rate.Code':
           id = None
@@ -162,11 +162,12 @@ def load_resources(dbClient, data):
       values = [record[field] for field in record.keys()]
       markers = ['%s'] * len(record.keys())
       sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
+
       dbClient.execute(sql, values)
 
     # Error
     except Exception as error:
-
+      
       logger.error(error)
       dbClient.rollback()
       log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'

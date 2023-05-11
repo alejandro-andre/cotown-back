@@ -26,7 +26,6 @@ def labels(dbClient, id, locale):
   WHERE et.id = %s AND locale = %s;
   ''', (id, locale,))
   result = dbClient.fetch()
-  print(result)
   dbClient.disconnect()
   return json.dumps(result, default=str)
 

@@ -97,29 +97,29 @@ def main():
     # Log
     log = ''
 
-    # Process each sheet
-    for sheet in workbook.sheetnames:
+    # Process only first sheet
+    sheet = workbook.sheetnames[0]
 
-      # Processing
-      log += sheet + '\n'
-      sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-      dbClient.execute(sql, ('Procesando...', '', id))
-      dbClient.commit()         
+    # Processing
+    log += sheet + '\n'
+    sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
+    dbClient.execute(sql, ('Procesando...', '', id))
+    dbClient.commit()         
 
-      # Resources
-      if sheet == 'Recursos':
-        ok, l = load_resources(dbClient, workbook[sheet])
+    # Resources
+    if sheet == 'Recursos':
+      ok, l = load_resources(dbClient, workbook[sheet])
 
-      # Prices
-      elif sheet == 'Precios':
-        ok, l = load_prices(dbClient, workbook[sheet])
+    # Prices
+    elif sheet == 'Precios':
+      ok, l = load_prices(dbClient, workbook[sheet])
 
-      # Other
-      else:
-        ok, l = False, 'Error: Tipo de carga desconcida.'
+    # Other
+    else:
+      ok, l = False, 'Error: Tipo de carga desconcida.'
 
-      # Append log
-      log += l + '\n'
+    # Append log
+    log += l + '\n'
 
     # Save result
     sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
