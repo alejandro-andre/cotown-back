@@ -10,7 +10,7 @@ BEGIN
   -- Piso?
   IF NEW."Resource_type" = 'piso' THEN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}$' THEN
-      RAISE EXCEPTION '!!!Wrong flat code, must have XXXnnn.nn.nn format!!!Código de piso incorrecto, debe formato XXXnnn.nn.nn!!!';
+      RAISE EXCEPTION '!!!Wrong flat code', NEW."Code", ', must have XXXnnn.nn.nn format!!!Código de piso ', NEW."Code", ' incorrecto, debe formato XXXnnn.nn.nn!!!';
     END IF;
     UPDATE "Resource"."Resource" SET id=id WHERE "Flat_id" = NEW.id;
     RETURN NEW;
@@ -22,14 +22,14 @@ BEGIN
   -- Habitacion
   IF NEW."Resource_type" = 'habitacion' THEN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}\.H\d{2}$' THEN
-      RAISE EXCEPTION '!!!Wrong room code, must have XXXnnn.nn.nn.Hnn format!!!Código de habitacion incorrecto, debe formato XXXnnn.nn.nn.Hnn!!!';
+      RAISE EXCEPTION '!!!Wrong room code', NEW."Code", ', must have XXXnnn.nn.nn.Hnn format!!!Código de habitacion ', NEW."Code", ' incorrecto, debe formato XXXnnn.nn.nn.Hnn!!!';
     END IF;
   END IF;
 
  -- Plaza
   IF NEW."Resource_type" = 'plaza' THEN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}\.H\d{2}\.P\d$' THEN
-      RAISE EXCEPTION '!!!Wrong room code, must have XXXnnn.nn.nn.Hnn.Pn format!!!Código de habitacion incorrecto, debe formato XXXnnn.nn.nn.Hnn.Pn!!!';
+      RAISE EXCEPTION '!!!Wrong place code ', NEW."Code", ', must have XXXnnn.nn.nn.Hnn.Pn format!!!Código de plaza ', NEW."Code", ' incorrecto, debe formato XXXnnn.nn.nn.Hnn.Pn!!!';
     END IF;
   	SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Room_id";
   END IF;
