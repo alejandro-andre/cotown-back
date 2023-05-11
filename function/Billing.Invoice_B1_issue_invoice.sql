@@ -34,10 +34,12 @@ BEGIN
 
   -- Ya emitida?
   IF NEW."Issued" = TRUE AND NEW."Code" IS NOT NULL THEN
+
+    -- Rectificativa?
     IF NEW."Bill_type" = 'factura' AND OLD."Rectified" = FALSE AND NEW."Rectified" = TRUE  THEN
 
       -- Inserta factura rectificativa
- 	  INSERT INTO "Billing"."Invoice" 
+ 	    INSERT INTO "Billing"."Invoice" 
         ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
       VALUES 
         ('rectificativa', False, False, CURRENT_DATE, OLD."Provider_id", OLD."Customer_id", OLD."Booking_id", OLD."Payment_method_id", OLD."Payment_id", CONCAT('Factura rectificativa de la ', OLD."Code"))
@@ -56,7 +58,7 @@ BEGIN
       CLOSE lines;
 
       -- Emite factura
- 	  UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = i_id;
+ 	    UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = i_id;
       RETURN NEW;
  	  
     END IF;

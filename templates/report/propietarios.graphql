@@ -5,9 +5,11 @@
         Address
         Bill_pattern
         City
+        Comments
         Country: CountryViaCountry_id {
             Name
         }
+        Credit_pattern
         Document
         Email
         Id_type: Id_typeViaId_type_id {
@@ -18,6 +20,7 @@
         Provider_type: Provider_typeViaProvider_type_id {
             Name
         }
+        Prefix_SAP
         Province
         Receipt_pattern
         Signer_document

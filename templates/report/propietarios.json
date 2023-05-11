@@ -13,6 +13,9 @@
     "Signer_id_type.Name",
     "Signer_document",
     "Signer_name",
+    "Prefix_SAP",
     "Bill_pattern",
-    "Receipt_pattern"
+    "Credit_pattern",
+    "Receipt_pattern",
+    "Comments"
 ]

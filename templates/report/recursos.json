@@ -1,15 +1,16 @@
 [
 "Owner.Name",
+"Service.Name",
 "Code",
 "Address",
 "Resource_flat_type.Code",
 "Resource_place_type.Code",
 "Billing_type",
 "Sale_type",
-"=_xlfn.XLOOKUP(\"2023\"&_xlfn.LEFT($B3,6)&D3&E3,Precios!Q:Q,Precios!H:H,0)*_xlfn.XLOOKUP(K3,Tarifas!A:A,Tarifas!C:C,0)",
-"=_xlfn.XLOOKUP(\"2023\"&_xlfn.LEFT($B3,6)&D3&E3,Precios!Q:Q,Precios!I:I,0)*_xlfn.XLOOKUP(K3,Tarifas!A:A,Tarifas!C:C,0)",
-"=_xlfn.XLOOKUP(\"2023\"&_xlfn.LEFT($B3,6)&D3&E3,Precios!Q:Q,Precios!J:J,0)*_xlfn.XLOOKUP(K3,Tarifas!A:A,Tarifas!C:C,0)",
 "Pricing_rate.Code",
+"=_xlfn.XLOOKUP(\"2023\"&_xlfn.LEFT($B3,6)&E3&F3,Precios!O:O,Precios!F:F,0)*_xlfn.XLOOKUP(K3,Tarifas!A:A,Tarifas!C:C,0)",
+"=_xlfn.XLOOKUP(\"2023\"&_xlfn.LEFT($B3,6)&E3&F3,Precios!O:O,Precios!G:G,0)*_xlfn.XLOOKUP(K3,Tarifas!A:A,Tarifas!C:C,0)",
+"=_xlfn.XLOOKUP(\"2023\"&_xlfn.LEFT($B3,6)&E3&F3,Precios!O:O,Precios!H:H,0)*_xlfn.XLOOKUP(K3,Tarifas!A:A,Tarifas!C:C,0)",
 "Description",
 "Description_en",
 "Area",
@@ -20,7 +21,6 @@
 "Wifi_ssid",
 "Wifi_key",
 "Gate_mac",
-"Gate_url",
 "Gate_phone",
 "Notes"
 ]

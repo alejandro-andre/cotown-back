@@ -3,6 +3,7 @@
     orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
   ) {
     Owner: ProviderViaOwner_id { Name }
+    Service: ProviderViaService_id { Name }
     Code
     Address
     Resource_flat_type: Resource_flat_typeViaFlat_type_id { Code }
@@ -20,7 +21,6 @@
     Wifi_ssid	
     Wifi_key	
     Gate_mac	
-    Gate_url	
     Gate_phone	
     Notes
   }
