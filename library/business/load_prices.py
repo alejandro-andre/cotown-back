@@ -40,11 +40,21 @@ def load_prices(dbClient, data):
         if column is None or isinstance(column, int):
           pass
 
+        # Building.Code
+        elif column == 'Building.Code':
+          dbClient.select('SELECT id FROM "Building"."Building" WHERE "Code"=%s', (cell.value,))
+          aux = dbClient.fetch()
+          if aux is None:
+            log += 'Fila: ' + str(irow+2).zfill(4) + '. Edificio "' + str(cell.value) + '" no encontrado\n'
+            ok = False
+          else:  
+            record['Building_id'] = aux['id']
+
         # Resource_flat_type.Code
         elif column == 'Flat_type.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', [cell.value])
+            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', (cell.value,))
             aux = dbClient.fetch()
             if aux is None:
               log += 'Fila: ' + str(irow+2).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
@@ -57,7 +67,7 @@ def load_prices(dbClient, data):
         elif column == 'Place_type.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', [cell.value])
+            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', (cell.value,))
             aux = dbClient.fetch()
             if aux is None:
               log += 'Fila: ' + str(irow+2).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
@@ -81,7 +91,7 @@ def load_prices(dbClient, data):
       update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
       values = [record[field] for field in record.keys()]
       markers = ['%s'] * len(record.keys())
-      sql = 'INSERT INTO "Billing"."Pricing_detail" ({}) VALUES ({}) ON CONFLICT ("Year","Flat_type_id","Place_type_id") DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
+      sql = 'INSERT INTO "Billing"."Pricing_detail" ({}) VALUES ({}) ON CONFLICT ("Year","Building_id","Flat_type_id","Place_type_id") DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
       dbClient.execute(sql, values)
 
     # Error
