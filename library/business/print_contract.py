@@ -99,7 +99,7 @@ query BookingById ($id: Int!) {
           Owner_signer_id_type: Name
         }
         Owner_signer_id: Signer_document
-        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
       }
       ProviderViaService_id {
         Id_typeViaId_type_id {
@@ -119,7 +119,7 @@ query BookingById ($id: Int!) {
           Service_signer_id_type: Name
         }
         Service_signer_id: Signer_document
-        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
+        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
       }
     }
     CustomerViaCustomer_id {
@@ -236,7 +236,7 @@ query Booking_groupById ($id: Int!) {
                 Owner_signer_id_type: Name
                 }
                 Owner_signer_id: Signer_document
-                Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
+                Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
             ProviderViaService_id {
                 Id_typeViaId_type_id {
@@ -256,7 +256,7 @@ query Booking_groupById ($id: Int!) {
                 Service_signer_id_type: Name
                 }
                 Service_signer_id: Signer_document
-                Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Type }
+                Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
         }
           Id_typeViaId_type_id {
@@ -400,7 +400,7 @@ def do_contracts(apiClient, id):
         'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
         files={'file': file}
       )
-      json_rent = { 'name': 'Contrato de renta.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+      json_rent = { 'name': context['Owner_template']['Name'] + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
     json_svcs = None
@@ -411,7 +411,7 @@ def do_contracts(apiClient, id):
         'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
         files={'file': file}
       )
-      json_svcs = { 'name': 'Contrato de servicios.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+      json_svcs = { 'name': context['Service_template']['Name'] + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''
@@ -456,7 +456,7 @@ def do_group_contracts(apiClient, id):
         'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token, 
         files={'file': file}
       )
-      json_rent = { 'name': 'Contrato de renta.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+      json_rent = { 'name': context['Owner_template']['Name'] + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
     json_svcs = None
@@ -467,7 +467,7 @@ def do_group_contracts(apiClient, id):
         'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
         files={'file': file}
       )
-      json_svcs = { 'name': 'Contrato de servicios.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+      json_svcs = { 'name': context['Service_template']['Name'] + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''

@@ -64,7 +64,16 @@ BEGIN
     END IF;
    
     -- No permite cambios
-    RAISE EXCEPTION '!!!Bill has been already issued, cannot change!!!La factura ya ha sido emitida, no puede cambiarse!!!'; 
+    IF OLD."Bill_type" <> NEW."Bill_type"
+    OR OLD."Booking_group_id" <> NEW."Booking_group_id"
+    OR OLD."Booking_id" <> NEW."Booking_id"
+    OR OLD."Concept" <> NEW."Concept"
+    OR OLD."Customer_id" <> NEW."Customer_id"
+    OR OLD."Issued_date" <> NEW."Issued_date"
+    OR OLD."Provider_id" <> NEW."Provider_id" THEN
+      RAISE EXCEPTION '!!!Bill has been already issued, cannot change!!!La factura ya ha sido emitida, no puede cambiarse!!!'; 
+    END IF;
+    RETURN NEW;
    
   END IF;
 
