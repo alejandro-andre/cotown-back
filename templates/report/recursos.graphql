@@ -24,9 +24,16 @@
     Gate_phone	
     Notes
     Amenities: Resource_amenityListViaResource_id {
-        Amenity: Resource_amenity_typeViaAmenity_type_id {
-            Value: Code
-        }
+      Amenity: Resource_amenity_typeViaAmenity_type_id {
+        Code
+      }
+    }
+    Unavailable: Resource_availabilityListViaResource_id {
+      Status: Resource_statusViaStatus_id {
+        Name
+      }
+      Date_from
+      Date_to
     }
   }
 }

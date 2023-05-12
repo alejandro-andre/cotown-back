@@ -9,8 +9,6 @@ from io import BytesIO
 import pandas as pd
 import json
 
-from ..services.utils import flatten_json
-
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
@@ -47,7 +45,7 @@ def export_to_excel(apiClient, name, variables=None):
     df = pd.json_normalize(data[next(iter(data.keys()))])
 
     # Select and sort columns
-    df = df.reindex(columns, axis=1)
+    df = df.reindex([item.split(':')[0] for item in columns], axis=1)
 
     # Copy styles from first data row
     styles = []
@@ -78,7 +76,11 @@ def export_to_excel(apiClient, name, variables=None):
         # List of dicts
         elif isinstance(row[c], list):
           try:
-            values = [v.get('Value') for d in row[c] for v in d.values()]
+            values = []
+            for item in row[c]:
+              for key in columns[c].split(':')[1:]:
+                item = item[key]
+              values.append(item)
             cell.value = ','.join(values)
           except:
             cell.value = '[ERROR]'

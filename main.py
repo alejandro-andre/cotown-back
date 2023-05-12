@@ -115,6 +115,8 @@ def runapp():
   
     # Export
     result = export_to_excel(apiClient, name, vars)
+    if result is None:
+      return 'ko'
 
     # Response
     response = send_file(result, mimetype='application/vnd.ms-excel')
