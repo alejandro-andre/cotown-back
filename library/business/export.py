@@ -9,6 +9,8 @@ from io import BytesIO
 import pandas as pd
 import json
 
+from ..services.utils import flatten_json
+
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
@@ -69,11 +71,19 @@ def export_to_excel(apiClient, name, variables=None):
           continue
 
         # Formula
-        if columns[c][0] == '=':
+        elif columns[c][0] == '=':
           t = Translator(columns[c], 'A1')
           cell.value = t.translate_formula(row_delta = r - 2)
 
-        # Value
+        # List of dicts
+        elif isinstance(row[c], list):
+          try:
+            values = [v.get('Value') for d in row[c] for v in d.values()]
+            cell.value = ','.join(values)
+          except:
+            cell.value = '[ERROR]'
+
+        # Simple value
         else:
           cell.value = row[c]
 
