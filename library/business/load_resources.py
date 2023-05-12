@@ -26,6 +26,8 @@ def load_resources(dbClient, data):
 
       # Empty record
       record = {}
+      extras = []
+      unavail = {}
 
       # Ok by default
       ok = True
@@ -105,6 +107,16 @@ def load_resources(dbClient, data):
               id = aux['id']
           record['Rate_id'] = id
 
+        # Extras
+        elif column == '[extras]':
+          if cell.value is not None:
+            extras = [e.strip() for e in cell.value.split(',')]
+
+        # Special cells
+        elif column[0] == '[':
+          if cell.value is not None:
+            unavail[column[1:-1]] = cell.value
+
         # Copy cells
         else:
           record[column] = cell.value
@@ -155,20 +167,46 @@ def load_resources(dbClient, data):
 
       # Resource address
       record['Address'] = record['Address']
-      #record['Address'] = record['Address']  + ' ' + record['Code'][12:].replace('.', ' ')
-
-      # Insert records
+     
+      # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
       update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
       values = [record[field] for field in record.keys()]
       markers = ['%s'] * len(record.keys())
-      sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
-
+      sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
       dbClient.execute(sql, values)
+      id = dbClient.returning()[0]
+
+      # Extras
+      dbClient.execute('DELETE FROM "Resource"."Resource_amenity" WHERE "Resource_id" = %s', (id,))
+      for item in extras:
+        dbClient.select('SELECT id FROM "Resource"."Resource_amenity_type" WHERE "Code" = %s', (item,))
+        aux = dbClient.fetch()
+        if aux is None:
+          log += 'Fila: ' + str(irow+2).zfill(4) + '. Extra "' + item + '" no encontrado\n'
+          ok = False
+        else:  
+          dbClient.execute('''
+          INSERT INTO "Resource"."Resource_amenity" 
+          ("Resource_id", "Amenity_type_id") 
+          VALUES (%s, %s)''', (id, aux[0]))
+
+      # Unavailability
+      if record['Resource_type'] == 'piso' and unavail != {}:
+        dbClient.execute('DELETE FROM "Resource"."Resource_availability" WHERE "Resource_id" = %s', (id,))
+        dbClient.select('SELECT id FROM "Resource"."Resource_status" WHERE "Name" = %s', (unavail['unavailable'],))
+        aux = dbClient.fetch()
+        if aux is None:
+          log += 'Fila: ' + str(irow+2).zfill(4) + '. Código de no disponibilidad "' + unavail['unavailable'] + '" no encontrado\n'
+          ok = False
+        else:  
+          dbClient.execute('''
+          INSERT INTO "Resource"."Resource_availability" 
+          ("Resource_id", "Status_id", "Date_from", "Date_to") 
+          VALUES (%s, %s, %s, %s)''', (id, aux[0], unavail['from'], unavail['to']))
 
     # Error
     except Exception as error:
-      
       logger.error(error)
       dbClient.rollback()
       log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'
