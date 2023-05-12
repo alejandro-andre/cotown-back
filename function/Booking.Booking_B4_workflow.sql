@@ -167,13 +167,13 @@ BEGIN
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
     -- Log 
-    change := 'Pendiente de firmar el contrato de la reserva' ; 
+    change := 'Pendiente de firmar el contrato de la reserva'; 
   END IF;
 
   -- A CONTRATO
   IF (NEW."Status" = 'contrato') THEN 
       -- Log 
-      change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed") ; 
+      change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed"); 
   END IF;
 
   -- A CHECK IN CONFIRMADO
@@ -181,7 +181,7 @@ BEGIN
     -- Email
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
     -- Log 
-    change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in") ; 
+    change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in"); 
   END IF;
 
   -- A CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
