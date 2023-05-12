@@ -75,7 +75,7 @@ def main():
   # ###################################################
 
   # Get upload requests
-  dbClient.select('SELECT id, "File" FROM "Batch"."Upload" --WHERE "Result" IS NULL')
+  dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
   data = dbClient.fetchall()
 
   # Loop thru files
