@@ -49,7 +49,7 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
               ok = False
             else:  
               id = aux['id']
@@ -62,7 +62,7 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
               ok = False
             else:  
               id = aux['id']
@@ -75,7 +75,7 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', [cell.value])
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
               ok = False
             else:  
               id = aux['id']
@@ -88,7 +88,7 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', [cell.value])
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
               ok = False
             else:  
               id = aux['id']
@@ -101,7 +101,7 @@ def load_resources(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Billing"."Pricing_rate" WHERE "Code"=%s', [cell.value])
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Tarifa "' + str(cell.value) + '" no encontrada\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tarifa "' + str(cell.value) + '" no encontrada\n'
               ok = False
             else:  
               id = aux['id']
@@ -125,7 +125,7 @@ def load_resources(dbClient, data):
       dbClient.select('SELECT id FROM "Building"."Building" WHERE "Code"=%s', (record['Code'][:6],))
       aux = dbClient.fetch()
       if aux is None:
-        log += 'Fila: ' + str(irow+2).zfill(4) + '. Edificio "' + record['Code'][:6] + '" no encontrado\n'
+        log += 'Fila: ' + str(irow+3).zfill(4) + '. Edificio "' + record['Code'][:6] + '" no encontrado\n'
         ok = False
       else:  
         record['Building_id'] = aux['id']
@@ -142,7 +142,7 @@ def load_resources(dbClient, data):
         dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
         aux = dbClient.fetch()
         if aux is None:
-          log += 'Fila: ' + str(irow+2).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
           ok = False
         else:  
           record['Flat_id'] = aux['id']
@@ -153,14 +153,14 @@ def load_resources(dbClient, data):
         dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
         aux = dbClient.fetch()
         if aux is None:
-          log += 'Fila: ' + str(irow+2).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
           ok = False
         else:  
           record['Flat_id'] = aux['id']
         dbClient.select('SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:16],))
         aux = dbClient.fetch()
         if aux is None:
-          log += 'Fila: ' + str(irow+2).zfill(4) + '. Habitación "' + record['Code'][:12] + '" no encontrada\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Habitación "' + record['Code'][:12] + '" no encontrada\n'
           ok = False
         else:  
           record['Room_id'] = aux['id']
@@ -183,7 +183,7 @@ def load_resources(dbClient, data):
         dbClient.select('SELECT id FROM "Resource"."Resource_amenity_type" WHERE "Code" = %s', (item,))
         aux = dbClient.fetch()
         if aux is None:
-          log += 'Fila: ' + str(irow+2).zfill(4) + '. Extra "' + item + '" no encontrado\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Extra "' + item + '" no encontrado\n'
           ok = False
         else:  
           dbClient.execute('''
@@ -197,7 +197,7 @@ def load_resources(dbClient, data):
         dbClient.select('SELECT id FROM "Resource"."Resource_status" WHERE "Name" = %s', (unavail['unavailable'],))
         aux = dbClient.fetch()
         if aux is None:
-          log += 'Fila: ' + str(irow+2).zfill(4) + '. Código de no disponibilidad "' + unavail['unavailable'] + '" no encontrado\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Código de no disponibilidad "' + unavail['unavailable'] + '" no encontrado\n'
           ok = False
         else:  
           dbClient.execute('''
@@ -209,7 +209,7 @@ def load_resources(dbClient, data):
     except Exception as error:
       logger.error(error)
       dbClient.rollback()
-      log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'
+      log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
       log += str(error) + '\n'
       ok = False
 

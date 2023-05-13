@@ -45,7 +45,7 @@ def load_prices(dbClient, data):
           dbClient.select('SELECT id FROM "Building"."Building" WHERE "Code"=%s', (cell.value,))
           aux = dbClient.fetch()
           if aux is None:
-            log += 'Fila: ' + str(irow+2).zfill(4) + '. Edificio "' + str(cell.value) + '" no encontrado\n'
+            log += 'Fila: ' + str(irow+3).zfill(4) + '. Edificio "' + str(cell.value) + '" no encontrado\n'
             ok = False
           else:  
             record['Building_id'] = aux['id']
@@ -57,7 +57,7 @@ def load_prices(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', (cell.value,))
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
               ok = False
             else:  
               id = aux['id']
@@ -70,7 +70,7 @@ def load_prices(dbClient, data):
             dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', (cell.value,))
             aux = dbClient.fetch()
             if aux is None:
-              log += 'Fila: ' + str(irow+2).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
               ok = False
             else:  
               id = aux['id']
@@ -99,7 +99,7 @@ def load_prices(dbClient, data):
 
       logger.error(error)
       dbClient.rollback()
-      log += 'Fila: ' + str(irow+2).zfill(4) + '. Contiene datos erróneos.\n'
+      log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
       log += str(error) + '\n'
       ok = False
 
