@@ -435,6 +435,56 @@ def bill_group_rent(dbClient):
 
 
 # ###################################################
+# Generate monthly bills for group bookints
+# ###################################################
+
+def pay_bills(dbClient):
+
+  # Capture exceptions
+  try:
+
+    # Get all bills without payment
+    dbClient.select('''
+    SELECT "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
+    FROM "Billing"."Invoice" 
+    WHERE "Payment_id" IS NULL''')
+    data = dbClient.fetchall()
+
+    # Loop thru bills
+    for item in data:
+
+      # Debug
+      logger.debug(item)
+
+      dbClient.execute('''
+        INSERT INTO "Billing"."Payment" 
+        ("Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type")
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ''', 
+        (
+          item['Payment_method_id'],
+          item['Customer_id'], 
+          item['Booking_id'], 
+          item['Booking_group_id'], 
+          item['Total'], 
+          item['Issued_date'], 
+          item['Concept'], 
+          'servicios'
+        )
+      )
+        
+    # End
+    dbClient.commit()
+    return
+
+  # Process exception
+  except Exception as error:
+    logger.error(error)
+    dbClient.rollback()
+    return
+
+
+# ###################################################
 # Billing process
 # ###################################################
 
@@ -484,6 +534,9 @@ def main():
   # 2. Monthly billing process
   bill_rent(dbClient)
   bill_group_rent(dbClient)
+
+  # 3. Generate payment for each manual bill
+  pay_bills(dbClient)
 
   # Disconnect
   dbClient.connect()
