@@ -445,9 +445,9 @@ def pay_bills(dbClient):
 
     # Get all bills without payment
     dbClient.select('''
-    SELECT "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
+    SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
     FROM "Billing"."Invoice" 
-    WHERE "Payment_id" IS NULL''')
+    WHERE "Issued" AND "Payment_id" IS NULL''')
     data = dbClient.fetchall()
 
     # Loop thru bills
@@ -460,6 +460,7 @@ def pay_bills(dbClient):
         INSERT INTO "Billing"."Payment" 
         ("Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type")
         VALUES (%s, %s, %s, %s, %s, %s, %s)
+        RETURNING ID
         ''', 
         (
           item['Payment_method_id'],
@@ -472,7 +473,11 @@ def pay_bills(dbClient):
           'servicios'
         )
       )
+      payid = dbClient.returning()[0]
         
+      # Update bill
+      dbClient.execute('UPDATE "Billing"."Invoice" SET "Payment_id" = %s WHERE id = %s', (payid, item['id']))
+
     # End
     dbClient.commit()
     return
