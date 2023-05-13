@@ -7,8 +7,6 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
-
   -- Invoice id
   IF TG_OP = 'DELETE' THEN
   	invoice_id = OLD."Invoice_id";
@@ -20,7 +18,7 @@ BEGIN
   SELECT SUM("Amount")
   INTO total
   FROM "Billing"."Invoice_line"
-  WHERE "Invoice_id"= invoice_id;
+  WHERE "Invoice_id" = invoice_id;
 
   -- Actualiza el importe
   UPDATE "Billing"."Invoice" 

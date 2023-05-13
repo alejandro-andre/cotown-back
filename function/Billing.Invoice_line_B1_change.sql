@@ -7,8 +7,6 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
-
   -- Invoice id
   IF TG_OP = 'DELETE' THEN
   	invoice_id = OLD."Invoice_id";
