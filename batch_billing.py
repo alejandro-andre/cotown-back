@@ -459,7 +459,7 @@ def pay_bills(dbClient):
       dbClient.execute('''
         INSERT INTO "Billing"."Payment" 
         ("Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type")
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING ID
         ''', 
         (
