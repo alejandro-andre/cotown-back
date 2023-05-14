@@ -13,8 +13,8 @@ BEGIN
   user_name := CONCAT('X', LPAD(NEW.id::text, 6, '0'));
 
   -- Inserta el usuario en Airflows
-  INSERT INTO "Models"."User" ("username", "email", "password") 
-  VALUES (user_name, NEW."Email", 'Passw0rd!') 
+  INSERT INTO "Models"."User" ("username", "email", "password", "emailValidated") 
+  VALUES (user_name, NEW."Email", 'Passw0rd!', FALSE) 
   ON CONFLICT ("username") DO UPDATE SET "email" = NEW."Email"
   RETURNING id INTO user_id;
  
