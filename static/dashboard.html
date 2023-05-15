@@ -12,6 +12,9 @@ a{color: #000; text-decoration: none;}
 .subtitle {line-height: 2em; font-size: .9rem; text-align: center; background-color: #ddd;}
 .value {line-height: 2em; font-size: 2rem; text-align: center; border: 1px dotted black;}
 .active {background-color: #00BFB2;}
+.arrow {width: 14px; opacity:0;}
+.up {opacity:1; transform: rotate(0deg);}
+.down {opacity:1;transform: rotate(180deg);}
 </style>
 <body>
 <h1>Dashboard</h1>
@@ -47,9 +50,15 @@ a{color: #000; text-decoration: none;}
     <div id="" class="value">123</div>
 </div>
 <div class="grid-container">
-  <div class="grid-title">Estado</div>
-  <div class="grid-title">Residente</div>
-  <div class="grid-title">Fecha desde</div>
+  <div class="grid-title">Estado
+    <svg class="arrow up" focusable="false" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"></path></svg>
+  </div>
+  <div class="grid-title">Residente
+    <svg class="arrow down" focusable="false" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"></path></svg>
+  </div>
+  <div class="grid-title">Fecha desde
+    <svg class="arrow" focusable="false" viewBox="0 0 24 24"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"></path></svg>
+  </div>
   <div class="grid-title">Fecha hasta</div>
   <div class="grid-title">Tipo de recurso</div>
   <div class="grid-title">Recurso</div>
