@@ -1,4 +1,8 @@
 -- Botones de reserva
+DECLARE
+
+   pending_payments INTEGER;
+
 BEGIN
 
   RESET ROLE;
@@ -20,7 +24,9 @@ BEGIN
 
   -- Boton checkout
   NEW."Button_checkout" := '';
-  IF NEW."Status" = 'checkout' THEN
+  -- Comprobamos que el usuario no tenga pagos pendientes.
+  SELECT COUNT(*) INTO pending_payments FROM "Billing"."Payment"  WHERE "Payment"."Booking_id" = NEW.id AND "Payment"."Payment_date" IS NULL;
+  IF NEW."Status" = 'checkout' AND pending_payments = 0 THEN    
      NEW."Button_checkout" := CONCAT('https://dev.cotown.ciber.es/booking/', NEW.id, '/status/devolvergarantia');
   END IF;
 
