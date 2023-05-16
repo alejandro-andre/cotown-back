@@ -354,7 +354,7 @@ def generate_doc_file(context, template):
 # Generate (rent and services) contracts
 # ######################################################
 
-def get_template(apiClient, tpl, rtype, name):
+def get_template(apiClient, tpl, rtype, provider):
 
     # Fix
     if rtype == 'plaza':
@@ -362,26 +362,26 @@ def get_template(apiClient, tpl, rtype, name):
     
     # No templates
     if tpl is None:
-      logger.warning(name + ' no tiene plantillas de contrato')
+      logger.warning(provider + ' no tiene plantillas de contrato')
       return None, None
     
     # Look for proper template
     fid = None
-    name = ''
+    fname = ''
     for c in tpl:
       if rtype == c['Type']:
         fid = c['id']
-        name = c['Name']
+        fname = c['Name']
         break
     if fid is None:
-      logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
+      logger.warning(provider + ' no tiene plantilla de contrato de ' + rtype)
       return None, None
 
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
-      logger.warning(name + ' no se encuentra la plantilla de contrato de ' + rtype)
-    return template, name
+      logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + rtype)
+    return template, fname
     
 
 def do_contracts(apiClient, id):
