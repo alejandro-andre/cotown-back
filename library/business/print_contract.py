@@ -356,17 +356,13 @@ def generate_doc_file(context, template):
 
 def get_template(apiClient, tpl, rtype, name):
 
-    # No template required
-    if name is None:
-      return None, None
-
     # Fix
     if rtype == 'plaza':
       rtype = 'habitacion'
     
     # No templates
     if tpl is None:
-      logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
+      logger.warning(name + ' no tiene plantillas de contrato')
       return None, None
     
     # Look for proper template
@@ -384,7 +380,7 @@ def get_template(apiClient, tpl, rtype, name):
     # Get template
     template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
     if template is None:
-      logger.warning(name + ' no tiene plantilla de contrato de ' + rtype)
+      logger.warning(name + ' no se encuentra la plantilla de contrato de ' + rtype)
     return template, name
     
 
