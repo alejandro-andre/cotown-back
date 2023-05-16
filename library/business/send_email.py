@@ -179,9 +179,8 @@ def do_email(apiClient, email):
     apiClient.call(query, variables)
 
     # Debug
-    #if email['Customer']['Email'] != 'alejandroandref@gmail.com' and \
-    #   email['Customer']['Email'] != 'cesar.ramos@experis.es':
-    #    return
+    if '@test.com' in email['Customer']['Email']:
+        return
 
     # Send email
     if subject != 'ERROR':
