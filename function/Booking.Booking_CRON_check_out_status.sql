@@ -3,6 +3,6 @@ BEGIN
   RESET ROLE;
   UPDATE "Booking"."Booking" 
   SET "Status"='checkout' 
-  WHERE "Booking"."Check_out" <= CURRENT_DATE 
+  WHERE CURRENT_DATE >= GREATEST("Booking"."Check_out", "Booking"."Date_to")
   AND "Booking"."Status"='inhouse';
 END;

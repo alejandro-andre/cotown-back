@@ -3,6 +3,6 @@ BEGIN
   RESET ROLE;
   UPDATE "Booking"."Booking" 
   SET "Status"='checkin' 
-  WHERE "Booking"."Check_in" <= CURRENT_DATE 
-  AND "Booking"."Status"='checkinconfirmado';
+  WHERE CURRENT_DATE >= GREATEST("Booking"."Check_in", "Booking"."Date_from")
+  AND ("Booking"."Status"='checkinconfirmado' OR "Booking"."Status"='contrato');
 END;
