@@ -53,13 +53,6 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Null resource? Delete prices
-  IF NEW."Resource_id" IS NULL THEN
-    DELETE FROM "Booking"."Booking_price"
-    WHERE "Booking_id" = NEW.id;
-    RETURN NEW;
-  END IF;
-
   -- Prices already calculated and resource or dates not changed? Ignore
   SELECT COUNT(*)
   INTO num
@@ -88,7 +81,7 @@ BEGIN
   INTO incpct
   FROM "Resource"."Resource_amenity" ra
   INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id"
-  WHERE ra."Resource_id" = NEW.id
+  WHERE ra."Resource_id" = NEW."Resource_id"
   AND rat."Increment" > 0;
  
   -- Get rate multiplier
@@ -154,7 +147,7 @@ BEGIN
   multiplier := multiplier * (1 + (incpct / 100.0));
   cy_rent := cy_rent * multiplier;
   ny_rent := ny_rent * multiplier;
- 
+
   -- Current year prices
   m_rent := cy_rent;
   m_services := cy_services;
