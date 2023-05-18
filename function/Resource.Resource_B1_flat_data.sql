@@ -41,7 +41,6 @@ BEGIN
 
   -- Asigna los datos
   NEW."Building_id" := reg."Building_id";
-  NEW."Flat_type_id" := reg."Flat_type_id";
   NEW."Owner_id" := reg."Owner_id";
   NEW."Service_id" := reg."Service_id";
   NEW."Billing_type" := reg."Billing_type";
