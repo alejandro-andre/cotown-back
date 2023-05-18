@@ -210,7 +210,11 @@ def load_resources(dbClient, data):
       logger.error(error)
       dbClient.rollback()
       log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
-      log += str(error) + '\n'
+      e = str(error)
+      if (e.startswith('!!!')):
+        log += e.split('!!!')[2]
+      else:
+        log += e + '\n'
       ok = False
 
     # Count oks and errors
