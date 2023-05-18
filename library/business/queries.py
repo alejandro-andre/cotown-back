@@ -288,15 +288,15 @@ def availability(dbClient, date_from, date_to, building, flat_type, place_type):
     FROM "Resource"."Resource" r
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
-    INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
+    LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
     LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
     AND bd."Date_from" <= %s 
     AND bd."Date_to" >= %s
     WHERE bd.id IS NULL 
-    AND rft."Code" LIKE %s
-    AND rpt."Code" LIKE %s
     AND b."Code" LIKE %s
-    ORDER BY r."Code";''', (date_to, date_from, flat_type + '%', place_type + '%', building + '%'))
+    AND rft."Code" LIKE %s
+    AND (rpt."Code" LIKE %s OR rpt.id IS NULL)
+    ORDER BY r."Code";''', (date_to, date_from, building + '%', flat_type + '%', place_type + '%'))
     aux = dbClient.fetchall()
     dbClient.disconnect()
     list = [item for sub_list in aux for item in sub_list]
