@@ -29,7 +29,14 @@ BEGIN
   -- SOLICITUD PAGADA o ALTERNATIVA PAGADA a CONFIRMADA
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
-    NEW."Status" := 'confirmada';
+    -- Si hay que pagar garantía, pasa a confirmada
+    IF NEW."Deposit" > 0 THEN
+      NEW."Status" := 'confirmada';
+    -- Si no hay que pagar garantía, pasa a firma contrato
+    ELSE
+      NEW."Deposit_actual" = 0;
+      NEW."Status" := 'firmacontrato';
+    END IF;
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
