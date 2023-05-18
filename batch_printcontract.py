@@ -65,13 +65,12 @@ def main():
     bookings = apiClient.call('''
     {
       data: Booking_BookingList ( 
-        orderBy: [{ attribute: id }]
         where: { 
           AND: [
-            { Status: { EQ: firmacontrato } },
-            { Contract_rent: { IS_NULL: true } } 
-          ] 
-        }
+            { Status: { IN: [firmacontrato, contrato, checkinconfirmado, checkin, inhouse] } },
+            { Contract_rent: { IS_NULL: true } }
+          ]
+        } 
       ) { id }
     }
     ''')
