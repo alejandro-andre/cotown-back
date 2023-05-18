@@ -212,7 +212,7 @@ def load_resources(dbClient, data):
       log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
       e = str(error)
       if (e.startswith('!!!')):
-        log += e.split('!!!')[2]
+        log += e.split('!!!')[2] + '\n'
       else:
         log += e + '\n'
       ok = False
