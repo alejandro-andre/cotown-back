@@ -47,10 +47,17 @@ def runapp():
 
 
   # ###################################################
+  # Constants
+  # ###################################################
+
+  API_PREFIX = '/api/v1'
+
+
+  # ###################################################
   # Environment variables
   # ###################################################
 
-  BACK   = str(os.environ.get('COTOWN_BACK'))
+  BACK     = str(os.environ.get('COTOWN_BACK'))
   SERVER   = str(os.environ.get('COTOWN_SERVER'))
   DATABASE = str(os.environ.get('COTOWN_DATABASE'))
   DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
@@ -346,26 +353,26 @@ def runapp():
       apiClient.auth(user=GQLUSER, password=GQLPASS)
     
   # Payment functions
-  app.add_url_rule('/notify', view_func=post_notification, methods=['POST'])
-  app.add_url_rule('/pay/<int:id>', view_func=get_pay, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
+  app.add_url_rule(API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
 
   # User management functions
-  app.add_url_rule('/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
-  app.add_url_rule('/provideruser/del/<int:id>', view_func=get_provider_user_del, methods=['GET'])
-  app.add_url_rule('/customeruser/add/<int:id>', view_func=get_customer_user_add, methods=['GET'])
-  app.add_url_rule('/customeruser/del/<int:id>', view_func=get_customer_user_del, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/provideruser/del/<int:id>', view_func=get_provider_user_del, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/customeruser/add/<int:id>', view_func=get_customer_user_add, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/customeruser/del/<int:id>', view_func=get_customer_user_del, methods=['GET'])
 
   # Special queries
-  app.add_url_rule('/availability', view_func=post_availability, methods=['POST'])
-  app.add_url_rule('/dashboard', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule('/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule('/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
-  app.add_url_rule('/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
+  app.add_url_rule(API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Other functions
-  app.add_url_rule('/hi', view_func=get_hello, methods=['GET'])
-  app.add_url_rule('/html/<path:filename>', view_func=get_html, methods=['GET'])
-  app.add_url_rule('/export/<string:name>', view_func=get_export, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
 
   # Return app
   return app
