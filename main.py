@@ -288,12 +288,12 @@ def runapp():
   
     # Redsys data
     params = pay(
-      order   = payment['Payment_order'], 
-      amount  = int(100 * float(payment['Amount'])), 
-      id    = payment['id'],
-      urlok   = 'https://' + SERVER + '/admin/Billing.PaymentOK/external?id=' + payment['Payment_order'],
-      urlko   = 'https://' + SERVER + '/admin/Billing.PaymentKO/external?id=' + payment['Payment_order'],
-      urlnotify = 'https://' + BACK   + '/notify'
+      order     = payment['Payment_order'], 
+      amount    = int(100 * float(payment['Amount'])), 
+      id        = payment['id'],
+      urlok     = 'https://' + BACK + '/customer/pago_ok?id=' + payment['Payment_order'],
+      urlko     = 'https://' + BACK + '/customer/pago_ko?id=' + payment['Payment_order'],
+      urlnotify = 'https://' + BACK + API_PREFIX + '/notify'
     )
     logger.debug(params)
 

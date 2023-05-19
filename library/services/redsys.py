@@ -57,16 +57,16 @@ def pay(order, amount, id, urlok, urlko, urlnotify):
 
   # Transaction data
   data = {
-    'DS_MERCHANT_CURRENCY'     : MERCHANT_CURRENCY,
+    'DS_MERCHANT_CURRENCY'       : MERCHANT_CURRENCY,
     'DS_MERCHANT_MERCHANTCODE'   : MERCHANT_MERCHANTCODE,
-    'DS_MERCHANT_TERMINAL'     : MERCHANT_TERMINAL,
+    'DS_MERCHANT_TERMINAL'       : MERCHANT_TERMINAL,
     'DS_MERCHANT_TRANSACTIONTYPE': MERCHANT_TRANSACTION_PAY,
-    'DS_MERCHANT_URLOK'      : urlok,
-    'DS_MERCHANT_URLKO'      : urlko,
-    'DS_MERCHANT_MERCHANTURL'  : urlnotify,
+    'DS_MERCHANT_URLOK'          : urlok,
+    'DS_MERCHANT_URLKO'          : urlko,
+    'DS_MERCHANT_MERCHANTURL'    : urlnotify,
     'DS_MERCHANT_MERCHANTDATA'   : str(id),
-    'DS_MERCHANT_ORDER'      : str(order),
-    'DS_MERCHANT_AMOUNT'     : str(amount)
+    'DS_MERCHANT_ORDER'          : str(order),
+    'DS_MERCHANT_AMOUNT'         : str(amount)
   }
 
   # Merchant parameters
