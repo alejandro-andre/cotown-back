@@ -80,7 +80,7 @@ def export_to_excel(apiClient, name, variables=None):
             for item in row[c]:
               for key in columns[c].split(':')[1:]:
                 item = item[key]
-              values.append(item)
+              values.append(str(item))
             cell.value = ','.join(values)
           except:
             cell.value = '[ERROR]'

@@ -26,6 +26,7 @@
     Amenities: Resource_amenityListViaResource_id {
       Amenity: Resource_amenity_typeViaAmenity_type_id {
         Code
+        Increment
       }
     }
     Unavailable: Resource_availabilityListViaResource_id {
