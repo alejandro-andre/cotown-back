@@ -41,7 +41,7 @@ window.addEventListener('pageshow', function(event) {
     window.location.reload(); 
   }
 });
-xhr.open('GET', window.location.origin + '/pay/' + id, true);
+xhr.open('GET', window.location.origin + '/api/v1/pay/' + id, true);
 xhr.onload = function() {
   if (xhr.status === 200) {
     const datos = JSON.parse(xhr.responseText);
