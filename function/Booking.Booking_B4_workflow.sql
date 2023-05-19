@@ -88,7 +88,7 @@ BEGIN
   END IF;
 
   -- No ha habido cambios de estado
-  IF (NEW."Status" = OLD."Status") THEN
+  IF (NEW."Status" = OLD."Status" AND  OLD."Resource_id" = NEW."Resource_id") THEN
     RETURN NEW;
   END IF;
 
@@ -130,7 +130,7 @@ BEGIN
 
   -- A CONFIRMADA 
   -- Inserta pago de garantía pendiente y envía mail
-  IF (NEW."Status" = 'confirmada' ) THEN
+  IF (NEW."Status" = 'confirmada') THEN
     -- Borra fecha expiración
     NEW."Expiry_date" := NULL;
     -- Actualiza la fecha de confirmación
@@ -138,7 +138,8 @@ BEGIN
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- Depósito
-    IF (NEW."Deposit" > 0) THEN
+    DELETE FROM "Billing"."Payment" WHERE "Booking_id" =  NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
+    IF (NEW."Deposit" > 0 ) THEN
       INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
     END IF;
     -- EMail
