@@ -107,6 +107,7 @@ def runapp():
       except:
         pass
       cache[token] = result
+      return result
 
     # Debug / Remove in production
     apiClient.auth(user=GQLUSER, password=GQLPASS)
