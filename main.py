@@ -11,6 +11,7 @@
 # System includes
 import os
 from flask import Flask, request, abort, send_file, send_from_directory
+from cachetools import TTLCache
 
 # Logging
 import logging
@@ -19,11 +20,8 @@ logger = logging.getLogger('COTOWN')
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
-
-from library.services.keycloak import create_keycloak_user, delete_keycloak_user
 from library.services.redsys import pay, validate
 from library.business.export import export_to_excel
-from library.business.send_email import smtp_mail
 from library.business.queries import *
 
 
@@ -74,10 +72,49 @@ def runapp():
 
   # graphQL API
   apiClient = APIClient(SERVER)
-  token = ''
 
   # DB API
   dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
+
+
+  # #####################################
+  # Cache
+  # #####################################
+
+  cache = TTLCache(maxsize=100, ttl=60)
+
+
+  # #####################################
+  # Validate token
+  # #####################################
+
+  def validate_token(token):
+
+    # Check cache first
+    if token in cache:
+        return cache[token]
+
+    # Forbidden by default
+    result = 403
+
+    # Call API to check if token is valid
+    if token is not None:
+      try:
+        apiClient.auth(token)
+        result = apiClient.call('{ user: getCurrentUser { currentUser } }')
+        if result['user']['currentUser'] != 'anonymous':
+          result = 0
+      except:
+        pass
+      cache[token] = result
+
+    # Debug / Remove in production
+    apiClient.auth(user=GQLUSER, password=GQLPASS)
+    logger.warning('Acceso sin token')
+    result = 0
+
+    # Forbidden
+    return result
 
 
   # ###################################################
@@ -129,100 +166,7 @@ def runapp():
     response = send_file(result, mimetype='application/vnd.ms-excel')
     response.headers['Content-Disposition'] = 'inline; filename="' + name + '.xlsx"'
     return response    
-
-
-  # ###################################################
-  # Create provider user
-  # ###################################################
-
-  def get_provider_user_add(id):
-    
-    # Get provider
-    data = get_provider(dbClient, id)
-    logger.debug('Provider->')
-    logger.debug(data)
-    if data is not None:
-      logger.debug('Provider found')
-    else:
-      return 'ko'
-  
-    # Create airflows account
-    data['User_name'] = 'p' + data['Document']
-    if create_airflows_user(dbClient, data, 200):
-      logger.debug('Provider created in Airflows')
-    else:
-      return 'ko'
-
-    # Create keycloak account
-    if create_keycloak_user('p' + str(data['id']), data['Name'], data['Email'], data['User_name']):
-      logger.debug('Provider created in Keycloak')
-    else:
-      return 'ko'
-
-    # Ok
-    return 'ok'
-
-
-  # ###################################################
-  # Create customer user
-  # ###################################################
-
-  def get_customer_user_add(id):
-
-    # Get customer
-    data = get_customer(dbClient, id)
-    logger.debug('Customer->')
-    logger.debug(data)
-    if data is not None:
-      logger.debug('Customer found')
-    else:
-      return 'ko'
-  
-    # Create airflows account
-    data['User_name'] = 'c' + str(id).zfill(6)
-    if create_airflows_user(dbClient, data, 300):
-      logger.debug('Customer created in Airflows')
-    else:
-      return 'ko'
-
-    # Create keycloak account
-    if create_keycloak_user('c' + str(data['id']), data['Name'], data['Email'], data['User_name']):
-      logger.debug('Customer created in Keycloak')
-    else:
-      return 'ko'
-
-    # Send email
-    subject = 'Bienvenido'
-    body = 'Accede a https://' + SERVER
-    smtp_mail(data['Email'], subject, body)
-
-    # Ok
-    return 'ok'
-
-
-  # ###################################################
-  # Delete provider user
-  # ###################################################
-
-  def get_provider_user_del(id):
-
-    if delete_keycloak_user('p' + str(id)):
-      logger.debug('Provider deleted in keycloak')
-      return 'ok'
-    return 'ko'
-    
-
-  # ###################################################
-  # Delete customer user
-  # ###################################################
-
-  def get_customer_user_del(id):
-
-    if delete_airflows_user(dbClient, id):
-      logger.debug('Customer deleted in airflows')
-      return 'ok'
-    return 'ko'
-         
+        
 
   # ###################################################
   # Special queries
@@ -345,36 +289,51 @@ def runapp():
     # Debug
     logger.info('Recibido ' + request.path)
 
-    # Get token if present
-    token = request.args.get('token')  
-    if token is not None:
-      apiClient.auth(token)
-    else:
-      apiClient.auth(user=GQLUSER, password=GQLPASS)
-    
-  # Payment functions
-  app.add_url_rule(API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
-  app.add_url_rule(API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+    # Get & validate token, if present
+    value = validate_token(request.args.get('access_token'))
 
-  # User management functions
-  app.add_url_rule(API_PREFIX + '/provideruser/add/<int:id>', view_func=get_provider_user_add, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/provideruser/del/<int:id>', view_func=get_provider_user_del, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/customeruser/add/<int:id>', view_func=get_customer_user_add, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/customeruser/del/<int:id>', view_func=get_customer_user_del, methods=['GET'])
+    # Skip token validaton on public endpoints
+    if request.endpoint in ('get_hello', 'post_notification'):
+      return
 
-  # Special queries
-  app.add_url_rule(API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
-  app.add_url_rule(API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
+    # Token invalid?
+    if value != 0:
+      abort(value) 
+
+
+  # ---------------------------------
+  # Requests without token    
+  # ---------------------------------
 
   # Other functions
   app.add_url_rule(API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
+
+  # Payment functions
+  app.add_url_rule(API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
+
+  # ---------------------------------
+  # Requests with  token    
+  # ---------------------------------
+
+  # Payment functions
+  app.add_url_rule(API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+
+  # Planning
+  app.add_url_rule(API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
+
+  # Dashboard
+  app.add_url_rule(API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule(API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
+
+  # Status buttons
+  app.add_url_rule(API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
+
+  # Export
   app.add_url_rule(API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
   app.add_url_rule(API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
 
-  # Return app
+    # Return app
   return app
 
 
