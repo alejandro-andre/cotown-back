@@ -1,32 +1,36 @@
 <html>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Flex">
-<style>
-body{font-family: 'Roboto Flex',sans-serif; font-weight: 400; margin: 0; padding: 0;}
-h1{font-size: 1.25rem; font-weight: 500; padding: 20px 15px 15px 25px;}
-a{color: #000; text-decoration: none;}
-.row{width: 100%; border-bottom: 1px solid #ddd; padding: 15px 15px 15px 30px; font-size: 0.9rem; }
-</style>
+
+<head>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Flex">
+
+  <style>
+  body{font-family: 'Roboto Flex',sans-serif; font-weight: 400; margin: 0; padding: 0;}
+  h1{font-size: 1.25rem; font-weight: 500; padding: 20px 15px 15px 25px;}
+  a{color: #000; text-decoration: none;}
+  .row{width: 100%; border-bottom: 1px solid #ddd; padding: 15px 15px 15px 30px; font-size: 0.9rem; }
+  </style>
+
+</head>
+
 <body>
-<script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("access_token");
-</script>
-<h1>Descargas de datos</h1>
-<div class="row" style="font-size:.75em;color: rgba(0, 0, 0, 0.54);">Datos a descargar</div>
-<div class="row">
-  <a href="/api/v1/export/propietarios">Propietarios</a>
-</div>
-<div class="row">
-  <a href="/api/v1/export/edificios">Edificios</a>
-</div>
-<div class="row">
-  <a href="/api/v1/export/recursos">Recursos, precios y tarifas</a>
-</div>
-<div class="row">
-  <a href="/api/v1/export/precios">Precios</a>
-</div>
-<div class="row">
-  <a href="/api/v1/export/tarifas">Tarifas</a>
-</div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("access_token");
+    function link(url) { window.location.href = url + '?access_token=' + token; }
+  </script>
+
+  <h1>Descargas de datos</h1>
+
+  <div class="row" style="font-size:.75em;color: rgba(0, 0, 0, 0.54);">Datos a descargar</div>
+
+  <div class="row"><a href="#" onclick="link('/api/v1/export/propietarios')">Propietarios</a></div>
+  <div class="row"><a href="#" onclick="link('/api/v1/export/edificios')">Edificios</a></div>
+  <div class="row"><a href="#" onclick="link('/api/v1/export/recursos')">Recursos, precios y tarifas</a></div>
+  <div class="row"><a href="#" onclick="link('/api/v1/export/precios')">Precios</a></div>
+  <div class="row"><a href="#" onclick="link('/api/v1/export/tarifas')">Tarifas</a></div>
+
 </body>
+
 </html>
