@@ -99,7 +99,7 @@ query BookingById ($id: Int!) {
           Owner_signer_id_type: Name
         }
         Owner_signer_id: Signer_document
-        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
+        Contract_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
       }
       ProviderViaService_id {
         Id_typeViaId_type_id {
@@ -119,7 +119,6 @@ query BookingById ($id: Int!) {
           Service_signer_id_type: Name
         }
         Service_signer_id: Signer_document
-        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
       }
     }
     CustomerViaCustomer_id {
@@ -236,7 +235,7 @@ query Booking_groupById ($id: Int!) {
                 Owner_signer_id_type: Name
                 }
                 Owner_signer_id: Signer_document
-                Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
+                Contract_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
             ProviderViaService_id {
                 Id_typeViaId_type_id {
@@ -256,7 +255,6 @@ query Booking_groupById ($id: Int!) {
                 Service_signer_id_type: Name
                 }
                 Service_signer_id: Signer_document
-                Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
         }
           Id_typeViaId_type_id {
@@ -354,33 +352,33 @@ def generate_doc_file(context, template):
 # Generate (rent and services) contracts
 # ######################################################
 
-def get_template(apiClient, tpl, rtype, provider):
+def get_template(apiClient, template, resource_type, provider, contract_type):
 
-    # Fix
-    if rtype == 'plaza':
-      rtype = 'habitacion'
-    
     # No templates
-    if tpl is None:
+    if template is None:
       logger.warning(provider + ' no tiene plantillas de contrato')
       return None, None
+    
+    # Fix
+    if resource_type == 'plaza':
+      resource_type = 'habitacion'
     
     # Look for proper template
     fid = None
     fname = ''
-    for c in tpl:
-      if rtype == c['Type']:
+    for c in template:
+      if resource_type == c['Type']:
         fid = c['id']
         fname = c['Name']
         break
     if fid is None:
-      logger.warning(provider + ' no tiene plantilla de contrato de ' + rtype)
+      logger.warning(provider + ' no tiene plantilla de contrato de ' + resource_type)
       return None, None
 
     # Get template
-    template = apiClient.getFile(fid, 'Provider/Provider_template', 'Template')
+    template = apiClient.getFile(fid, 'Provider/Provider_template', contract_type)
     if template is None:
-      logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + rtype)
+      logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + resource_type)
     return template, fname
     
 
@@ -398,7 +396,7 @@ def do_contracts(apiClient, id):
     context = flatten_json(result['data'][0])
 
     # Generate rent contract
-    template, name = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'])
+    template, name = get_template(apiClient, context['Contract_template'], context['Resource_type'], context['Owner_name'], 'Rent')
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -408,15 +406,14 @@ def do_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if context['Owner_id'] != context['Service_id']:
-      template, name = get_template(apiClient, context['Service_template'], context['Resource_type'], context['Service_name'])
-      if template is not None:
-        file = generate_doc_file(context, template.content)
-        response = requests.post(
-          'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
-          files={'file': file}
-        )
-        json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+    template, name = get_template(apiClient, context['Contract_template'], context['Resource_type'], context['Owner_name'], 'Services')
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''
@@ -457,7 +454,7 @@ def do_group_contracts(apiClient, id):
     room = context['Room'][0]
 
     # Generate rent contract
-    template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
+    template, name = get_template(apiClient, room['Contract_template'], 'grupo', room['Owner_name'], 'Rent')
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -467,15 +464,14 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if context['Service_id'] is not None and context['Owner_id'] != context['Service_id']:
-      template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
-      if template is not None:
-        file = generate_doc_file(context, template.content)
-        response = requests.post(
-          'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
-          files={'file': file}
-        )
-        json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+    template, name = get_template(apiClient, room['Contract_template'], 'grupo', room['Service_name'], 'Services')
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''
