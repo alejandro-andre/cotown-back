@@ -81,7 +81,13 @@ BEGIN
     NEW."Status" := 'cancelada';
   END IF;
 
-  -- DEVOLVER GARANTIA a FINALIZAD
+  -- DESCARTADA PAGADA a DESCARTADA
+  -- Actualiza el estado a "descartada" cuando se devuelve el booking fee
+  IF (NEW."Status" = 'descartadapagada' AND NEW."Booking_fee_returned" IS NOT NULL) THEN
+    NEW."Status" := 'descartada';
+  END IF;
+
+  -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
   IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
     NEW."Status" := 'finalizada';
