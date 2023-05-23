@@ -17,7 +17,6 @@ BEGIN
 
   -- Obtiene crea un pago con el booking fee
   SELECT "Booking_fee" INTO booking_fee_amount FROM "Building"."Building" WHERE id = NEW."Building_id";
-  NEW."Booking_fee" = booking_fee_amount;
   INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, booking_fee_amount, CURRENT_DATE, 'Booking fee', 'booking');
 
   -- Log
@@ -26,6 +25,8 @@ BEGIN
   -- Email
   INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
 
+  -- Update booking fee
+  UPDATE "Booking"."Booking" SET "Booking_fee" = booking_fee_amount WHERE id = NEW.id;
   RETURN NEW;
 
 END;

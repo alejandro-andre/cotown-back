@@ -1,22 +1,23 @@
+-- Audit
 DECLARE
 
-	username VARCHAR;
+  user_name VARCHAR;
   record TEXT;
-	changes TEXT;
+  changes TEXT;
 
 BEGIN
 
-  username := CURRENT_USER;
+  user_name := CURRENT_USER;
   RESET ROLE;
  
   IF TG_OP = 'INSERT' THEN
-    NEW."Created_by" := username;
+    NEW."Created_by" := user_name;
     NEW."Created_at" := NOW();
     record:= to_jsonb(NEW)::TEXT;
   END IF;
 
   IF TG_OP = 'UPDATE' THEN
-    NEW."Updated_by" := username;
+    NEW."Updated_by" := user_name;
     NEW."Updated_at" := NOW(); 
     record = to_jsonb(OLD);
     WITH jsonb_diff AS (
@@ -38,8 +39,13 @@ BEGIN
   END IF;
   
   INSERT INTO "Admin"."Log" ("Table", "Action", "User", "When", "Record", "Changes")
-  VALUES (TG_TABLE_NAME, TG_OP, username, NOW(), record, changes);
+  VALUES (TG_TABLE_NAME, TG_OP, user_name, NOW(), record, changes);
   
+  EXECUTE 'SET ROLE "' || user_name || '"';
+
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
   RETURN NEW;
 
 END;
