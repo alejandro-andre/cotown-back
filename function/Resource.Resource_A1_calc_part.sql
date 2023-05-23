@@ -10,7 +10,7 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  --RESET ROLE;
 
   IF pg_trigger_depth() = 1 THEN
   

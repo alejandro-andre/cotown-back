@@ -6,7 +6,7 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  --RESET ROLE;
   
   -- Borra viejos precios 
   DELETE FROM "Booking"."Booking_group_price"

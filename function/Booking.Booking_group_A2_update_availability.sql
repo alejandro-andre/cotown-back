@@ -18,7 +18,7 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  --RESET ROLE;
   
   -- Borra las reservas del grupo
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;

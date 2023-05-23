@@ -5,7 +5,7 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  --RESET ROLE;
   
   -- Boton descartar
   NEW."Button_discard" := '';

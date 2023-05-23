@@ -133,7 +133,6 @@ print('Filas originales...........: ', df.shape[0])
 df['Email'] = df['Email'].str.split('@').str[0] + '@test.com'
 
 # TO DO: CIFs
-# TO DO: Validate birth-dates
 
 # 1. Remove columns
 df.drop('id', axis=1, inplace=True)

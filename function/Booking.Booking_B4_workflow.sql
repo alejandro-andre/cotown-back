@@ -6,7 +6,7 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  --RESET ROLE;
   
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada

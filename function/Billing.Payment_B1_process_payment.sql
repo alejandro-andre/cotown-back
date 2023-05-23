@@ -8,13 +8,13 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  --RESET ROLE;
   
   -- Asigna el link del boton para el pago por TPV
-  IF (NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL) THEN
-    NEW."Pay" := CONCAT('/functions/Admin.goin?url=/admin/Billing.Pay/external?id=', NEW.id);
-    RETURN NEW;
-  END IF;
+  --IF (NEW."Payment_method_id" = 1 AND NEW."Payment_date" IS NULL) THEN
+  --  NEW."Pay" := CONCAT('/functions/Admin.goin?url=/admin/Billing.Pay/external?id=', NEW.id);
+  --  RETURN NEW;
+  --END IF;
 
   -- Comprobamos si el pago se ha llevado a cabo correctamente 
   IF (NEW."Payment_date" IS NULL) THEN 
