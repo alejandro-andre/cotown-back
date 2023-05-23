@@ -8,7 +8,6 @@ DECLARE
 BEGIN
 
   user_name := CURRENT_USER;
-  RESET ROLE;
  
   IF TG_OP = 'INSERT' THEN
     NEW."Created_by" := user_name;
@@ -38,11 +37,13 @@ BEGIN
     record = to_jsonb(OLD);
   END IF;
   
-  INSERT INTO "Admin"."Log" ("Table", "Action", "User", "When", "Record", "Changes")
-  VALUES (TG_TABLE_NAME, TG_OP, user_name, NOW(), record, changes);
+  IF user_name <> 'modelsadmin' AND user_name <> 'postgres' THEN
+    RESET ROLE;
+    INSERT INTO "Admin"."Log" ("Table", "Action", "User", "When", "Record", "Changes")
+    VALUES (TG_TABLE_NAME, TG_OP, user_name, NOW(), record, changes);
+    EXECUTE 'SET ROLE "' || user_name || '"';
+  END IF;
   
-  EXECUTE 'SET ROLE "' || user_name || '"';
-
   IF TG_OP = 'DELETE' THEN
     RETURN OLD;
   END IF;
