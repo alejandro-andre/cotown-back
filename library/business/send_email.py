@@ -26,8 +26,8 @@ from library.services.utils import flatten_json
 
 HOST = 'smtp.office365.com'
 PORT = '587'
-FROM = 'no-replay@cotown.com'
-USER = 'no-replay@cotown.com'
+FROM = 'no-reply@cotown.com'
+USER = 'no-reply@cotown.com'
 PASS = 'Suq97716'
 
 
