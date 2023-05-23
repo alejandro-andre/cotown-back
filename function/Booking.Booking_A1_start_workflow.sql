@@ -1,13 +1,9 @@
 -- Inicio del workflow de reserva
-DECLARE
-
-  booking_fee_amount INTEGER;
-
 BEGIN
 
   --RESET ROLE;
   
-  -- Alta en otro estado
+  -- Alta en estado diferente de solictud
   IF NEW."Status" IS NOT NULL AND NEW."Status" <> 'solicitud' THEN
     RETURN NEW;
   END IF;
@@ -16,8 +12,7 @@ BEGIN
   UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = NEW.id;
 
   -- Obtiene crea un pago con el booking fee
-  SELECT "Booking_fee" INTO booking_fee_amount FROM "Building"."Building" WHERE id = NEW."Building_id";
-  INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, booking_fee_amount, CURRENT_DATE, 'Booking fee', 'booking');
+  INSERT INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
 
   -- Log
   INSERT INTO "Booking"."Booking_log"("Booking_id", "Log") VALUES (NEW.id, 'Solicitud de recurso');
@@ -25,8 +20,6 @@ BEGIN
   -- Email
   INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
 
-  -- Update booking fee
-  UPDATE "Booking"."Booking" SET "Booking_fee" = booking_fee_amount WHERE id = NEW.id;
   RETURN NEW;
 
 END;
