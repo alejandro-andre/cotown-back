@@ -111,8 +111,8 @@ def runapp():
     if token is not None:
       try:
         apiClient.auth(token)
-        result = apiClient.call('{ user: getCurrentUser { currentUser } }')
-        if result['user']['currentUser'] != 'anonymous':
+        data = apiClient.call('{ user: getCurrentUser { currentUser } }')
+        if data['user']['currentUser'] != 'anonymous':
           result = 0
       except:
         pass
@@ -314,6 +314,7 @@ def runapp():
 
     # Token invalid?
     if value != 0:
+      logger.debug(value)
       abort(value) 
 
 

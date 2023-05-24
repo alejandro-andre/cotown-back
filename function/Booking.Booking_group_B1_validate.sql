@@ -6,8 +6,11 @@ DECLARE
   years INTEGER;
   duration INTERVAL;
 
-BEGIN
+  room_id INTEGER;
+  room_ids INTEGER[];
 
+BEGIN
+ 
   -- Check request dates
   IF NEW."Date_from" > NEW."Date_to" THEN
     RAISE exception '!!!Wrong dates!!!Fechas incorrectas!!!';
@@ -17,6 +20,18 @@ BEGIN
   IF NEW."Request_date" IS NULL THEN
     NEW."Request_date" := NOW();
   END IF;
+
+  -- Get place ids
+  SELECT array_agg(id) INTO room_ids FROM "Resource"."Resource" WHERE "Code" = ANY(NEW."Room_ids");
+ 
+  -- Delete rooms not in the list
+  DELETE FROM "Booking"."Booking_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
+ 
+  -- Create rooms in the list
+  FOREACH room_id IN ARRAY(room_ids) LOOP
+    INSERT INTO "Booking"."Booking_rooming" ("Booking_id", "Resource_id") VALUES (NEW.id, room_id)
+    ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING;
+  END LOOP;
 
   -- Return record
   RETURN NEW;

@@ -12,6 +12,10 @@ BEGIN
   END IF;
 
   -- Obtiene la edad
+  IF NEW."Birth_date" < '1910-01-01' THEN
+    NEW."Birth_date" = NULL;
+    RETURN NEW;
+  END IF;
   SELECT DATE_PART('year', AGE(NOW(), NEW."Birth_date")) INTO customer_age;
 
   -- Menor?

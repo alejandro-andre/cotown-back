@@ -22,11 +22,11 @@ BEGIN
     WITH jsonb_diff AS (
       SELECT key, value AS value1, NULL::jsonb AS value2
       FROM jsonb_each(to_jsonb(OLD))
-      WHERE NOT (key, value) IN (SELECT key, value FROM jsonb_each(to_jsonb(NEW)))
+      WHERE NOT (key, value) IN (SELECT key, value FROM jsonb_each(to_jsonb(NEW))) AND jsonb_typeof(value) <> 'object'
       UNION ALL
       SELECT key, NULL::jsonb, value AS value2
       FROM jsonb_each(to_jsonb(NEW))
-      WHERE NOT (key, value) IN (SELECT key, value FROM jsonb_each(to_jsonb(OLD)))
+      WHERE NOT (key, value) IN (SELECT key, value FROM jsonb_each(to_jsonb(OLD))) AND jsonb_typeof(value) <> 'object'
     )
     SELECT jsonb_object_agg(key, COALESCE(value1, value2))
     INTO changes
