@@ -15,10 +15,10 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
-# Export to excel
+# Export graphql to excel
 # ###################################################
 
-def export_to_excel(apiClient, name, variables=None):
+def query_to_excel(apiClient, name, variables=None):
 
   # Get template
   fi = open('templates/report/' + name + '.xlsx', 'rb')
@@ -94,3 +94,12 @@ def export_to_excel(apiClient, name, variables=None):
   wb.save(virtual_workbook)
   virtual_workbook.seek(0)
   return virtual_workbook
+
+
+# ###################################################
+# Export json data to excel
+# ###################################################
+
+def json_to_excel(json, name):
+
+  pass
