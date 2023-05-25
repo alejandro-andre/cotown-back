@@ -19,6 +19,11 @@ BEGIN
     RETURN NEW;
   END IF;
   
+  -- Ignora los estados que no bloquean
+  IF NEW."Status" IN ('solicitud','solicitudpagada','alternativas','alternativaspagada','descartada','descartadapagada','caducada') THEN
+    RETURN NEW;
+  END IF;
+
   -- Obtiene el código del recurso
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
