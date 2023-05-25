@@ -10,6 +10,7 @@
 
 from datetime import datetime
 import pandas as pd
+import numpy as np
 import openpyxl
 import xlwt
 import re
@@ -136,7 +137,6 @@ df['Email'] = df['Email'].str.split('@').str[0] + '@test.com'
 
 # 1. Remove columns
 df.drop('id', axis=1, inplace=True)
-df.drop('Language_id', axis=1, inplace=True)
 
 # 2. Remove rows without mandatory fields
 df.dropna(subset=['Name'], inplace=True)
@@ -162,6 +162,8 @@ df.insert(0, 'id', range(1, 1 + len(df)))
 df['Name'] = df['Name'].str.title()
 df['Type'] = 'persona'
 df['User_name'] = 'N' + df['id'].astype(str).str.zfill(6)
+df['Comments'] = np.where(df['Language_id'].ne(''), 'Idiomas: ' + df['Language_id'].astype(str), '')
+df.drop('Language_id', axis=1, inplace=True)
 
 # 8. NIF/NIE
 df['Id_type_id'] = df.apply(lambda row: nif_nie(row['Document'], row['Id_type_id']), axis=1)

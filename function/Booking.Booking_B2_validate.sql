@@ -12,6 +12,17 @@ DECLARE
 
 BEGIN
 	
+  -- Comprueba si existen las tipologías seleccionadas en el edificio
+  SELECT COUNT(*) 
+  INTO num
+  FROM "Resource"."Resource" r
+  WHERE "Building_id" = NEW."Building_id"
+  AND r."Flat_type_id" = NEW."Flat_type_id"
+  AND r."Place_type_id" = NEW."Place_type_id";
+  IF num < 1 THEN
+    RAISE exception '!!!Selected flat/place type doesnt exist on that building!!!Las tipologías elegidas no existen en el edificio!!!'; 	
+  END IF;
+ 
   -- Get customer id type
   SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
  
