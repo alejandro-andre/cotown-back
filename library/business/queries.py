@@ -292,7 +292,7 @@ def availability(dbClient, date_from, date_to, building, flat_type, place_type):
   try:
     dbClient.connect()
     dbClient.select('''
-    SELECT r.id
+    SELECT r."Code"
     FROM "Resource"."Resource" r
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
