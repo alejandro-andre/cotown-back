@@ -22,7 +22,7 @@ BEGIN
   RETURNING id INTO user_id;
  
   -- Inserta el rol en Airflows
-  INSERT INTO "Models"."UserRole" ("user", "role") VALUES (user_id, 200)
+  INSERT INTO "Models"."UserRole" ("user", "role") VALUES (user_id, 300)
   ON CONFLICT ("user", "role") DO NOTHING;
 
   -- Asigna el usuario

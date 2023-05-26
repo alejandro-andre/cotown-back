@@ -66,6 +66,12 @@ query BookingById ($id: Int!) {
     Booking_rent: Rent
     Booking_services: Services
     Booking_limit: Limit
+    Customer_reasonViaReason_id {
+      Booking_reason: Name
+    }
+    SchoolViaSchool_id {
+      School: Name
+    }
     Booking_second_resident: Second_resident
     ResourceViaResource_id {
       Resource_code: Code
@@ -82,10 +88,11 @@ query BookingById ($id: Int!) {
         }
       }
       ProviderViaOwner_id {
+        Owner_id: id
         Id_typeViaId_type_id {
           Owner_id_type: Name
         }
-        Owner_id: Document
+        Owner_document: Document
         Owner_name: Name
         Owner_address: Address
         Owner_zip: Zip
@@ -100,12 +107,16 @@ query BookingById ($id: Int!) {
         }
         Owner_signer_id: Signer_document
         Contract_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
+        Owner_signature: Signature {
+            name
+        }
       }
       ProviderViaService_id {
+        Service_id: id
         Id_typeViaId_type_id {
           Service_id_type: Name
         }
-        Service_id: Document
+        Service_document: Document
         Service_name: Name
         Service_address: Address
         Service_zip: Zip
