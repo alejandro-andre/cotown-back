@@ -1,17 +1,16 @@
-# CONDICIONES PARTICULARES DEL CONTRATO DE HABITACIÓN.
+# CONTRATO DE ARRENDAMIENTO (TEMPORADA) DE UN PISO COMPARTIDO POR RAZON DE ESTUDIOS O TRABAJO
+# CONTRATO DE ARRENDAMIENTO DE TEMPORADA DE INMUEBLE
+# CONTRATO DE ARRENDAMIENTO DE PISO COMPLETO
+# CONDICIONES PARTICULARES DEL CONTRATO DE HABITACIÓN
+# CONTRATO DE SERVICIOS
+# CONTRATO DE PRESTACIÓN DE SERVICIOS
 
-A {{Today_day}} de {{Today_month|month}} de {{Today_year}}
+En Barcelona a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
+_¿la firma siempre en Barcelona?_
 
-{% for p in Prices %}
-{{p.Rent_date}}:{{p.Rent}}
+## REUNIDOS
 
-{% endfor %}
-
-La habitacion ocupa {{Resource_part}} del piso.
-
-La habitacion ocupa {{Resource_part|part}} del piso.
-
-**Las partes:**
+De una parte, {{Owner_signer_name}}, mayor de edad, provisto de {{Owner_signer_id_type}} {{Owner_signer_id}}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, y actuando en nombre y representación de {{Owber_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_id}}. En adelante el "arrendador" o la "propiedad".
 
 ## A. Arrendataria.
 
