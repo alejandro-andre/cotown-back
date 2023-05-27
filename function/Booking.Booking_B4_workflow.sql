@@ -200,17 +200,34 @@ BEGIN
 
   -- A CANCELADA (BOTON CANCELAR EN EL AREA PRIVADA)
   -- Cancelada, elimina pago pendiente de garantia y envía mail
-  IF (NEW."Status" = 'cancelada') THEN              
+  IF (NEW."Status" = 'cancelada') THEN     
+
+    -- Eliminamos facturas no pagadas ??
+    DELETE  FROM "Billing"."Invoice"
+    WHERE "Payment_id" IN (
+      SELECT "Invoice"."Payment_id" FROM "Billing"."Payment", "Billing"."Invoice" 
+      WHERE "Payment"."Booking_id" = NEW.id 
+      AND "Payment"."Payment_date" IS null
+      AND "Payment"."id" = "Invoice"."Payment_id");
+
     -- Eliminamos cualquier registro de pago no ha pagado.
     DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
     -- Actualizamos la fecha de cancelación
     NEW."Cancel_date" := CURRENT_DATE;
     -- TODO: Calcular penalizacion
+    IF(NEW."Cancelation_fee" > 0) THEN
+      -- EMail con penalizacion
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
+      -- Log
+      change := CONCAT('Reserva cancelada con penalización. Penalización: ', NEW."Cancelation_fee"); 
+    ELSE
+      -- EMail sin penalizacion
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
+      -- Log
+      change := 'Reserva cancelada sin penalización';   
+    END IF; 
     
-    -- EMail 
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
-    -- Log
-    change := 'Reserva cancelada antes de pagar la garantia';   
+       
   END IF;
 
   -- A IN HOUSE (BOTON 'CHECK IN OK')
