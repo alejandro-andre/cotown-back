@@ -89,9 +89,9 @@ BEGIN
 
   -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
-  IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
-    NEW."Status" := 'finalizada';
-  END IF;
+  -- IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
+  --   NEW."Status" := 'finalizada';
+  -- END IF;
 
   -- No ha habido cambios de estado
   IF (NEW."Status" = OLD."Status" AND  OLD."Resource_id" = NEW."Resource_id") THEN
@@ -191,7 +191,7 @@ BEGIN
   END IF;
 
   -- A CHECK IN CONFIRMADO
-  IF (NEW."Status" = 'checkinconfirmado') THEN 
+  IF (NEW."Status" = 'checkinconfirmado' OR (NEW."Status" = 'checkin' AND OLD."Status" = 'contrato')) THEN 
     -- Email
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
     -- Log 
@@ -217,7 +217,7 @@ BEGIN
     -- TODO: Calcular penalizacion
     IF(NEW."Cancelation_fee" > 0) THEN
       -- EMail con penalizacion
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'canceladapenalizacion', NEW.id);
       -- Log
       change := CONCAT('Reserva cancelada con penalización. Penalización: ', NEW."Cancelation_fee"); 
     ELSE
@@ -242,15 +242,23 @@ BEGIN
   -- A DEVOLVER GARANTIA (BOTON 'CHECK OUT OK')
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'devolvergarantia') THEN 
+  -- EMail
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'devolvergarantia', NEW.id);
     -- Log
-    change := 'El checkout ha sido correcto. Se puede devolver la garantia de la reserva ';   
+    change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW."Deposit_returned");
+    INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);
+    
+    IF (NEW."Deposit_returned" IS NOT NULL) THEN
+        NEW."Status" := 'finalizada';
+    END IF;
+
   END IF;
 
   -- A FINALIZADA
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'finalizada') THEN 
     -- Log
-    change := 'Reserva finalizada';   
+    change := CONCAT('Reserva finalizada ', CURRENT_DATE);   
   END IF;
 
   -- Registra el cambio
