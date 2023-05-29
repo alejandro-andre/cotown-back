@@ -89,7 +89,10 @@ def main():
 
     # Loop thru emails
     for email in emails.get('data'):
-      do_email(apiClient, email)
+      try:
+        do_email(apiClient, email)
+      except:
+         pass
 
 
 # #####################################
