@@ -123,7 +123,7 @@ query BookingById ($id: Int) {
           }
           Owner_signer_id: Document
         }
-        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
       }
       ProviderViaService_id {
         Id_typeViaId_type_id {
@@ -147,7 +147,7 @@ query BookingById ($id: Int) {
           }
           Service_signer_id: Document
         }
-        Signer_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
+        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
       }
     }
     CustomerViaCustomer_id {
@@ -266,7 +266,7 @@ query Booking_groupById ($id: Int!) {
                 Owner_signers: Provider_contactListViaProvider_id (
                   where: { Provider_contact_type_id: { EQ: 1 } }
                 ) {
-                  Service_signer_name: Name
+                  Owner_signer_name: Name
                   Id_typeViaId_type_id {
                     Owner_signer_id_type: Name
                   }
@@ -296,7 +296,7 @@ query Booking_groupById ($id: Int!) {
                   }
                   Service_signer_id: Document
                 }
-                Signer_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
+                Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
         }
           Id_typeViaId_type_id {
@@ -404,6 +404,8 @@ def get_template(apiClient, template, resource_type, provider, contract_type):
     # Fix
     if resource_type == 'plaza':
       resource_type = 'habitacion'
+    
+    print(template)
     
     # Look for proper template
     fid = None

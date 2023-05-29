@@ -75,6 +75,9 @@ def main():
     }
     ''')
 
+    do_contracts(apiClient, 751)
+    return
+
     # Loop thru contracts
     if bookings is not None:
       for booking in bookings.get('data'):
