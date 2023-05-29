@@ -405,8 +405,6 @@ def get_template(apiClient, template, resource_type, provider, contract_type):
     if resource_type == 'plaza':
       resource_type = 'habitacion'
     
-    print(template)
-    
     # Look for proper template
     fid = None
     fname = ''
