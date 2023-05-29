@@ -37,12 +37,12 @@ BEGIN
     record = to_jsonb(OLD);
   END IF;
   
-  --IF user_name <> 'modelsadmin' AND user_name <> 'postgres' THEN
-  --  RESET ROLE;
-  --  INSERT INTO "Admin"."Log" ("Table", "Action", "User", "When", "Record", "Changes")
-  --  VALUES (TG_TABLE_NAME, TG_OP, user_name, NOW(), record, changes);
-  --  EXECUTE 'SET ROLE "' || user_name || '"';
-  --END IF;
+  --?IF user_name <> 'modelsadmin' AND user_name <> 'postgres' THEN
+  --?  RESET ROLE;
+  --?  INSERT INTO "Admin"."Log" ("Table", "Action", "User", "When", "Record", "Changes")
+  --?  VALUES (TG_TABLE_NAME, TG_OP, user_name, NOW(), record, changes);
+  --?  EXECUTE 'SET ROLE "' || user_name || '"';
+  --?END IF;
   
   IF TG_OP = 'DELETE' THEN
     RETURN OLD;
