@@ -21,6 +21,10 @@ BEGIN
   END IF;
 
   -- Return
-  RETURN NEW; 
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD; 
+  ELSE
+    RETURN NEW; 
+  END IF;
 
 END;
