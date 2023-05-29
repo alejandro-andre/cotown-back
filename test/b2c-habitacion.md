@@ -7,7 +7,7 @@ En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 # REUNIDOS
 
-De una parte, {{Owner_signer_name}}, mayor de edad, provisto de {{Owner_signer_id_type}} {{Owner_signer_id}}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, y actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_document}}. 
+De una parte, {% for s in Owner_signers %}{%-if loop.index>1 %} y {% endif %}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{% endfor %} con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_document}}. 
 
 En adelante el "**Arrendador**" o la "**Propiedad**".
 
