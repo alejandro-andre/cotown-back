@@ -49,10 +49,10 @@ h3 {{ font-size: 1em; font-weight: 600; }}
 # ######################################################
 
 BOOKING = '''
-query BookingById ($id: Int!) {
+query BookingById ($id: Int) {
   data: Booking_BookingList (
     where: { id: { EQ: $id } }
-  ) {
+  ) {      
     Booking_id: id
     Booking_status: Status
     Booking_date_from_day: Date_from_day
@@ -66,33 +66,46 @@ query BookingById ($id: Int!) {
     Booking_rent: Rent
     Booking_services: Services
     Booking_limit: Limit
-    Customer_reasonViaReason_id {
-      Booking_reason: Name
-    }
-    SchoolViaSchool_id {
-      School: Name
-    }
     Booking_second_resident: Second_resident
+    Cancelation_fee
+    Cancel_date
+    Resource_flat_typeViaFlat_type_id { 
+      Booking_flat_type_code: Code 
+      Booking_flat_type_name: Name 
+    }
+    Resource_place_typeViaPlace_type_id { 
+      Booking_place_type_code: Code 
+      Booking_place_type_name: Name 
+    }
+    BuildingViaBuilding_id {
+      Booking_building_code: Code
+      Booking_building_name: Name
+      Booking_building_address: Address
+      DistrictViaDistrict_id {
+        LocationViaLocation_id {
+          Booking_building_city: Name
+        }
+      }
+    }
     ResourceViaResource_id {
       Resource_code: Code
       Resource_type
       Resource_part: Part
       Resource_address: Address
       Building: BuildingViaBuilding_id {
-        Building_code: Code
-        Building_address: Address
+        Resource_building_code: Code
+        Resource_building_address: Address
         DistrictViaDistrict_id {
           LocationViaLocation_id {
-            Building_city: Name
+            Resource_building_city: Name
           }
         }
       }
       ProviderViaOwner_id {
-        Owner_id: id
         Id_typeViaId_type_id {
           Owner_id_type: Name
         }
-        Owner_document: Document
+        Owner_id: Document
         Owner_name: Name
         Owner_address: Address
         Owner_zip: Zip
@@ -101,22 +114,22 @@ query BookingById ($id: Int!) {
         CountryViaCountry_id {
           Owner_country: Name
         }
-        Owner_signer_name: Signer_name
-        Id_typeViaSigner_Id_type_id {
-          Owner_signer_id_type: Name
+        Owner_signers: Provider_contactListViaProvider_id (
+          where: { Provider_contact_type_id: { EQ: 1 } }
+        ) {
+          Owner_signer_name: Name
+          Id_typeViaId_type_id {
+            Owner_signer_id_type: Name
+          }
+          Owner_signer_id: Document
         }
-        Owner_signer_id: Signer_document
-        Contract_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
-        Owner_signature: Signature {
-            name
-        }
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
       }
       ProviderViaService_id {
-        Service_id: id
         Id_typeViaId_type_id {
           Service_id_type: Name
         }
-        Service_document: Document
+        Service_id: Document
         Service_name: Name
         Service_address: Address
         Service_zip: Zip
@@ -125,11 +138,16 @@ query BookingById ($id: Int!) {
         CountryViaCountry_id {
           Service_country: Name
         }
-        Service_signer_name: Signer_name
-        Id_typeViaSigner_Id_type_id {
-          Service_signer_id_type: Name
+        Service_signers: Provider_contactListViaProvider_id (
+          where: { Provider_contact_type_id: { EQ: 1 } }
+        ) {
+          Service_signer_name: Name
+          Id_typeViaId_type_id {
+            Service_signer_id_type: Name
+          }
+          Service_signer_id: Document
         }
-        Service_signer_id: Signer_document
+        Signer_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id }
       }
     }
     CustomerViaCustomer_id {
@@ -145,12 +163,8 @@ query BookingById ($id: Int!) {
       CountryViaCountry_id {
         Customer_country: Name
       }
-      CountryViaNationality_id {
-          Customer_nationality: Name
-      }
       Customer_email: Email
       Customer_birth_date: Birth_date
-      Customer_tutor_id: Tutor_id
     }
     CustomerViaPayer_id {
       Id_typeViaId_type_id {
@@ -168,16 +182,24 @@ query BookingById ($id: Int!) {
       Payer_email: Email
       Payer_bank_account: Bank_account
     }
-    Prices: Booking_priceListViaBooking_id {
-      Rent_date
-      Rent
-      Services
-      Rent_discount
-      Services_discount
+    Options: Booking_optionListViaBooking_id {
+        Option_id: id
+        Resource_flat_typeViaFlat_type_id { 
+            Option_flat_type_code: Code 
+            Option_flat_type_name: Name 
+        }
+        Resource_place_typeViaPlace_type_id { 
+            Option_place_type_code: Code 
+            Option_place_type_name: Name 
+        }
+        BuildingViaBuilding_id {
+            Option_building_code: Code
+            Option_building_name: Name
+            Option_building_address: Address
+        }
     }
   }
-}
-'''
+}'''
 
 GROUP_BOOKING = '''
 query Booking_groupById ($id: Int!) {
@@ -230,7 +252,7 @@ query Booking_groupById ($id: Int!) {
             }
             ProviderViaOwner_id {
                 Id_typeViaId_type_id {
-                Owner_id_type: Name
+                  Owner_id_type: Name
                 }
                 Owner_id: Document
                 Owner_name: Name
@@ -239,18 +261,22 @@ query Booking_groupById ($id: Int!) {
                 Owner_city: City
                 Owner_province: Province
                 CountryViaCountry_id {
-                Owner_country: Name
+                  Owner_country: Name
                 }
-                Owner_signer_name: Signer_name
-                Id_typeViaSigner_Id_type_id {
-                Owner_signer_id_type: Name
+                Owner_signers: Provider_contactListViaProvider_id (
+                  where: { Provider_contact_type_id: { EQ: 1 } }
+                ) {
+                  Service_signer_name: Name
+                  Id_typeViaId_type_id {
+                    Owner_signer_id_type: Name
+                  }
+                  Owner_signer_id: Document
                 }
-                Owner_signer_id: Signer_document
-                Contract_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
+                Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
             ProviderViaService_id {
                 Id_typeViaId_type_id {
-                Service_id_type: Name
+                  Service_id_type: Name
                 }
                 Service_id: Document
                 Service_name: Name
@@ -259,13 +285,18 @@ query Booking_groupById ($id: Int!) {
                 Service_city: City
                 Service_province: Province
                 CountryViaCountry_id {
-                Service_country: Name
+                  Service_country: Name
                 }
-                Service_signer_name: Signer_name
-                Id_typeViaSigner_Id_type_id {
-                Service_signer_id_type: Name
+                Service_signers: Provider_contactListViaProvider_id (
+                  where: { Provider_contact_type_id: { EQ: 1 } }
+                ) {
+                  Service_signer_name: Name
+                  Id_typeViaId_type_id {
+                    Service_signer_id_type: Name
+                  }
+                  Service_signer_id: Document
                 }
-                Service_signer_id: Signer_document
+                Signer_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
             }
         }
           Id_typeViaId_type_id {
@@ -278,7 +309,7 @@ query Booking_groupById ($id: Int!) {
         Customer_city: City
         Customer_province: Province
         CountryViaCountry_id {
-            Customer_country: Name
+          Customer_country: Name
         }
         Customer_email: Email
     }
@@ -407,7 +438,7 @@ def do_contracts(apiClient, id):
     context = flatten_json(result['data'][0])
 
     # Generate rent contract
-    template, name = get_template(apiClient, context['Contract_template'], context['Resource_type'], context['Owner_name'], 'Rent')
+    template, name = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'], 'Rent')
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -417,7 +448,7 @@ def do_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    template, name = get_template(apiClient, context['Contract_template'], context['Resource_type'], context['Owner_name'], 'Services')
+    template, name = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'], 'Services')
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -465,7 +496,7 @@ def do_group_contracts(apiClient, id):
     room = context['Room'][0]
 
     # Generate rent contract
-    template, name = get_template(apiClient, room['Contract_template'], 'grupo', room['Owner_name'], 'Rent')
+    template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'], 'Rent')
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -475,7 +506,7 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    template, name = get_template(apiClient, room['Contract_template'], 'grupo', room['Service_name'], 'Services')
+    template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Service_name'], 'Services')
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
