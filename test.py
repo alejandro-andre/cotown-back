@@ -33,4 +33,4 @@ def main(tpl, id):
 
 if __name__ == '__main__':
 
-    main('b2c-habitacion', 453)
+    main('test/b2c-habitacion', 453)
