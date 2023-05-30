@@ -7,7 +7,7 @@ En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 # REUNIDOS
 
-De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} n.º {{Rooms[0].Owner_id}}{%if Rooms[0].Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 
 En adelante el "**Arrendador**" o la "**Propiedad**".
 

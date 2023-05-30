@@ -4,16 +4,16 @@ import json
 # Cotown includes
 from library.services.apiclient import APIClient
 from library.services.utils import flatten_json
-from library.business.print_contract import BOOKING, generate_doc_file
+from library.business.print_contract import BOOKING, GROUP_BOOKING, generate_doc_file
 
-def main(tpl, id):
+def main(q, tpl, id):
 
     # graphQL API
     apiClient = APIClient('experis.flows.ninja')
     apiClient.auth(user='modelsadmin', password='Ciber$2022')
 
     # Get booking
-    booking = apiClient.call(BOOKING, { "id": id })
+    booking = apiClient.call(q, { "id": id })
     if booking is None:
       return
 
@@ -33,4 +33,5 @@ def main(tpl, id):
 
 if __name__ == '__main__':
 
-    main('test/b2c-habitacion', 751)
+    main(BOOKING, 'test/b2c-habitacion', 1)
+    main(GROUP_BOOKING, 'test/b2c-grupo', 1)

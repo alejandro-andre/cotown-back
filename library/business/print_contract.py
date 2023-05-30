@@ -208,12 +208,12 @@ query Booking_groupById ($id: Int!) {
       Customer_email: Email
       Customer_bank_account: Bank_account
       Customer_signer_name: Signer_name
-      Id_typeViaId_type_id {
+      Id_typeViaSigner_id_type_id {
         Customer_signer_id_type: Name
       }
       Customer_signer_id: Document
     }
-    Room: Booking_roomingListViaBooking_id {
+    Rooms: Booking_roomingListViaBooking_id {
       ResourceViaResource_id {
         Resource_code: Code
         Resource_type
