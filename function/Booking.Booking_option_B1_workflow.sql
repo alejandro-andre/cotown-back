@@ -7,8 +7,6 @@ DECLARE
 
 BEGIN
   
-  --RESET ROLE;
-  
   -- ALTERNATIVAS a SOLICITUD
   -- ALTERNATIVASPAGADA A SOLICITUDPAGADA
   -- Aceptada, actualiza la petición

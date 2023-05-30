@@ -3,7 +3,7 @@ DECLARE
 
   change VARCHAR = NULL;
   record_id INTEGER = 0;
-  user_name VARCHAR;
+  curr_user VARCHAR;
 
 BEGIN
 
@@ -101,9 +101,10 @@ BEGIN
   -- Procesa los cambios
   -- ######################################################
 
-  user_name := CURRENT_USER;
-  RESET ROLE;  
-
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+ 
   -- A ALTERNATIVA o ALTERNATIVAS PAGADA
   IF (NEW."Status" = 'alternativas' OR NEW."Status" = 'alternativaspagada') THEN
     -- Email
@@ -268,7 +269,8 @@ BEGIN
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);
   END IF;
 
-  EXECUTE 'SET ROLE "' || user_name || '"';
+  -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

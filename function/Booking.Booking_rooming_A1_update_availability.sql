@@ -12,8 +12,6 @@ DECLARE
 
 BEGIN
 
-  --RESET ROLE;
-  
   -- Borra todas reservasd de esa plaza
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
   

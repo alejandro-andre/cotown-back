@@ -41,8 +41,6 @@ DECLARE
 
 BEGIN
 
-  --RESET ROLE;
-
   -- No resource
   IF NEW."Resource_id" IS NULL THEN
     RETURN NEW;

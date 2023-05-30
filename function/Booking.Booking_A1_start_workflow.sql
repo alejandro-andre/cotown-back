@@ -1,8 +1,6 @@
 -- Inicio del workflow de reserva
 BEGIN
 
-  --RESET ROLE;
-  
   -- Alta en estado diferente de solictud
   IF NEW."Status" IS NOT NULL AND NEW."Status" <> 'solicitud' THEN
     RETURN NEW;

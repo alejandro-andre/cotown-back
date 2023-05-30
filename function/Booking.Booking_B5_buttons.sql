@@ -5,8 +5,6 @@ DECLARE
 
 BEGIN
 
-  --RESET ROLE;
-  
   -- Boton descartar
   NEW."Button_discard" := '';
   IF NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas' OR NEW."Status" = 'pendientepago' THEN

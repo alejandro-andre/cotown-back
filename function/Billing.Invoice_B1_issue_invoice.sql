@@ -24,8 +24,6 @@ DECLARE
    
 BEGIN
 
-  --RESET ROLE;
-  
   -- No se tiene que emitir aún?
   IF NOT NEW."Issued" AND NEW."Code" IS NULL THEN   
     RETURN NEW;

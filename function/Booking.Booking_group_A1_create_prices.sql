@@ -6,8 +6,6 @@ DECLARE
 
 BEGIN
 
-  --RESET ROLE;
-
   -- Borra viejos precios 
   DELETE FROM "Booking"."Booking_group_price"
   WHERE "Booking_id" = NEW.id

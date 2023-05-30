@@ -13,8 +13,6 @@ DECLARE
 
 BEGIN
 
-  --RESET ROLE;
-
   -- Borra todos las reservas relacionadas con ese bloqueo
   DELETE FROM "Booking"."Booking_detail" WHERE "Availability_id" = NEW.id;
 

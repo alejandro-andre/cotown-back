@@ -1,16 +1,20 @@
 -- Creación de usuario
 DECLARE
 
+  curr_user VARCHAR;
   user_name VARCHAR;
   user_id INTEGER;
 
 BEGIN
 
-  RESET ROLE;
-
+  -- Already created
   IF NEW."User_name" IS NOT NULL THEN
     RETURN NEW;
   END IF;
+
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;  
 
   -- Username
   user_name := CONCAT('C', LPAD(NEW.id::text, 6, '0'));
@@ -38,6 +42,7 @@ BEGIN
   INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW.id, 'bienvenida', NEW.id);
 
   -- Fin
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

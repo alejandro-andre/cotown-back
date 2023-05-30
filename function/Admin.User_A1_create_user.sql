@@ -2,12 +2,15 @@
 -- AFTER INSERT
 DECLARE
 
+  curr_user VARCHAR;
   user_name VARCHAR;
   user_id INTEGER;
 
 BEGIN
 
-  RESET ROLE;
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;  
 
   -- Username
   user_name := CONCAT('X', LPAD(NEW.id::text, 6, '0'));

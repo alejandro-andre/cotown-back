@@ -1,16 +1,19 @@
 -- Creación de usuario
 DECLARE
 
+  curr_user VARCHAR;
   user_name VARCHAR;
   user_id INTEGER;
 
 BEGIN
 
-  RESET ROLE;
-
   IF NEW."User_name" IS NOT NULL THEN
     RETURN NEW;
   END IF;
+
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;  
 
   -- Username
   user_name := CONCAT('P', LPAD(NEW.id::text, 6, '0'));
@@ -35,6 +38,7 @@ BEGIN
   EXECUTE 'GRANT "provider" TO "' || user_name || '"';
 
   -- Fin
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

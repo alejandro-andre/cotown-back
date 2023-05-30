@@ -10,10 +10,14 @@ DECLARE
   reason_id INTEGER;
   reg RECORD;
   num INTEGER;
-  user_name VARCHAR;
+  curr_user VARCHAR;
 
 BEGIN
 	
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+ 
   -- Comprueba si existen las tipologías seleccionadas en el edificio
   SELECT COUNT(*) 
   INTO num
@@ -96,8 +100,6 @@ BEGIN
 
   -- Documentos obligatorios
   IF NEW."Reason_id" <> OLD."Reason_id" THEN
-    user_name := CURRENT_USER;
-    RESET ROLE;
     DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
     INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
       SELECT NEW."Customer_id", id
@@ -105,10 +107,10 @@ BEGIN
       WHERE "Mandatory" = TRUE
       AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
     ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
-    EXECUTE 'SET ROLE "' || user_name || '"';
   END IF;
   
   -- Return record
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

@@ -2,6 +2,7 @@
 DECLARE
 
   code VARCHAR;
+  curr_user VARCHAR;
   reg RECORD;
   cur CURSOR FOR 
     SELECT *
@@ -11,7 +12,9 @@ DECLARE
 
 BEGIN
 
-  RESET ROLE;
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
   
   -- Borra todos los registros relacionados con ese bloqueo
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
@@ -48,6 +51,7 @@ BEGIN
   CLOSE cur;
   
   -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

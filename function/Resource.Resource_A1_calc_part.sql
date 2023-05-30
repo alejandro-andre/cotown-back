@@ -10,8 +10,6 @@ DECLARE
 
 BEGIN
 
-  --RESET ROLE;
-
   IF pg_trigger_depth() = 1 THEN
   
     -- Flat id
