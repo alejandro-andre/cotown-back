@@ -62,9 +62,9 @@ query BookingById ($id: Int) {
     Booking_date_to_month: Date_to_month
     Booking_date_to_year: Date_to_year
     Booking_confirmation_date: Confirmation_date
-    Booking_deposit: Deposit
     Booking_rent: Rent
     Booking_services: Services
+    Booking_deposit: Deposit
     Booking_limit: Limit
     Booking_second_resident: Second_resident
     Cancelation_fee
@@ -172,22 +172,6 @@ query BookingById ($id: Int) {
       }
       Customer_signer_id: Signer_document
     }
-    Options: Booking_optionListViaBooking_id {
-        Option_id: id
-        Resource_flat_typeViaFlat_type_id { 
-            Option_flat_type_code: Code 
-            Option_flat_type_name: Name 
-        }
-        Resource_place_typeViaPlace_type_id { 
-            Option_place_type_code: Code 
-            Option_place_type_name: Name 
-        }
-        BuildingViaBuilding_id {
-            Option_building_code: Code
-            Option_building_name: Name
-            Option_building_address: Address
-        }
-    }
   }
 }'''
 
@@ -206,7 +190,6 @@ query Booking_groupById ($id: Int!) {
     Booking_date_to_year: Date_to_year
     Booking_rent: Rent
     Booking_services: Services
-    Booking_limit: Limit
     Booking_deposit: Deposit
     Booking_limit: Limit
     CustomerViaPayer_id {
@@ -231,82 +214,82 @@ query Booking_groupById ($id: Int!) {
       Customer_signer_id: Document
     }
     Room: Booking_roomingListViaBooking_id {
-        ResourceViaResource_id {
-            Resource_code: Code
-            Resource_type
-            Resource_part: Part
-            Resource_address: Address
-            Building: BuildingViaBuilding_id {
-                Building_code: Code
-                Building_address: Address
-                DistrictViaDistrict_id {
-                LocationViaLocation_id {
-                    Building_city: Name
-                }
-                }
+      ResourceViaResource_id {
+        Resource_code: Code
+        Resource_type
+        Resource_part: Part
+        Resource_address: Address
+        Building: BuildingViaBuilding_id {
+          Building_code: Code
+          Building_address: Address
+          DistrictViaDistrict_id {
+            LocationViaLocation_id {
+              Building_city: Name
             }
-            ProviderViaOwner_id {
-                Id_typeViaId_type_id {
-                  Owner_id_type: Name
-                }
-                Owner_id: Document
-                Owner_name: Name
-                Owner_address: Address
-                Owner_zip: Zip
-                Owner_city: City
-                Owner_province: Province
-                CountryViaCountry_id {
-                  Owner_country: Name
-                }
-                Owner_signers: Provider_contactListViaProvider_id (
-                  where: { Provider_contact_type_id: { EQ: 1 } }
-                ) {
-                  Owner_signer_name: Name
-                  Id_typeViaId_type_id {
-                    Owner_signer_id_type: Name
-                  }
-                  Owner_signer_id: Document
-                }
-                Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
-            }
-            ProviderViaService_id {
-                Id_typeViaId_type_id {
-                  Service_id_type: Name
-                }
-                Service_id: Document
-                Service_name: Name
-                Service_address: Address
-                Service_zip: Zip
-                Service_city: City
-                Service_province: Province
-                CountryViaCountry_id {
-                  Service_country: Name
-                }
-                Service_signers: Provider_contactListViaProvider_id (
-                  where: { Provider_contact_type_id: { EQ: 1 } }
-                ) {
-                  Service_signer_name: Name
-                  Id_typeViaId_type_id {
-                    Service_signer_id_type: Name
-                  }
-                  Service_signer_id: Document
-                }
-                Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
-            }
+          }
         }
+        ProviderViaOwner_id {
           Id_typeViaId_type_id {
-            Customer_id_type: Name
+            Owner_id_type: Name
+          }
+          Owner_id: Document
+          Owner_name: Name
+          Owner_address: Address
+          Owner_zip: Zip
+          Owner_city: City
+          Owner_province: Province
+          CountryViaCountry_id {
+            Owner_country: Name
+          }
+          Owner_signers: Provider_contactListViaProvider_id (
+            where: { Provider_contact_type_id: { EQ: 1 } }
+          ) {
+            Owner_signer_name: Name
+            Id_typeViaId_type_id {
+              Owner_signer_id_type: Name
+            }
+            Owner_signer_id: Document
+          }
+          Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
         }
-        Customer_id: Document
-        Customer_name: Name
-        Customer_address: Address
-        Customer_zip: Zip
-        Customer_city: City
-        Customer_province: Province
-        CountryViaCountry_id {
-          Customer_country: Name
+        ProviderViaService_id {
+          Id_typeViaId_type_id {
+            Service_id_type: Name
+          }
+          Service_id: Document
+          Service_name: Name
+          Service_address: Address
+          Service_zip: Zip
+          Service_city: City
+          Service_province: Province
+          CountryViaCountry_id {
+            Service_country: Name
+          }
+          Service_signers: Provider_contactListViaProvider_id (
+            where: { Provider_contact_type_id: { EQ: 1 } }
+          ) {
+            Service_signer_name: Name
+            Id_typeViaId_type_id {
+              Service_signer_id_type: Name
+            }
+            Service_signer_id: Document
+          }
+          Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type }
         }
-        Customer_email: Email
+      }
+      Id_typeViaId_type_id {
+        Resident_id_type: Name
+      }
+      Resident_id: Document
+      Resident_name: Name
+      Resident_address: Address
+      Resident_zip: Zip
+      Resident_city: City
+      Resident_province: Province
+      CountryViaCountry_id {
+        Resident_country: Name
+      }
+      Resident_email: Email
     }
     Prices: Booking_group_priceListViaBooking_id {
       Rent_date
