@@ -10,6 +10,7 @@ DECLARE
   reason_id INTEGER;
   reg RECORD;
   num INTEGER;
+  user_name VARCHAR;
 
 BEGIN
 	
@@ -27,15 +28,6 @@ BEGIN
   -- Get customer id type
   SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
  
-  -- Documentos obligatorios
-  DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
-  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
-    SELECT NEW."Customer_id", id
-    FROM "Customer"."Customer_doc_type" cdt
-    WHERE "Mandatory" = TRUE
-    AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
-  ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
-
   -- Reserva bloqueada?
   IF NEW."Lock" AND 
     OLD."Resource_id" IS NOT NULL AND
@@ -102,6 +94,20 @@ BEGIN
     NEW."Request_date" := NOW();
   END IF;
 
+  -- Documentos obligatorios
+  IF NEW."Reason_id" <> OLD."Reason_id" THEN
+    user_name := CURRENT_USER;
+    RESET ROLE;
+    DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
+    INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
+      SELECT NEW."Customer_id", id
+      FROM "Customer"."Customer_doc_type" cdt
+      WHERE "Mandatory" = TRUE
+      AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
+    ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
+    EXECUTE 'SET ROLE "' || user_name || '"';
+  END IF;
+  
   -- Return record
   RETURN NEW;
 

@@ -3,11 +3,10 @@ DECLARE
 
   change VARCHAR = NULL;
   record_id INTEGER = 0;
+  user_name VARCHAR;
 
 BEGIN
 
-  --RESET ROLE;
-  
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
@@ -101,6 +100,9 @@ BEGIN
   -- ######################################################
   -- Procesa los cambios
   -- ######################################################
+
+  user_name := CURRENT_USER;
+  RESET ROLE;  
 
   -- A ALTERNATIVA o ALTERNATIVAS PAGADA
   IF (NEW."Status" = 'alternativas' OR NEW."Status" = 'alternativaspagada') THEN
@@ -266,6 +268,7 @@ BEGIN
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);
   END IF;
 
+  EXECUTE 'SET ROLE "' || user_name || '"';
   RETURN NEW;
 
 END;
