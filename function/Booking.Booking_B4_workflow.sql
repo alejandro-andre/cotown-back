@@ -217,6 +217,8 @@ BEGIN
     DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
     -- Actualizamos la fecha de cancelación
     NEW."Cancel_date" := CURRENT_DATE;
+    -- Eliminamos el recurso asignado
+    NEW."Resource_id" = NULL;
     -- TODO: Calcular penalizacion
     IF(NEW."Cancelation_fee" > 0) THEN
       -- EMail con penalizacion
