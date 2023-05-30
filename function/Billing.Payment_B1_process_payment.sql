@@ -5,6 +5,7 @@ DECLARE
   customer_id INTEGER;
   status_record VARCHAR;
   y VARCHAR;
+  curr_user VARCHAR;
 
 BEGIN
 
@@ -32,6 +33,10 @@ BEGIN
   -- Seleccionamos el estado actual de la reserva
   SELECT "Status" INTO status_record FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
   
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+ 
   -- Comprobamos si el tipo de pago es 'booking'
   IF (NEW."Payment_type" = 'booking') THEN
 
@@ -42,21 +47,18 @@ BEGIN
     -- Comprobamos si el estado es 'solicitud'
     IF (status_record = 'solicitud') THEN
       UPDATE "Booking"."Booking" SET "Status" ='solicitudpagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      RETURN NEW;
     END IF;
   
     -- ALTERNATIVAS a ALTERNATIVAS PAGADA
     -- Comprobamos si el estado es 'alternativas'
     IF (status_record = 'alternativas') THEN
       UPDATE "Booking"."Booking" SET "Status" ='alternativaspagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      RETURN NEW;
     END IF;
   
     -- PENDIENTE PAGO a CONFIRMADA
     -- Comprobamos si el estado es 'pendientepago'
     IF (status_record = 'pendientepago') THEN
       UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      RETURN NEW;
     END IF;    
 
   END IF;
@@ -70,11 +72,12 @@ BEGIN
     -- CONFIRMADA a FIRMA CONTRATO
     IF (status_record = 'confirmada') THEN
       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      RETURN NEW;
     END IF;
 
   END IF;
 
+  -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

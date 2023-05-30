@@ -1,4 +1,8 @@
 -- Inicio del workflow de reserva
+DECLARE
+
+  curr_user VARCHAR;
+
 BEGIN
 
   -- Alta en estado diferente de solictud
@@ -6,6 +10,10 @@ BEGIN
     RETURN NEW;
   END IF;
   
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+ 
   -- Estado solicitud
   UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = NEW.id;
 
@@ -18,6 +26,8 @@ BEGIN
   -- Email
   INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
 
+  -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;
