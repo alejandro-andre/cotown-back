@@ -15,6 +15,8 @@ import openpyxl
 import xlwt
 import re
 
+# Constants
+PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
 
 # #####################################
 # Auxiliary functions
@@ -22,7 +24,9 @@ import re
 
 def clean_email(email):
 
-    valid = re.sub(r'[^a-zA-Z0-9_.@]', '', email)
+    valid = re.sub(r'[^a-zA-Z0-9-_.@]', '', email)
+    if valid != email:
+        print(valid, email)
     return valid
 
 
@@ -38,7 +42,7 @@ def clean_date(date):
                 return d
         except Exception as e:
             pass
-    return datetime.strptime('1900-01-01', '%Y-%m-%d')
+    return PAST
 
 
 def nif_nie(dni, type):
@@ -133,8 +137,6 @@ print('Filas originales...........: ', df.shape[0])
 # 0. Debug. Change email addresses
 df['Email'] = df['Email'].str.split('@').str[0] + '@test.com'
 
-# TO DO: CIFs
-
 # 1. Remove columns
 df.drop('id', axis=1, inplace=True)
 
@@ -151,7 +153,7 @@ df = df.groupby(['Email']).apply(consolidate)
 print('Filas con diferente email..: ', df.shape[0])
 
 # 5. Drop duplicates in 'Document'
-df = df[~(df['Document'].duplicated(keep=False) & (df['Document'] != ''))]
+df = df[~(df['Document'].duplicated(keep='last') & (df['Document'] != ''))]
 print('Filas sin id duplicado.....: ', df.shape[0])
 
 # 6. Reindex
