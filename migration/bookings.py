@@ -29,9 +29,16 @@ PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
 def get_date(string):
 
   try:
+    return datetime.strptime(str(string), '%Y-%m-%d %H:%M:%S')
+  except:
+    pass
+
+  try:
     return datetime.strptime(str(string), '%Y-%m-%d')
   except:
-    return PAST
+    pass
+  
+  return PAST
 
 def check_dates(row, tag):
 
@@ -78,8 +85,8 @@ def set_status(row):
   if row['Status'] == 'finished':
     return 'finalizada'
 
-  # Request
-  if row['Resource_id'] is None:
+  # Pending
+  if row['Status'] == 'pending':
     return 'solicitud'
 
   # Dates
@@ -105,7 +112,7 @@ def set_status(row):
       return 'inhouse'
 
   # Confirmed
-  return 'confirmada'
+  return 'pendientepago'
 
 def lookup_resource(code, index=0):
 
@@ -149,10 +156,27 @@ def lookup_customer(email):
 # #####################################
 
 '''
-SELECT b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer_id, 
+-- 7a. Solicitudes
+SELECT rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
 	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   b.FROM AS Date_from, b.TO AS Date_to, bi.checkin AS Check_in, bi.checkout AS Check_out, r.school_id AS School_id, 
-	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource_id, b.payment_method_id AS Payment_method_id, rq.comments
+	   rq.FROM AS Date_from, rq.TO AS Date_to, NULL AS Check_in, NULL AS Check_out, r.school_id AS School_id, 
+	   rq.created_at AS Request_date, NULL AS Confirmation_date,
+	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
+FROM requests rq
+LEFT JOIN requesters r ON r.id = rq.requester_id 
+LEFT JOIN resources re ON re.id = rq.resource_id
+LEFT JOIN bookings b ON b.request_id = rq.id
+WHERE rq.state IN ('pending', 'accepted')
+AND b.id IS NULL
+
+UNION
+
+-- 7b. Datos de reserva individuales
+SELECT b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
+	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
+	   b.FROM AS Date_from, b.TO AS Date_to, bi.checkin AS Check_in, bi.checkout AS Check_out, r.school_id AS School_id,
+	   rq.created_at AS Request_date, b.created_at AS Confirmation_date, 
+	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
 FROM booking_resource br 
 LEFT JOIN bookings b ON b.id = br.booking_id 
 LEFT JOIN booking_information bi ON bi.booking_id = b.id
@@ -161,8 +185,7 @@ LEFT JOIN requests rq ON rq.id = b.request_id
 LEFT JOIN requesters r ON r.id = rq.requester_id 
 LEFT JOIN resources re ON re.id = br.resource_id
 LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
-WHERE bl.id IS NULL 
-ORDER BY br.id;
+WHERE bl.id IS NULL;
 '''
 
 # ###################################################
@@ -206,11 +229,11 @@ print('Filas originales...........: ', df.shape[0])
 df['Customer_id'] = df['Customer'].apply(lambda x: lookup_customer(x))
 df = df.drop(df.loc[df['Customer_id'] == -1].index)
 print('Filas con cliente..........: ', df.shape[0])
+print(df)
 
 # 2. Resource
 df['Resource_id'] = df['Resource'].apply(lambda x: lookup_resource(x))
 df = df.drop(df.loc[df['Resource_id'] == -1].index)
-print('Filas con recurso..........: ', df.shape[0])
 
 # 3. Request
 df['Building_id']   = df['Resource'].apply(lambda x: lookup_resource(x, 3))
@@ -229,6 +252,8 @@ df['Date_from'] = df['Date_from'].apply(lambda x: get_date(x))
 df['Date_to']   = df['Date_to'].apply(lambda x: get_date(x))
 df['Check_in']  = df['Check_in'].apply(lambda x: get_date(x))
 df['Check_out'] = df['Check_out'].apply(lambda x: get_date(x))
+df['Request_date'] = df['Request_date'].apply(lambda x: get_date(x))
+df['Confirmation_date'] = df['Confirmation_date'].apply(lambda x: get_date(x))
 
 # 6. Validate and drop invalid dates
 now = datetime.today()
@@ -241,7 +266,6 @@ print('Filas con fechas correctas.: ', df.shape[0])
 
 # 7. Calculate status
 df['Status'] = df.apply(lambda row: set_status(row), axis=1)
-print(df['Status'])
 
 # 8. Drop columns
 df.drop('Customer', axis=1, inplace=True)
