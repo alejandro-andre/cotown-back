@@ -7,14 +7,16 @@ En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 # REUNIDOS
 
-De una parte, {% for s in Owner_signers %}{%-if loop.index>1 %} y {% endif %}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{% endfor %} con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_document}}. 
+De una parte, {% for s in Owner_signers %}{%-if loop.index>1 %} y {% endif %}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{% endfor %}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_document}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 
 En adelante el "**Arrendador**" o la "**Propiedad**".
 
-{%if Customer_tutor_id==''%}
-Sr./Sra. {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}} {{Customer_province}} {{Customer_country}}, actuando en su nombre y representación.
+{%if Customer_type=='empresa'%}
+Sr./Sra. {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} núm. {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} n.º {{Customer_id}}.
+{%elif Customer_tutor_id==''%}
+Sr./Sra. {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
 {%else%}
-Sr./Sra. {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}} {{Customer_province}} {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
+Sr./Sra. {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
 {%endif%}
 
 En adelante denominada la “**Arrendataria**”

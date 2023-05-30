@@ -151,6 +151,7 @@ query BookingById ($id: Int) {
       }
     }
     CustomerViaCustomer_id {
+      Customer_type: Type
       Id_typeViaId_type_id {
         Customer_id_type: Name
       }
@@ -165,22 +166,11 @@ query BookingById ($id: Int) {
       }
       Customer_email: Email
       Customer_birth_date: Birth_date
-    }
-    CustomerViaPayer_id {
-      Id_typeViaId_type_id {
-        Payer_id_type: Name
+      Customer_signer_name: Signer_name
+      Id_typeViaSigner_id_type_id {
+        Customer_signer_id_type: Name
       }
-      Payer_id: Document
-      Payer_name: Name
-      Payer_address: Address
-      Payer_zip: Zip
-      Payer_city: City
-      Payer_prvince: Province
-      CountryViaCountry_id {
-        Payer_country: Name
-      }
-      Payer_email: Email
-      Payer_bank_account: Bank_account
+      Customer_signer_id: Signer_document
     }
     Options: Booking_optionListViaBooking_id {
         Option_id: id
@@ -221,19 +211,24 @@ query Booking_groupById ($id: Int!) {
     Booking_limit: Limit
     CustomerViaPayer_id {
       Id_typeViaId_type_id {
-        Payer_id_type: Name
+        Customer_id_type: Name
       }
-      Payer_id: Document
-      Payer_name: Name
-      Payer_address: Address
-      Payer_zip: Zip
-      Payer_city: City
-      Payer_prvince: Province
+      Customer_id: Document
+      Customer_name: Name
+      Customer_address: Address
+      Customer_zip: Zip
+      Customer_city: City
+      Customer_prvince: Province
       CountryViaCountry_id {
-        Payer_country: Name
+        Customer_country: Name
       }
-      Payer_email: Email
-      Payer_bank_account: Bank_account
+      Customer_email: Email
+      Customer_bank_account: Bank_account
+      Customer_signer_name: Signer_name
+      Id_typeViaId_type_id {
+        Customer_signer_id_type: Name
+      }
+      Customer_signer_id: Document
     }
     Room: Booking_roomingListViaBooking_id {
         ResourceViaResource_id {

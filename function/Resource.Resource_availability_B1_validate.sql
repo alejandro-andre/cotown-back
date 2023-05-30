@@ -17,6 +17,7 @@ BEGIN
   FROM "Booking"."Booking_detail" bd
   INNER JOIN "Resource"."Resource" r ON r.id = bd."Resource_id" 
   WHERE "Date_from" <= NEW."Date_to" 
+  --? AND "Availability_id" IS NULL
   AND "Date_to" >= NEW."Date_from"
   AND r."Flat_id" = NEW."Resource_id"; 
  
