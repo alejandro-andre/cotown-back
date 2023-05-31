@@ -1,5 +1,4 @@
-# CONTRATO DE ARRENDAMIENTO (TEMPORADA) DE UN PISO COMPARTIDO 
-# POR RAZON DE ESTUDIOS O TRABAJO
+# CONTRATO DE ...
 
 
 En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
@@ -21,7 +20,7 @@ Sr./Sra. {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de n
 
 En adelante denominada la “**Arrendataria**”
 
-# MANIFIESTAN
+# MANIFIESTAN (EJEMPLO)
 
 I.- Que la sociedad {{Owner_name}} es la propietaria del inmueble ubicado en {{Building_address}} de {{Building_city}} y ejerce en él la actividad de arrendar partes indivisas de la finca por temporada a estudiantes y jóvenes profesionales durante su estancia académica o laboral. Que la vivienda se encuentra totalmente amueblada y equipado con los utensilios domésticos. 
 
@@ -29,7 +28,7 @@ II.- Que el objeto del presente arrendamiento es una parte indivisa de la vivien
 
 III.- Que el arrendatario, desea arrendar una parte indivisa de la finca por motivos de {{Booking_reason}} en {{School}} y consecuentemente, AMBAS PARTES se reconocen suficiente capacidad legal para llevar a cabo este contrato, INTERVINIENDO en nombre y derecho mencionados respectivamente, siendo responsables de la veracidad de sus manifestaciones y que se regirá por las siguientes:  
 
-# ESTIPULACIONES
+# ESTIPULACIONES (EJEMPLO)
 
 ## PRIMERA.- DESTINO. 
 
@@ -151,9 +150,14 @@ Este contrato se rige por las disposiciones contenidas en el código civil, art�
 
 Y con el carácter expresado en la intervención, firman el presente contrato por duplicado, en cuatro folios escritos por el anverso numeradas sus caras del uno al cuatro, en el lugar y fecha indicados. 
 
-
-
-| | |
-|-|-|
-|El Arrendador|El Arrendatario|
-|Fdo: D./D. {{Owner_signer_name}}|Fdo: {{Customer_name}}|
+|  |  |
+|:-|:-|
+|**El Arrendador**|**El Arrendatario**|
+{%-for s in Rooms[0].Owner_signers-%}
+|&nbsp; | |
+|&nbsp; | |
+|&nbsp; | |
+|&nbsp; | |
+|&nbsp; | |
+|Fdo: D./D. {{s.Owner_signer_name}}|{%if loop.index==1%}Fdo: {{Customer_name}}{%endif%}|
+{%-endfor-%}
