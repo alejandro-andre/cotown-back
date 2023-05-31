@@ -164,7 +164,7 @@ BEGIN
     -- EMail 
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
     -- Log
-    change := 'Solicitud descartada. Hay que devolver el pago del booking';   
+    change := 'Solicitud descartada y booking pagado.';   
   END IF;
 
   -- A DESCARTADA
@@ -176,7 +176,10 @@ BEGIN
     -- EMail
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
     -- Log
-    change := 'Solicitud descartada.';   
+    change := CONCAT('Solicitud descartada. ');
+    IF(NEW."Booking_fee_returned" IS NOT NULL) THEN
+      change := CONCAT(change, 'Hay que devolver el booking con por importe de: ', NEW."Booking_fee_returned"); 
+    END IF; 
   END IF;
 
   -- A FIRMA CONTRATO
