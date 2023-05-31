@@ -4,9 +4,15 @@ DECLARE
   booking_status VARCHAR;
   deposit_paid INTEGER;
   customer_id INTEGER;
+  curr_user VARCHAR;
 
 BEGIN
   
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+ 
+
   -- ALTERNATIVAS a SOLICITUD
   -- ALTERNATIVASPAGADA A SOLICITUDPAGADA
   -- Aceptada, actualiza la petición
@@ -21,12 +27,12 @@ BEGIN
             ELSE "Status"
           END
     WHERE id = NEW."Booking_id";
+    EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
 
   -- Estado actual de la reserva
   SELECT "Status", "Customer_id" into booking_status, customer_id FROM "Booking"."Booking" WHERE "Booking".id = NEW."Booking_id";
-
 
   -- SOLICITUD a ALTERNATIVAS 
   -- Actualiza la solicitud
@@ -43,6 +49,7 @@ BEGIN
   END IF;
 
   -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;
