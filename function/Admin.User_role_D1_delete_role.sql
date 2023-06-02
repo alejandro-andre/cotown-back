@@ -4,8 +4,13 @@ DECLARE
 
   rol_name VARCHAR;
   user_name VARCHAR;
+  curr_user VARCHAR;
  
 BEGIN
+
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;  
 
   -- Get user name
   SELECT "User_name" INTO user_name FROM "Admin"."User" WHERE id = OLD."User_id";
@@ -20,6 +25,7 @@ BEGIN
   END IF;
  
   -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

@@ -37,6 +37,7 @@ BEGIN
   EXECUTE 'GRANT "cotown" TO "' || user_name || '"';
 
   -- Fin
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

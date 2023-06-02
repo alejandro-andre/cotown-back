@@ -5,8 +5,13 @@ DECLARE
   user_id INTEGER;
   user_name VARCHAR;
   rol_name VARCHAR;
+  curr_user VARCHAR;
  
 BEGIN
+
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;  
 
   -- Get user name
   SELECT "User_name" INTO user_name FROM "Admin"."User" WHERE id = NEW."User_id";
@@ -21,6 +26,7 @@ BEGIN
   EXECUTE 'GRANT "' || rol_name || '" TO "' || user_name || '"';
  
   -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

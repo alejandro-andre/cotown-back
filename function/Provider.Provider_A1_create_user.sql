@@ -7,6 +7,7 @@ DECLARE
 
 BEGIN
 
+  -- Already created
   IF NEW."User_name" IS NOT NULL THEN
     RETURN NEW;
   END IF;
