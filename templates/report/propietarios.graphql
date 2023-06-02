@@ -23,11 +23,6 @@
         Prefix_SAP
         Province
         Receipt_pattern
-        Signer_document
-        Signer_id_type: Id_typeViaSigner_Id_type_id {
-            Name
-        }
-        Signer_name
         Type
     }
 }
