@@ -14,7 +14,7 @@ scrape_configs:
   - targets:
       - localhost
     labels:
-      container: back
+      container_name: batch
       host: Back
       job: varlogs
       __path__: /var/log/cotown/*.log

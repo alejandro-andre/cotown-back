@@ -50,7 +50,7 @@ prometheus:
 
 nginx:
 	docker run -d -p 80:80 -p 443:443 --name nginx --net=cotownnet \
-        	-v ${HOME}/usr/share/nginx:ro \
+		-v ${HOME}/www:/usr/share/nginx/www:ro \
         	-v ${HOME}/config/nginx.conf:/etc/nginx/nginx.conf:ro \
         	-v /etc/letsencrypt:/certs \
         	nginx
@@ -59,9 +59,9 @@ nginx:
 # Backoffice
 # ###################################
 
-#--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" 
 back:
 	docker run -d --name back --restart=unless-stopped --net=cotownnet \
+		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
 		-e COTOWN_SERVER='core.cotown.com' \
 		-e COTOWN_DATABASE='niledb' \
 		-e COTOWN_DBUSER='postgres' \

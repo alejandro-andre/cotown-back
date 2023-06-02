@@ -15,8 +15,7 @@ loki:
 promtail:
 	docker run -d --name promtail --link=loki --net=cotownnet \
 		-v $(HOME)/cotown/config:/mnt/config \
-		-v ${HOME}/cotown/dev/log:/var/log/dev \
-		-v ${HOME}/cotown/pre/log:/var/log/pre \
+		-v ${HOME}/cotown/log:/var/log/cotown \
 		grafana/promtail -config.file=/mnt/config/promtail-config.yaml
 
 monitor:
@@ -51,7 +50,7 @@ prometheus:
 
 nginx:
 	docker run -d -p 80:80 -p 443:443 --name nginx --net=cotownnet \
-        	-v ${HOME}/cotown:/usr/share/nginx:ro \
+        	-v ${HOME}/cotown/www:/usr/share/nginx/www:ro \
         	-v ${HOME}/cotown/config/nginx.conf:/etc/nginx/nginx.conf:ro \
         	-v /etc/letsencrypt:/certs \
         	nginx
@@ -60,8 +59,8 @@ nginx:
 # Containers
 # ###################################
 
-backdev:
-	docker run -d --name backdev --restart=unless-stopped --net=cotownnet \
+back:
+	docker run -d --name back --restart=unless-stopped --net=cotownnet \
 		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
 		-e COTOWN_BACK='dev.cotown.ciber.es' \
 		-e COTOWN_SERVER='experis.flows.ninja' \
@@ -72,17 +71,4 @@ backdev:
 		-e COTOWN_GQLPASS='Ciber$$2022' \
 		-e COTOWN_SSHUSER='themes' \
 		-e COTOWN_SSHPASS='Admin1234!' \
-		-v ${HOME}/cotown/dev/app:/app cotown
-
-backpre:
-	docker run -d --name backpre --restart=unless-stopped --net=cotownnet \
-		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
-		-e COTOWN_SERVER='core.cotown.com' \
-		-e COTOWN_DATABASE='niledb' \
-		-e COTOWN_DBUSER='postgres' \
-		-e COTOWN_DBPASS='postgres' \
-		-e COTOWN_GQLUSER='modelsadmin' \
-		-e COTOWN_GQLPASS='Ciber$$2022' \
-		-e COTOWN_SSHUSER='themes' \
-		-e COTOWN_SSHPASS='Admin1234!' \
-		-v ${HOME}/cotown/pre/app:/app cotown
+		-v ${HOME}/cotown/app:/app cotown
