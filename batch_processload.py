@@ -10,7 +10,6 @@
 
 # System includes
 from openpyxl import load_workbook
-import os
 import io
 
 # Logging
@@ -18,6 +17,7 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
+from library.services.config import settings
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
 from library.business.load_prices import load_prices
@@ -44,29 +44,15 @@ def main():
 
 
   # ###################################################
-  # Environment variables
-  # ###################################################
-
-  SERVER   = str(os.environ.get('COTOWN_SERVER'))
-  DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-  DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-  DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
-  GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
-  GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
-  SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-  SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
-
-
-  # ###################################################
   # GraphQL and DB client
   # ###################################################
 
   # graphQL API
-  apiClient = APIClient(SERVER)
-  apiClient.auth(user=GQLUSER, password=GQLPASS)
+  apiClient = APIClient(settings.SERVER)
+  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
   # DB API
-  dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
+  dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
   dbClient.connect()
 
 

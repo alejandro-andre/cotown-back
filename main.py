@@ -9,7 +9,6 @@
 # #####################################
 
 # System includes
-import os
 from flask import Flask, request, abort, send_file, send_from_directory
 from cachetools import TTLCache
 
@@ -20,6 +19,7 @@ logger = logging.getLogger('COTOWN')
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
+from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.business.export import query_to_excel
 from library.business.queries import *
@@ -45,46 +45,14 @@ def runapp():
 
 
   # ###################################################
-  # Constants
-  # ###################################################
-
-  API_PREFIX = '/api/v1'
-
-
-  # ###################################################
-  # Environment variables
-  # ###################################################
-
-  BACK     = str(os.environ.get('COTOWN_BACK'))
-  SERVER   = str(os.environ.get('COTOWN_SERVER'))
-  DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-  DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-  DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
-  GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
-  GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
-  SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-  SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
-
-  # Debug!!
-  #BACK     = ''
-  #SERVER   = 'experis.flows.ninja'
-  #DATABASE = 'niledb'
-  #DBUSER   = 'postgres'
-  #DBPASS   = 'postgres'
-  #GQLUSER  = 'modelsadmin'
-  #GQLPASS  = 'Ciber$2022'
-  #SSHUSER  = 'themes'
-  #SSHPASS  = 'Admin1234!'
-
-  # ###################################################
   # GraphQL and DB client
   # ###################################################
 
   # graphQL API
-  apiClient = APIClient(SERVER)
+  apiClient = APIClient(settings.SERVER)
 
   # DB API
-  dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
+  dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
 
 
   # #####################################
@@ -120,7 +88,7 @@ def runapp():
       return result
 
     # Debug / Remove in production
-    apiClient.auth(user=GQLUSER, password=GQLPASS)
+    apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
     logger.warning('Acceso sin token')
     result = 0
 
@@ -251,9 +219,8 @@ def runapp():
       order     = payment['Payment_order'], 
       amount    = int(100 * float(payment['Amount'])), 
       id        = payment['id'],
-      urlok     = 'https://' + BACK + '/customer/pago_ok?id=' + payment['Payment_order'],
-      urlko     = 'https://' + BACK + '/customer/pago_ko?id=' + payment['Payment_order'],
-      urlnotify = 'https://' + BACK + API_PREFIX + '/notify'
+      urlok     = 'https://' + settings.BACK + '/customer/pago_ok?id=' + payment['Payment_order'],
+      urlko     = 'https://' + settings.BACK + '/customer/pago_ko?id=' + payment['Payment_order'],
     )
     logger.debug(params)
 
@@ -323,33 +290,33 @@ def runapp():
   # ---------------------------------
 
   # Other functions
-  app.add_url_rule(API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
 
   # Payment functions
-  app.add_url_rule(API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
 
   # ---------------------------------
   # Requests with  token    
   # ---------------------------------
 
   # Payment functions
-  app.add_url_rule(API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
 
   # Planning
-  app.add_url_rule(API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
 
   # Dashboard
-  app.add_url_rule(API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/dashboard/export/<string:status>', view_func=get_dashboard_export, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/dashboard/export/<string:status>', view_func=get_dashboard_export, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Status buttons
-  app.add_url_rule(API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
   # Export
-  app.add_url_rule(API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
-  app.add_url_rule(API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
 
     # Return app
   return app

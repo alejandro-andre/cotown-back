@@ -17,18 +17,8 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
+from library.services.config import settings
 from library.services.utils import flatten_json
-
-
-# ###################################################
-# Constants
-# ###################################################
-
-HOST = 'smtp.office365.com'
-PORT = '587'
-FROM = 'no-reply@cotown.com'
-USER = 'no-reply@cotown.com'
-PASS = 'Suq97716'
 
 
 # ######################################################
@@ -115,18 +105,18 @@ def smtp_mail(to, subject, body):
 
     # Prepare mail
     msg = MIMEMultipart()
-    msg['From']    = FROM
+    msg['From']    = settings.SMTPFROM
     msg['To']      = to
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'html'))
 
     # Send mail
     context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    session = smtplib.SMTP(HOST, PORT)
+    session = smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT)
     session.ehlo()
     session.starttls(context=context)
-    session.login(USER, PASS)
-    errors = session.sendmail(FROM, receivers, msg.as_string())
+    session.login(settings.SMTPUSER, settings.SMTPPASS)
+    errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
     session.quit()
     return errors
 

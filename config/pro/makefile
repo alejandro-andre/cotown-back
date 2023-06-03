@@ -62,12 +62,5 @@ nginx:
 back:
 	docker run -d --name back --restart=unless-stopped --net=cotownnet \
 		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
-		-e COTOWN_SERVER='core.cotown.com' \
-		-e COTOWN_DATABASE='niledb' \
-		-e COTOWN_DBUSER='postgres' \
-		-e COTOWN_DBPASS='postgres' \
-		-e COTOWN_GQLUSER='modelsadmin' \
-		-e COTOWN_GQLPASS='Ciber$$2022' \
-		-e COTOWN_SSHUSER='themes' \
-		-e COTOWN_SSHPASS='Admin1234!' \
+		-e COTOWN_ENV='production' \
 		-v ${HOME}/app:/app cotown

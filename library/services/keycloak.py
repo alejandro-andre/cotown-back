@@ -17,8 +17,8 @@
 # Imports
 # ###################################################
 
+# System imports
 import requests
-import os
 
 # Logging
 import logging
@@ -26,34 +26,25 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
-# Constants
-# ###################################################
-
-# Environment variables
-SERVER = str(os.environ.get('COTOWN_SERVER'))
-SECRET = str(os.environ.get('COTOWN_SECRET'))
-
-
-# ###################################################
 # Create user
 # ###################################################
 
-def create_keycloak_user(id, firstName, email, username):
+def create_keycloak_user(id, firstName, email, username, server, secret):
 
   # Get access token
   auth_data = {
     'grant_type': 'client_credentials',
     'client_id': 'airflows-admin',
-    'client_secret': SECRET
+    'client_secret': secret
   }
-  response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
+  response = requests.post('https://' + server + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
   logger.debug('keycloak response->')
   logger.debug(response)
   if response.status_code != 200:
     return False
 
   # Create user
-  api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users'
+  api_url = 'https://' + server + '/auth/admin/realms/airflows/users'
   access_token = response.json()['access_token']
   headers = {
     'Authorization': f'Bearer { access_token }',
@@ -90,15 +81,15 @@ def create_keycloak_user(id, firstName, email, username):
 # Delete user
 # ###################################################
 
-def delete_keycloak_user(username):
+def delete_keycloak_user(username, server, secret):
 
   # Get access token
   auth_data = {
     'grant_type': 'client_credentials',
     'client_id': 'airflows-admin',
-    'client_secret': SECRET
+    'client_secret': secret
   }
-  response = requests.post('https://' + SERVER + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
+  response = requests.post('https://' + server + '/auth/realms/airflows/protocol/openid-connect/token', data=auth_data)
   logger.debug('keycloak token->')
   logger.debug(response)
   if response.status_code != 200:
@@ -106,7 +97,7 @@ def delete_keycloak_user(username):
 
   # Get user
   access_token = response.json()['access_token']
-  api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users?lastName=' + username
+  api_url = 'https://' + server + '/auth/admin/realms/airflows/users?lastName=' + username
   headers = {
     'Authorization': f'Bearer { access_token }',
     'Content-Type': 'application/json'
@@ -120,7 +111,7 @@ def delete_keycloak_user(username):
   # Delete user
   id = response.json()[0]['id']
   logger.debug('keycloak id ', id)
-  api_url = 'https://' + SERVER + '/auth/admin/realms/airflows/users/' + id
+  api_url = 'https://' + server + '/auth/admin/realms/airflows/users/' + id
   headers = {
     'Authorization': f'Bearer { access_token }',
     'Content-Type': 'application/json'

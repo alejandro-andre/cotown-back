@@ -9,7 +9,6 @@
 # ###################################################
 
 # System includes
-import os
 from datetime import datetime
 
 # Logging
@@ -17,14 +16,13 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
+from library.services.config import settings
 from library.services.dbclient import DBClient
 
 
 # ###################################################
 # Constants
 # ###################################################
-
-START_DATE = '2023-05-01'
 
 ID_COTOWN = 1
 
@@ -138,7 +136,7 @@ def bill_rent(dbClient):
     AND "Rent_date" <= %s
     AND "Rent_date" >= %s
     ORDER BY p."Booking_id", p."Rent_date"
-    ''', (datetime.now(), START_DATE))
+    ''', (datetime.now(), settings.BILL_DATE))
     data = dbClient.fetchall()
 
     # Loop thru payments
@@ -299,7 +297,7 @@ def bill_group_rent(dbClient):
     AND bgp."Rent_date" >= %s
     GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
     ORDER BY bgp."Booking_id", bgp."Rent_date"
-    ''', (datetime.now(), START_DATE, ))
+    ''', (datetime.now(), settings.BILL_DATE, ))
     data = dbClient.fetchall()
 
     # Loop thru payments
@@ -509,23 +507,11 @@ def main():
 
 
   # ###################################################
-  # Environment variables
-  # ###################################################
-
-  SERVER   = str(os.environ.get('COTOWN_SERVER'))
-  DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-  DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-  DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
-  SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-  SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
-
-
-  # ###################################################
   # DB client
   # ###################################################
 
   # DB API
-  dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
+  dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
   dbClient.connect()
 
 

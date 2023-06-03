@@ -8,14 +8,12 @@
 # Imports
 # ###################################################
 
-# System includes
-import os
-
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
+from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.business.send_email import do_email
 
@@ -40,21 +38,12 @@ def main():
 
 
     # ###################################################
-    # Environment variables
-    # ###################################################
-
-    SERVER   = str(os.environ.get('COTOWN_SERVER'))
-    GQLUSER  = str(os.environ.get('COTOWN_GQLUSER'))
-    GQLPASS  = str(os.environ.get('COTOWN_GQLPASS'))
-
-
-    # ###################################################
     # GraphQL client
     # ###################################################
 
     # graphQL API
-    apiClient = APIClient(SERVER)
-    apiClient.auth(user=GQLUSER, password=GQLPASS)
+    apiClient = APIClient(settings.SERVER)
+    apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
 
     # ###################################################

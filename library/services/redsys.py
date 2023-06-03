@@ -13,17 +13,8 @@ import hashlib
 import logging
 logger = logging.getLogger('COTOWN')
 
-
-# #############################################
-# Constants
-# #############################################
-
-MERCHANT_CURRENCY        ='978'        # Euro
-MERCHANT_MERCHANTCODE    = '348032921' # Test
-MERCHANT_TERMINAL        = '002'       # Terminal 1
-MERCHANT_TRANSACTION_PAY = '0'         # Pago
-MERCHANT_KEY             = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'
-
+# Cotown includes
+from library.services.config import settings
 
 # #####################################
 # 3DES cypher
@@ -31,7 +22,7 @@ MERCHANT_KEY             = 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'
 
 def encrypt_DES3(order: str) -> bytes:
 
-  secret_key: bytes = MERCHANT_KEY.encode('utf-8')
+  secret_key: bytes = settings.REDSYS_KEY.encode('utf-8')
   key = base64.b64decode(secret_key)
   cipher = DES3.new(key, DES3.MODE_CBC, IV=b'\0\0\0\0\0\0\0\0')
   return cipher.encrypt(order.encode('utf-8').ljust(16, b'\0'))
@@ -40,7 +31,7 @@ def encrypt_DES3(order: str) -> bytes:
 def calc_signature(order, params):
 
   # Diversify key
-  secret_key: bytes = MERCHANT_KEY.encode('utf-8')
+  secret_key: bytes = settings.MERCHANT_KEY.encode('utf-8')
   cipher = DES3.new(base64.b64decode(secret_key), DES3.MODE_CBC, IV=b'\0\0\0\0\0\0\0\0')
   key = cipher.encrypt(order.encode('utf-8').ljust(16, b'\0'))
 
@@ -53,17 +44,17 @@ def calc_signature(order, params):
 # Payment form
 # #####################################
 
-def pay(order, amount, id, urlok, urlko, urlnotify):
+def pay(order, amount, id, urlok, urlko):
 
   # Transaction data
   data = {
-    'DS_MERCHANT_CURRENCY'       : MERCHANT_CURRENCY,
-    'DS_MERCHANT_MERCHANTCODE'   : MERCHANT_MERCHANTCODE,
-    'DS_MERCHANT_TERMINAL'       : MERCHANT_TERMINAL,
-    'DS_MERCHANT_TRANSACTIONTYPE': MERCHANT_TRANSACTION_PAY,
+    'DS_MERCHANT_CURRENCY'       : '978', # Euro
+    'DS_MERCHANT_TRANSACTIONTYPE': '0', # Pago
+    'DS_MERCHANT_TERMINAL'       : settings.REDSYS_TERMINAL,
+    'DS_MERCHANT_MERCHANTCODE'   : settings.REDSYS_MERCHANTCODE,
+    'DS_MERCHANT_MERCHANTURL'    : settings.REDSYS_MERCHANTURL,
     'DS_MERCHANT_URLOK'          : urlok,
     'DS_MERCHANT_URLKO'          : urlko,
-    'DS_MERCHANT_MERCHANTURL'    : urlnotify,
     'DS_MERCHANT_MERCHANTDATA'   : str(id),
     'DS_MERCHANT_ORDER'          : str(order),
     'DS_MERCHANT_AMOUNT'         : str(amount)

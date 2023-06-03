@@ -1,5 +1,5 @@
-*/1  * * * * cd /app; sh ./dobatch.sh sendemail
-*/5  * * * * cd /app; sh ./dobatch.sh processload
-*/5  * * * * cd /app; sh ./dobatch.sh printbill
-*/15 * * * * cd /app; sh ./dobatch.sh printcontract
-*/15 * * * * cd /app; sh ./dobatch.sh billing
+*/5  * * * * cd /home/cotown/app; sh ./dobatch.sh sendemail
+*/5  * * * * cd /home/cotown/app; sh ./dobatch.sh processload
+*/5  * * * * cd /home/cotown/app; sh ./dobatch.sh printbill
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh printcontract
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh billing
