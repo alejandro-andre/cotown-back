@@ -31,7 +31,7 @@ def encrypt_DES3(order: str) -> bytes:
 def calc_signature(order, params):
 
   # Diversify key
-  secret_key: bytes = settings.MERCHANT_KEY.encode('utf-8')
+  secret_key: bytes = settings.REDSYS_KEY.encode('utf-8')
   cipher = DES3.new(base64.b64decode(secret_key), DES3.MODE_CBC, IV=b'\0\0\0\0\0\0\0\0')
   key = cipher.encrypt(order.encode('utf-8').ljust(16, b'\0'))
 
