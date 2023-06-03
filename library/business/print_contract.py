@@ -92,6 +92,10 @@ query BookingById ($id: Int) {
       Resource_type
       Resource_part: Part
       Resource_address: Address
+      Flat: ResourceViaFlat_id {
+        Resource_flat_code: Code
+        Resource_flat_address: Address
+      }
       Building: BuildingViaBuilding_id {
         Resource_building_code: Code
         Resource_building_address: Address
@@ -173,7 +177,8 @@ query BookingById ($id: Int) {
       Customer_signer_id: Signer_document
     }
   }
-}'''
+}
+'''
 
 GROUP_BOOKING = '''
 query Booking_groupById ($id: Int!) {
@@ -219,12 +224,16 @@ query Booking_groupById ($id: Int!) {
         Resource_type
         Resource_part: Part
         Resource_address: Address
+        Flat: ResourceViaFlat_id {
+          Resource_flat_code: Code
+          Resource_flat_address: Address
+        }
         Building: BuildingViaBuilding_id {
-          Building_code: Code
-          Building_address: Address
+          Resource_building_code: Code
+          Resource_building_address: Address
           DistrictViaDistrict_id {
             LocationViaLocation_id {
-              Building_city: Name
+              Resource_building_city: Name
             }
           }
         }

@@ -22,7 +22,7 @@ En adelante denominada la “**Arrendataria**”
 
 # MANIFIESTAN (EJEMPLO)
 
-I.- Que la sociedad {{Owner_name}} es la propietaria del inmueble ubicado en {{Building_address}} de {{Building_city}} y ejerce en él la actividad de arrendar partes indivisas de la finca por temporada a estudiantes y jóvenes profesionales durante su estancia académica o laboral. Que la vivienda se encuentra totalmente amueblada y equipado con los utensilios domésticos. 
+I.- Que la sociedad {{Owner_name}} es la propietaria del inmueble ubicado en {{Rooms[0].Resource_building_address}} {{Rooms[0].Resource_flat_address}} de {{Rooms[0].Building_city}} y ejerce en él la actividad de arrendar partes indivisas de la finca por temporada a estudiantes y jóvenes profesionales durante su estancia académica o laboral. Que la vivienda se encuentra totalmente amueblada y equipado con los utensilios domésticos. 
 
 II.- Que el objeto del presente arrendamiento es una parte indivisa de la vivienda, que se encuentra amueblada y equipada. 
 
