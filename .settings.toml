@@ -14,12 +14,14 @@ BILLDATE='2023-06-01'
 CHECKINDAYS=14
 
 [development]
+BACK='dev.cotown.ciber.es'
 SERVER='experis.flows.ninja'
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://dev.cotown.ciber.es/api/v1/notify'
 
 [production]
+BACK='back.cotown.com'
 SERVER='core.cotown.com'
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
