@@ -1,28 +1,43 @@
 [default]
+
+# General
 API_PREFIX='/api/v1'
 DBUSER='postgres'
 DATABASE='niledb'
 GQLUSER='modelsadmin'
 SSHUSER='themes'
 
+# Log level: CRITICAL=50, ERROR=40, WARNING=30, INFO=20, DEBUG=10
+LOGLEVEL=20
+
+# Email send
 SMTPHOST='smtp.office365.com'
 SMTPPORT='587'
 SMTPFROM='no-reply@cotown.com'
 SMTPUSER='no-reply@cotown.com'
 
+# App parameters
 BILLDATE='2023-06-01'
 CHECKINDAYS=14
 
 [development]
+
+# Servers
 BACK='dev.cotown.ciber.es'
 SERVER='experis.flows.ninja'
+
+# Redsys
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://dev.cotown.ciber.es/api/v1/notify'
 
 [production]
+
+# Servers
 BACK='back.cotown.com'
 SERVER='core.cotown.com'
+
+# Redsys
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://back.core.cotown/api/v1/notify'

@@ -11,13 +11,13 @@
 # System includes
 from datetime import datetime
 
-# Logging
-import logging
-logger = logging.getLogger('COTOWN')
-
 # Cotown includes
 from library.services.config import settings
 from library.services.dbclient import DBClient
+
+# Logging
+import logging
+logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
@@ -497,9 +497,9 @@ def main():
   # Logging
   # ###################################################
 
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(settings.LOGLEVEL)
   console_handler = logging.StreamHandler()
-  console_handler.setLevel(logging.DEBUG)
+  console_handler.setLevel(settings.LOGLEVEL)
   formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(levelname)s] %(message)s')
   console_handler.setFormatter(formatter)
   logger.addHandler(console_handler)

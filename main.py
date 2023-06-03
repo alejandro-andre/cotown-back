@@ -12,10 +12,6 @@
 from flask import Flask, request, abort, send_file, send_from_directory
 from cachetools import TTLCache
 
-# Logging
-import logging
-logger = logging.getLogger('COTOWN')
-
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
@@ -23,6 +19,10 @@ from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.business.export import query_to_excel
 from library.business.queries import *
+
+# Logging
+import logging
+logger = logging.getLogger('COTOWN')
 
 
 # #####################################
@@ -35,9 +35,9 @@ def runapp():
   # Logging
   # ###################################################
 
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(settings.LOGLEVEL)
   console_handler = logging.StreamHandler()
-  console_handler.setLevel(logging.DEBUG)
+  console_handler.setLevel(settings.LOGLEVEL)
   formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(levelname)s] %(message)s')
   console_handler.setFormatter(formatter)
   logger.addHandler(console_handler)
