@@ -1,0 +1,41 @@
+query BillingPaimment ($date_from: String, $date_to:String){
+    Billing_PaymentList (
+        orderBy: [{attribute: Issued_date, direction:ASC}]
+        where: {
+            AND: [
+            { Issued_date: { GE: $date_from } },
+            { Issued_date: { LE: $date_to } } 
+            #, { Payment_date: { IS_NULL: true }}
+            ]
+  })
+         
+ {
+        # INFORMACIÓN DEL PAGO
+        # Booking_id: Booking_id
+        Payment_id: id
+        Payment_date
+        Payment_type
+        Billing_amount: Amount
+         Payment_methodViaPayment_method_id{
+                Payment_method:Name
+        }
+        Payment_concept: Concept
+
+        #INFORMACIÓN DEL CLIENTE
+        CustomerViaCustomer_id {
+         Customer_name: Name
+        }
+
+        
+        #INFORMACIÓN DEL RECURSO
+        BookingViaBooking_id{
+            # Resource_id
+            ResourceViaResource_id{
+                Resource_type
+                Resource_code: Code
+                Resource_address: Address
+                ProviderViaService_id{
+                   Resource_provider_name: Name                 
+                }
+            }
+        }

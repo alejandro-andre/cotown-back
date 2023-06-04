@@ -1,0 +1,13 @@
+[
+    "Paymnet_id",
+    "Payment_date",
+    "Payment_type",
+    "Amount",
+    "Payment_method",
+    "Payment_concept",
+    "Customer_name",
+    "Resource_type",
+    "Resource_code",
+    "Resource_address",
+    "Resource_provider_name"
+]
