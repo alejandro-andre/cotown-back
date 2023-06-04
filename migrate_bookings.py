@@ -31,8 +31,8 @@ PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
 -- 7a. Datos de reserva individuales
 SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
 	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   DATE_FORMAT(b.FROM, "%Y-%M-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%M-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%M-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%M-%d") AS Check_out, 
-       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%M-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%M-%d") AS Confirmation_date, 
+	   DATE_FORMAT(b.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out, 
+       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS Confirmation_date, 
 	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
 FROM booking_resource br 
 LEFT JOIN bookings b ON b.id = br.booking_id 
@@ -50,8 +50,8 @@ UNION
 -- 7b. Solicitudes
 SELECT rq.id, rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
 	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   DATE_FORMAT(b.FROM, "%Y-%M-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%M-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out, 
-       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%M-%d") AS Request_date, NULL AS Confirmation_date, 
+	   DATE_FORMAT(b.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out, 
+       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, NULL AS Confirmation_date, 
 	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
 FROM requests rq
 LEFT JOIN requesters r ON r.id = rq.requester_id 
