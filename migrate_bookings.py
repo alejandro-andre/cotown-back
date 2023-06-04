@@ -13,14 +13,55 @@ from datetime import datetime
 import pandas as pd
 import openpyxl
 import xlwt
-import os
 import re
 
 # Cotown includes
-from dbclient import DBClient
+from library.services.config import settings
+from library.services.dbclient import DBClient
 
 # Constants
 PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
+
+
+# #####################################
+# Query
+# #####################################
+
+'''
+-- 7a. Datos de reserva individuales
+SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
+	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
+	   DATE_FORMAT(b.FROM, "%Y-%M-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%M-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%M-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%M-%d") AS Check_out, 
+       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%M-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%M-%d") AS Confirmation_date, 
+	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
+FROM booking_resource br 
+LEFT JOIN bookings b ON b.id = br.booking_id 
+LEFT JOIN booking_information bi ON bi.booking_id = b.id
+LEFT JOIN booking_resource_resident brr ON brr.booking_resource_id = br.resource_id
+LEFT JOIN requests rq ON rq.id = b.request_id 
+LEFT JOIN requesters r ON r.id = rq.requester_id 
+LEFT JOIN resources re ON re.id = br.resource_id
+LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
+WHERE bl.id IS NULL
+AND re.id IS NOT NULL
+
+UNION
+
+-- 7b. Solicitudes
+SELECT rq.id, rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
+	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
+	   DATE_FORMAT(b.FROM, "%Y-%M-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%M-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out, 
+       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%M-%d") AS Request_date, NULL AS Confirmation_date, 
+	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
+FROM requests rq
+LEFT JOIN requesters r ON r.id = rq.requester_id 
+LEFT JOIN resources re ON re.id = rq.resource_id
+LEFT JOIN bookings b ON b.request_id = rq.id
+WHERE rq.state IN ('pending', 'accepted')
+AND re.id IS NOT NULL
+AND b.id IS NULL;
+'''
+
 
 # #####################################
 # Auxiliary functions
@@ -29,15 +70,15 @@ PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
 def get_date(string):
 
   try:
-    return datetime.strptime(str(string), '%Y-%m-%d %H:%M:%S')
-  except:
-    pass
-
-  try:
     return datetime.strptime(str(string), '%Y-%m-%d')
   except:
     pass
   
+  try:
+    return datetime.strptime(str(string), '%Y-%m-%d %H:%M:%S')
+  except:
+    pass
+
   return PAST
 
 def check_dates(row, tag):
@@ -78,7 +119,7 @@ def check_dates(row, tag):
 
   # Return requested date
   return dates[tag]
-    
+
 def set_status(row):
 
   # Finished
@@ -136,7 +177,6 @@ def lookup_resource(code, index=0):
 
   return -1
 
-
 def lookup_customer(email):
 
   email = email.split('@')[0] + '@test.com'
@@ -152,59 +192,11 @@ def lookup_customer(email):
 
 
 # #####################################
-# Query
-# #####################################
-
-'''
--- 7a. Solicitudes
-SELECT rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
-	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   rq.FROM AS Date_from, rq.TO AS Date_to, NULL AS Check_in, NULL AS Check_out, r.school_id AS School_id, 
-	   rq.created_at AS Request_date, NULL AS Confirmation_date,
-	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
-FROM requests rq
-LEFT JOIN requesters r ON r.id = rq.requester_id 
-LEFT JOIN resources re ON re.id = rq.resource_id
-LEFT JOIN bookings b ON b.request_id = rq.id
-WHERE rq.state IN ('pending', 'accepted')
-AND b.id IS NULL
-
-UNION
-
--- 7b. Datos de reserva individuales
-SELECT b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
-	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   b.FROM AS Date_from, b.TO AS Date_to, bi.checkin AS Check_in, bi.checkout AS Check_out, r.school_id AS School_id,
-	   rq.created_at AS Request_date, b.created_at AS Confirmation_date, 
-	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
-FROM booking_resource br 
-LEFT JOIN bookings b ON b.id = br.booking_id 
-LEFT JOIN booking_information bi ON bi.booking_id = b.id
-LEFT JOIN booking_resource_resident brr ON brr.booking_resource_id = br.resource_id
-LEFT JOIN requests rq ON rq.id = b.request_id 
-LEFT JOIN requesters r ON r.id = rq.requester_id 
-LEFT JOIN resources re ON re.id = br.resource_id
-LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
-WHERE bl.id IS NULL;
-'''
-
-# ###################################################
-# Environment variables
-# ###################################################
-
-SERVER   = str(os.environ.get('COTOWN_SERVER'))
-DATABASE = str(os.environ.get('COTOWN_DATABASE'))
-DBUSER   = str(os.environ.get('COTOWN_DBUSER'))
-DBPASS   = str(os.environ.get('COTOWN_DBPASS'))
-SSHUSER  = str(os.environ.get('COTOWN_SSHUSER'))
-SSHPASS  = str(os.environ.get('COTOWN_SSHPASS'))
-
-# #####################################
 # Main
 # #####################################
 
 # DB API
-dbClient = DBClient(SERVER, DATABASE, DBUSER, DBPASS, SSHUSER, SSHPASS)
+dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
 dbClient.connect()
 
 # Load customers
@@ -222,14 +214,13 @@ print()
 dbClient.disconnect()
 
 # Load data, csv in Excel format
-df = pd.read_csv('bookings.in.csv', delimiter=';', encoding='utf-8')
+df = pd.read_csv('migration/bookings.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
 # 1. Customer
 df['Customer_id'] = df['Customer'].apply(lambda x: lookup_customer(x))
 df = df.drop(df.loc[df['Customer_id'] == -1].index)
 print('Filas con cliente..........: ', df.shape[0])
-print(df)
 
 # 2. Resource
 df['Resource_id'] = df['Resource'].apply(lambda x: lookup_resource(x))
@@ -261,6 +252,7 @@ df['Date_from'] = df.apply(lambda row: check_dates(row, 'Date_from'), axis=1)
 df['Date_to']   = df.apply(lambda row: check_dates(row, 'Date_to'),   axis=1)
 df['Check_in']  = df.apply(lambda row: check_dates(row, 'Check_in'),  axis=1)
 df['Check_out'] = df.apply(lambda row: check_dates(row, 'Check_out'), axis=1)
+print(df['Date_from'])
 df = df.drop(df.loc[df['Date_from'] == PAST].index)
 print('Filas con fechas correctas.: ', df.shape[0])
 
@@ -276,11 +268,11 @@ df.drop('hiring_expense_amount', axis=1, inplace=True)
 df.drop('cleaning_service_amount', axis=1, inplace=True)
 
 # 7. Reindex
-df.reset_index(drop=True, inplace=True)
-df.insert(0, 'id', range(1, 1 + len(df)))
+#df.reset_index(drop=True, inplace=True)
+#df.insert(0, 'id', range(1, 1 + len(df)))
 
 # Save data to XLSX
-file = 'bookings.out.xlsx'
+file = 'migration/bookings.out.xlsx'
 df.to_excel(file, index=False, startrow=1)
 wb = openpyxl.load_workbook(file)
 sheet = wb.active
