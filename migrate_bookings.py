@@ -187,13 +187,12 @@ def lookup_resource(code, index=0):
 
   return -1
 
-def lookup_booking(id, index=0):
+def lookup_booking(id):
 
   # Lookup booking
   try:
-    id = df_bookings.loc[df_bookings['id'] == id, index].values[0]
-    print(id)
-    return id
+    result = df_bookings.loc[df_bookings['id'] == id, 'id'].values[0]
+    return result
   except:
     pass
 	
