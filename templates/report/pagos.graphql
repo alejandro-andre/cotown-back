@@ -1,15 +1,15 @@
-query BillingPaimment ($fecha:String){
+query BillingPaimment ($fecha:String) {
     Billing_PaymentList (
-        orderBy: [{attribute: Issued_date, direction:ASC}]
+        orderBy: [{attribute: Issued_date, direction: ASC}]
         where: {
             AND: [
             #{ Issued_date: { GE: $date_from } },
             { Issued_date: { LE: $fecha } } ,
-            { Payment_date: { IS_NULL: true }}
+            { Payment_date: { IS_NULL: true } }
             ]
-  })
-         
- {
+        }
+    )
+    {
         # INFORMACIÓN DEL PAGO
         # Booking_id: Booking_id
         Payment_id: id
@@ -26,9 +26,8 @@ query BillingPaimment ($fecha:String){
          Customer_name: Name
         }
 
-        
         #INFORMACIÓN DEL RECURSO
-        BookingViaBooking_id{
+        BookingViaBooking_id {
             # Resource_id
             ResourceViaResource_id{
                 Resource_type
@@ -39,3 +38,5 @@ query BillingPaimment ($fecha:String){
                 }
             }
         }
+    }
+}
