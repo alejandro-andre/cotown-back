@@ -1,11 +1,11 @@
-query BillingPaimment ($date_from: String, $date_to:String){
+query BillingPaimment ($fecha:String){
     Billing_PaymentList (
         orderBy: [{attribute: Issued_date, direction:ASC}]
         where: {
             AND: [
-            { Issued_date: { GE: $date_from } },
-            { Issued_date: { LE: $date_to } } 
-            #, { Payment_date: { IS_NULL: true }}
+            #{ Issued_date: { GE: $date_from } },
+            { Issued_date: { LE: $fecha } } ,
+            { Payment_date: { IS_NULL: true }}
             ]
   })
          
