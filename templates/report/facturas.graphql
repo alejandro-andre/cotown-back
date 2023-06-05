@@ -1,11 +1,11 @@
-query BillingInvoice ($date_from: String, $date_to:String){
+query BillingInvoice ($desde: String, $hasta:String){
 
 Billing_InvoiceList(
 orderBy: [{attribute: Issued_date, direction:ASC}]
 where: {
     AND: [
-      { Issued_date: { GT: $date_from } },
-      { Issued_date: { LT: $date_to } }
+      { Issued_date: { GE: $desde } },
+      { Issued_date: { LT: $hasta } }
     ]
   })
 {

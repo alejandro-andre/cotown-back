@@ -131,6 +131,7 @@ ORDER BY r.email;
 # #####################################
 
 # Load data, csv in Excel format
+print('CLIENTES')
 df = pd.read_csv('migration/customers.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
