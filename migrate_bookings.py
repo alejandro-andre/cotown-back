@@ -187,13 +187,12 @@ def lookup_resource(code, index=0):
 
   return -1
 
-def lookup_booking(id, index=0):
+def lookup_booking(id):
 
   # Lookup booking
   try:
-    id = df_bookings.loc[df_bookings['id'] == id, index].values[0]
-    print(id)
-    return id
+    result = df_bookings.loc[df_bookings['id'] == id, 'id'].values[0]
+    return result
   except:
     pass
 	
@@ -330,7 +329,11 @@ df_prices['Booking_id'] = df_prices['Booking_id'].apply(lambda x: lookup_booking
 df_prices = df_prices.drop(df_prices.loc[df_prices['Booking_id'] == -1].index)
 print('Filas con reserva..........: ', df_prices.shape[0])
 
-# 3. Reindex
+# 3. Round
+df_prices['Rent'] = df_prices['Rent'].round(0);
+df_prices['Services'] = df_prices['Services'].round(0);
+
+# 4. Reindex
 df_prices.insert(0, 'id', range(1, 1 + len(df_prices)))
 
 # Save data to XLSX
