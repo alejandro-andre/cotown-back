@@ -1,1 +1,1 @@
-$env:ENV_FOR_DYNACONF='production'
+$env:COTOWN_ENV='production'
