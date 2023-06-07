@@ -33,9 +33,40 @@ PR_BOOKING_FEE = 1
 PR_DEPOSIT = 2
 PR_RENT = 3
 PR_SERVICES = 4
+PR_RENT_SERVICES = 4
 
 VAT_21 = 1
-VAT_0 = 2
+
+PRODUCTS = {}
+
+# ###################################################
+# Get structure data
+# ###################################################
+
+def get_data(dbClient):
+
+  # Capture exceptions
+  try:
+
+    # Get all payments without bill
+    dbClient.select('''
+      SELECT p.id, p."Name", p."Name_en", t.id, t."Name", t."Name_en", t."Value" 
+      FROM "Billing"."Product" p
+      INNER JOIN "Billing"."Tax" t ON t.id = p."Tax_id";
+    ''')
+    data = dbClient.fetchall()
+    for product in data:
+      PRODUCTS[product[0]] = {
+        'concept': product[1],
+        'tax': product[3],
+        'value': product[5]
+      }
+
+  except Exception as error:
+    logger.error(error)
+    dbClient.rollback()
+    return
+
 
 # ###################################################
 # Generate booking fee and deposit payment bills
@@ -73,7 +104,7 @@ def bill_payments(dbClient):
         RETURNING id
         ''', 
         (
-          'factura' if item['Payment_type'] == 'booking' else 'recibo', 
+          'recibo' if item['Payment_type'] == 'deposito' else 'factura', 
           False, 
           False,
           datetime.now(), 
@@ -81,8 +112,8 @@ def bill_payments(dbClient):
           item['Customer_id'], 
           item['Booking_id'], 
           item['Payment_method_id'], 
-          item['id'], 
-          'Booking fee' if item['Payment_type'] == 'booking' else 'Garantía', 
+          item['id'],
+          PRODUCTS[PR_BOOKING_FEE]['concept'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['concept'], 
         )
       )
       billid = dbClient.returning()[0]
@@ -97,8 +128,8 @@ def bill_payments(dbClient):
           billid, 
           item['Amount'], 
           PR_BOOKING_FEE if item['Payment_type'] == 'booking' else PR_DEPOSIT, 
-          PR_BOOKING_FEE if item['Payment_type'] == 'booking' else PR_DEPOSIT, 
-          'Booking fee' if item['Payment_type'] == 'booking' else 'Garantía ' + item['Code'],
+          PR_BOOKING_FEE if item['Payment_type'] == 'booking' else PR_DEPOSIT,
+          PRODUCTS[PR_BOOKING_FEE]['concept'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['concept'] + ' ' + item['Code']
         )
       )
 
@@ -127,16 +158,19 @@ def bill_rent(dbClient):
 
     # Get all prices not already billed
     dbClient.select('''
-    SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", b."Customer_id", b."Payment_method_id", r."Code", r."Owner_id", r."Service_id"
+    SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", 
+           b."Customer_id", b."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
     FROM "Booking"."Booking_price" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+    INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
+    INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id" 
     WHERE "Invoice_rent_id" IS NULL 
     AND "Invoice_services_id" IS NULL
     AND "Rent_date" <= %s
     AND "Rent_date" >= %s
     ORDER BY p."Booking_id", p."Rent_date"
-    ''', (datetime.now(), settings.BILL_DATE))
+    ''', (datetime.now(), settings.BILLDATE))
     data = dbClient.fetchall()
 
     # Loop thru payments
@@ -150,7 +184,9 @@ def bill_rent(dbClient):
       services = int(item['Services'] or 0) + int(item['Services_discount'] or 0)
 
       # Same issuer
+      product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
+        product = PRODUCTS[PR_RENT_SERVICES]
         rent += services
         services = 0
         
@@ -169,7 +205,7 @@ def bill_rent(dbClient):
             item['Booking_id'], 
             rent + services,
             datetime.now(), 
-            'Renta y servicios ' + item['Code'] + ' ' + str(item['Rent_date']),
+            product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date']),
             'servicios'
           )
         )
@@ -194,7 +230,7 @@ def bill_rent(dbClient):
             item['Booking_id'], 
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD, 
             paymentid, 
-            'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+            product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
           )
         )
         rentid = dbClient.returning()[0]
@@ -209,8 +245,8 @@ def bill_rent(dbClient):
             rentid, 
             rent, 
             PR_RENT, 
-            VAT_0,
-            'Renta mensual [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+            product['tax'] if item['Tax_id'] is None else item['Tax_id'],
+            product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
           )
         )
 
@@ -239,7 +275,7 @@ def bill_rent(dbClient):
             item['Booking_id'], 
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD, 
             paymentid, 
-            'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+            PRODUCTS[PR_SERVICES]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
           )
         )
         servid = dbClient.returning()[0]
@@ -254,8 +290,8 @@ def bill_rent(dbClient):
             servid, 
             services, 
             PR_SERVICES, 
-            VAT_21,
-            'Servicios mensuales [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+            PRODUCTS[PR_SERVICES]['tax'],
+            PRODUCTS[PR_SERVICES]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
           )
         )
 
@@ -297,7 +333,7 @@ def bill_group_rent(dbClient):
     AND bgp."Rent_date" >= %s
     GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
     ORDER BY bgp."Booking_id", bgp."Rent_date"
-    ''', (datetime.now(), settings.BILL_DATE, ))
+    ''', (datetime.now(), settings.BILLDATE, ))
     data = dbClient.fetchall()
 
     # Loop thru payments
@@ -364,8 +400,8 @@ def bill_group_rent(dbClient):
           (
             rentid, 
             rent, 
-            PR_RENT, 
-            VAT_0 if item['Tax'] else VAT_21,
+            PR_RENT,
+            PRODUCTS[PR_RENT]['tax'] if item['Tax'] else VAT_21,
             'Renta mensual (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
           )
         )
@@ -518,6 +554,9 @@ def main():
   # ###################################################
   # Main
   # ###################################################
+
+  # 0. Get structure data
+  get_data(dbClient)
 
   # 1. Generate invoice for each booking fee and deposit payment 
   bill_payments(dbClient)
