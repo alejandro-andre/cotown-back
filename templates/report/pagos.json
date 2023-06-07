@@ -1,8 +1,8 @@
 [
-    "Paymnet_id",
-    "Payment_date",
+    "Payment_id",
+    "Issued_date",
     "Payment_type",
-    "Amount",
+    "Billing_amount",
     "Payment_method",
     "Payment_concept",
     "Customer_name",
