@@ -9,13 +9,37 @@ where: {
     ]
   })
 {
-        Issued_date:Issued_date   
         Booking_id: id
-        Concept: Concept
+        Issued_date:Issued_date   
+        Bill_type
+        Bill_code: Code
+        Bill_concept: Concept
+        Issued
         Total: Total    
-       CustomerViaCustomer_id {
+         Payment_methodViaPayment_method_id{
+                Payment_method:Name
+        }
+
+        #INFORMACIÓN DEL CLIENTE
+        CustomerViaCustomer_id {
             Customer_name: Name
-       }        
+       } 
+              
+       #INFORMACIÓN DEL PROVEEDOR
+       ProviderViaProvider_id{
+             Resource_provider_name: Name                 
+       }
+       SAP_code
+
+       #INFORMACIÓN DEL RECURSO
+        BookingViaBooking_id{
+            # Resource_id
+            ResourceViaResource_id{
+                Resource_type
+                Resource_code: Code
+                Resource_address: Address
+             }
+        } 
     
   }
 }
