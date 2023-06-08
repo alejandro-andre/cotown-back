@@ -99,15 +99,13 @@ BEGIN
   END IF;
 
   -- Documentos obligatorios
-  IF NEW."Reason_id" <> OLD."Reason_id" THEN
-    DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
-    INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
-      SELECT NEW."Customer_id", id
-      FROM "Customer"."Customer_doc_type" cdt
-      WHERE "Mandatory" = TRUE
-      AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
-    ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
-  END IF;
+  DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
+  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
+    SELECT NEW."Customer_id", id
+    FROM "Customer"."Customer_doc_type" cdt
+    WHERE "Mandatory" = TRUE
+    AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
+  ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
   
   -- Return record
   EXECUTE 'SET ROLE "' || curr_user || '"';
