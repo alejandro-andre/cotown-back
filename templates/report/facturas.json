@@ -1,6 +1,14 @@
 [
     "Issued_date",
-    "Concept", 
-    "Total",
-    "Customer_name"
+    "Bill_type",
+    "Bill_code",
+    "Bill_concept",
+    "Issued",
+    "Total",   
+    "Payment_method",
+    "Customer_name",
+    "Resource_provider_name",
+    "SAP_code",
+    "Resource_type",
+    "Resource_address"
 ]
