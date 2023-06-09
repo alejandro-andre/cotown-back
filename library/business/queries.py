@@ -66,19 +66,34 @@ def dashboard(dbClient, status = None):
   else:
 
     # Get bookings
-    sql = '''
-    SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
-    FROM "Booking"."Booking" b 
-    INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
-    INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id" 
-    LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
-    WHERE'''
     if status == 'ok':
-      dbClient.select(sql + '"Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
+      sql = '''
+        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
+        FROM "Booking"."Booking" b 
+        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
+        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id" 
+        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+        WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')'''
+      dbClient.select(sql)
     elif status == 'next':
-      dbClient.select(sql + '"Check_in" BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
+      sql = '''
+        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", r."Code" as "Resource", b."Flight", b."Arrival", ct."Name" AS "Option"
+        FROM "Booking"."Booking" b 
+        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
+        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id" 
+        INNER JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
+        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+        WHERE "Check_in" BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKINDAYS) + ' days\''
+      dbClient.select(sql)
     else:
-      dbClient.select(sql + '"Status" = %s', (status,))
+      sql = '''
+        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
+        FROM "Booking"."Booking" b 
+        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
+        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id" 
+        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+        WHERE "Status" = %s'''
+      dbClient.select(sql, (status,))
 
     # Result
     result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
