@@ -219,8 +219,8 @@ def runapp():
       order     = payment['Payment_order'], 
       amount    = int(100 * float(payment['Amount'])), 
       id        = payment['id'],
-      urlok     = 'https://' + settings.BACK + '/customer/pago_ok?id=' + payment['Payment_order'],
-      urlko     = 'https://' + settings.BACK + '/customer/pago_ko?id=' + payment['Payment_order'],
+      urlok     = 'https://' + settings.BACK + '/customer/#/pago_ok?id=' + payment['Payment_order'],
+      urlko     = 'https://' + settings.BACK + '/customer/#/pago_ko?id=' + payment['Payment_order'],
     )
     logger.debug(params)
 

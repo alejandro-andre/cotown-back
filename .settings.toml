@@ -40,4 +40,4 @@ SERVER='core.cotown.com'
 # Redsys
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
-REDSYS_MERCHANTURL='https://back.core.cotown/api/v1/notify'
+REDSYS_MERCHANTURL='https://back.cotown.com/api/v1/notify'
