@@ -6,7 +6,8 @@
 import markdown
 import logging
 import requests
-import datetime
+import locale
+from datetime import datetime
 from jinja2 import Environment
 from weasyprint import HTML
 from io import BytesIO
@@ -67,6 +68,12 @@ query BookingById ($id: Int) {
     Booking_deposit: Deposit
     Booking_limit: Limit
     Booking_second_resident: Second_resident
+    Customer_reasonViaReason_id {
+        Booking_reason: Name
+    } 
+    SchoolViaSchool_id {
+        Booking_school: Name
+    }
     Cancelation_fee
     Cancel_date
     Resource_flat_typeViaFlat_type_id { 
@@ -111,6 +118,7 @@ query BookingById ($id: Int) {
         }
         Owner_id: Document
         Owner_name: Name
+        Owner_email: Email
         Owner_address: Address
         Owner_zip: Zip
         Owner_city: City
@@ -135,6 +143,7 @@ query BookingById ($id: Int) {
         }
         Service_id: Document
         Service_name: Name
+        Service_email: Email
         Service_address: Address
         Service_zip: Zip
         Service_city: City
@@ -314,6 +323,21 @@ query Booking_groupById ($id: Int!) {
 # Additional functions
 # ######################################################
 
+def age(birthdate):
+
+  if birthdate is None or birthdate == '':
+    return 18
+  now = datetime.now()
+  bth = datetime.strptime(birthdate, '%Y-%m-%d')
+  age = now.year - bth.year 
+  if now.month < bth.month or (now.month == bth.month and now.day < bth.day):
+      age -= 1
+  return age  
+
+def decimal (value, decimals=2):
+  
+  return locale.format_string('%.'+str(decimals)+'f', value, grouping=True)
+
 def month(m):
 
   try:
@@ -346,8 +370,11 @@ def part(p):
 
 def generate_doc_file(context, template):
 
+  # Locale
+  locale.setlocale(locale.LC_NUMERIC, 'es_ES.UTF-8')
+
   # Prepare render context
-  now = datetime.datetime.now()
+  now = datetime.now()
   context['Today_day'] = now.day
   context['Today_month'] = now.month
   context['Today_year'] = now.year
@@ -356,6 +383,8 @@ def generate_doc_file(context, template):
   env = Environment()
   env.filters['month'] = month
   env.filters['part'] = part
+  env.filters['decimal'] = decimal
+  env.filters['age'] = age
 
   # Render contract
   text = template.decode('utf-8').replace('\r\n\r\n\r\n', '\r\n\r\n&nbsp;\r\n\r\n')
@@ -480,6 +509,7 @@ def do_group_contracts(apiClient, id):
     variables = { 'id': id }
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten_json(result['data'][0])
+    print(context)
     room = context['Room'][0]
 
     # Generate rent contract

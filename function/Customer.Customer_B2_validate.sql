@@ -14,7 +14,7 @@ BEGIN
   SELECT DATE_PART('year', AGE(NOW(), NEW."Birth_date")) INTO customer_age;
 
   -- Menor?
-  IF customer_age < 18 THEN
+  IF customer_age > 17 THEN
     IF NEW."Tutor_id_type_id" IS NULL OR NEW."Tutor_document" IS NULL OR 
        NEW."Tutor_name" IS NULL OR (NEW."Tutor_email" IS NULL AND NEW."Tutor_phones" IS NULL) THEN 
       RAISE EXCEPTION '!!!Minor require tutor!!!Menores requieren tutor!!!';
