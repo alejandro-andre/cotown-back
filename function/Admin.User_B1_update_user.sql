@@ -1,4 +1,4 @@
--- Verifica el proveedor
+-- Verifica el usuario
 DECLARE 
 
   num INTEGER;
