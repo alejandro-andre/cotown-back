@@ -1,8 +1,8 @@
 -- Verifica el cliente
 DECLARE
 
-  tutor_id INTEGER;
   customer_age INTEGER;
+  num INTEGER;
 
 BEGIN
 
@@ -15,16 +15,9 @@ BEGIN
 
   -- Menor?
   IF customer_age < 18 THEN
-    IF NEW."Tutor_id" IS NULL THEN 
+    IF NEW."Tutor_id_type_id" IS NULL OR NEW."Tutor_document" IS NULL OR 
+       NEW."Tutor_name" IS NULL OR (NEW."Tutor_email" IS NULL AND NEW."Tutor_phones" IS NULL) THEN 
       RAISE EXCEPTION '!!!Minor require tutor!!!Menores requieren tutor!!!';
-    ELSE 
-      SELECT DATE_PART('year', AGE(NOW(), "Birth_date"))
-        INTO customer_age
-        FROM "Customer"."Customer"
-        WHERE id = NEW."Tutor_id";
-      IF customer_age < 18 THEN
-          RAISE EXCEPTION '!!!Tutor must be > 18 years!!!El tutor debe tener más de 18 años!!!';
-      END IF;
     END IF;
   END IF;
 
