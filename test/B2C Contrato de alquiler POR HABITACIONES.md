@@ -8,7 +8,7 @@ En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 # LAS PARTES
 
 {%if Owner_id_type=='CIF'%}
-De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} n.º {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 {%else%}
 De una parte, {{Owner_name}}, mayor de edad, con {{Owner_id_type}} núm. {{Owner_id}}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}} actuando en su nombre y representación.
 {%endif%}
@@ -16,7 +16,7 @@ De una parte, {{Owner_name}}, mayor de edad, con {{Owner_id_type}} núm. {{Owner
 En adelante el "**Arrendador**" o la "**Propiedad**".
 
 {%if Customer_type=='empresa'%}
-De otra parte, D./Dª. {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} núm. {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} n.º {{Customer_id}}.
+De otra parte, D./Dª. {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} {{Customer_id}}.
 {%elif Customer_birth_date|age >= 18%}
 De otra parte, D./Dª. {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
 {%else%}

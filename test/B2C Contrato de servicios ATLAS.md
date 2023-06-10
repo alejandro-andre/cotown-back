@@ -11,8 +11,8 @@ De una parte, {%for s in Service_signers%}{%-if loop.index>1%} y {%endif%}{{s.Se
 En adelante **ATLAS**.
 
 {%if Customer_type=='empresa'%}
-De otra parte, D./Dª. {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} núm. {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} n.º {{Customer_id}}.
-{%elif Customer_birth_date|age > 17%}
+De otra parte, D./Dª. {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} {{Customer_id}}.
+{%elif Customer_birth_date|age >= 18%}
 De otra parte, D./Dª. {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
 {%else%}
 De otra parte, D./Dª. {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
@@ -22,7 +22,7 @@ En adelante el "**Arrendatario**".
 
 # MANIFIESTAN
 
-I.- Que, el Arrendatario tiene arrendado el piso sito en {{Resource_building_address}} {{Resource_flat_address}} (la "habitación"), 
+I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_building_address}} {{Resource_flat_address}} (el "piso"), 
 
 II.- Que, ATLAS es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
 
@@ -30,7 +30,7 @@ III.- Y, siendo la voluntad del Arrendatario contratar los servicios de ATLAS y 
 
 # ESTIPULACIONES
 
-1. El Arrendatario contrata a ATLAS para que lleve a cabo los servicios de limpieza de las zonas comunes del piso que  el Arrendatario tiene arrendado (el "Servicio") con total autonomía a independencia, conforme a los usos y costumbres del sector de actividad de ATLAS, con el uso de su propio personal con la cualificación y experiencia adecuadas, medios materiales y  todos aquellos necesarios para la correcta prestación del servicio aquí contratado.
+1. El Arrendatario contrata a ATLAS para que lleve a cabo los servicios de limpieza de las zonas comunes del piso donde el Arrendatario tiene arrendada la habitación (el "Servicio") con total autonomía a independencia, conforme a los usos y costumbres del sector de actividad de ATLAS, con el uso de su propio personal con la cualificación y experiencia adecuadas, medios materiales y  todos aquellos necesarios para la correcta prestación del servicio aquí contratado.
 
 ATLAS asumirá el coste del personal, medios, material, gastos e impuestos necesarios para la prestación del servicio aquí contratado.
 
