@@ -48,7 +48,6 @@ def main():
 
   # graphQL API
   apiClient = APIClient(settings.SERVER)
-  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
   # DB API
   dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
@@ -77,6 +76,7 @@ def main():
         logger.info(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
 
         # Get email
+        apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
         email = apiClient.call('''
           query EmailById ($id: Int!) {
             data: Customer_Customer_emailList ( 
