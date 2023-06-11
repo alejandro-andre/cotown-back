@@ -48,9 +48,18 @@ BEGIN
   OPEN depositrecall;
   FETCH depositrecall INTO booking_id, customer_id;
   WHILE (FOUND) LOOP
-    INSERT INTO "Customer"."Customer_email" 
-           ("Customer_id", "Template", "Entity_id") 
-           VALUES (customer_id, 'depositorecall', booking_id);
+  	IF NOT EXISTS (
+  		SELECT id 
+  		FROM "Customer"."Customer_email" 
+  		WHERE "Customer_id" = customer_id 
+  		AND "Entity_id" = booking_id 
+  		AND "Template" = 'deposito'
+  		AND "Created_at" > (CURRENT_DATE - INTERVAL '1 days')
+  	) THEN
+      INSERT INTO "Customer"."Customer_email" 
+             ("Customer_id", "Template", "Entity_id") 
+             VALUES (customer_id, 'depositorecall', booking_id);
+   	END IF;
     FETCH depositrecall INTO booking_id, customer_id;
   END LOOP;
   CLOSE depositrecall;
