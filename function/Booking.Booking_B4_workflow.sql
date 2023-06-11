@@ -7,6 +7,11 @@ DECLARE
 
 BEGIN
 
+  -- Por defecto, deshabilita el botón de envío de alternativas
+  IF (NEW."Status" <> 'solicitud' AND NEW."Status" <> 'solicitudpagada') THEN
+    NEW."Button_options" := '';
+  END IF;
+
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
