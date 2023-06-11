@@ -250,7 +250,7 @@ BEGIN
   -- A DEVOLVER GARANTIA (BOTON 'CHECK OUT OK')
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'devolvergarantia') THEN 
-  -- EMail
+    -- EMail
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'devolvergarantia', NEW.id);
     -- Log
     change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW."Deposit_returned");
