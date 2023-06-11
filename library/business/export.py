@@ -28,7 +28,7 @@ def fill_json(data, columns, sheet):
 
   # Copy styles from first data row
   styles = []
-  start = 3
+  start = sheet.max_row
   for c in range(0, df.shape[1]):
     cell = sheet.cell(row=start, column=c+1)
     styles.append(cell._style)
