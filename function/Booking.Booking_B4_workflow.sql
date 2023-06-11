@@ -88,12 +88,12 @@ BEGIN
 
   -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
-  -- IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
-  --   NEW."Status" := 'finalizada';
-  -- END IF;
+  IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
+    NEW."Status" := 'finalizada';
+  END IF;
 
   -- No ha habido cambios de estado
-  IF (NEW."Status" = OLD."Status" AND  OLD."Resource_id" = NEW."Resource_id") THEN
+  IF (NEW."Status" = OLD."Status" AND OLD."Resource_id" = NEW."Resource_id") THEN
     RETURN NEW;
   END IF;
 

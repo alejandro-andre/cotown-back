@@ -37,7 +37,7 @@ BEGIN
   -- Actualiza la solicitud
   IF booking_status = 'solicitud' THEN
        UPDATE "Booking"."Booking" 
-       SET "Button_options" = CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativas')
+       SET "Button_options" = CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW."Booking_id", '/status/alternativas')
        WHERE id = NEW."Booking_id";
   END IF;
 
@@ -45,7 +45,7 @@ BEGIN
   -- Actualiza la solicitud pagada
   IF booking_status = 'solicitudpagada' THEN
     UPDATE "Booking"."Booking" 
-    SET "Button_options" = CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativaspagada')
+    SET "Button_options" = CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW."Booking_id", '/status/alternativaspagada')
     WHERE id = NEW."Booking_id";
   END IF;
 
