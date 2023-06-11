@@ -12,7 +12,6 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE; 
  
-
   -- ALTERNATIVAS a SOLICITUD
   -- ALTERNATIVASPAGADA A SOLICITUDPAGADA
   -- Aceptada, actualiza la petición
@@ -21,10 +20,10 @@ BEGIN
       SET "Building_id" = NEW."Building_id", 
           "Flat_type_id" = NEW."Flat_type_id", 
           "Place_type_id" = NEW."Place_type_id",
+          "Button_options" = '',
           "Status" = CASE
-            WHEN "Status" = 'alternativas' THEN 'solicitud'
             WHEN "Status" = 'alternativaspagada' THEN 'solicitudpagada'
-            ELSE "Status"
+            ELSE 'solicitud'
           END
     WHERE id = NEW."Booking_id";
     EXECUTE 'SET ROLE "' || curr_user || '"';
@@ -37,13 +36,17 @@ BEGIN
   -- SOLICITUD a ALTERNATIVAS 
   -- Actualiza la solicitud
   IF booking_status = 'solicitud' THEN
-     UPDATE "Booking"."Booking" SET "Status" = 'alternativas' WHERE id = NEW."Booking_id";
+       UPDATE "Booking"."Booking" 
+       SET "Button_options" = CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativas')
+       WHERE id = NEW."Booking_id";
   END IF;
 
   -- SOLICITUDPAGADA a ALTERNATIVASPAGADA 
   -- Actualiza la solicitud pagada
   IF booking_status = 'solicitudpagada' THEN
-    UPDATE "Booking"."Booking" SET "Status" = 'alternativaspagada' WHERE id = NEW."Booking_id";
+    UPDATE "Booking"."Booking" 
+    SET "Button_options" = CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativaspagada')
+    WHERE id = NEW."Booking_id";
   END IF;
 
   -- Return
