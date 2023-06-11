@@ -27,7 +27,7 @@ BEGIN
     FROM "Billing"."Payment" p
     WHERE p."Booking_id" = b.id
     AND p."Payment_type" = 'deposito'
-  	AND p."Issued_date" < (CURRENT_DATE - INTERVAL '2 days')
+  	AND p."Issued_date" < (CURRENT_DATE - INTERVAL '4 days')
   );
 
   -- Actualiza el estado a 'check_in' de todas las reservas que tienen que entrar en el dia en curso
