@@ -7,6 +7,21 @@ DECLARE
 
 BEGIN
 
+  -- Por defecto, deshabilita el botón de envío de alternativas
+  NEW."Button_options" := '';
+  IF NEW."Status" = 'solicitud' THEN
+    IF (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = TRUE) = 0 AND
+       (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
+      NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativas');
+    END IF;
+  END IF;
+  IF NEW."Status" = 'solicitudpagada' THEN
+    IF (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = TRUE) = 0 AND
+       (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
+      NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativaspagada');
+    END IF;
+  END IF;
+
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
@@ -88,12 +103,17 @@ BEGIN
 
   -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
-  -- IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
-  --   NEW."Status" := 'finalizada';
-  -- END IF;
+  IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
+    NEW."Status" := 'finalizada';
+  END IF;
+
+  -- Mail contrato
+  IF (NEW."Status" = 'firmacontrato' AND OLD."Contract_rent" IS NULL AND NEW."Contract_rent" IS NOT NULL) THEN
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
+  END IF;
 
   -- No ha habido cambios de estado
-  IF (NEW."Status" = OLD."Status" AND  OLD."Resource_id" = NEW."Resource_id") THEN
+  IF (NEW."Status" = OLD."Status" AND OLD."Resource_id" = NEW."Resource_id") THEN
     RETURN NEW;
   END IF;
 
@@ -184,16 +204,18 @@ BEGIN
 
   -- A FIRMA CONTRATO
   IF (NEW."Status" = 'firmacontrato') THEN 
-    -- EMail 
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
     -- Log 
     change := 'Pendiente de firmar el contrato de la reserva'; 
   END IF;
 
   -- A CONTRATO
   IF (NEW."Status" = 'contrato') THEN 
-      -- Log 
-      change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed"); 
+    -- EMail
+    IF NEW."Check_in" IS NULL THEN
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
+    END IF;
+    -- Log 
+    change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed"); 
   END IF;
 
   -- A CHECK IN CONFIRMADO
@@ -250,7 +272,7 @@ BEGIN
   -- A DEVOLVER GARANTIA (BOTON 'CHECK OUT OK')
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'devolvergarantia') THEN 
-  -- EMail
+    -- EMail
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'devolvergarantia', NEW.id);
     -- Log
     change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW."Deposit_returned");

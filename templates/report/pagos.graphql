@@ -17,26 +17,25 @@ query BillingPaimment ($fecha:String){
         Issued_date
         Payment_type
         Amount
-        Payment_method:Payment_methodViaPayment_method_id{
+        Payment_method: Payment_methodViaPayment_method_id {
             Name
         }
         Concept
 
         #INFORMACIÓN DEL CLIENTE
-        Customer: CustomerViaCustomer_id {
-            Name
+        CustomerViaCustomer_id {
+            Customer_name: Name
         }
-
         
         #INFORMACIÓN DEL RECURSO
-        Booking: BookingViaBooking_id{
+        Booking: BookingViaBooking_id {
             # Resource_id
-            Resource: ResourceViaResource_id{
+            Resource: ResourceViaResource_id {
                 Resource_type
                 Code
-                Address
-                Provider: ProviderViaService_id{
-                    Name                 
+                Resource_address: Address
+                ProviderViaService_id{
+                   Resource_provider_name: Name                 
                 }
             }
         }    
