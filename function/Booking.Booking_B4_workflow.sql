@@ -200,8 +200,12 @@ BEGIN
 
   -- A CONTRATO
   IF (NEW."Status" = 'contrato') THEN 
-      -- Log 
-      change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed"); 
+    -- EMail
+    IF NEW."Check_in" IS NULL THEN
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
+    END IF;
+    -- Log 
+    change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed"); 
   END IF;
 
   -- A CHECK IN CONFIRMADO
