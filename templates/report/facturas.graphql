@@ -3,7 +3,7 @@ query BillingInvoice ($desde: String, $hasta:String) {
       orderBy: [{ attribute: Code, direction: ASC }]
       where: { 
         AND: [
-            { Provider: { EQ: 10 } }
+            { Provider_id: { EQ: 10 } }
             { Issued: { EQ: true } }
             { Issued_date: { GE: $desde } }
             { Issued_date: { LT: $hasta } }
