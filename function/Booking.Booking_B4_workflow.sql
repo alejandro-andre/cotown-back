@@ -97,6 +97,11 @@ BEGIN
     NEW."Status" := 'finalizada';
   END IF;
 
+  -- Mail contrato
+  IF (NEW."Status" = 'firmacontrato' AND OLD."Contract_rent" IS NULL AND NEW."Contract_rent" IS NOT NULL) THEN
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
+  END IF;
+
   -- No ha habido cambios de estado
   IF (NEW."Status" = OLD."Status" AND OLD."Resource_id" = NEW."Resource_id") THEN
     RETURN NEW;
@@ -189,8 +194,6 @@ BEGIN
 
   -- A FIRMA CONTRATO
   IF (NEW."Status" = 'firmacontrato') THEN 
-    -- EMail 
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
     -- Log 
     change := 'Pendiente de firmar el contrato de la reserva'; 
   END IF;
