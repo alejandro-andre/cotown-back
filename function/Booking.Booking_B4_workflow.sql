@@ -8,8 +8,18 @@ DECLARE
 BEGIN
 
   -- Por defecto, deshabilita el botón de envío de alternativas
-  IF (NEW."Status" <> 'solicitud' AND NEW."Status" <> 'solicitudpagada') THEN
-    NEW."Button_options" := '';
+  NEW."Button_options" := '';
+  IF NEW."Status" = 'solicitud' THEN
+    IF (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = TRUE) = 0 AND
+       (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
+      NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativas');
+    END IF;
+  END IF;
+  IF NEW."Status" = 'solicitudpagada' THEN
+    IF (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = TRUE) = 0 AND
+       (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
+      NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativaspagada');
+    END IF;
   END IF;
 
   -- SOLICITUD a PENDIENTE DE PAGO
