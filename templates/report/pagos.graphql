@@ -12,31 +12,31 @@ query BillingPaimment ($fecha:String){
  {
         # INFORMACIÓN DEL PAGO
         # Booking_id: Booking_id
-        Payment_id: id
+        id
         # Payment_date
         Issued_date
         Payment_type
-        Billing_amount: Amount
-         Payment_methodViaPayment_method_id{
-                Payment_method:Name
+        Amount
+        Payment_method:Payment_methodViaPayment_method_id{
+            Name
         }
-        Payment_concept: Concept
+        Concept
 
         #INFORMACIÓN DEL CLIENTE
-        CustomerViaCustomer_id {
-         Customer_name: Name
+        Customer: CustomerViaCustomer_id {
+            Name
         }
 
         
         #INFORMACIÓN DEL RECURSO
-        BookingViaBooking_id{
+        Booking: BookingViaBooking_id{
             # Resource_id
-            ResourceViaResource_id{
+            Resource: ResourceViaResource_id{
                 Resource_type
-                Resource_code: Code
-                Resource_address: Address
-                ProviderViaService_id{
-                   Resource_provider_name: Name                 
+                Code
+                Address
+                Provider: ProviderViaService_id{
+                    Name                 
                 }
             }
         }    
