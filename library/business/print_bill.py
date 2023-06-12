@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.services.utils import flatten_json
+from library.services.utils import flatten
 
 
 # ######################################################
@@ -117,7 +117,7 @@ def do_bill(apiClient, id):
     # Get bill info
     variables = { 'id': id }
     result = apiClient.call(BILL, variables)
-    context = flatten_json(result['data'][0])
+    context = flatten(result['data'][0])
 
     # Aggregate taxes
     taxes = {}

@@ -9,6 +9,9 @@ from io import BytesIO
 import pandas as pd
 import json
 
+# Cotown
+from library.services.utils import super_flatten
+
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
@@ -21,7 +24,9 @@ logger = logging.getLogger('COTOWN')
 def fill_json(data, columns, sheet):
 
   # Create dataframe
-  df = pd.json_normalize(data)
+  normalized = [super_flatten(d) for d in data]
+  df = pd.DataFrame(normalized)
+  #http://localhost:5000/api/v1/export/facturas?desde=2023-06-01&hasta=2023-07-01
 
   # Select and sort columns
   df = df.reindex([item.split(':')[0] for item in columns], axis=1)
@@ -32,6 +37,7 @@ def fill_json(data, columns, sheet):
   for c in range(0, df.shape[1]):
     cell = sheet.cell(row=start, column=c+1)
     styles.append(cell._style)
+    print(cell.value)
 
   # Write data
   for r, row in enumerate(dataframe_to_rows(df, index=False, header=False), 2):

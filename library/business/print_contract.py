@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
-from library.services.utils import flatten_json
+from library.services.utils import flatten
 
 
 # ######################################################
@@ -451,7 +451,7 @@ def do_contracts(apiClient, id):
     # Get booking info
     variables = { 'id': id }
     result = apiClient.call(BOOKING, variables)
-    context = flatten_json(result['data'][0])
+    context = flatten(result['data'][0])
 
     # Generate rent contract
     template, name = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'], 'Rent')
@@ -508,7 +508,7 @@ def do_group_contracts(apiClient, id):
     # Get booking info
     variables = { 'id': id }
     result = apiClient.call(GROUP_BOOKING, variables)
-    context = flatten_json(result['data'][0])
+    context = flatten(result['data'][0])
     print(context)
     room = context['Room'][0]
 

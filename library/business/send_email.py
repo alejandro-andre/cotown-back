@@ -18,7 +18,7 @@ logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.services.config import settings
-from library.services.utils import flatten_json
+from library.services.utils import flatten
 
 
 # ######################################################
@@ -68,7 +68,7 @@ def generate_email(apiClient, email):
   result = apiClient.call(TEMPLATE, variables)
   if len(result['data']) == 0:
       return 'ERROR', 'ERROR'
-  template = flatten_json(result['data'][0])
+  template = flatten(result['data'][0])
 
   # Context
   context = email
@@ -76,7 +76,7 @@ def generate_email(apiClient, email):
   # Call graphQL endpoint
   if id is not None and template['Query'] != '':
     result = apiClient.call(template['Query'], {'id': id})
-    context |= flatten_json(result['data'][0])
+    context |= flatten(result['data'][0])
 
   # Jinja environment
   env = Environment()

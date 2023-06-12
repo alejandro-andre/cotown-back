@@ -1,45 +1,37 @@
-query BillingInvoice ($desde: String, $hasta:String){
-
-Billing_InvoiceList(
-orderBy: [{attribute: Issued_date, direction:ASC}]
-where: {
-    AND: [
-      { Issued_date: { GE: $desde } },
-      { Issued_date: { LT: $hasta } }
-    ]
-  })
-{
-        Booking_id: id
-        Issued_date:Issued_date   
-        Bill_type
-        Bill_code: Code
-        Bill_concept: Concept
-        Issued
-        Total: Total    
-         Payment_methodViaPayment_method_id{
-                Payment_method:Name
+query BillingInvoice ($desde: String, $hasta:String) {
+    data: Billing_InvoiceList (
+      orderBy: [{ attribute: Code, direction: ASC }]
+      where: { 
+        AND: [
+            { Provider: { EQ: 10 } }
+            { Issued: { EQ: true } }
+            { Issued_date: { GE: $desde } }
+            { Issued_date: { LT: $hasta } }
+        ]
+      }
+    ) {
+        Code
+        Issued_date
+        Total
+        SAP_code
+        Provider: ProviderViaProvider_id {
+            Name
         }
-
-        #INFORMACIÓN DEL CLIENTE
-        CustomerViaCustomer_id {
-            Customer_name: Name
-       } 
-              
-       #INFORMACIÓN DEL PROVEEDOR
-       ProviderViaProvider_id{
-             Resource_provider_name: Name                 
-       }
-       SAP_code
-
-       #INFORMACIÓN DEL RECURSO
-        BookingViaBooking_id{
-            # Resource_id
-            ResourceViaResource_id{
-                Resource_type
-                Resource_code: Code
-                Resource_address: Address
-             }
-        } 
-    
-  }
+        Customer: CustomerViaCustomer_id {
+            Name
+            Document
+            Zip
+            Address
+            Country: CountryViaCountry_id {
+                Name
+            }
+        }
+        Lines: Invoice_lineListViaInvoice_id (limit: 1) {
+            id
+            Tax: TaxViaTax_id {
+                id
+                Value
+            }
+        }
+    }
 }

@@ -3,7 +3,7 @@ import json
 
 # Cotown includes
 from library.services.apiclient import APIClient
-from library.services.utils import flatten_json
+from library.services.utils import flatten
 from library.business.print_contract import age, BOOKING, GROUP_BOOKING, generate_doc_file
 
 def main(q, tpl, id):
@@ -18,7 +18,7 @@ def main(q, tpl, id):
       return
 
     # Prepare booking
-    context = flatten_json(booking['data'][0])
+    context = flatten(booking['data'][0])
     #print(json.dumps(context, indent=2))
 
     # Open template file
