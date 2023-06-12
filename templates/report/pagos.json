@@ -1,13 +1,13 @@
 [
-    "Payment_id",
+    "id",
     "Issued_date",
     "Payment_type",
-    "Billing_amount",
-    "Payment_method",
-    "Payment_concept",
+    "Amount",
+    "Payment_method.Name",
+    "Concept",
     "Customer_name",
-    "Resource_type",
-    "Resource_code",
+    "Booking.Resource.Resource_type",
+    "Booking.Resource.Code",
     "Resource_address",
     "Resource_provider_name"
 ]
