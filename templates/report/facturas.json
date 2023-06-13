@@ -13,5 +13,6 @@
 "Customer.Country.Name",
 "Issued_date",
 "Issued_date",
-"Lines.0.Tax.Value"
+"Lines.0.Tax.Value",
+"Concept"
 ]

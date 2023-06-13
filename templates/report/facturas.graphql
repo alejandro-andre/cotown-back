@@ -14,6 +14,7 @@ query BillingInvoice ($desde: String, $hasta:String) {
         Issued_date
         Total
         SAP_code
+        Concept
         Provider: ProviderViaProvider_id {
             Name
         }
