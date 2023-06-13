@@ -334,8 +334,10 @@ def age(birthdate):
       age -= 1
   return age  
 
-def decimal (value, decimals=2):
-  
+def decimal (value, decimals=0):
+
+  if value == '':
+    value = 0
   return locale.format_string('%.'+str(decimals)+'f', value, grouping=True)
 
 def month(m):

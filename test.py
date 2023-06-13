@@ -34,6 +34,6 @@ def main(q, tpl, id):
 if __name__ == '__main__':
 
     print('Testing...')
-    main(BOOKING, 'test/b2c-alquiler-habitacion', 5)
-    #main(BOOKING, 'test/b2c-servicios-habitacion', 5)
+    main(BOOKING, 'test/B2C Contrato de alquiler POR HABITACIONES', 1497)
+    #main(BOOKING, 'test/b2c-servicios-habitacion', 1497)
     #main(GROUP_BOOKING, 'test/b2c-grupo', 2)

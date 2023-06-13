@@ -14,7 +14,7 @@ DECLARE
       AND ce."Template" LIKE 'firmacontrato'
     WHERE b."Status" = 'firmacontrato'
     AND b."Contract_signed" IS NULL 
-    AND (ce.id IS NULL OR ce."Created_at" < (CURRENT_DATE - INTERVAL '3 days'));
+    AND ce."Created_at" < (CURRENT_DATE - INTERVAL '3 days');
 
 BEGIN
 
