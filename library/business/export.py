@@ -8,6 +8,7 @@ from openpyxl.formula.translate import Translator
 from io import BytesIO
 import pandas as pd
 import json
+import os
 
 # Cotown
 from library.services.utils import super_flatten
@@ -21,12 +22,7 @@ logger = logging.getLogger('COTOWN')
 # Fill excel with JSON
 # ###################################################
 
-def fill_json(data, columns, sheet):
-
-  # Create dataframe
-  normalized = [super_flatten(d) for d in data]
-  df = pd.DataFrame(normalized)
-  #http://localhost:5000/api/v1/export/facturas?desde=2023-06-01&hasta=2023-07-01
+def fill_sheet(df, columns, sheet):
 
   # Select and sort columns
   df = df.reindex([item.split(':')[0] for item in columns], axis=1)
@@ -37,7 +33,6 @@ def fill_json(data, columns, sheet):
   for c in range(0, df.shape[1]):
     cell = sheet.cell(row=start, column=c+1)
     styles.append(cell._style)
-    print(cell.value)
 
   # Write data
   for r, row in enumerate(dataframe_to_rows(df, index=False, header=False), 2):
@@ -79,7 +74,11 @@ def fill_json(data, columns, sheet):
 # Export graphql to excel
 # ###################################################
 
-def query_to_excel(apiClient, name, variables=None):
+def query_to_excel(apiClient, dbClient, name, variables=None):
+
+  # Querys
+  query = None
+  sql = None
 
   # Get template
   fi = open('templates/report/' + name + '.xlsx', 'rb')
@@ -89,33 +88,44 @@ def query_to_excel(apiClient, name, variables=None):
   wb = load_workbook(filename=BytesIO(template.read()))
   for sheet in wb.sheetnames:
 
-    # Get query
-    fi = open('templates/report/' + sheet.lower() + '.graphql', 'r')
-    query = fi.read()
-    fi.close()
+    # Get graphQL query
+    file = 'templates/report/' + sheet.lower() + '.graphql'
+    if os.path.exists(file):    
+      fi = open(file, 'r')
+      query = fi.read()
+      fi.close()
+
+    # Get SQL query
+    else:
+      file = 'templates/report/' + sheet.lower() + '.sql'
+      fi = open(file, 'r')
+      sql = fi.read()
+      fi.close()
 
     # Get columns
     fi = open('templates/report/' + sheet.lower() + '.json', 'r')
     columns = json.load(fi)
     fi.close()
 
-    # Call graphQL endpoint
-    data = apiClient.call(query, variables)
+    # Get graphQL data
+    if query:
+      result = apiClient.call(query, variables)
+      data = result[next(iter(result.keys()))]
+      df = pd.DataFrame([super_flatten(d) for d in data])
+      fill_sheet(df, columns, wb[sheet])
 
-    # Fill sheet with data
-    fill_json(data[next(iter(data.keys()))], columns, wb[sheet])
+    # Get SQL data
+    else:
+      dbClient.connect()
+      dbClient.select(sql, variables)
+      desc = [desc[0] for desc in dbClient.sel.description]
+      data = dbClient.fetchall()
+      dbClient.disconnect()
+      df = pd.DataFrame(data, columns=desc)
+      fill_sheet(df, columns, wb[sheet])
 
   # Save
   virtual_workbook = BytesIO()
   wb.save(virtual_workbook)
   virtual_workbook.seek(0)
   return virtual_workbook
-
-
-# ###################################################
-# Export json data to excel
-# ###################################################
-
-def json_to_excel(json, name):
-
-  pass

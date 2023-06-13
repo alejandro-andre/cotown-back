@@ -119,6 +119,8 @@ class DBClient:
   # Select SQL
   def select(self, sql, args=None):
 
+    print(sql)
+    print(args)
     self.sel = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)
     self.sel.execute(sql, args)
 

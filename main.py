@@ -137,7 +137,7 @@ def runapp():
         vars[item] = request.args[item]
   
     # Export
-    result = query_to_excel(apiClient, name, vars)
+    result = query_to_excel(apiClient, dbClient, name, vars)
     if result is None:
       return 'ko'
 
@@ -180,11 +180,6 @@ def runapp():
 
     return dashboard(dbClient, status)
 
-
-  # Dashboard export
-  def get_dashboard_export(status):
-
-    datos = dashboard(dbClient, status)
 
   # Labels
   def get_labels(id, locale):
@@ -308,7 +303,6 @@ def runapp():
   # Dashboard
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/dashboard/export/<string:status>', view_func=get_dashboard_export, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Status buttons
