@@ -3,6 +3,7 @@
 "Issued_date",
 "Payment_type",
 "Amount",
+"Payment_date",
 "Payment_method.Name",
 "Concept",
 "Customer.Name",

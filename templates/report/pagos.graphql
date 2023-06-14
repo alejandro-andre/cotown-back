@@ -19,6 +19,7 @@ query BillingPaimment ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int)
         Issued_date
         Payment_type
         Amount
+        Payment_date
         Payment_method:Payment_methodViaPayment_method_id{
             Name
         }
