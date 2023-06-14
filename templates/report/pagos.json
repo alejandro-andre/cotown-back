@@ -5,9 +5,11 @@
 "Amount",
 "Payment_method.Name",
 "Concept",
-"Customer_name",
+"Customer.Name",
 "Booking.Resource.Resource_type",
+"Booking.Check_in",
+"Booking.Check_out",
 "Booking.Resource.Code",
-"Resource_address",
-"Resource_provider_name"
+"Booking.Resource.Address",
+"Booking.Resource.Provider.Name"
 ]
