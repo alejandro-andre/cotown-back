@@ -81,7 +81,7 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
     if isinstance(variables[var], str):
       if ',' in variables[var]:
         variables[var] = tuple(variables[var].split(','))
-
+  
   # Querys
   query = None
   sql = None
@@ -127,7 +127,8 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
         dbClient.select(sql, variables)
         desc = [desc[0] for desc in dbClient.sel.description]
         data = dbClient.fetchall()
-      except:
+      except Exception as e:
+        logging.error(e)
         dbClient.rollback()
         dbClient.disconnect()
         return
