@@ -1,10 +1,12 @@
-query BillingPaimment ($fecha:String){
+query BillingPaimment ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int){
     Billing_PaymentList (
         orderBy: [{attribute: Issued_date, direction:ASC}]
         where: {
             AND: [
-            #{ Issued_date: { GE: $date_from } },
-            { Issued_date: { LE: $fecha } } ,
+            { Issued_date: { GE: $fdesde } } 
+            { Issued_date: { LE: $fhasta } } 
+            { id: { GE: $pdesde } }
+            { id: { LE: $phasta } }
             { Payment_date: { IS_NULL: true }}
             ]
   })
@@ -17,25 +19,28 @@ query BillingPaimment ($fecha:String){
         Issued_date
         Payment_type
         Amount
-        Payment_method: Payment_methodViaPayment_method_id {
+        Payment_method:Payment_methodViaPayment_method_id{
             Name
         }
         Concept
 
         #INFORMACIÓN DEL CLIENTE
-        CustomerViaCustomer_id {
-            Customer_name: Name
+        Customer: CustomerViaCustomer_id {
+            Name
         }
-        
+
+                
         #INFORMACIÓN DEL RECURSO
-        Booking: BookingViaBooking_id {
-            # Resource_id
-            Resource: ResourceViaResource_id {
+        Booking: BookingViaBooking_id{
+            Check_in
+            Check_out
+            Resource: ResourceViaResource_id{
                 Resource_type
                 Code
-                Resource_address: Address
-                ProviderViaService_id{
-                   Resource_provider_name: Name                 
+                Address
+                Provider: ProviderViaService_id{
+                    Provider_id: id
+                    Name                 
                 }
             }
         }    
