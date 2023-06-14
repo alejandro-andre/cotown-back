@@ -76,6 +76,12 @@ def fill_sheet(df, columns, sheet):
 
 def query_to_excel(apiClient, dbClient, name, variables=None):
 
+  # Process variables (convert lists to tuple, for SQL WHERE IN)
+  for var in variables:
+    if isinstance(variables[var], str):
+      if ',' in variables[var]:
+        variables[var] = tuple(variables[var].split(','))
+
   # Querys
   query = None
   sql = None
@@ -116,10 +122,15 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
 
     # Get SQL data
     else:
-      dbClient.connect()
-      dbClient.select(sql, variables)
-      desc = [desc[0] for desc in dbClient.sel.description]
-      data = dbClient.fetchall()
+      try:
+        dbClient.connect()
+        dbClient.select(sql, variables)
+        desc = [desc[0] for desc in dbClient.sel.description]
+        data = dbClient.fetchall()
+      except:
+        dbClient.rollback()
+        dbClient.disconnect()
+        return
       dbClient.disconnect()
       df = pd.DataFrame(data, columns=desc)
       fill_sheet(df, columns, wb[sheet])

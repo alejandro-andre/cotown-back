@@ -128,7 +128,7 @@ def runapp():
     # Debug
     logger.debug('Excel ' + name)
 
-    # Querystring variables, try int by default
+    # Querystring variables
     vars = {}
     for item in dict(request.args).keys():
       try:

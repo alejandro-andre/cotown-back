@@ -64,7 +64,6 @@ def dashboard(dbClient, status = None):
 
   # Rows
   else:
-
     # Get bookings
     if status == 'ok':
       sql = '''
