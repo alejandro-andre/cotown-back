@@ -47,7 +47,7 @@ def upload(folder):
         thumbnail_base64 = base64.b64encode(thumbnail_data.read()).decode('utf-8')
 
       # Upload file
-      print('Uploading ' + name)
+      print('Uploading ' + file)
       with open(path, "rb") as f:
         url = 'https://' + SERVER + '/document/' \
             + schema[0] + '/' + schema[1] + '/' + id + '/' + schema[2] \
@@ -79,7 +79,7 @@ def upload(folder):
         vars['file']['height'] = height
 
       # Update
-      print('Updating ' + name)
+      print('Updating ' + file)
       result = client.execute(gql(query), vars)
 
 
