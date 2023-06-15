@@ -165,11 +165,11 @@ def bill_rent(dbClient):
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
     INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id" 
-    WHERE "Invoice_rent_id" IS NULL 
+    WHERE b."Status" IN ('checkin', 'inhouse','checkout')
+    AND "Invoice_rent_id" IS NULL 
     AND "Invoice_services_id" IS NULL
     AND "Rent_date" <= %s
-    AND "Rent_date" >= %s
-    ORDER BY p."Booking_id", p."Rent_date"
+    AND "Rent_date" >= %s"
     ''', (datetime.now(), settings.BILLDATE))
     data = dbClient.fetchall()
 
@@ -328,7 +328,8 @@ def bill_group_rent(dbClient):
     INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
     INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
     INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id" 
-    WHERE bgp."Invoice_rent_id" IS NULL
+    WHERE bg."Status" = 'grupoconfirmado'
+    AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= %s
     AND bgp."Rent_date" >= %s
     GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
