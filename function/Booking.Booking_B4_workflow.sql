@@ -30,13 +30,13 @@ BEGIN
 
   -- PENDIENTE DE PAGO A CADUCADA
   -- Actualiza al estado 'Pendiente de pago' cuando la solicitud ya no esta caducada
-   IF (NEW."Status" = 'pendientepago' AND NEW."Expiry_date" < CURRENT_DATE)  THEN
+  IF (NEW."Status" = 'pendientepago' AND NEW."Expiry_date" < CURRENT_DATE)  THEN
     NEW."Status" :='caducada';
   END IF;
 
   -- CADUCADA A PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando la solicitud esta caducada
-   IF (NEW."Status" = 'caducada' AND NEW."Expiry_date" >= CURRENT_DATE)  THEN
+  IF (NEW."Status" = 'caducada' AND NEW."Expiry_date" >= CURRENT_DATE)  THEN
     NEW."Status" :='pendientepago';
   END IF;
 
@@ -167,7 +167,7 @@ BEGIN
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- Depósito
-    DELETE FROM "Billing"."Payment" WHERE "Booking_id" =  NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
+    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
     IF (NEW."Deposit" > 0 ) THEN
       INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
     END IF;
@@ -191,8 +191,8 @@ BEGIN
   IF (NEW."Status" = 'descartada') THEN
     -- Quita el recurso
     NEW."Resource_id" := NULL;
-    -- Eliminamos el registro de pago del booking, si existe, ya que no ha sido pagado.
-    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id;
+    -- Eliminamos el registro de pagos no ha pagados.
+    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
     -- EMail
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
     -- Log
