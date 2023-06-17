@@ -1,6 +1,6 @@
-query BillingPaimment ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int){
+query BillingPaimment ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     Billing_InvoiceList (
-        orderBy: [{attribute: Issued_date, direction:ASC}
+        orderBy: [ {attribute: Issued_date, direction:ASC}
                   { attribute: Provider_id, direction: ASC }
                   { attribute: Customer_id, direction: ASC }]
         where: {
@@ -30,20 +30,28 @@ query BillingPaimment ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int)
             Amount       
             Payment_date 
         }
-        Payment_method:Payment_methodViaPayment_method_id{
+        Payment_method: Payment_methodViaPayment_method_id {
             Name
         }
 
         #INFORMACIÓN DEL RECURSO
-        Booking: BookingViaBooking_id{
+        Booking: BookingViaBooking_id {
             id
-            Check_in
-            Check_out
-            Resource: ResourceViaResource_id{
+            Date_from
+            Date_to
+            Resource: ResourceViaResource_id {
                 Resource_type
                 Code
                 Address
-            }
+                Flat_type: Resource_flat_typeViaFlat_type_id {
+                    Code
+                    Name
+                }
+                Place_type: Resource_place_typeViaPlace_type_id {
+                    Code
+                    Name
+                }
+           }
         }   
     }
 }
