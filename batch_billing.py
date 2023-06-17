@@ -169,7 +169,7 @@ def bill_rent(dbClient):
     AND "Invoice_rent_id" IS NULL 
     AND "Invoice_services_id" IS NULL
     AND "Rent_date" <= %s
-    AND "Rent_date" >= %s"
+    AND "Rent_date" >= %s
     ''', (datetime.now(), settings.BILLDATE))
     data = dbClient.fetchall()
 
