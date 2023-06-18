@@ -5,6 +5,7 @@
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.formula.translate import Translator
+from datetime import datetime
 from io import BytesIO
 import pandas as pd
 import json
@@ -27,12 +28,14 @@ def fill_sheet(df, columns, sheet):
   # Select and sort columns
   df = df.reindex([item.split(':')[0] for item in columns], axis=1)
 
-  # Copy styles from first data row
+  # Copy formats & styles from first data row
   styles = []
+  format = []
   start = sheet.max_row
   for c in range(0, df.shape[1]):
     cell = sheet.cell(row=start, column=c+1)
     styles.append(cell._style)
+    format.append(cell.value)
 
   # Write data
   for r, row in enumerate(dataframe_to_rows(df, index=False, header=False), 2):
@@ -44,17 +47,8 @@ def fill_sheet(df, columns, sheet):
       # Copy style
       cell._style = styles[c]
 
-      # Blank column, skip
-      if columns[c] == '':
-        continue
-
-      # Formula
-      elif columns[c][0] == '=':
-        t = Translator(columns[c], 'A1')
-        cell.value = t.translate_formula(row_delta = r - 2)
-
       # List of dicts
-      elif isinstance(row[c], list):
+      if isinstance(row[c], list):
         try:
           values = []
           for item in row[c]:
@@ -67,7 +61,17 @@ def fill_sheet(df, columns, sheet):
 
       # Simple value
       else:
-        cell.value = row[c]
+        # Format
+        if format[c] == 'date':
+          try:
+            cell.value = datetime.strptime(row[c][:10], '%Y-%m-%d').strftime('%d/%m/%Y')
+          except:
+            cell.value = row[c]
+        elif format[c] is not None:
+          t = Translator(format[c], 'A1')
+          cell.value = t.translate_formula(row_delta = r - 2)
+        else:
+          cell.value = row[c]
 
 
 # ###################################################
