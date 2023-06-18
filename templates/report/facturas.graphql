@@ -1,18 +1,18 @@
-query BillingInvoice ($fdesde: String, $fhasta:String, $pdesde:Int, $phasta:Int) {
+query Invoices ($fdesde: String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     data: Billing_InvoiceList (
-      orderBy: [
-          { attribute: Provider_id, direction: ASC }
-          { attribute: Code, direction: ASC }
-      ]
-      where: { 
-        AND: [
-            { Issued: { EQ: true } }
-            { Provider_id: { GE: $pdesde } }
-            { Provider_id: { LE: $phasta } }
-            { Issued_date: { GE: $fdesde } }
-            { Issued_date: { LT: $fhasta } }
+        orderBy: [
+            { attribute: Provider_id, direction: ASC }
+            { attribute: Code, direction: ASC }
         ]
-      }
+        where: { 
+            AND: [
+                { Issued: { EQ: true } }
+                { Provider_id: { GE: $pdesde } }
+                { Provider_id: { LE: $phasta } }
+                { Issued_date: { GE: $fdesde } }
+                { Issued_date: { LT: $fhasta } }
+            ]
+        }
     ) {
         Code
         Issued_date

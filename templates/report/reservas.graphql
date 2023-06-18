@@ -1,6 +1,14 @@
-{
+query Bookings ($fdesde: String, $fhasta:String) {
     data: Booking_BookingList (
-        orderBy: [{attribute: id}]
+        orderBy: [
+            {attribute: id}
+        ]
+        where: { 
+            AND: [
+                { Date_from: { LE: $fhasta } }
+                { Date_to:   { GE: $fdesde } }
+            ]
+        }
     ) {
         id
         Status

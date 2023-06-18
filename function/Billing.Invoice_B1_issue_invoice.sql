@@ -30,6 +30,14 @@ BEGIN
   END IF;
   NEW."Issued" := TRUE;
 
+  -- No se puede cambiar
+  IF OLD."Issued" = TRUE THEN
+    NEW."Issued" = TRUE;
+  END IF;
+  IF OLD."Rectified" = TRUE THEN
+    NEW."Rectified" = TRUE;
+  END IF;
+
   -- Ya emitida?
   IF NEW."Issued" = TRUE AND NEW."Code" IS NOT NULL THEN
 
