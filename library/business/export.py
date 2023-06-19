@@ -99,7 +99,7 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
   for sheet in wb.sheetnames:
 
     # Get graphQL query
-    file = 'templates/report/' + sheet.lower() + '.graphql'
+    file = 'templates/report/' + name + '.' + sheet.lower() + '.graphql'
     if os.path.exists(file):    
       fi = open(file, 'r')
       query = fi.read()
@@ -107,13 +107,13 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
 
     # Get SQL query
     else:
-      file = 'templates/report/' + sheet.lower() + '.sql'
+      file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
       fi = open(file, 'r')
       sql = fi.read()
       fi.close()
 
     # Get columns
-    fi = open('templates/report/' + sheet.lower() + '.json', 'r')
+    fi = open('templates/report/' + name + '.' + sheet.lower() + '.json', 'r')
     columns = json.load(fi)
     fi.close()
 

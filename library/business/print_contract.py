@@ -511,7 +511,6 @@ def do_group_contracts(apiClient, id):
     variables = { 'id': id }
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten(result['data'][0])
-    print(context)
     room = context['Room'][0]
 
     # Generate rent contract
