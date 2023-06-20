@@ -120,4 +120,4 @@ def upload(folder):
 
 # Directorio raíz que se desea recorrer
 if __name__ == '__main__':
-  upload('files')
+  upload('content')

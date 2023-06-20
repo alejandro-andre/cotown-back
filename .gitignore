@@ -1,4 +1,3 @@
 **/__pycache__/*
 /download
-/upload/**/*.png
-/upload/**/*.jpg
+/upload/content/**
