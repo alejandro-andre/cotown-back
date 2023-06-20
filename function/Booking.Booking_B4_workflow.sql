@@ -109,7 +109,7 @@ BEGIN
 
   -- CONTTRATO GENERADO
   -- Borra la fecha de la firma y envia mail contrato
-  IF (NEW."Status" = 'firmacontrato' AND OLD."Contract_rent" IS NULL AND NEW."Contract_rent" IS NOT NULL) THEN
+  IF (OLD."Contract_rent" IS NULL AND NEW."Contract_rent" IS NOT NULL) THEN
     NEW."Contract_signed" := NULL;
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
   END IF;
