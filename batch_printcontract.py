@@ -87,11 +87,14 @@ def main():
     ''')
 
     # Loop thru contracts
+    num = 0
     if bookings is not None:
       for booking in bookings.get('data'):
           id = booking['id']
           logger.debug(id)
           do_group_contracts(apiClient, id)
+          num += 1
+    logger.info('{} contracts printed'.format(num))
 
 
 # #####################################

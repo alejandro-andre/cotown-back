@@ -95,7 +95,8 @@ def upload(folder):
               'file': { 
                 'oid': oid, 
                 'type': mimetype,
-                'name': name
+                'name': name,
+                'thumbnail': None
               }
             }
 

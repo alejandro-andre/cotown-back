@@ -65,6 +65,7 @@ def main():
   data = dbClient.fetchall()
 
   # Loop thru files
+  num = 0
   for file in data:
 
     # Result
@@ -111,6 +112,10 @@ def main():
     sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
     dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
     dbClient.commit()         
+    num += 1
+
+  # Info
+  logger.info('{} files processed'.format(num))
 
 
 # #####################################

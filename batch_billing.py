@@ -92,6 +92,7 @@ def bill_payments(dbClient):
     data = dbClient.fetchall()
 
     # Loop thru payments
+    num = 0
     for item in data:
 
       # Debug
@@ -136,9 +137,11 @@ def bill_payments(dbClient):
 
       # Update bill
       dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+      num += 1
 
     # End
     dbClient.commit()
+    logger.info('{} payment bills generated'.format(num))
     return
 
   # Process exception
@@ -175,6 +178,7 @@ def bill_rent(dbClient):
     data = dbClient.fetchall()
 
     # Loop thru payments
+    num = 0
     for item in data:
 
       # Debug
@@ -301,9 +305,11 @@ def bill_rent(dbClient):
 
         # Update price
         dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
+        num += 1
 
     # End
     dbClient.commit()
+    logger.info('{} bills generated'.format(num))
     return
 
   # Process exception
@@ -339,6 +345,7 @@ def bill_group_rent(dbClient):
     data = dbClient.fetchall()
 
     # Loop thru payments
+    num = 0
     for item in data:
 
       # Debug
@@ -458,9 +465,11 @@ def bill_group_rent(dbClient):
 
         # Update price
         dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
+        num += 1
         
     # End
     dbClient.commit()
+    logger.info('{} group bills generated'.format(num))
     return
 
   # Process exception
@@ -487,6 +496,7 @@ def pay_bills(dbClient):
     data = dbClient.fetchall()
 
     # Loop thru bills
+    num = 0
     for item in data:
 
       # Debug
@@ -513,9 +523,11 @@ def pay_bills(dbClient):
         
       # Update bill
       dbClient.execute('UPDATE "Billing"."Invoice" SET "Payment_id" = %s WHERE id = %s', (payid, item['id']))
+      num += 1
 
     # End
     dbClient.commit()
+    logger.info('{} payments generated'.format(num))
     return
 
   # Process exception

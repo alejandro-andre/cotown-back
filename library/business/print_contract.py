@@ -456,7 +456,7 @@ def do_contracts(apiClient, id):
     contract_type = context['Resource_type']
     if contract_type == 'plaza':
       contract_type == 'habitacion'
-    if context['Building_type_id'] == 3:
+    if context['Booking_building_type'] == 3:
       contract_type == 'residencia'
 
     # Generate rent contract
