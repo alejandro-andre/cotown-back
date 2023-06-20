@@ -88,6 +88,7 @@ query BookingById ($id: Int) {
       Booking_building_code: Code
       Booking_building_name: Name
       Booking_building_address: Address
+      Booking_building_type: Building_type_id
       DistrictViaDistrict_id {
         LocationViaLocation_id {
           Booking_building_city: Name
@@ -419,10 +420,6 @@ def get_template(apiClient, template, resource_type, provider):
       logger.warning(provider + ' no tiene plantillas de contrato')
       return None, None
     
-    # Fix
-    if resource_type == 'plaza':
-      resource_type = 'habitacion'
-    
     # Look for proper template
     fid = None
     fname = ''
@@ -455,8 +452,15 @@ def do_contracts(apiClient, id):
     result = apiClient.call(BOOKING, variables)
     context = flatten(result['data'][0])
 
+    # Determine template to use
+    contract_type = context['Resource_type']
+    if contract_type == 'plaza':
+      contract_type == 'habitacion'
+    if context['Building_type_id'] == 3:
+      contract_type == 'residencia'
+
     # Generate rent contract
-    template, name = get_template(apiClient, context['Owner_template'], context['Resource_type'], context['Owner_name'])
+    template, name = get_template(apiClient, context['Owner_template'], contract_type, context['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -466,7 +470,7 @@ def do_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    template, name = get_template(apiClient, context['Service_template'], context['Resource_type'], context['Owner_name'])
+    template, name = get_template(apiClient, context['Service_template'], contract_type, context['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
