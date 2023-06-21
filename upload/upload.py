@@ -39,16 +39,21 @@ def upload(folder):
     for dir in dirs:
 
       # Schema, entity and field
+      print(dir)
       schema, entity, field = dir.split('.')
 
       # graphQL query
-      query = '{data:' + schema + '_' + entity + 'List{id ' + field + '{name}}}'
+      query = '{data:' + schema + '_' + entity + 'List{id ' + field + '{name width}}}'
       vars = { 'authorization': token }
       result = client.execute(gql(query), vars)
 
       # Process each record
       for item in result['data']:
         if item[field]:
+
+          # Skip already loaded
+          if item[field]['width'] and item[field]['width'] > 10:
+            continue
 
           try:
             # File info
@@ -58,13 +63,17 @@ def upload(folder):
 
             # Guess mimetype
             mimetype, _ = mimetypes.guess_type(path)
-            if mimetype is None:
+            if path[-3:] == '.md':
               mimetype = 'plain/text'
 
-            # Image?
-            if 'image/' in mimetype:
+            # SVG?
+            if mimetype == 'image/svg+xml':
 
-              # Generate thumbnail
+              width, height = (512, 512)
+
+            # Raster image
+            elif 'image/' in mimetype:
+
               image = Image.open(path)
               width, height = image.size
               image.thumbnail((256 , 256))
@@ -74,7 +83,7 @@ def upload(folder):
               thumbnail = base64.b64encode(data.read()).decode('utf-8')
 
             # Upload file
-            print('Uploading ' + name)
+            print('- Uploading ' + name)
             with open(path, "rb") as f:
               url = 'https://' + SERVER + '/document/' \
                   + schema + '/' + entity + '/' + str(id) + '/' + field \
@@ -101,19 +110,18 @@ def upload(folder):
             }
 
             # Image?
-            if 'image/' in mimetype:
+            if 'image/' in mimetype and not 'svg' in mimetype:
               vars['file']['thumbnail'] = 'data:' + mimetype + ';base64,' + thumbnail
               vars['file']['width'] = width
               vars['file']['height'] = height
 
             # Update
-            print('Updating ' + name)
+            print('- Updating ' + name)
             result = client.execute(gql(query), vars)
 
           except Exception as e:
             print(e)
             
-
 # ##################################################
 # Main
 # ##################################################
