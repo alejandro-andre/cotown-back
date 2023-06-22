@@ -13,7 +13,8 @@ LOGLEVEL=20
 # Email send
 SMTPHOST='smtp.office365.com'
 SMTPPORT='587'
-SMTPFROM='Cotown'
+SMTPADDR='Cotown'
+SMTPFROM='no-reply@cotown.com'
 SMTPUSER='no-reply@cotown.com'
 
 # App parameters
