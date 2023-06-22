@@ -9,7 +9,7 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-- job_name: cotownlog
+- job_name: cotown
   static_configs:
   - targets:
       - localhost
