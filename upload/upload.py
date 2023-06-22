@@ -52,8 +52,8 @@ def upload(folder):
         if item[field]:
 
           # Skip already loaded
-          if item[field]['width'] and item[field]['width'] > 10:
-            continue
+          #if item[field]['width'] and item[field]['width'] > 10:
+          #  continue
 
           try:
             # File info
@@ -68,12 +68,10 @@ def upload(folder):
 
             # SVG?
             if mimetype == 'image/svg+xml':
-
               width, height = (512, 512)
 
             # Raster image
             elif 'image/' in mimetype:
-
               image = Image.open(path)
               width, height = image.size
               image.thumbnail((256 , 256))
