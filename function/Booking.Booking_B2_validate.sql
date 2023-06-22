@@ -17,7 +17,12 @@ BEGIN
   -- Superuser ROLE
   curr_user := CURRENT_USER;
   RESET ROLE; 
- 
+
+  -- Tipología obligatoria
+  IF NEW."Resource_type" <> 'piso' AND NEW."Place_type_id" IS NULL THEN
+    RAISE exception '!!!Place type is mandatory!!!El tipo de plaza es obligatoria!!!'; 	
+  END IF;
+
   -- Comprueba si existen las tipologías seleccionadas en el edificio
   SELECT COUNT(*) 
   INTO num
@@ -28,9 +33,6 @@ BEGIN
   --?IF num < 1 THEN
   --?  RAISE exception '!!!Selected flat/place type doesnt exist on that building!!!Las tipologías elegidas no existen en el edificio!!!'; 	
   --?END IF;
- 
-  -- Get customer id type
-  SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
  
   -- Reserva bloqueada?
   IF NEW."Lock" AND 
@@ -98,6 +100,9 @@ BEGIN
     NEW."Request_date" := NOW();
   END IF;
 
+  -- Get customer id type
+  SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
+ 
   -- Documentos obligatorios
   DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
   INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id") 
