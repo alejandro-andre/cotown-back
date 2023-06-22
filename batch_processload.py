@@ -37,7 +37,7 @@ def main():
   logger.setLevel(settings.LOGLEVEL)
   console_handler = logging.StreamHandler()
   console_handler.setLevel(settings.LOGLEVEL)
-  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(levelname)s] %(message)s')
+  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
   console_handler.setFormatter(formatter)
   logger.addHandler(console_handler)
   logger.info('Started')
