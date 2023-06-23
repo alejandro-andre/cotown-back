@@ -16,7 +16,7 @@ query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
         Issued_date
         Code
         Concept
-        Amount
+        Total
         Provider: ProviderViaProvider_id {
             id
             Name

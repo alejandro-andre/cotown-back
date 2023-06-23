@@ -67,9 +67,9 @@ def fill_sheet(df, columns, sheet):
             cell.value = datetime.strptime(row[c][:10], '%Y-%m-%d').strftime('%d/%m/%Y')
           except:
             cell.value = row[c]
-        if format[c] == 'datetime':
+        elif format[c] == 'datetime':
           try:
-            cell.value = datetime.strptime('%Y-%m-%dT%H:%M:%S').strftime('%d/%m/%Y %H:%M:%S')
+            cell.value = datetime.strptime(row[c], '%Y-%m-%dT%H:%M:%S').strftime('%d/%m/%Y %H:%M:%S')
           except:
             cell.value = row[c]
         elif format[c] is not None:

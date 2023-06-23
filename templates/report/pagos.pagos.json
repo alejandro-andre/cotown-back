@@ -7,7 +7,7 @@
 "Booking.Resource.Flat_type.Name",
 "Booking.Resource.Place_type.Code",
 "Booking.Resource.Place_type.Name",
-"Amount",
+"Total",
 "Payment.Payment_date",
 "Payment.Payment_order",
 "Payment.Payment_auth",
