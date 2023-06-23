@@ -453,14 +453,14 @@ def do_contracts(apiClient, id):
     context = flatten(result['data'][0])
 
     # Determine template to use
-    contract_type = context['Resource_type']
-    if contract_type == 'plaza':
-      contract_type == 'habitacion'
+    template_type = context['Resource_type']
+    if template_type == 'plaza':
+      template_type == 'habitacion'
     if context['Booking_building_type'] == 3:
-      contract_type == 'residencia'
+      template_type == 'residencia'
 
     # Generate rent contract
-    template, name = get_template(apiClient, context['Owner_template'], contract_type, context['Owner_name'])
+    template, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
@@ -470,7 +470,7 @@ def do_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    template, name = get_template(apiClient, context['Service_template'], contract_type, context['Owner_name'])
+    template, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
     if template is not None:
       file = generate_doc_file(context, template.content)
       response = requests.post(
