@@ -3,9 +3,13 @@ DECLARE
 
   change VARCHAR = NULL;
   record_id INTEGER = 0;
+  payment_method_id INTEGER = 1;
   curr_user VARCHAR;
 
 BEGIN
+
+  -- Payer payment method
+  SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
 
   -- Por defecto, deshabilita el botón de envío de alternativas
   NEW."Button_options" := '';
@@ -111,7 +115,9 @@ BEGIN
   -- Borra la fecha de la firma y envia mail contrato
   IF (OLD."Contract_rent" IS NULL AND NEW."Contract_rent" IS NOT NULL) THEN
     NEW."Contract_signed" := NULL;
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'firmacontrato', NEW.id);
   END IF;
 
   -- No ha habido cambios de estado
@@ -130,7 +136,9 @@ BEGIN
   -- A ALTERNATIVA o ALTERNATIVAS PAGADA
   IF (NEW."Status" = 'alternativas' OR NEW."Status" = 'alternativaspagada') THEN
     -- Email
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'alternativas', NEW.id);
+    INSERT
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'alternativas', NEW.id);
     -- Log
     change := 'Revisar alternativas';
   END IF;
@@ -146,7 +154,9 @@ BEGIN
       END IF;
     END IF;
     -- Email
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
     -- Log
     change := 'Pendiente de pago';
   END IF;
@@ -154,7 +164,9 @@ BEGIN
   -- A CADUCADA
 	IF (NEW."Status" = 'caducada') THEN
 		-- Envia email informando de la caducidad
-		INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'caducada', NEW.id);
+		INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'caducada', NEW.id);
 		-- Log
 		change := CONCAT('La solicitud ha caducado el día ', NEW."Expiry_date");
 	END IF;
@@ -171,10 +183,14 @@ BEGIN
     -- Depósito
     DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
     IF (NEW."Deposit" > 0 ) THEN
-      INSERT INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  VALUES (COALESCE(NEW."Payment_method_id", 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
+      INSERT 
+        INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  
+        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
     END IF;
     -- EMail
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'confirmada', NEW.id);
     -- Log
     change := 'Reserva confirmada';
   END IF;
@@ -184,7 +200,9 @@ BEGIN
     -- Quita el recurso
     NEW."Resource_id" := NULL;
     -- EMail 
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'descartadapagada', NEW.id);
     -- Log
     change := 'Solicitud descartada y booking pagado.';   
   END IF;
@@ -196,7 +214,9 @@ BEGIN
     -- Eliminamos el registro de pagos no ha pagados.
     DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
     -- EMail
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'descartada', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'descartada', NEW.id);
     -- Log
     change := CONCAT('Solicitud descartada. ');
     IF(NEW."Booking_fee_returned" IS NOT NULL) THEN
@@ -214,7 +234,9 @@ BEGIN
   IF (NEW."Status" = 'contrato') THEN 
     -- EMail
     IF NEW."Check_in" IS NULL THEN
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
+      INSERT 
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+        VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
     END IF;
     -- Log 
     change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed"); 
@@ -223,7 +245,9 @@ BEGIN
   -- A CHECK IN CONFIRMADO
   IF (NEW."Status" = 'checkinconfirmado' OR (NEW."Status" = 'checkin' AND OLD."Status" = 'contrato')) THEN 
     -- Email
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
     -- Log 
     change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in"); 
   END IF;
@@ -247,12 +271,16 @@ BEGIN
     -- TODO: Calcular penalizacion
     IF(NEW."Cancelation_fee" > 0) THEN
       -- EMail con penalizacion
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'canceladapenalizacion', NEW.id);
+      INSERT 
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+        VALUES (NEW."Customer_id", 'canceladapenalizacion', NEW.id);
       -- Log
       change := CONCAT('Reserva cancelada con penalización. Penalización: ', NEW."Cancelation_fee"); 
     ELSE
       -- EMail sin penalizacion
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'cancelada', NEW.id);
+      INSERT 
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+        VALUES (NEW."Customer_id", 'cancelada', NEW.id);
       -- Log
       change := 'Reserva cancelada sin penalización';   
     END IF; 
@@ -263,7 +291,9 @@ BEGIN
   -- Se confirma la llegada del usuario al alojamiento
   IF (NEW."Status" = 'inhouse') THEN  
     -- EMail
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'inhouse', NEW.id);
+    INSERT 
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'inhouse', NEW.id);
     -- Log
     change := 'Se confirma que el usuario ha llegado al alojamiento.';   
   END IF;
@@ -272,7 +302,9 @@ BEGIN
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'devolvergarantia') THEN 
     -- EMail
-    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'devolvergarantia', NEW.id);
+    INSERT  
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
+      VALUES (NEW."Customer_id", 'devolvergarantia', NEW.id);
     -- Log
     change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW."Deposit_returned");
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);

@@ -160,8 +160,9 @@ def bill_rent(dbClient):
   # Get all prices not already billed
   dbClient.select('''
   SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", 
-          b."Customer_id", b."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
+         b."Payer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
   FROM "Booking"."Booking_price" p
+  INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
   INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
   INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
   INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
@@ -207,7 +208,7 @@ def bill_rent(dbClient):
           ''', 
           (
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
-            item['Customer_id'], 
+            item['Payer_id'], 
             item['Booking_id'], 
             rent + services,
             datetime.now(), 
@@ -232,7 +233,7 @@ def bill_rent(dbClient):
               False,
               datetime.now(), 
               item['Owner_id'], 
-              item['Customer_id'], 
+              item['Payer_id'], 
               item['Booking_id'], 
               item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD, 
               paymentid, 
@@ -277,7 +278,7 @@ def bill_rent(dbClient):
               False,
               datetime.now(), 
               item['Service_id'], 
-              item['Customer_id'], 
+              item['Payer_id'], 
               item['Booking_id'], 
               item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD, 
               paymentid, 
