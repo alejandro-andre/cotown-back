@@ -106,8 +106,10 @@ def download_contracts(apiClient, variables=None):
   query = '''query Download ($fdesde:String, $fhasta:String) {
     data: Booking_BookingList (
       where: {
-        Date_from: { GE: $fdesde }
-        Date_from: { LE: $fhasta }
+        AND: [
+          { Date_from: { GE: $fdesde } }
+          { Date_from: { LE: $fhasta } }
+        ]
       }
     ) { 
       id
