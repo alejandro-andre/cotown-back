@@ -174,7 +174,7 @@ def runapp():
       abort(404)
 
     # Response
-    response = send_file(result, mimetype='application/vnd.ms-excel')
+    response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response.headers['Content-Disposition'] = 'inline; filename="' + name + '.xlsx"'
     return response    
         
