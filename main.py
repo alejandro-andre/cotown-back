@@ -18,6 +18,7 @@ from library.services.apiclient import APIClient
 from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.business.export import query_to_excel
+from library.business.download import download
 from library.business.queries import *
 
 # Logging
@@ -112,12 +113,43 @@ def runapp():
 
   def get_html(filename):
 
+    # Debug
     logger.debug('HTML ' + filename)
+
+    # Return static file
     try:
       return send_from_directory('static', filename + '.html')
     except:
       return send_from_directory('static', filename)
 
+
+  # ###################################################
+  # Download files
+  # ###################################################
+
+  def get_download(name):
+
+    # Debug
+    logger.debug('Download ' + name)
+
+    # Querystring variables
+    vars = {}
+    for item in dict(request.args).keys():
+      try:
+        vars[item] = int(request.args[item])
+      except:
+        vars[item] = request.args[item]
+  
+    # Download zip
+    result = download(apiClient, name, vars)
+    if result is None:
+      abort(404)
+
+    # Response
+    response = send_file(result, mimetype='application/zip')
+    response.headers['Content-Disposition'] = 'inline; filename="' + name + '.zip"'
+    return response
+  
 
   # ###################################################
   # Export to excel
@@ -126,7 +158,7 @@ def runapp():
   def get_export(name):
 
     # Debug
-    logger.debug('Excel ' + name)
+    logger.debug('Export ' + name)
 
     # Querystring variables
     vars = {}
@@ -139,7 +171,7 @@ def runapp():
     # Export
     result = query_to_excel(apiClient, dbClient, name, vars)
     if result is None:
-      return 'ko'
+      abort(404)
 
     # Response
     response = send_file(result, mimetype='application/vnd.ms-excel')
@@ -299,6 +331,9 @@ def runapp():
 
   # Planning
   app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
+
+  # Download files
+  app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=get_download, methods=['GET'])
 
   # Dashboard
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
