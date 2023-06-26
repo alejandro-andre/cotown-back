@@ -1,0 +1,84 @@
+# CONTRATO DE PRESTACIÓN DE SERVICIOS
+
+
+En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
+
+
+# LAS PARTES 
+
+De una parte, {%for s in Service_signers%}{%-if loop.index>1%} y {%endif%}{{s.Service_signer_name}}, mayor de edad, provisto de {{s.Service_signer_id_type}} {{s.Service_signer_id}}{%endfor%}, con domicilio profesional en {{Service_address}}, {{Service_zip}} {{Service_city}}, actuando en nombre y representación de {{Service_name}} con el mismo domicilio, {{Service_id_type}} n.º {{Service_id}}{%if Service_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+
+En adelante **ATLAS**.
+
+{%if Customer_type=='empresa'%}
+De otra parte, D./Dª. {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} {{Customer_id}}.
+{%elif Customer_birth_date|age >= 18%}
+De otra parte, D./Dª. {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
+{%else%}
+De otra parte, D./Dª. {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
+{%endif%}
+
+En adelante el "**Arrendatario**".
+
+# MANIFIESTAN
+
+I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_building_address}} {{Resource_flat_address}} (el "piso"), 
+
+II.- Que, ATLAS es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
+
+III.- Y, siendo la voluntad del Arrendatario contratar los servicios de ATLAS y ésta en prestarlos, los sujetan a los siguientes.
+
+# ESTIPULACIONES
+
+1. El Arrendatario contrata a ATLAS para que lleve a cabo los servicios de limpieza de las zonas comunes del piso donde el Arrendatario tiene arrendada la habitación (el "Servicio") con total autonomía a independencia, conforme a los usos y costumbres del sector de actividad de ATLAS, con el uso de su propio personal con la cualificación y experiencia adecuadas, medios materiales y  todos aquellos necesarios para la correcta prestación del servicio aquí contratado.
+
+ATLAS asumirá el coste del personal, medios, material, gastos e impuestos necesarios para la prestación del servicio aquí contratado.
+
+2. Los servicios a prestar consistirán en la limpieza periódica según condiciones de la reserva de las zonas comunes del piso donde el Arrendatario tiene arrendada una habitación.
+
+3. La retribución global por la prestación del servicio consistirá en el pago {{Booking_services|decimal(0)}} €/mes, que se llevará a cabo de forma mensual por el Arrendatario y durante todo el tiempo que dure el arrendamiento de la habitación/piso, mediante su pago con tarjeta bancaria o bien mediante domiciliación bancaria en caso de disponer de una cuenta bancaria española previa la firma del documento SEPA.
+
+4. ATLAS será el único responsable por el personal por ella contratado para la prestación del servicio.
+
+5. El impago de una sola mensualidad del servicio será causa de resolución del presente contrato de servicios.
+
+6. Ninguna de las partes podrá ceder en forma alguna los derechos y/o obligaciones asumidas por y en el presente Contrato sin el consentimiento previo, expreso y por escrito de la otra parte.
+
+7. De acuerdo con lo establecido en el Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo de 27 de abril de 2016, las partes quedan informados de que los datos personales que figuran en este contrato, así como aquellos que proporcione en virtud de este, quedaran incorporados a los ficheros automatizados de cada una de las partes, conservándolos con carácter confidencial.
+
+Tal y como disponen los artículos 6.1.b y 6.1.c del citado Reglamento, los datos se emplearán únicamente en la medida en que sean necesarios para ejecutar el contrato y en la medida en que ambas partes deban cumplir sus obligaciones legales.
+
+Las partes quedan informadas de que el responsable del tratamiento es respectivamente cada parte, cuyos domicilios figuran en el encabezamiento del contrato.
+
+Las partes quedan informadas de su derecho a solicitar a la otra parte el acceso a sus datos, su rectificación o supresión, la limitación de su tratamiento, la oposición a su tratamiento y su portabilidad. 
+
+Las partes quedan informadas de su derecho a presentar una reclamación ante una autoridad de control y a retirar el consentimiento que haya otorgado al tratamiento de datos para finalidades específicas en cualquier momento, sin que ello afecte a la licitud del tratamiento basado en el consentimiento previo a su retirada.
+
+Por último, Las partes quedan informadas de que sus datos se conservarán durante el plazo que dure la relación entre ambas partes. Posteriormente, se conservarán debidamente bloqueados, a disposición exclusiva de los organismos públicos competentes y con el exclusivo fin de poder atender a posibles responsabilidades nacidas del tratamiento hasta finalizar los plazos de prescripciones legales establecidos por la normativa vigente.
+
+8. Todos los avisos y comunicaciones escritas enviadas en ejecución del Contrato se remitirán a las direcciones que obran en el encabezamiento, por cualquier medio que acredite fehacientemente el contenido y la entrega de la comunicación.
+Asimismo, las comunicaciones se podrán llevar a cabo a las direcciones de correo electrónico siguientes, siempre que se tenga constancia escrita de su recepción.
+
+Las notificaciones a ATLAS se efectuarán en la persona de contacto de {{Service_signers[0].Service_signer_name}} a la dirección de correo electrónico: {{Service_email}}
+
+Las notificaciones al Arrendatario se efectuarán a la dirección de correo electrónico: {{Customer_email}}
+
+Cualquier cambio de dirección postal o de correo electrónico deberá ser comunicado a las otras Partes con suficiente antelación mediante cualquiera de los medios indicados en esta cláusula.
+
+9. El Contrato de prestación de servicios se regirá e interpretará de acuerdo con las Leyes de España.
+
+En lo no previsto en este contrato, las partes estarán a lo previsto en la ley 32/2006 reguladora de la subcontratación y su RD 1109/2007 de desarrollo.
+Las Partes se someten al fuero y jurisdicción de los Juzgados y Tribunales de la ciudad del lugar de prestación del servicio, con expresa renuncia a su propio fuero si fuera otro, para cualquier divergencia que surja entre las Partes con relación al Contrato de Prestación de Servicios.
+Y, habiendo leído y comprendido la totalidad del presente contrato, lo firman en prueba de aceptación y conformidad, por duplicado ejemplar y a un solo efecto, en el lugar y la fecha indicados en el encabezamiento.
+ 
+|  |  |
+|:-|:-|
+|**{{Service_name}}**|**El Arrendatario**|
+{%-for s in Service_signers-%}
+|&nbsp; | |
+|&nbsp; | |
+|&nbsp; | |
+|&nbsp; | |
+|&nbsp; | |
+|Fdo: {{s.Service_signer_name}}|{%if loop.index==1%}Fdo: {{Customer_name}}{%endif%}|
+{%-endfor-%}
