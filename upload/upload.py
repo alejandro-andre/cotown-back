@@ -17,6 +17,7 @@ import os
 # ##################################################
 
 SERVER = 'experis.flows.ninja'
+#SERVER = 'core.cotown.com'
 USER   = 'modelsadmin'
 PASS   = 'Ciber$2022'
 
