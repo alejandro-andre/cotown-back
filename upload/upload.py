@@ -9,6 +9,7 @@ from io import BytesIO
 import base64
 import mimetypes
 import requests
+import sys
 import os
 
 
@@ -26,7 +27,7 @@ PASS   = 'Ciber$2022'
 # Upload files to Airflows
 # ##################################################
 
-def upload(folder):
+def upload(folder, wildcard):
 
   # Get token
   client = Client(transport=AIOHTTPTransport(url='https://' + SERVER + '/graphql'), fetch_schema_from_transport=True)
@@ -38,6 +39,10 @@ def upload(folder):
 
     # Folders
     for dir in dirs:
+
+      # Discard not matching folders
+      if wildcard not in dir:
+        continue
 
       # Schema, entity and field
       print(dir)
@@ -127,5 +132,5 @@ def upload(folder):
 
 # Directorio raíz que se desea recorrer
 if __name__ == '__main__':
-  #upload('web')
-  upload('contracts')
+  upload(sys.argv[1], sys.argv[2])
+  #upload('contracts')
