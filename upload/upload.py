@@ -41,7 +41,7 @@ def upload(folder, wildcard):
     for dir in dirs:
 
       # Discard not matching folders
-      if wildcard not in dir:
+      if wildcard != '*' and wildcard not in dir:
         continue
 
       # Schema, entity and field
@@ -132,5 +132,7 @@ def upload(folder, wildcard):
 
 # Directorio raíz que se desea recorrer
 if __name__ == '__main__':
-  upload(sys.argv[1], sys.argv[2])
+  folder = sys.argv[1]
+  wildcard = sys.argv[2] if len(sys.argv) > 2 else '*'
+  upload(folder, wildcard)
   #upload('contracts')
