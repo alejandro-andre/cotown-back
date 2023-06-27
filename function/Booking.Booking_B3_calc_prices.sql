@@ -180,10 +180,10 @@ BEGIN
     dt_intr := AGE(dt_next, dt_curr);
   
     -- Year change?
-    --IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
-    --  m_rent := ny_rent;
-    --  m_services := ny_services;
-    --END IF;  
+    IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
+      m_rent := ny_rent;
+      m_services := ny_services;
+    END IF;  
   
     -- Incomplete months
     IF dt_intr < INTERVAL '1 month' THEN
