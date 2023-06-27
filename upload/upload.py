@@ -2,15 +2,18 @@
 # Imports
 # ##################################################
 
+import os
+os.add_dll_directory('C:\Program Files\GTK3-Runtime Win64\lib')
+
 from PIL import Image
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 from io import BytesIO
+import cairosvg
 import base64
 import mimetypes
 import requests
 import sys
-import os
 
 
 # ##################################################
@@ -74,7 +77,12 @@ def upload(folder, wildcard):
 
             # SVG?
             if mimetype == 'image/svg+xml':
-              width, height = (512, 512)
+              width, height = (256, 256)
+              image = cairosvg.svg2png(url=path, output_height=height, output_width=width)
+              data = BytesIO(image)
+              data.seek(0)
+              thumbnail = base64.b64encode(data.read()).decode('utf-8')
+              mimetype = 'image/png'
 
             # Raster image
             elif 'image/' in mimetype:
@@ -114,7 +122,7 @@ def upload(folder, wildcard):
             }
 
             # Image?
-            if 'image/' in mimetype and not 'svg' in mimetype:
+            if 'image/' in mimetype:
               vars['file']['thumbnail'] = 'data:' + mimetype + ';base64,' + thumbnail
               vars['file']['width'] = width
               vars['file']['height'] = height
