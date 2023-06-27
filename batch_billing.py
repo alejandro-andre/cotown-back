@@ -162,8 +162,8 @@ def bill_rent(dbClient):
   SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", 
          b."Payer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
   FROM "Booking"."Booking_price" p
-  INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
   INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
+  INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
   INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
   INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
   INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id" 
@@ -333,7 +333,7 @@ def bill_group_rent(dbClient):
 
   # Get all prices not already billed
   dbClient.select('''
-  SELECT bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", COUNT(r."Code") as num, MAX(r."Owner_id") as "Owner_id", MAX(r."Service_id") as "Service_id"
+  SELECT bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", COUNT(r."Code") as num, MAX(bg."Room_ids") as "Room_ids", MAX(r."Owner_id") as "Owner_id", MAX(r."Service_id") as "Service_id"
   FROM "Booking"."Booking_group_price" bgp
   INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
   INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
@@ -358,6 +358,9 @@ def bill_group_rent(dbClient):
     # Capture exceptions
     try:
 
+      # Resource list
+      comments = 'Recursos: ' + (', '.join(item['Room_ids']))
+    
       # Amounts
       rent = int(item['Rent'] or 0) * int(item['num'] or 0)
       services = int(item['Services'] or 0) * int(item['num'] or 0)
@@ -388,8 +391,8 @@ def bill_group_rent(dbClient):
 
           dbClient.execute('''
             INSERT INTO "Billing"."Invoice" 
-            ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             ''', 
             (
@@ -403,6 +406,7 @@ def bill_group_rent(dbClient):
               PM_TRANSFER, 
               paymentid, 
               'Renta mensual (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+              comments
             )
           )
           rentid = dbClient.returning()[0]
@@ -410,8 +414,8 @@ def bill_group_rent(dbClient):
           # Create invoice line
           dbClient.execute('''
             INSERT INTO "Billing"."Invoice_line" 
-            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
-            VALUES (%s, %s, %s, %s, %s)
+            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+            VALUES (%s, %s, %s, %s, %s, %s)
             ''', 
             (
               rentid, 
@@ -419,6 +423,7 @@ def bill_group_rent(dbClient):
               PR_RENT,
               PRODUCTS[PR_RENT]['tax'] if item['Tax'] else VAT_21,
               'Renta mensual (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+              comments
             )
           )
 
@@ -431,10 +436,11 @@ def bill_group_rent(dbClient):
         # Create services invoice
         if services > 0:
           
+          comments = 'Recursos: ' + (', '.join(item['Room_ids']))
           dbClient.execute('''
             INSERT INTO "Billing"."Invoice" 
-            ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             ''', 
             (
@@ -448,6 +454,7 @@ def bill_group_rent(dbClient):
               PM_TRANSFER, 
               paymentid, 
               'Servicios mensuales (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+              comments
             )
           )
           servid = dbClient.returning()[0]
@@ -455,15 +462,15 @@ def bill_group_rent(dbClient):
           # Create invoice line
           dbClient.execute('''
             INSERT INTO "Billing"."Invoice_line" 
-            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
-            VALUES (%s, %s, %s, %s, %s)
+            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+            VALUES (%s, %s, %s, %s, %s, %s)
             ''', 
             (
               servid, 
               services, 
               PR_SERVICES, 
               VAT_0 if item['Tax'] else VAT_21,
-              'Servicios mensuales (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+              'Servicios mensuales (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7], comments
             )
           )
 

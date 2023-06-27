@@ -69,6 +69,7 @@ query BillById ($id: Int!) {
         }
         Lines: Invoice_lineListViaInvoice_id {
             Line_concept: Concept
+            Line_comments: Comments
             ProductViaProduct_id {
                 Line_product: Name
             }
@@ -83,6 +84,15 @@ query BillById ($id: Int!) {
 
 
 # ######################################################
+# Format date
+# ######################################################
+
+def ymd(v):
+
+  return v[8:10] + '/' + v[5:7] + '/' + v[:4]
+
+
+# ######################################################
 # Generate file
 # ######################################################
 
@@ -90,9 +100,10 @@ def generate_bill_file(context):
 
   # Jinja environment
   env = Environment(
-      loader=FileSystemLoader('./templates/other'),
-      autoescape=select_autoescape(['html', 'xml'])
+    loader=FileSystemLoader('./templates/other'),
+    autoescape=select_autoescape(['html', 'xml'])
   )
+  env.filters['ymd'] = ymd
 
   # Generate HTML
   tpl = env.get_template('bill.html')
