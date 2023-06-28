@@ -21,6 +21,10 @@ def main(q, tpl, id):
     context = flatten(booking['data'][0])
     #print(json.dumps(context, indent=2))
 
+    # Consolidate flats
+    if context.get('Rooms'):
+      context['Flats'] = ', '.join(list({r["Resource_flat_address"] for r in context['Rooms']}))
+
     # Open template file
     fi = open(tpl + '.md', 'rb')
     template = fi.read()
@@ -34,6 +38,5 @@ def main(q, tpl, id):
 if __name__ == '__main__':
 
     print('Testing...')
-    main(BOOKING, 'test/B2C Contrato de alquiler POR HABITACIONES', 1497)
-    #main(BOOKING, 'test/b2c-servicios-habitacion', 1497)
-    #main(GROUP_BOOKING, 'test/b2c-grupo', 2)
+    main(BOOKING, 'test/B2C Vandor', 3)
+    main(GROUP_BOOKING, 'test/B2B Vandor', 1)

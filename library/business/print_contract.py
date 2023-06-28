@@ -4,9 +4,9 @@
 
 # System includes
 import markdown
-import logging
 import requests
 import locale
+from num2words import num2words
 from datetime import datetime
 from jinja2 import Environment
 from weasyprint import HTML
@@ -38,6 +38,7 @@ li {{ list-style-position: outside; }}
 h1 {{ font-size: 1em; font-weight: 600; text-align: center; }}
 h2 {{ font-size: 1em; font-weight: 600; }}
 h3 {{ font-size: 1em; font-weight: 600; }}
+hr {{ border-top: 0px; page-break-after: always; }}
 </style>
 </head>
 <body>{}</body>
@@ -56,6 +57,8 @@ query BookingById ($id: Int) {
   ) {      
     Booking_id: id
     Booking_status: Status
+    Booking_date_from: Date_from
+    Booking_date_to: Date_to
     Booking_date_from_day: Date_from_day
     Booking_date_from_month: Date_from_month
     Booking_date_from_year: Date_from_year
@@ -107,6 +110,10 @@ query BookingById ($id: Int) {
       Building: BuildingViaBuilding_id {
         Resource_building_code: Code
         Resource_building_address: Address
+        SegmentViaSegment_id {
+            Segment_name: Name
+            Segment_url: Url
+        }
         DistrictViaDistrict_id {
           LocationViaLocation_id {
             Resource_building_city: Name
@@ -166,6 +173,9 @@ query BookingById ($id: Int) {
     }
     CustomerViaCustomer_id {
       Customer_type: Type
+      GenderViaGender_id {
+        Customer_gender: Code
+      }
       Id_typeViaId_type_id {
         Customer_id_type: Name
       }
@@ -186,6 +196,15 @@ query BookingById ($id: Int) {
       }
       Customer_signer_id: Signer_document
     }
+    Prices: Booking_priceListViaBooking_id {
+      Rent_date_day
+      Rent_date_month
+      Rent_date_year
+      Rent
+      Services
+      Rent_discount
+      Services_discount
+    }
   }
 }
 '''
@@ -197,6 +216,8 @@ query Booking_groupById ($id: Int!) {
   ) {
     Booking_id: id
     Booking_status: Status
+    Booking_date_from: Date_from
+    Booking_date_to: Date_to
     Booking_date_from_day: Date_from_day
     Booking_date_from_month: Date_from_month
     Booking_date_from_year: Date_from_year
@@ -221,6 +242,7 @@ query Booking_groupById ($id: Int!) {
         Customer_country: Name
       }
       Customer_email: Email
+      Customer_birth_date: Birth_date
       Customer_bank_account: Bank_account
       Customer_signer_name: Signer_name
       Id_typeViaSigner_id_type_id {
@@ -241,6 +263,10 @@ query Booking_groupById ($id: Int!) {
         Building: BuildingViaBuilding_id {
           Resource_building_code: Code
           Resource_building_address: Address
+          SegmentViaSegment_id {
+              Segment_name: Name
+              Segment_url: Url
+          }
           DistrictViaDistrict_id {
             LocationViaLocation_id {
               Resource_building_city: Name
@@ -311,7 +337,9 @@ query Booking_groupById ($id: Int!) {
       Resident_email: Email
     }
     Prices: Booking_group_priceListViaBooking_id {
-      Rent_date
+      Rent_date_day
+      Rent_date_month
+      Rent_date_year
       Rent
       Services
     }
@@ -323,6 +351,11 @@ query Booking_groupById ($id: Int!) {
 # ######################################################
 # Additional functions
 # ######################################################
+
+def words(number):
+
+  return num2words(number, lang='es')
+
 
 def age(birthdate):
 
@@ -382,15 +415,21 @@ def generate_doc_file(context, template):
   context['Today_month'] = now.month
   context['Today_year'] = now.year
 
+  # Calculated fields
+  df = datetime.strptime(context['Booking_date_from'], '%Y-%m-%d')
+  dt = datetime.strptime(context['Booking_date_to'], '%Y-%m-%d')
+  context['Months'] = round((dt - df).days / 30)
+
   # Add custom functions
   env = Environment()
+  env.filters['decimal'] = decimal
+  env.filters['words'] = words
   env.filters['month'] = month
   env.filters['part'] = part
-  env.filters['decimal'] = decimal
   env.filters['age'] = age
 
   # Render contract
-  text = template.decode('utf-8').replace('\r\n\r\n\r\n', '\r\n\r\n&nbsp;\r\n\r\n')
+  text = template.decode('utf-8').replace('\r\n\r\n\r\n\r\n', '\r\n\r\n&nbsp;\r\n\r\n')
   md = env.from_string(text).render(context)
 
   # Convert markdown to HTML
@@ -516,6 +555,9 @@ def do_group_contracts(apiClient, id):
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten(result['data'][0])
     room = context['Room'][0]
+
+    # Consolidate flats
+    context['Flats'] = ', '.join(list({r["Resource_flat_address"] for r in context['Rooms']}))
 
     # Generate rent contract
     template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
