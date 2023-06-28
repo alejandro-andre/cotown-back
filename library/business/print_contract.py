@@ -97,6 +97,14 @@ query BookingById ($id: Int) {
           Booking_building_city: Name
         }
       }
+      Services: Building_serviceListViaBuilding_id {
+        Building_service_typeViaService_id (
+            joinType: INNER
+            where: { Contract: { EQ: true } }
+        ) {
+            Name
+        }
+      }
     }
     ResourceViaResource_id {
       Resource_code: Code
