@@ -8,7 +8,7 @@ En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 ## LAS PARTES
 
 {%if Rooms[0].Owner_id_type=='CIF'%}
-De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edadRooms[0]., provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 {%else%}
 De una parte, {{Rooms[0].Owner_name}}, mayor de edad, con {{Rooms[0].Owner_id_type}} núm. {{Rooms[0].Owner_id}}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}} actuando en su nombre y representación.
 {%endif%}
@@ -47,6 +47,7 @@ II. Que, la Arrendataria es una organización/entidad interesada en arrendar el 
 III. Que la gestión del presente contrato y, por lo tanto, la representación de la Propiedad durante todo el plazo que dure el presente será llevada a cabo por la compañía Cotown Sharing Life, S.L. (la gestora).
 
 IV. Y, estando ambas partes interesadas en el arrendamiento de conformidad con los términos que seguidamente se convienen, suscriben el presente contrato de arrendamiento, de conformidad con las siguientes,
+
 
 ## ESTIPULACIONES
 
@@ -243,11 +244,10 @@ Para resolver cualquier interpretación o disputa derivada del presente Contrato
 
 Y, habiendo leído y comprendido la totalidad del presente Contrato de arrendamiento, lo firman en prueba de aceptación y conformidad, por duplicado ejemplar y a un solo efecto, en el lugar y la fecha indicados en el encabezado.
 
-
 | | |
 |:-|:-|
 |**El Arrendador**|**El Arrendatario**|
-{%-for s in Owner_signers-%}
+{%-for s in Rooms[0].Owner_signers-%}
 |&nbsp; | |
 |&nbsp; | |
 |&nbsp; | |

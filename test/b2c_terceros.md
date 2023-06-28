@@ -181,9 +181,9 @@ El pago de la Renta no podrá ser suspendido por ninguna causa o motivo salvo a 
 
 Cualquier situación de crisis, alarma, pandemia o similar no supondrá la reducción total o parcial de la renta que deberá ser igualmente abonada.
 
-## 5. La Arrendataria está obligada a; 
+## 5. La Arrendataria está obligada a: 
 
-a) informar a la Arrendadora de cualquier incidente avería o daño que detecte dentro de la Habitación, piso, o edificio, así como en elementos del mobiliario e inventario; 
+a) informar a la Arrendadora de cualquier incidente avería o daño que detecte dentro de la Habitación, piso, o edificio, así como en elementos del mobiliario e inventario;
 
 b) no tener animales en la Habitación ni entrar animales al edificio; 
 

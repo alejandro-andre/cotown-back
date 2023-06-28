@@ -38,5 +38,7 @@ def main(q, tpl, id):
 if __name__ == '__main__':
 
     print('Testing...')
-    main(BOOKING, 'test/B2C Vandor', 3)
-    main(GROUP_BOOKING, 'test/B2B Vandor', 1)
+    main(GROUP_BOOKING, 'test/b2b_vandor', 1)
+    main(BOOKING, 'test/b2c_vandor', 3)
+    main(BOOKING, 'test/b2c_piso_completo', 3)
+    main(BOOKING, 'test/b2c_servicios', 3)

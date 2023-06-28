@@ -8,7 +8,7 @@ En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 ## LAS PARTES
 
 {%if Rooms[0].Owner_id_type=='CIF'%}
-De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edadRooms[0]., provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 {%else%}
 De una parte, {{Rooms[0].Owner_name}}, mayor de edad, con {{Rooms[0].Owner_id_type}} núm. {{Rooms[0].Owner_id}}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}} actuando en su nombre y representación.
 {%endif%}
@@ -25,7 +25,7 @@ De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%e
 
 En adelante denominada la "**Arrendataria**"
 
-En adelante, LA "ARRENDADORA" y LA "ARRENDATARIA" serán referidas conjuntamente como las "Partes" y cualquiera de ellas, separadamente, como una "Parte".
+En adelante, LA "**Arrendadora**" y LA "**Arrendataria**" serán referidas conjuntamente como las "**Partes**" y cualquiera de ellas, separadamente, como una "**Parte**".
 
 Todas las partes intervienen y actúan en su propio nombre y representación.
 
@@ -40,7 +40,7 @@ I. Que, la Arrendadora es propietaria de la siguiente finca:
 - Ciudad: {{Rooms[0].Resource_building_city}}
 - Piso/s: {{Flats}}
 
-(en adelante conjuntamente los "pisos" e individualmente el "piso")
+(en adelante conjuntamente los "**pisos**" e individualmente el "**piso**")
 
 II. Que, la Arrendataria es una organización/entidad interesada en arrendar el piso o los pisos de forma temporal y para ser ocupados exclusivamente por parte de las personas que se identificarán en el cuerpo de este documento.
  
@@ -48,11 +48,12 @@ III. Que la gestión del presente contrato y, por lo tanto, la representación d
 
 IV. Y, estando ambas partes interesadas en el arrendamiento de conformidad con los términos que seguidamente se convienen, suscriben el presente contrato de arrendamiento, de conformidad con las siguientes,
 
+
 ## ESTIPULACIONES
 
 ## 1.- OBJETO DEL CONTRATO DE ARRENDAMIENTO
 
-1.1.- La Arrendadora cede en arrendamiento a la Arrendataria el piso o los pisos que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "Contrato de arrendamiento"). 
+1.1.- La Arrendadora cede en arrendamiento a la Arrendataria el piso o los pisos que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**"). 
 
 {%for r in Rooms-%}
 - {{r.Resource_building_address}} - {{r.Resource_address}}
@@ -116,7 +117,7 @@ Será de cuenta de la Arrendataria cualquier otra que se pueda instaurar por el 
 
 ## 5.- GARANTÍA
 
-5.1.- Garantía. La Arrendadora girará a la firma del presente contrato de alquiler y a la cuenta corriente de la Arrendataria indicada en el pacto cuarto anterior, el importe de la garantía consistente en la cantidad de {{Booking_deposit|words}} euros ({{Booking_deposit}} €) (la "Garantía") a lo cual le autoriza la Arrendataria.
+5.1.- Garantía. La Arrendadora girará a la firma del presente contrato de alquiler y a la cuenta corriente de la Arrendataria indicada en el pacto cuarto anterior, el importe de la garantía consistente en la cantidad de {{Booking_deposit|words}} euros ({{Booking_deposit}} €) (la "**Garantía**") a lo cual le autoriza la Arrendataria.
 
 Se hace constar expresamente, y así se acepta al suscribirse el presente contrato, que si se produce una baja voluntaria la Arrendataria no tendrá derecho a la devolución del importe de la Garantía.
 
@@ -242,7 +243,6 @@ El presente Contrato de arrendamiento se redacta en idioma español. Los documen
 Para resolver cualquier interpretación o disputa derivada del presente Contrato de arrendamiento, las partes se someterán a la jurisdicción de los juzgados y tribunales de la ciudad de Barcelona con renuncia a su propio fuero si fuese el caso.
 
 Y, habiendo leído y comprendido la totalidad del presente Contrato de arrendamiento, lo firman en prueba de aceptación y conformidad, por duplicado ejemplar y a un solo efecto, en el lugar y la fecha indicados en el encabezado.
-
 
 | | |
 |:-|:-|

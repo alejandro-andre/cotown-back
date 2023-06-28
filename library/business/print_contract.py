@@ -279,6 +279,7 @@ query Booking_groupById ($id: Int!) {
           }
           Owner_id: Document
           Owner_name: Name
+          Owner_email: Email
           Owner_address: Address
           Owner_zip: Zip
           Owner_city: City
@@ -303,6 +304,7 @@ query Booking_groupById ($id: Int!) {
           }
           Service_id: Document
           Service_name: Name
+          Service_email: Email
           Service_address: Address
           Service_zip: Zip
           Service_city: City

@@ -1,6 +1,7 @@
 # CONTRATO DE ARRENDAMIENTO Y USO DE HABITACIÓN.
 
 
+
 En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 
@@ -182,7 +183,7 @@ El pago de la Renta no podrá ser suspendido por ninguna causa o motivo salvo a 
 
 Cualquier situación de crisis, alarma, pandemia o similar no supondrá la reducción total o parcial de la renta que deberá ser igualmente abonada.
 
-## 5. La Arrendataria está obligada a; 
+## 5. La Arrendataria está obligada a: 
 
 a) informar a la Arrendadora de cualquier incidente avería o daño que detecte dentro de la Habitación, piso, o edificio, así como en elementos del mobiliario e inventario; 
 
@@ -432,4 +433,3 @@ La Arrendataria manifiesta haber leído y entendido las Condiciones Particulares
 |&nbsp; | |
 |Fdo: {{s.Owner_signer_name}}|{%if loop.index==1%}Fdo: {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}{%endif%}|
 {%-endfor-%}
-
