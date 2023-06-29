@@ -5,6 +5,7 @@
 En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 
+
 ## LAS PARTES
 
 {%if Owner_id_type=='CIF'%}
@@ -26,20 +27,22 @@ De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%e
 En adelante denominada la "**Arrendataria**"
 
 
+
 ## MANIFIESTAN:  
  
-I.- Que el arrendador es propietario del inmueble ubicado en [----], que se encuentra totalmente amueblado y equipado con los utensilios domésticos. 
+I.- Que el arrendador es propietario del inmueble ubicado en {{Resource_building_address}} {{Resource_flat_address}}, que se encuentra totalmente amueblado y equipado con los utensilios domésticos. 
 
-II.- Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por estar [----] en [----].
+II.- Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por motivos de {{Customer_reason}} en {{Customer_school}}.
  
 III.- AMBAS PARTES se reconocen suficiente capacidad legal para llevar a cabo este contrato, INTERVINIENDO en nombre y derecho mencionados respectivamente, y convienen formalizar el presente CONTRATO DE ARRENDAMIENTO DE TEMPORADA, con arreglo a los siguientes
+
 
 
 ## ESTIPULACIONES: 
  
 ## PRIMERA.- OBJETO. 
 
-El arrendador arrienda a [----] el inmueble descrito en el expositivo primero de este contrato, para ser destinado a constituir su residencia temporal por motivo de estudios y por el tiempo que después se dirá. El inmueble que se arrienda en virtud del presente contrato no tendrá en ningún caso la condición de residencia permanente del arrendatario ni de cualesquiera terceros, salvo autorización expresa del arrendador. Asimismo, las partes convienen que el inmueble no podrá ser destinado al uso como alojamiento turístico o análogo (incluyendo de manera no exhaustiva las siguientes modalidades de alojamiento turístico: apartamentos turísticos y viviendas de uso turístico). 
+El arrendador arrienda a {{Customer_name}} el inmueble descrito en el expositivo primero de este contrato, para ser destinado a constituir su residencia temporal por motivo de estudios y por el tiempo que después se dirá. El inmueble que se arrienda en virtud del presente contrato no tendrá en ningún caso la condición de residencia permanente del arrendatario ni de cualesquiera terceros, salvo autorización expresa del arrendador. Asimismo, las partes convienen que el inmueble no podrá ser destinado al uso como alojamiento turístico o análogo (incluyendo de manera no exhaustiva las siguientes modalidades de alojamiento turístico: apartamentos turísticos y viviendas de uso turístico). 
  
 La parte arrendataria no podrá modificar el destino mencionado sin el previo consentimiento por escrito del arrendador. El incumplimiento de este precepto será motivo de resolución del contrato. 
  
@@ -63,7 +66,7 @@ A partir de las 22 horas queda totalmente prohibido hacer cualquier tipo de ruid
  
 ## CUARTA.- DURACIÓN. 
 
-El arrendamiento se pacta por temporada y tiempo determinado empezando este el día [----] y finalizando el día [----].
+El arrendamiento se pacta por temporada y tiempo determinado empezando este el día {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} y finalizando el día {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}}.
 
 A las 10 horas de la mañana del último día se tendrá que dejar libre el inmueble y entregar las llaves del mismo sin que sea necesario requerimiento previo.
  
@@ -71,9 +74,9 @@ Si el arrendatario continúa ocupando el inmueble una vez pasado el vencimiento 
  
 ## QUINTA.- RENTA. 
 
-La parte arrendataria abonará al gestor del arrendador Cotown Sharing Life, SL, en concepto de renta, la cantidad de [----] euros, dentro de los cinco primeros días de cada mes, mediante domiciliación bancaria o tarjeta bancaria. Además, la parte arrendataria abonará [----] € de limpieza de salida, dentro de los cinco primeros días del último mes de su estancia, mediante domiciliación bancaria o tarjeta bancaria.
+La parte arrendataria abonará al gestor del arrendador Cotown Sharing Life, SL, en concepto de renta, la cantidad de {{Booking_rent|decimal}} euros, dentro de los cinco primeros días de cada mes, mediante domiciliación bancaria o tarjeta bancaria. Además, la parte arrendataria abonará {{Booking_final_cleaning|decimal}} euros de limpieza de salida, dentro de los cinco primeros días del último mes de su estancia, mediante domiciliación bancaria o tarjeta bancaria.
 
-En el recibo que atenderá el arrendatario se incluyen también los gastos de comunidad (limpieza de zonas comunes de la escalera) y los suministros (Luz, Agua, Gas, e Internet) con un límite máximo, estos últimos, de [----] € mensuales, de tal suerte que lo que exceda de esa cantidad le será facturado al arrendatario aparte del recibo. 
+En el recibo que atenderá el arrendatario se incluyen también los gastos de comunidad (limpieza de zonas comunes de la escalera) y los suministros (Luz, Agua, Gas, e Internet) con un límite máximo, estos últimos, de {{Booking_limit|decimal}} euros mensuales, de tal suerte que lo que exceda de esa cantidad le será facturado al arrendatario aparte del recibo. 
  
 El incumplimiento de la obligación de pago de ese recibo en el periodo fijado será motivo de resolución del contrato, dando derecho al arrendador a solicitar el desahucio, siendo por cuenta del arrendatario los gastos que estas acciones originen. Los recibos emitidos se abonarán íntegramente sea cual sea el tiempo en que se utilicen los servicios de alojamiento. 
  
@@ -89,7 +92,7 @@ La propiedad no se hace responsable de los objetos robados y/o extraviados en el
  
 ## OCTAVA.- GARANTÍA.
 
-El arrendatario entrega a la arrendadora en el transcurso de este acto el importe de [----] € (un mes) en concepto de garantía, suma que tendrá como finalidad cubrir los pagos de las obligaciones derivadas de este contrato que el arrendatario asume a favor del arrendador y en su caso responder de los desperfectos que el arrendatario pueda causar en el piso donde contratado, incluidas la perdida de las llaves o excesos de consumos no satisfechos durante la estancia.
+El arrendatario entrega a la arrendadora en el transcurso de este acto el importe de {{Booking_deposit}} euros (un mes) en concepto de garantía, suma que tendrá como finalidad cubrir los pagos de las obligaciones derivadas de este contrato que el arrendatario asume a favor del arrendador y en su caso responder de los desperfectos que el arrendatario pueda causar en el piso donde contratado, incluidas la perdida de las llaves o excesos de consumos no satisfechos durante la estancia.
  
 Se hace constar expresamente, y así se acepta al suscribirse el presente contrato, que si se produce una baja voluntaria el arrendatario no tendrá derecho a la devolución del importe de la garantía excepto en el caso de haber dado éste un preaviso por escrito a la propiedad con al menos dos meses de antelación a la fecha prevista de la baja, en ese caso sólo se descontarán de la fianza 230 euros en concepto de penalización más la diferencia de tarifa si se le hubiera aplicado por la duración de la estancia. 
  

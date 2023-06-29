@@ -70,6 +70,7 @@ query BookingById ($id: Int) {
     Booking_services: Services
     Booking_deposit: Deposit
     Booking_limit: Limit
+    Booking_final_cleaning: Final_cleaning
     Booking_second_resident: Second_resident
     Customer_reasonViaReason_id {
         Booking_reason: Name

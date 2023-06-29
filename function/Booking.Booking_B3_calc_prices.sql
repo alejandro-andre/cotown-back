@@ -70,6 +70,7 @@ BEGIN
   NEW."Services" := 0;
   NEW."Deposit" := 0;
   NEW."Limit" := 0;
+  NEW."Final_cleaning" := 0;
   DELETE FROM "Booking"."Booking_price"
   WHERE "Booking_id" = NEW.id;
 
@@ -171,6 +172,9 @@ BEGIN
   NEW."Services" := m_services;
   NEW."Deposit" := m_deposit;
   NEW."Limit" := m_limit;
+  IF final_cleaning > 0 THEN
+    NEW."Final_cleaning" := final_cleaning; 
+  END IF;
 
   -- Insert prices
   WHILE dt_curr < dt_to LOOP
