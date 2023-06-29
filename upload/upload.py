@@ -3,7 +3,7 @@
 # ##################################################
 
 import os
-os.add_dll_directory('C:\Program Files\GTK3-Runtime Win64\lib')
+os.add_dll_directory('C:\\Program Files\\GTK3-Runtime Win64\\bin')
 
 from PIL import Image
 from gql import gql, Client
