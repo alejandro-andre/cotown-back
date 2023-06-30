@@ -12,6 +12,7 @@
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
+from openpyxl.formula.translate import Translator
 import pandas as pd
 
 # Cotown includes
@@ -208,14 +209,35 @@ def main():
   # Final. To excel
   # ###################################################
 
-  # Write data
+  # Generate new book from template
   book = load_workbook('templates/occupancy-report.xlsx')
+
+  # Replicate columns
+  for sheet_name in book.sheetnames:
+    if 'data-' not in sheet_name:
+      sheet = book[sheet_name]
+      for i, _ in enumerate(df_dates):
+        for row in range(1, sheet.max_row+1):
+          src = sheet.cell(row=row, column=2)
+          if src.data_type == 'f':
+              t = Translator(src.value, 'A1')
+              formula  = t.translate_formula(col_delta=1+i)
+          else:
+              formula = src.value
+          dst = sheet.cell(row=row, column=3+i, value=formula)
+          dst._style = src._style
   book.save('occupancy.xlsx')
+
+  # Write data
   with pd.ExcelWriter('occupancy.xlsx', engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
     df_beds.to_excel(writer, sheet_name='data-beds', index=False)
     df_night.to_excel(writer, sheet_name='data-nights', index=False)
     df_rent.to_excel(writer, sheet_name='data-rent', index=False)
     df_service.to_excel(writer, sheet_name='data-services', index=False)
+    writer.sheets['data-beds'].sheet_state = 'hidden'
+    writer.sheets['data-nights'].sheet_state = 'hidden'
+    writer.sheets['data-rent'].sheet_state = 'hidden'
+    writer.sheets['data-services'].sheet_state = 'hidden'
 
 
 # #####################################
