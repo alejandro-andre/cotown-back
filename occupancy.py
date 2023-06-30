@@ -50,6 +50,7 @@ def main():
   dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
   dbClient.connect()
 
+
   # ###################################################
   # Lambda functions
   # ###################################################
@@ -216,17 +217,6 @@ def main():
     df_rent.to_excel(writer, sheet_name='data-rent', index=False)
     df_service.to_excel(writer, sheet_name='data-services', index=False)
 
-  # Remove formulas and data sheets
-  book = load_workbook('occupancy.xlsx')
-  for sheet_name in book.sheetnames:
-    sheet = book[sheet_name]
-    if 'data-' not in sheet_name:
-      for row in sheet.iter_rows():
-        for cell in row:
-          cell.value = cell.value
-    else:
-      book.remove(sheet)
-  book.save('occupancy.xlsx')
 
 # #####################################
 # Main
