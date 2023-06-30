@@ -201,7 +201,7 @@ def occupancy(dbClient, vars):
   # ###################################################
 
   # Generate new book from template
-  book = load_workbook('templates/report/occupancy-report.xlsx')
+  book = load_workbook('templates/report/occupancy.xlsx')
   logger.info('Template loaded')
 
   # Replicate columns
