@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
 from openpyxl.formula.translate import Translator
-from io import BytesIO
 import pandas as pd
 import tempfile
 
@@ -202,7 +201,7 @@ def occupancy(dbClient, vars):
   # ###################################################
 
   # Generate new book from template
-  book = load_workbook('templates/occupancy-report.xlsx')
+  book = load_workbook('templates/report/occupancy-report.xlsx')
   logger.info('Template loaded')
 
   # Replicate columns
