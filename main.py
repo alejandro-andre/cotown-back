@@ -18,6 +18,7 @@ from library.services.apiclient import APIClient
 from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.business.export import query_to_excel
+from library.business.occupancy import occupancy
 from library.business.download import download
 from library.business.queries import *
 
@@ -180,6 +181,31 @@ def runapp():
         
 
   # ###################################################
+  # Occupancy report
+  # ###################################################
+
+  # Occupancy
+  def get_occupancy():
+
+    # Querystring variables
+    vars = {}
+    for item in dict(request.args).keys():
+      try:
+        vars[item] = int(request.args[item])
+      except:
+        vars[item] = request.args[item]
+  
+    result = occupancy(dbClient, vars)
+    if result is None:
+      abort(404)
+
+    # Response
+    response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response.headers['Content-Disposition'] = 'inline; filename="occupancy.xlsx"'
+    return response    
+
+
+  # ###################################################
   # Special queries
   # ###################################################
 
@@ -339,6 +365,9 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
+
+  # Occupancy report
+  app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
 
   # Status buttons
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])

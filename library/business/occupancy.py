@@ -1,10 +1,4 @@
 # ###################################################
-# Batch process
-# ---------------------------------------------------
-# Occupancy calculation
-# ###################################################
-
-# ###################################################
 # Imports
 # ###################################################
 
@@ -13,7 +7,9 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
 from openpyxl.formula.translate import Translator
+from io import BytesIO
 import pandas as pd
+import tempfile
 
 # Cotown includes
 from library.services.config import settings
@@ -28,29 +24,7 @@ logger = logging.getLogger('COTOWN')
 # Main
 # ###################################################
 
-def main():
-
-  # ###################################################
-  # Logging
-  # ###################################################
-
-  logger.setLevel(settings.LOGLEVEL)
-  console_handler = logging.StreamHandler()
-  console_handler.setLevel(settings.LOGLEVEL)
-  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
-  console_handler.setFormatter(formatter)
-  logger.addHandler(console_handler)
-  logger.info('Started')
-
-
-  # ###################################################
-  # DB client
-  # ###################################################
-
-  # DB API
-  dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
-  dbClient.connect()
-
+def occupancy(dbClient, vars):
 
   # ###################################################
   # Lambda functions
@@ -104,9 +78,19 @@ def main():
   # 0. Preparation
   # ###################################################
 
-  # 0.1 Get all months from 2023-01-01 to next year
+  # Connect
+  logger.info('Start occupancy report')
+  dbClient.connect()
+
+  # 0.1 Get all months from the selected range
+  # http://localhost:5000/api/v1/occupancy?fdesde=2023-01-01&fhasta=2024-12-31
+  start_date = '2023-01-01'
+  if vars.get('fdesde'):
+    start_date = vars.get('fdesde')
   end_date = (datetime.now() + timedelta(days=366)).strftime('%Y-%m-%d')
-  df_dates = pd.date_range(start='2023-01-01', end=end_date, freq='MS')
+  if vars.get('fhasta'):
+    end_date = vars.get('fhasta')
+  df_dates = pd.date_range(start=start_date, end=end_date, freq='MS')
 
   # 0.2 Get all resources: rooms and half places
   dbClient.select('''
@@ -120,6 +104,7 @@ def main():
   ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_res = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
+  logger.info('Resources retrieved')
 
 
   # ###################################################
@@ -130,6 +115,7 @@ def main():
   dbClient.select('SELECT "Resource_id", "Date_from", "Date_to" FROM "Resource"."Resource_availability"')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_avail = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
+  logger.info('Unavailabilities retrieved')
 
   # 1.2. Check available resources (beds) by month
   df_beds = df_res.copy()
@@ -138,6 +124,7 @@ def main():
     df_beds[dt] = df_beds.apply(lambda row: available(row['Flat_id'], dt), axis=1)
   df_beds.drop('Flat_id', axis=1, inplace=True)
   df_res.drop('Flat_id', axis=1, inplace=True)
+  logger.info('Beds calculated')
 
 
   # ###################################################
@@ -166,18 +153,21 @@ def main():
   columns = [desc[0] for desc in dbClient.sel.description]
   df_bills = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
   df_bills['Date'] = df_bills['Date'].dt.date
+  logger.info('Prices retrieved')
 
   # # 2.2. Pivot rent income by month
   df_rent = df_res.copy()
   for date in df_dates:
     dt = date.date()
     df_rent[dt] = df_rent.apply(lambda row: rent(row['Resource'], dt, "Rent"), axis=1)
+  logger.info('Rent calculated')
 
   # # 2.3. Pivot services income by month
   df_service = df_res.copy()
   for date in df_dates:
     dt = date.date()
     df_service[dt] = df_service.apply(lambda row: rent(row['Resource'], dt, "Services"), axis=1)
+  logger.info('Services calculated')
 
 
   # ###################################################
@@ -197,12 +187,14 @@ def main():
   ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_books = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
+  logger.info('Bookings retrieved')
 
   # 3.2. Pivot booked room nights by month
   df_night = df_res.copy()
   for date in df_dates:
     dt = date.date()
     df_night[dt] = df_night.apply(lambda row: nights(row['Resource'], dt), axis=1)
+  logger.info('Nights calculated')
 
 
   # ###################################################
@@ -211,40 +203,56 @@ def main():
 
   # Generate new book from template
   book = load_workbook('templates/occupancy-report.xlsx')
+  logger.info('Template loaded')
 
   # Replicate columns
   for sheet_name in book.sheetnames:
+
+    # Only dashboard sheets
     if 'data-' not in sheet_name:
       sheet = book[sheet_name]
+
+      # One column per date
       for i, _ in enumerate(df_dates):
-        for row in range(1, sheet.max_row+1):
-          src = sheet.cell(row=row, column=2)
-          if src.data_type == 'f':
+        if i > 0:
+
+          # Copy column formulas and styles
+          for row in range(1, sheet.max_row+1):
+            src = sheet.cell(row=row, column=2)
+            if src.data_type == 'f':
               t = Translator(src.value, 'A1')
-              formula  = t.translate_formula(col_delta=1+i)
-          else:
+              formula  = t.translate_formula(col_delta=i)
+            else:
               formula = src.value
-          dst = sheet.cell(row=row, column=3+i, value=formula)
-          dst._style = src._style
-  book.save('occupancy.xlsx')
+            dst = sheet.cell(row=row, column=2+i, value=formula)
+            dst._style = src._style
+
+      # Today's date
+      sheet.cell(row=1, column=2, value=datetime.now().date())
+
+  # Save book
+  temp = tempfile.NamedTemporaryFile(suffix='.xlsx').name
+  book.save(temp)
+  logger.info('Template prepared')
 
   # Write data
-  with pd.ExcelWriter('occupancy.xlsx', engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+  with pd.ExcelWriter(temp, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+
+    # Write sheets
     df_beds.to_excel(writer, sheet_name='data-beds', index=False)
     df_night.to_excel(writer, sheet_name='data-nights', index=False)
     df_rent.to_excel(writer, sheet_name='data-rent', index=False)
     df_service.to_excel(writer, sheet_name='data-services', index=False)
+
+    # Hide data sheets
     writer.sheets['data-beds'].sheet_state = 'hidden'
     writer.sheets['data-nights'].sheet_state = 'hidden'
     writer.sheets['data-rent'].sheet_state = 'hidden'
     writer.sheets['data-services'].sheet_state = 'hidden'
 
+    # Disconnect
+    logger.info('Report finished')
+    dbClient.disconnect()
 
-# #####################################
-# Main
-# #####################################
-
-if __name__ == '__main__':
-
-  main()
-  logger.info('Finished')
+    # return
+    return temp
