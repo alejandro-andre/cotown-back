@@ -9,12 +9,15 @@
 # #####################################
 
 # System includes
-from flask import Flask, request, abort, send_file, send_from_directory
+from flask import Flask, request, abort, make_response, send_file, send_from_directory
 from cachetools import TTLCache
+from datetime import timedelta
+import base64
 
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
+from library.services.cipher import encrypt, decrypt
 from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.business.export import query_to_excel
@@ -99,6 +102,22 @@ def runapp():
 
 
   # ###################################################
+  # Get user from cookies
+  # ###################################################
+
+  def get_user():
+
+    # Get and decypher cookie
+    cookie = request.cookies.get('user')
+    if cookie:
+      try:
+        cookie = json.loads(base64.b64decode(cookie).decode('utf-8'))
+        return json.loads(decrypt(base64.b64decode(cookie['credentials']), base64.b64decode(cookie['nonce'])))
+      except:
+        return None
+
+
+  # ###################################################
   # Hi
   # ###################################################
 
@@ -122,6 +141,52 @@ def runapp():
       return send_from_directory('static', filename + '.html')
     except:
       return send_from_directory('static', filename)
+
+
+  # ###################################################
+  # Logout
+  # ###################################################
+
+  def post_logout():
+
+    response = make_response(send_file('static/login.html'))
+    response.set_cookie('user', '', max_age=0)
+    return response
+
+
+  # ###################################################
+  # Login
+  # ###################################################
+
+  def post_login():
+
+    # Response
+    response = make_response(send_file('static/login.html'))
+
+    # Get login data
+    usr = request.form.get('usr')
+    pwd = request.form.get('pwd')
+
+    # Call backend
+    apiClient.auth(user=usr, password=pwd)
+    if apiClient.token is None:
+      return response
+
+    # Get user name
+    result = apiClient.call('{ data: Customer_CustomerList (orderBy: [{ attribute: id }] limit:2) { Name } }')
+    if len(result['data']) != 1:
+      return response
+
+    # Set cookie
+    creds = json.dumps({ 'usr': usr, 'pwd': pwd, 'token': apiClient.token })
+    ctext, nonce = encrypt(creds)
+    cookie = {
+      'name': result['data'][0]['Name'],
+      'credentials': base64.b64encode(ctext).decode('utf-8'),
+      'nonce': base64.b64encode(nonce).decode('utf-8')
+    }
+    response.set_cookie('user', base64.b64encode(json.dumps(cookie).encode()).decode('utf-8'), max_age=timedelta(days=60))
+    return response
 
 
   # ###################################################
@@ -341,6 +406,10 @@ def runapp():
   # ---------------------------------
   # Requests without token    
   # ---------------------------------
+
+  # Web login/logout
+  app.add_url_rule(settings.API_PREFIX + '/login', view_func=post_login, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/logout', view_func=post_logout, methods=['POST'])
 
   # Other functions
   app.add_url_rule(settings.API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
