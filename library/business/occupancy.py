@@ -151,7 +151,8 @@ def occupancy(dbClient, vars):
   ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_bills = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
-  df_bills['Date'] = df_bills['Date'].dt.date
+  if len(df_bills.index) > 0:
+    df_bills['Date'] = df_bills['Date'].dt.date
   logger.info('Prices retrieved')
 
   # # 2.2. Pivot rent income by month
