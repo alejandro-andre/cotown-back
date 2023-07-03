@@ -12,8 +12,11 @@ DECLARE
 
 BEGIN
 
-  -- Borra todas reservasd de esa plaza
+  -- Borra todas reservas de esa plaza
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
+  IF NEW."Resource_id" IS NULL THEN
+    RETURN NEW;
+  END IF;
   
   -- Obtiene la reserva padre/grupo
   SELECT * INTO booking FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
