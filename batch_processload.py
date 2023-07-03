@@ -21,6 +21,7 @@ from library.business.load_resources import load_resources
 
 # Logging
 import logging
+from logging.handlers import RotatingFileHandler
 logger = logging.getLogger('COTOWN')
 
 
@@ -35,11 +36,15 @@ def main():
   # ###################################################
 
   logger.setLevel(settings.LOGLEVEL)
+  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
   console_handler = logging.StreamHandler()
   console_handler.setLevel(settings.LOGLEVEL)
-  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
   console_handler.setFormatter(formatter)
+  file_handler = RotatingFileHandler('batch_processload.log', maxBytes=1000000, backupCount=5)
+  file_handler.setLevel(settings.LOGLEVEL)
+  file_handler.setFormatter(formatter)
   logger.addHandler(console_handler)
+  logger.addHandler(file_handler)
   logger.info('Started')
 
 
