@@ -185,7 +185,12 @@ def runapp():
       'credentials': base64.b64encode(ctext).decode('utf-8'),
       'nonce': base64.b64encode(nonce).decode('utf-8')
     }
-    response.set_cookie('user', base64.b64encode(json.dumps(cookie).encode()).decode('utf-8'), max_age=timedelta(days=60))
+    response.set_cookie(
+      'user', 
+      base64.b64encode(json.dumps(cookie).encode()).decode('utf-8'), 
+      max_age=timedelta(days=60),
+      domain=".cotown.com"
+    )
     return response
 
 
