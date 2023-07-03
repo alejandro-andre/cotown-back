@@ -365,7 +365,10 @@ query Booking_groupById ($id: Int!) {
 
 def words(number):
 
-  return num2words(number, lang='es')
+  try:
+    return num2words(number, lang='es')
+  except:
+    return ''
 
 
 def age(birthdate):
@@ -491,6 +494,8 @@ def get_template(apiClient, template, resource_type, provider):
 
 def do_contracts(apiClient, id):
 
+  logger.info('Contrato para la reserva ' + str(id))
+
   try:
     
     # Empty files
@@ -555,6 +560,8 @@ def do_contracts(apiClient, id):
 
 def do_group_contracts(apiClient, id):
 
+  logger.info('Contrato para la reserva G' + str(id))
+
   try:
     
     # Empty files
@@ -565,7 +572,7 @@ def do_group_contracts(apiClient, id):
     variables = { 'id': id }
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten(result['data'][0])
-    room = context['Room'][0]
+    room = context['Rooms'][0]
 
     # Consolidate flats
     context['Flats'] = ', '.join(list({r["Resource_flat_address"] for r in context['Rooms']}))
@@ -581,23 +588,22 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
-    if template is not None:
-      file = generate_doc_file(context, template.content)
-      response = requests.post(
-        'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
-        files={'file': file}
-      )
-      json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+    # template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
+    # if template is not None:
+    #   file = generate_doc_file(context, template.content)
+    #   response = requests.post(
+    #     'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+    #     files={'file': file}
+    #   )
+    #   json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''
-    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $rent: Models_DocumentTypeInputType) {
       Booking_Booking_groupUpdate (
         where:  { id: {EQ: $id} }
         entity: { 
           Contract_rent: $rent 
-          Contract_services: $svcs
         }
       ) { id }
     }
