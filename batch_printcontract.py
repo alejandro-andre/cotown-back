@@ -34,7 +34,7 @@ def main():
     console_handler = logging.StreamHandler()
     console_handler.setLevel(settings.LOGLEVEL)
     console_handler.setFormatter(formatter)
-    file_handler = RotatingFileHandler('batch_printcontract.log', maxBytes=1000000, backupCount=5)
+    file_handler = RotatingFileHandler('log/batch_printcontract.log', maxBytes=1000000, backupCount=5)
     file_handler.setLevel(settings.LOGLEVEL)
     file_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
