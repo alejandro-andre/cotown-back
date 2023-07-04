@@ -110,8 +110,13 @@ def occupancy(dbClient, vars):
   # 1. Beds
   # ###################################################
 
-  # 1.1 Get all unavailabilities
-  dbClient.select('SELECT "Resource_id", "Date_from", "Date_to" FROM "Resource"."Resource_availability"')
+  # 1.1 Get all unavailabilities that affect stock
+  dbClient.select('''
+  SELECT "Resource_id", "Date_from", "Date_to" 
+  FROM "Resource"."Resource_availability" ra
+  INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
+  WHERE NOT rs."Available"
+  ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_avail = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
   logger.info('Unavailabilities retrieved')
