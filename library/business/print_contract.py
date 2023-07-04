@@ -17,6 +17,7 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 # Cotown includes
+from library.services.config import settings
 from library.services.utils import flatten
 
 
@@ -39,6 +40,7 @@ h1 {{ font-size: 1em; font-weight: 600; text-align: center; }}
 h2 {{ font-size: 1em; font-weight: 600; }}
 h3 {{ font-size: 1em; font-weight: 600; }}
 hr {{ border-top: 0px; page-break-after: always; }}
+img[alt=firma] {{ width: 200px; }}
 </style>
 </head>
 <body>{}</body>
@@ -146,6 +148,7 @@ query BookingById ($id: Int) {
         Owner_signers: Provider_contactListViaProvider_id (
           where: { Provider_contact_type_id: { EQ: 1 } }
         ) {
+          Owner_signer: id
           Owner_signer_name: Name
           Id_typeViaId_type_id {
             Owner_signer_id_type: Name
@@ -171,6 +174,7 @@ query BookingById ($id: Int) {
         Service_signers: Provider_contactListViaProvider_id (
           where: { Provider_contact_type_id: { EQ: 1 } }
         ) {
+          Service_signer: id
           Service_signer_name: Name
           Id_typeViaId_type_id {
             Service_signer_id_type: Name
@@ -299,6 +303,7 @@ query Booking_groupById ($id: Int!) {
           Owner_signers: Provider_contactListViaProvider_id (
             where: { Provider_contact_type_id: { EQ: 1 } }
           ) {
+            Owner_signer: id
             Owner_signer_name: Name
             Id_typeViaId_type_id {
               Owner_signer_id_type: Name
@@ -324,6 +329,7 @@ query Booking_groupById ($id: Int!) {
           Service_signers: Provider_contactListViaProvider_id (
             where: { Provider_contact_type_id: { EQ: 1 } }
           ) {
+            Service_signer: id
             Service_signer_name: Name
             Id_typeViaId_type_id {
               Service_signer_id_type: Name
@@ -428,6 +434,7 @@ def generate_doc_file(context, template):
   context['Today_day'] = now.day
   context['Today_month'] = now.month
   context['Today_year'] = now.year
+  context['Server'] = 'https://' + settings.BACK + settings.API_PREFIX
 
   # Calculated fields
   df = datetime.strptime(context['Booking_date_from'], '%Y-%m-%d')
@@ -451,7 +458,7 @@ def generate_doc_file(context, template):
 
   # Return file
   file = BytesIO()
-  html = HTML(string=doc)
+  html = HTML(string=doc, base_url='base_url')
   html.write_pdf(file)
   file.seek(0)
 

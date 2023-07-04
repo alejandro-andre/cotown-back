@@ -91,10 +91,7 @@ Y, habiendo leído y comprendido la totalidad del presente contrato, lo firman e
 |:-|:-|
 |**El Proveedor de Servicios**|**El Arrendatario**|
 {%-for s in Service_signers-%}
-|&nbsp; | |
-|&nbsp; | |
-|&nbsp; | |
-|&nbsp; | |
-|&nbsp; | |
+| | |
+|![firma]({{Server}}/signature/{{s.Service_signer}})| |
 |Fdo: {{s.Service_signer_name}}|{%if loop.index==1%}Fdo: {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}{%endif%}|
 {%-endfor-%}

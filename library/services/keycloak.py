@@ -5,7 +5,7 @@
 # 1. Crear un nuevo cliente airflows-admin
 #  - Access type: confidential
 #  - Service account enabled
-#  - Root url: https://{{server}}
+#  - Root url: https://{{Server}}
 # 2. En la pestaña "Service account roles"
 #  - En Client roles, seleccionar realm-management
 #  - Asignar el rol realm-admin

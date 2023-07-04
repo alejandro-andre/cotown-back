@@ -12,6 +12,7 @@
 from flask import Flask, request, abort, make_response, send_file, send_from_directory
 from cachetools import TTLCache
 from datetime import timedelta
+from io import BytesIO
 import base64
 
 # Cotown includes
@@ -141,6 +142,21 @@ def runapp():
       return send_from_directory('static', filename + '.html')
     except:
       return send_from_directory('static', filename)
+
+
+  # ###################################################
+  # Signature
+  # ###################################################
+
+  def get_signature(id):
+
+    # Debug
+    logger.debug('Signature ' + str(id))
+
+    # Return image
+    image = apiClient.getFile(id, 'Provider/Provider_contact', 'Signature')
+    response = send_file(BytesIO(image.content), mimetype=image.headers['content-type'])
+    return response
 
 
   # ###################################################
@@ -448,6 +464,7 @@ def runapp():
 
   # Export
   app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
 
     # Return app

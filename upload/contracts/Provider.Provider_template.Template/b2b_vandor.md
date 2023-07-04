@@ -248,10 +248,7 @@ Y, habiendo leído y comprendido la totalidad del presente Contrato de arrendami
 |:-|:-|
 |**El Arrendador**|**El Arrendatario**|
 {%-for s in Rooms[0].Owner_signers-%}
-|&nbsp; | |
-|&nbsp; | |
-|&nbsp; | |
-|&nbsp; | |
-|&nbsp; | |
+| | |
+|![firma]({{Server}}/signature/{{s.Owner_signer}})| |
 |Fdo: {{s.Owner_signer_name}}|{%if loop.index==1%}Fdo: {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}{%endif%}|
 {%-endfor-%}
