@@ -1,4 +1,5 @@
 -- Almacena las reservas en tabla auxiliar
+-- AFTER INSERT/UPDATE/DELETE
 DECLARE
 
   code VARCHAR;
@@ -17,13 +18,21 @@ BEGIN
   RESET ROLE; 
   
   -- Borra todos los registros relacionados con ese bloqueo
-  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
-  IF NEW."Resource_id" IS NULL THEN
-    RETURN NEW;
+  IF TG_OP = 'DELETE' THEN
+    DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = OLD.id;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    RETURN OLD;
+  ELSE
+    DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
+    IF TG_OP = 'DELETE' OR NEW."Resource_id" IS NULL THEN
+      EXECUTE 'SET ROLE "' || curr_user || '"';
+      RETURN NEW;
+    END IF;
   END IF;
   
   -- Ignora los estados que no bloquean
   IF NEW."Status" IN ('solicitud','solicitudpagada','alternativas','alternativaspagada','descartada','descartadapagada','caducada') THEN
+    EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
 
@@ -35,7 +44,7 @@ BEGIN
   FETCH cur INTO reg;
   WHILE (FOUND) LOOP
   
-    -- Inserta la reserva
+    -- Inserta los bloqueos de la reserva
     INSERT INTO "Booking"."Booking_detail" (
       "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
       "Resource_type", "Status", "Date_from", "Date_to", "Lock"
