@@ -3,6 +3,7 @@
 DECLARE 
 
   issued BOOLEAN;
+  tax_id INTEGER;
   invoice_id INTEGER;
 
 BEGIN
@@ -19,6 +20,10 @@ BEGIN
   IF issued THEN
     RAISE EXCEPTION '!!!Bill has been already issued, cannot change!!!La factura ya ha sido emitida, no puede cambiarse!!!';
   END IF;
+
+  -- Tax
+  SELECT "Tax_id" INTO tax_id FROM "Billing"."Product" WHERE id = NEW."Product_id";
+  NEW."Tax_id" := tax_id;
 
   -- Return
   IF TG_OP = 'DELETE' THEN
