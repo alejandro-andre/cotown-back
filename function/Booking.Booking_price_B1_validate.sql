@@ -21,6 +21,11 @@ BEGIN
     END IF;
   END IF;
  
+  -- Discount reason
+  IF (NEW."Rent_discount" IS NOT NULL OR NEW."Services_discount" IS NOT NULL) AND NEW."Discount_type_id" IS NULL THEN
+    RAISE exception '!!!Discount reason mandatory!!!Motivo del descuento obligatorio!!!';
+  END IF;
+
   -- Return record
   RETURN NEW;
 
