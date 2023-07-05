@@ -73,7 +73,7 @@ Los pisos tienen el inventario que se adjuntará a la entrega de cada piso como 
 
 ## 2.- DURACIÓN
 
-2.1.- El arrendamiento del piso o pisos se pacta por temporada y por tanto por el tiempo determinado, común y de obligado cumplimiento de {{Months|words}} ({{Months}}) meses, plazo este que empezará a contar desde el {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} y finalizará el {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}}. 
+2.1.- El arrendamiento del piso o pisos se pacta por temporada y por tanto por el tiempo determinado, común y de obligado cumplimiento, plazo este que empezará a contar desde el {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} y finalizará el {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}}. 
 
 2.2.- Llegada la fecha final del arrendamiento, la Arrendataria dejará libre y a disposición de la Arrendadora el piso o los pisos, sin necesidad de preaviso alguno, haciendo entrega de cada piso  e inventario en perfecto estado, así como de todos los juegos de llaves, todo lo cual quedará recogido en el acta de entrega. 
 
@@ -117,7 +117,7 @@ Será de cuenta de la Arrendataria cualquier otra que se pueda instaurar por el 
 
 ## 5.- GARANTÍA
 
-5.1.- Garantía. La Arrendadora girará a la firma del presente contrato de alquiler y a la cuenta corriente de la Arrendataria indicada en el pacto cuarto anterior, el importe de la garantía consistente en la cantidad de {{Booking_deposit|words}} euros ({{Booking_deposit}} €) (la "**Garantía**") a lo cual le autoriza la Arrendataria.
+5.1.- Garantía. La Arrendadora girará a la firma del presente contrato de alquiler y a la cuenta corriente de la Arrendataria indicada en el pacto cuarto anterior, el importe de la garantía consistente en la cantidad de {{Booking_deposit}} euros (la "**Garantía**") a lo cual le autoriza la Arrendataria.
 
 Se hace constar expresamente, y así se acepta al suscribirse el presente contrato, que si se produce una baja voluntaria la Arrendataria no tendrá derecho a la devolución del importe de la Garantía.
 

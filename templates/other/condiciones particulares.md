@@ -56,13 +56,13 @@ Por el alquiler de la habitación la Arrendataria abonará obligatoriamente a pa
 
 - Los trabajos de entretenimiento y mantenimiento en el piso y los elementos comunes del edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y  electricidad del piso donde está ubicada la habitación, con el límite máximo mensual y por ocupante del piso de {{Booking_limit}}€, siendo dicho importe el resultado de la suma las tres facturas de suministros. Excedido dicho importe máximo de consumo expresado en euros, el exceso se cobrará a la Arrendataria, en base a su cuota de participación de {{Resource_part}} en el total piso, dentro de la factura mensual de renta pero como concepto aparte.
+- Los consumos de los suministros de agua, gas y  electricidad del piso donde está ubicada la habitación, con el límite máximo mensual y por ocupante del piso de {{Booking_limit}} euros, siendo dicho importe el resultado de la suma las tres facturas de suministros. Excedido dicho importe máximo de consumo expresado en euros, el exceso se cobrará a la Arrendataria, en base a su cuota de participación de {{Resource_part}} en el total piso, dentro de la factura mensual de renta pero como concepto aparte.
 
 - El servicio de internet.
 
 ### 4.2 Conceptos adicionales
 
-La Arrendataria dispondrá desde su llegada a la habitación de un teléfono de atención telefónica, 24 horas todos los días de la semana, para activar situaciones de emergencia, cuyo coste es de *** € al mes, que le será facturado como concepto a parte en la factura mensual de alquiler.
+La Arrendataria dispondrá desde su llegada a la habitación de un teléfono de atención telefónica, 24 horas todos los días de la semana, para activar situaciones de emergencia, cuyo coste es de *** euros al mes, que le será facturado como concepto a parte en la factura mensual de alquiler.
 
 ## 5. Facturación y pago.
 

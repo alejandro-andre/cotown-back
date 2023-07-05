@@ -78,7 +78,11 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a partir del inicio del Plazo, la cantidad de (la "**Renta**"):
 
 {%for rent in Prices%}
+{%-if Owner_id == Service_id-%}
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{(rent.Rent+rent.Services)|decimal(2)}} euros mensuales
+{%-else-%}
 - Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{rent.Rent|decimal(2)}} euros mensuales
+{%-endif-%}
 {%-endfor%}
 
 mediante los cargos recurrentes que efectuará la Arrendadora en la cuenta corriente o tarjeta de crédito designada por la Arrendataria durante todo el Plazo del Contrato de Habitación.
@@ -422,9 +426,9 @@ La Arrendataria manifiesta haber leído y entendido las Condiciones Particulares
 
 26. No se permite la instalación de aparatos de climatización adicionales de los que ya está dotado el piso o habitación y salvo autorización previa de la Arrendadora o su Gestora. 
 
-27. La pérdida de llaves y su restitución tiene un coste de 100€ (IVA incluido) por llave. Dicho coste podrá incrementarse en casos de pérdidas reiteradas.
+27. La pérdida de llaves y su restitución tiene un coste de 100 euros (IVA incluido) por llave. Dicho coste podrá incrementarse en casos de pérdidas reiteradas.
 
-28. El desplazamiento de personal de la Gestora al piso o Habitación por motivos injustificados o de negligencia de la Arrendataria supondrá el pago de 50€ (IVA incluido) por parte de dicha Arrendataria.
+28. El desplazamiento de personal de la Gestora al piso o Habitación por motivos injustificados o de negligencia de la Arrendataria supondrá el pago de 50 euros (IVA incluido) por parte de dicha Arrendataria.
 
 | | |
 |:-|:-|
