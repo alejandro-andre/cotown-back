@@ -91,7 +91,7 @@ def occupancy(dbClient, vars):
     end_date = vars.get('fhasta')
   df_dates = pd.date_range(start=start_date, end=end_date, freq='MS')
 
-  # 0.2 Get all resources: rooms and half places
+  # 0.2 Get all resources: individual rooms and places
   dbClient.select('''
     SELECT b."Name" as "Building", p."Name" as "Owner", l."Name" as "Location", r."Code" as "Resource", r."Flat_id" 
     FROM "Resource"."Resource" r
@@ -99,7 +99,8 @@ def occupancy(dbClient, vars):
     INNER JOIN "Geo"."District" d ON d.id = b."District_id"
     INNER JOIN "Geo"."Location" l on l.id = d."Location_id"
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
-    WHERE ("Resource_type" = 'habitacion' OR r."Code" LIKE '%.P2')
+    WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
+    ORDER BY r."Code" ASC;
   ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_res = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
