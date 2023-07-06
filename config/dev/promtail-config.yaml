@@ -17,4 +17,4 @@ scrape_configs:
       container_name: batch
       host: mv-cotown-core-dev
       job: varlogs
-      __path__: /home/azureuser/cotown/app/log/*.log
+      __path__: /var/log/cotown/*.log

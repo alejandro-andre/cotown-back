@@ -15,7 +15,7 @@ loki:
 promtail:
 	docker run -d --name promtail --link=loki --net=cotownnet \
 		-v $(HOME)/cotown/config:/mnt/config \
-		-v ${HOME}/cotown/log:/var/log/cotown \
+		-v ${HOME}/cotown/app/log:/var/log/cotown \
 		grafana/promtail -config.file=/mnt/config/promtail-config.yaml
 
 monitor:
@@ -56,7 +56,7 @@ nginx:
         	nginx
 
 # ###################################
-# Backoffice
+# Containers
 # ###################################
 
 back:

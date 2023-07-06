@@ -17,4 +17,4 @@ scrape_configs:
       container_name: batch
       host: Back
       job: varlogs
-      __path__: /home/cotown/app/log/*.log
+      __path__: /var/log/cotown/*.log
