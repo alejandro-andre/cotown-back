@@ -153,15 +153,15 @@ BEGIN
   ny_rent := ny_rent * multiplier;
 
   -- Current year prices
-  m_rent := cy_rent;
-  m_services := cy_services;
-  m_deposit := cy_deposit;
-  m_limit := cy_limit;
+  m_rent := ROUND(cy_rent,0);
+  m_services := ROUND(cy_services,0);
+  m_deposit := ROUND(cy_deposit,0);
+  m_limit := ROUND(cy_limit,0);
   IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
-    m_rent := ny_rent;
-    m_services := ny_services;
-    m_deposit := ny_deposit;
-    m_limit := ny_limit;
+    m_rent := ROUND(ny_rent);
+    m_services := ROUND(ny_services,0);
+    m_deposit := ROUND(ny_deposit,0);
+    m_limit := ROUND(ny_limit,0);
   END IF;  
 
   -- Insert base values
@@ -185,8 +185,8 @@ BEGIN
   
     -- Year change?
     IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
-      m_rent := ny_rent;
-      m_services := ny_services;
+      m_rent := ROUND(ny_rent,0);
+      m_services := ROUND(ny_services,0);
     END IF;  
   
     -- Incomplete months
@@ -194,22 +194,22 @@ BEGIN
       
       IF billing_type = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
-          m_rent := m_rent / 2;
-          m_services := m_services / 2;
+          m_rent := ROUND(m_rent / 2,0);
+          m_services := ROUND(m_services / 2,0);
         END IF;
       END IF;
     
       IF billing_type = 'proporcional' THEN
         days := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
-        m_rent := m_rent * EXTRACT(DAY FROM dt_intr) / days;
-        m_services := m_services * EXTRACT(DAY FROM dt_intr) / days;
+        m_rent := ROUND(m_rent * EXTRACT(DAY FROM dt_intr) / days,0);
+        m_services := ROUND(m_services * EXTRACT(DAY FROM dt_intr) / days,0);
       END IF;
     
     END IF;
     
     -- Final cleaning
     IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to AND place_type IS NULL THEN
-      m_services := m_services + coalesce(final_cleaning, 0);
+      m_services := ROUND(m_services + coalesce(final_cleaning, 0),0);
     END IF;
   
     -- Insert price

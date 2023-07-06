@@ -48,11 +48,10 @@ BEGIN
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
     -- Si hay que pagar garantía, pasa a confirmada
-    IF NEW."Deposit" > 0 THEN
+    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       NEW."Status" := 'confirmada';
     -- Si no hay que pagar garantía, pasa a firma contrato
     ELSE
-      NEW."Deposit_actual" = 0;
       NEW."Status" := 'firmacontrato';
     END IF;
   END IF;
@@ -182,7 +181,7 @@ BEGIN
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- Depósito
     DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
-    IF (NEW."Deposit" > 0 ) THEN
+    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       INSERT 
         INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  
         VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
