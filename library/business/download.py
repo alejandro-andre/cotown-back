@@ -52,12 +52,10 @@ def download_bills(apiClient, variables=None):
   query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     data: Billing_InvoiceList (
       where: {
-        AND: [
-          { Issued_date: { GE: $fdesde } }
-          { Issued_date: { LE: $fhasta } }
-          { Provider_id: { GE: $pdesde } }
-          { Provider_id: { LE: $phasta } }
-        ]
+        Issued_date: { GE: $fdesde }
+        Issued_date: { LE: $fhasta }
+        Provider_id: { GE: $pdesde }
+        Provider_id: { LE: $phasta }
       }
     ) { 
       id
@@ -103,19 +101,25 @@ def download_contracts(apiClient, variables=None):
   clear('download')
   
   # Get records
-  query = '''query Download ($fdesde:String, $fhasta:String) {
+  query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     data: Booking_BookingList (
-      where: {
-        AND: [
-          { Date_from: { GE: $fdesde } }
-          { Date_from: { LE: $fhasta } }
-        ]
+      where: { 
+        Date_from: { GE: $fdesde } 
+        Date_from: { LE: $fhasta } 
       }
-    ) { 
+    ) {
       id
       Contract_rent { name } 
-      Contract_services { name } 
-    } 
+      Contract_services { name }
+      ResourceViaResource_id {
+        ProviderViaOwner_id (
+          joinType: INNER
+          where: { id: { GE: $pdesde } id: { LE: $phasta } }
+        ) { 
+          id 
+        }
+      }
+    }
   }'''
   result = apiClient.call(query, variables)
 
