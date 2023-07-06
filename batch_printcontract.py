@@ -55,6 +55,9 @@ def main():
     # Main
     # ###################################################
 
+    # Contracts
+    num = 0
+
     # Get pending individual booking contracts
     bookings = apiClient.call('''
     {
@@ -74,7 +77,8 @@ def main():
       for booking in bookings.get('data'):
           id = booking['id']
           logger.debug(id)
-          do_contracts(apiClient, id)
+          if do_contracts(apiClient, id):
+            num += 1
 
     # Get pending group booking contracts
     bookings = apiClient.call('''
@@ -92,13 +96,14 @@ def main():
     ''')
 
     # Loop thru contracts
-    num = 0
     if bookings is not None:
       for booking in bookings.get('data'):
           id = booking['id']
           logger.debug(id)
-          do_group_contracts(apiClient, id)
-          num += 1
+          if do_group_contracts(apiClient, id):
+            num += 1
+
+    # Debug
     logger.info('{} contracts printed'.format(num))
 
 

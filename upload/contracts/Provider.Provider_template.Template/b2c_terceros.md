@@ -78,11 +78,11 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a partir del inicio del Plazo, la cantidad de (la "**Renta**"):
 
 {%for rent in Prices%}
-{%-if Owner_id == Service_id-%}
+{%if Owner_id == Service_id%}
 - Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{(rent.Rent+rent.Services)|decimal(2)}} euros mensuales
-{%-else-%}
+{%else%}
 - Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{rent.Rent|decimal(2)}} euros mensuales
-{%-endif-%}
+{%endif%}
 {%-endfor%}
 
 mediante los cargos recurrentes que efectuará la Arrendadora en la cuenta corriente o tarjeta de crédito designada por la Arrendataria durante todo el Plazo del Contrato de Habitación.
