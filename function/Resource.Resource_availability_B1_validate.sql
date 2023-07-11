@@ -11,7 +11,7 @@ BEGIN
     RAISE EXCEPTION '!!!End date must be greater than start date.!!!La fecha final debe ser mayor o igual que la fecha de inicio.!!!';
   END IF;
  
-  -- Cuenta reservas en este piso en las mismas fechas
+  -- Cuenta reservas en este recurso en las mismas fechas
   SELECT COUNT(*) 
   INTO count 
   FROM "Booking"."Booking_detail" bd
