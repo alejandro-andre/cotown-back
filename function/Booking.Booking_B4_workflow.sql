@@ -64,7 +64,7 @@ BEGIN
 
   -- CONTRATO a FIRMACONTRATO
   -- Actualiza el estado a "firmacontrato" cuando se quita la firma, tiene que firmarse el contrato nuevamente
-  IF (NEW."Status" = 'contrato' AND NEW."Contract_signed" IS NULL) THEN
+  IF (NEW."Status" = 'contrato' AND (NEW."Contract_signed" IS NULL OR NEW."Contract_rent" IS NULL)) THEN
     NEW."Status" := 'firmacontrato';
   END IF;
   
@@ -112,7 +112,7 @@ BEGIN
 
   -- CONTTRATO GENERADO
   -- Borra la fecha de la firma y envia mail contrato
-  IF (OLD."Contract_rent" IS NULL AND NEW."Contract_rent" IS NOT NULL) THEN
+  IF (OLD."Contract_rent" IS NULL AND NOT NEW."Contract_rent" IS NULL) THEN
     NEW."Contract_signed" := NULL;
     INSERT 
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
