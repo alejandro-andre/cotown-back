@@ -30,7 +30,7 @@ En adelante denominada la "**Arrendataria**"
 
 ## MANIFIESTAN:  
  
-I.- Que el arrendador es propietario del inmueble ubicado en {{Resource_building_address}} {{Resource_flat_address}}, que se encuentra totalmente amueblado y equipado con los utensilios domésticos. 
+I.- Que el arrendador es propietario del inmueble ubicado en {{Resource_building_address}} {{Resource_flat_street}}, que se encuentra totalmente amueblado y equipado con los utensilios domésticos. 
 
 II.- Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por motivos de {{Customer_reason}} en {{Customer_school}}.
  

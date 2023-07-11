@@ -45,7 +45,7 @@ III. En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y
 
 ## 1. Objeto.
 
-1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso {{Resource_flat_address}} del edificio de la calle {{Resource_building_address}} de la ciudad de {{Resource_building_city}}, para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
+1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso {{Resource_flat_address}} del edificio de la calle {{Resource_building_address}} {{Resource_flat_street}} de la ciudad de {{Resource_building_city}}, para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
 
 ## 1.2. Vinculación con las Condiciones Generales 
 

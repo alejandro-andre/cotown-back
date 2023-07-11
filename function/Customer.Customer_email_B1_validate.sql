@@ -2,8 +2,20 @@
 DECLARE
 
   en BOOLEAN;
+  tipo VARCHAR;
 
 BEGIN
+
+  -- Tipo de cliente
+  SELECT "Type"
+  INTO tipo
+  FROM "Customer"."Customer"
+  WHERE id = NEW."Customer_id"
+
+  -- Empresa? Ignora
+  IF tipo = 'empresa' THEN
+    RETURN NULL;
+  END IF;
 
   -- Plantilla
   SELECT "Enabled"

@@ -114,9 +114,11 @@ query BookingById ($id: Int) {
       Resource_type
       Resource_part: Part
       Resource_address: Address
+      Resource_street: Street
       Flat: ResourceViaFlat_id {
         Resource_flat_code: Code
         Resource_flat_address: Address
+        Resource_flat_street: Street
       }
       Building: BuildingViaBuilding_id {
         Resource_building_code: Code
@@ -269,9 +271,11 @@ query Booking_groupById ($id: Int!) {
         Resource_type
         Resource_part: Part
         Resource_address: Address
+        Resource_street: Street
         Flat: ResourceViaFlat_id {
           Resource_flat_code: Code
           Resource_flat_address: Address
+          Resource_flat_street: Street
         }
         Building: BuildingViaBuilding_id {
           Resource_building_code: Code

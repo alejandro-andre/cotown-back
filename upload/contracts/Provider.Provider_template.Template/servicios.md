@@ -28,7 +28,7 @@ En adelante denominada la "**Arrendataria**"
 
 ## MANIFIESTAN
 
-I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_building_address}} {{Resource_flat_address}} (la "**habitación**"), 
+I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_building_address}} {{Resource_flat_street}} (la "**habitación**"), 
 
 II.- Que, el Proveedor de Servicios es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
 
