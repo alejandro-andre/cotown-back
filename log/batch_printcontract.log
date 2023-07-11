@@ -1,4 +1,0 @@
-[2023-07-06 09:36:10,020] [COTOWN] [batch_printcontract] [main/42] [INFO] Started
-[2023-07-06 09:36:14,125] [COTOWN] [print_contract] [do_contracts/504] [INFO] Contrato para la reserva 1529
-[2023-07-06 09:36:19,005] [COTOWN] [batch_printcontract] [main/102] [INFO] 0 contracts printed
-[2023-07-06 09:36:19,005] [COTOWN] [batch_printcontract] [<module>/112] [INFO] Finished

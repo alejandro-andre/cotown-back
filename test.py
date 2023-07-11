@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     print('Testing...')
     #main(GROUP_BOOKING, 'upload/contracts/Provider.Provider_template.Template/b2b_vandor', 1)
-    main(BOOKING, 'upload/contracts/Provider.Provider_template.Template/b2c_vandor', 1525)
+    main(BOOKING, 'upload/contracts/Provider.Provider_template.Template/b2c_vandor', 1)
     #main(BOOKING, 'upload/contracts/Provider.Provider_template.Template/b2c_servicios', 3)
     #main(BOOKING, 'upload/contracts/Provider.Provider_template.Template/b2c_piso_completo', 6)
     #main(BOOKING, 'upload/contracts/Provider.Provider_template.Template/residencia', 5)

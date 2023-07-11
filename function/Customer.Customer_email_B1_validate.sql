@@ -10,7 +10,7 @@ BEGIN
   SELECT "Type"
   INTO tipo
   FROM "Customer"."Customer"
-  WHERE id = NEW."Customer_id"
+  WHERE id = NEW."Customer_id";
 
   -- Empresa? Ignora
   IF tipo = 'empresa' THEN
