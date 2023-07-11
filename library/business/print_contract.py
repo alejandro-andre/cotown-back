@@ -517,9 +517,9 @@ def do_contracts(apiClient, id):
     # Determine template to use
     template_type = context['Resource_type']
     if template_type == 'plaza':
-      template_type == 'habitacion'
+      template_type = 'habitacion'
     if context['Booking_building_type'] == 3:
-      template_type == 'residencia'
+      template_type = 'residencia'
 
     # Generate rent contract
     template, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
