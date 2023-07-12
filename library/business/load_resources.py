@@ -166,6 +166,7 @@ def load_resources(dbClient, data):
           record['Room_id'] = aux['id']
 
       # Resource address
+      record['Street']  = record['Street']
       record['Address'] = record['Address']
      
       # Insert record

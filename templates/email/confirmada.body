@@ -1,9 +1,0 @@
-<html lang="es">
-<title>Hola {{Customer.Name}}!</title>
-<meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
-<body>
-Hola {{Customer.Name}},
-La reserva {{Booking_id}} está confirmada.
-Tu reserva es el recurso {{Resource_code}}
-</body>
-</html>

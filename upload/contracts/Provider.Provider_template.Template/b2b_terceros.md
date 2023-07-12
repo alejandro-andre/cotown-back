@@ -36,7 +36,7 @@ Los comparecientes tienen, según se reconocen recíprocamente, la capacidad jur
 
 I. Que, la Arrendadora es propietaria de la siguiente finca: 
 
-- Calle: {{Rooms[0].Resource_building_address}} {{Rooms[0].Resource_flat_street}}
+- Calle:  {{Rooms[0].Resource_flat_street}}
 - Ciudad: {{Rooms[0].Resource_building_city}}
 - Piso/s: {{Flats}}
 
@@ -56,7 +56,7 @@ IV. Y, estando ambas partes interesadas en el arrendamiento de conformidad con l
 1.1.- La Arrendadora cede en arrendamiento a la Arrendataria el piso o los pisos que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**"). 
 
 {%for r in Rooms-%}
-- {{r.Resource_building_address}} {{r.Resource_flat_street}}- {{r.Resource_address}}
+- {{r.Resource_flat_street}}- {{r.Resource_address}}
 {%endfor%}
 
 1.2.- Los pisos se entregarán libres de arrendatarios y ocupantes, con la extensión, usos, circunstancias y estado físico que la Arrendataria declara conocer y aceptar expresamente. 
