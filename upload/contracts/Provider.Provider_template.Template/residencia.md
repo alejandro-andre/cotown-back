@@ -79,9 +79,9 @@ Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al pre
 
 {%for rent in Prices%}
 {%-if Owner_id == Service_id-%}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{(rent.Rent+rent.Services)|decimal(2)}} euros mensuales
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{(rent.Rent+rent.Services)|decimal}} euros mensuales
 {%else%}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{rent.Rent|decimal(2)}} euros mensuales
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{rent.Rent|decimal}} euros mensuales
 {%endif%}
 {%-endfor%}
 
@@ -111,7 +111,7 @@ En este contexto, mediante la suscripción del presente Contrato de Habitación,
 
 ## 6. Prestación de Garantía
 
-Coincidiendo con la firma del Contrato de Habitación, la Arrendataria ha efectuado el pago a favor de la Arrendadora de una garantía en la suma de {{Booking_deposit}} euros (la "**Garantía**"), para garantizar el cumplimiento por la Arrendataria de todas las obligaciones que asume en el Contrato de Habitación, Condiciones Particulares, Condiciones Generales, Normas de Uso y responsabilidades económicas asumidas por la Arrendataria. 
+Coincidiendo con la firma del Contrato de Habitación, la Arrendataria ha efectuado el pago a favor de la Arrendadora de una garantía en la suma de {{Booking_deposit|decimal}} euros (la "**Garantía**"), para garantizar el cumplimiento por la Arrendataria de todas las obligaciones que asume en el Contrato de Habitación, Condiciones Particulares, Condiciones Generales, Normas de Uso y responsabilidades económicas asumidas por la Arrendataria. 
 
 Las Partes acuerdan la devolución de la Garantía a la Arrendataria y sin intereses, en un plazo máximo de treinta (30) días contados desde la finalización del Contrato de Habitación, previa verificación del correcto estado de la Habitación y las zonas comunes del piso, así como de la no existencia de deudas o cantidades a reclamar a la Arrendataria.
 

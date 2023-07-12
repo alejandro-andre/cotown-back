@@ -85,7 +85,7 @@ Los pisos tienen el inventario que se adjuntará a la entrega de cada piso como 
 
 El precio de alquiler mensual se determina en base al precio por plaza/cama que se pone a disposición para la Arrendataria. El número de plazas/camas una vez entregadas a la Arrendataria no podrá ser objeto de modificación o reducción hasta la finalización del contrato salvo acuerdo expreso y escrito de ambas partes.
 
-El precio acordado y negociado por las partes por el presente contrato de arrendamiento se establece en base una tarifa de {{Booking_rent}} euros al mes (sin impuestos) por cada cama/plaza disponible en cada piso objeto de alquiler según quedará recogido en el anexo indicado en el anterior punto 1.1.
+El precio acordado y negociado por las partes por el presente contrato de arrendamiento se establece en base una tarifa de {{Booking_rent|decimal}} euros al mes (sin impuestos) por cada cama/plaza disponible en cada piso objeto de alquiler según quedará recogido en el anexo indicado en el anterior punto 1.1.
 
 El pago de la renta a la que venga obligada al pago la Arrendataria en cada momento así como de cuantas obligaciones económicas deriven de este Contrato será satisfecha por la Arrendataria por mensualidades anticipadas y dentro de los cinco (5) primeros días de cada mes. La Arrendataria autoriza a que, para el cobro de las mensualidades, la Arrendadora realice, entre los días 1 a 5 de cada mes, un cargo en la cuenta bancaria de la Arrendataria número {{Customer_bank_account}}.
 
@@ -117,7 +117,7 @@ Será de cuenta de la Arrendataria cualquier otra que se pueda instaurar por el 
 
 ## 5.- GARANTÍA
 
-5.1.- Garantía. La Arrendadora girará a la firma del presente contrato de alquiler y a la cuenta corriente de la Arrendataria indicada en el pacto cuarto anterior, el importe de la garantía consistente en la cantidad de {{Booking_deposit}} euros (la "Garantía") a lo cual le autoriza la Arrendataria.
+5.1.- Garantía. La Arrendadora girará a la firma del presente contrato de alquiler y a la cuenta corriente de la Arrendataria indicada en el pacto cuarto anterior, el importe de la garantía consistente en la cantidad de {{Booking_deposit|decimal}} euros (la "Garantía") a lo cual le autoriza la Arrendataria.
 
 Se hace constar expresamente, y así se acepta al suscribirse el presente contrato, que si se produce una baja voluntaria la Arrendataria no tendrá derecho a la devolución del importe de la Garantía.
 

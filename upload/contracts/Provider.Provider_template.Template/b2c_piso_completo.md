@@ -92,7 +92,7 @@ La propiedad no se hace responsable de los objetos robados y/o extraviados en el
  
 ## OCTAVA.- GARANTÍA.
 
-El arrendatario entrega a la arrendadora en el transcurso de este acto el importe de {{Booking_deposit}} euros (un mes) en concepto de garantía, suma que tendrá como finalidad cubrir los pagos de las obligaciones derivadas de este contrato que el arrendatario asume a favor del arrendador y en su caso responder de los desperfectos que el arrendatario pueda causar en el piso donde contratado, incluidas la perdida de las llaves o excesos de consumos no satisfechos durante la estancia.
+El arrendatario entrega a la arrendadora en el transcurso de este acto el importe de {{Booking_deposit|decimal}} euros (un mes) en concepto de garantía, suma que tendrá como finalidad cubrir los pagos de las obligaciones derivadas de este contrato que el arrendatario asume a favor del arrendador y en su caso responder de los desperfectos que el arrendatario pueda causar en el piso donde contratado, incluidas la perdida de las llaves o excesos de consumos no satisfechos durante la estancia.
  
 Se hace constar expresamente, y así se acepta al suscribirse el presente contrato, que si se produce una baja voluntaria el arrendatario no tendrá derecho a la devolución del importe de la garantía excepto en el caso de haber dado éste un preaviso por escrito a la propiedad con al menos dos meses de antelación a la fecha prevista de la baja, en ese caso sólo se descontarán de la fianza 230 euros en concepto de penalización más la diferencia de tarifa si se le hubiera aplicado por la duración de la estancia. 
  

@@ -46,7 +46,7 @@ El Proveedor de Servicios asumirá el coste del personal, medios, material, gast
 3.- La retribución global por la prestación del servicio consistirá en el pago de
 
 {%for rent in Prices%}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{rent.Services|decimal(2)}} euros mensuales
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}:   {{rent.Services|decimal}} euros mensuales
 {%-endfor%}
 
 que se llevará a cabo de forma mensual por el Arrendatario y durante todo el tiempo que dure el arrendamiento de la habitación/piso, mediante su pago con tarjeta bancaria o bien mediante domiciliación bancaria en caso de disponer de una cuenta bancaria española previa la firma del documento SEPA.
