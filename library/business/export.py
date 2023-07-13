@@ -9,6 +9,7 @@ from openpyxl.formula.translate import Translator
 from datetime import datetime
 from io import BytesIO
 import pandas as pd
+import warnings
 import json
 import os
 
@@ -92,17 +93,18 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
       if ',' in variables[var]:
         variables[var] = tuple(variables[var].split(','))
   
-  # Querys
-  query = None
-  sql = None
-
   # Get template
   fi = open('templates/report/' + name + '.xlsx', 'rb')
   template = BytesIO(fi.read())
   
   # Open template
+  warnings.simplefilter(action='ignore', category=UserWarning)
   wb = load_workbook(filename=BytesIO(template.read()))
   for sheet in wb.sheetnames:
+
+    # Querys
+    query = None
+    sql = None
 
     # Get graphQL query
     file = 'templates/report/' + name + '.' + sheet.lower() + '.graphql'
@@ -112,16 +114,18 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
       fi.close()
 
     # Get SQL query
-    else:
-      file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
+    file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
+    if os.path.exists(file):
       fi = open(file, 'r')
       sql = fi.read()
       fi.close()
 
     # Get columns
-    fi = open('templates/report/' + name + '.' + sheet.lower() + '.json', 'r')
-    columns = json.load(fi)
-    fi.close()
+    file = 'templates/report/' + name + '.' + sheet.lower() + '.json'
+    if os.path.exists(file):
+      fi = open(file, 'r')
+      columns = json.load(fi)
+      fi.close()
 
     # Get graphQL data
     if query:
@@ -131,7 +135,7 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
       fill_sheet(df, columns, wb[sheet])
 
     # Get SQL data
-    else:
+    if sql:
       try:
         dbClient.connect()
         dbClient.select(sql, variables)

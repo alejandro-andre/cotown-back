@@ -1,0 +1,40 @@
+query Rooms ($id: Int) {
+    data: Booking_Booking_roomingList (
+        orderBy: [{attribute: Resource_id}]
+        where: { Booking_id: { EQ: $id } }
+    ) {
+        Booking_id
+        Resource: ResourceViaResource_id {
+            id
+            Code
+        }
+        Check_in
+        Check_out
+        Id_type: Id_typeViaId_type_id {
+            Name
+        }
+        Document
+        Name
+        Email
+        Phones
+        Address
+        Zip
+        City
+        Province
+        Country: CountryViaCountry_id {
+            Name
+        }
+        Gender: GenderViaGender_id {
+            Name
+        }
+        Language: LanguageViaLanguage_id {
+            Name
+        }
+        Nationality: CountryViaNationality_id {
+            Name
+        }
+        Origin: CountryViaCountry_origin_id {
+            Name
+        }
+    }
+}
