@@ -328,7 +328,7 @@ def runapp():
 
     return buildings(dbClient, year)
   
-  def get_amenities(status = None):
+  def get_amenities():
 
     return amenities(dbClient)
 
