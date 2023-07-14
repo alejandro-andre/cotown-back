@@ -325,6 +325,12 @@ def runapp():
     return dashboard(dbClient, status)
 
 
+  # Dashboard
+  def get_buildings(year = 2023):
+
+    return buildings(dbClient, year)
+
+
   # Labels
   def get_labels(id, locale):
 
@@ -463,11 +469,14 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
   # Export
-  app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
 
-    # Return app
+  # Other
+  app.add_url_rule(settings.API_PREFIX + '/buildings/<int:year>', view_func=get_buildings, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
+
+  # Return app
   return app
 
 

@@ -105,6 +105,47 @@ def dashboard(dbClient, status = None):
 
 
 # ######################################################
+# Web buildings info
+# ######################################################
+
+def buildings(dbClient, year):
+
+  # Connect
+  dbClient.connect()
+
+  # Get buildings
+  sql = '''
+    SELECT 
+      r."Building_id", b."Name" AS "Building_name", 
+      rpt."Code" AS "Place_type", rpt."Name" AS "Place_type_name", rpt."Name_en"  AS "Place_type_name_en", 
+      rft."Code" AS "Flat_type", rft."Name" AS "Flat_type_name", rft."Name_en" AS "Flat_type_name_en", 
+      MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
+      MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
+      MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
+      COUNT(*) AS "Qty"
+    FROM "Resource"."Resource" r
+    INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+    INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id"  = rft.id
+    INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id"  = rpt.id
+    INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+    INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
+    WHERE pd."Year" = %s
+    AND rpt.id < 300
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+  '''
+  dbClient.select(sql, (year,))
+
+  # Result
+  result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
+
+  # Disconnect
+  dbClient.disconnect()
+
+  # Return
+  return result
+
+
+# ######################################################
 # Get payment
 # ######################################################
 
