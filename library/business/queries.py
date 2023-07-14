@@ -3,6 +3,7 @@
 # ######################################################
 
 # System includes
+import pandas as pd
 import logging
 import datetime
 import json
@@ -135,9 +136,69 @@ def buildings(dbClient, year):
   '''
   dbClient.select(sql, (year,))
 
-  # Result
-  result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
+# Obtener los resultados de la consulta
+  results = dbClient.fetchall()
 
+  # Crear una estructura de datos para almacenar los resultados agrupados
+  grouped_data = []
+
+  # Procesar los resultados y agruparlos en tres niveles (Building, Place_type, Flat_type)
+  for row in results:
+      
+    building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
+    if building_index is None:
+      building = {
+        'id': row['Building_id'],
+        'Name': row['Building_name'],
+        'Place_types': [{
+          'Code': row['Place_type'],
+          'Name': row['Place_type_name'],
+          'Name_en': row['Place_type_name_en'],
+          'Flat_types': [{
+            'Code': row['Flat_type'],
+            'Name': row['Flat_type_name'],
+            'Name_en': row['Flat_type_name_en'],
+            'Rent_long': row['Rent_long'],
+            'Rent_medium': row['Rent_medium'],
+            'Rent_short': row['Rent_short'],
+            'Qty': row['Qty']
+          }]
+        }]
+      }
+      grouped_data.append(building)
+    else:
+      place_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Place_types']) if d['Code'] == row['Place_type']), None)
+      if place_type_index is None:
+        place_type_obj = {
+          'Code': row['Place_type'],
+          'Name': row['Place_type_name'],
+          'Name_en': row['Place_type_name_en'],
+          'Flat_types': [{
+            'Code': row['Flat_type'],
+            'Name': row['Flat_type_name'],
+            'Name_en': row['Flat_type_name_en'],
+            'Rent_long': row['Rent_long'],
+            'Rent_medium': row['Rent_medium'],
+            'Rent_short': row['Rent_short'],
+            'Qty': row['Qty']
+          }]
+        }
+        grouped_data[building_index]['Place_types'].append(place_type_obj)
+      else:
+        flat_type_obj = {
+          'Code': row['Flat_type'],
+          'Name': row['Flat_type_name'],
+          'Name_en': row['Flat_type_name_en'],
+          'Rent_long': row['Rent_long'],
+          'Rent_medium': row['Rent_medium'],
+          'Rent_short': row['Rent_short'],
+          'Qty': row['Qty']
+        }
+        grouped_data[building_index]['Place_types'][place_type_index]['Flat_types'].append(flat_type_obj)
+
+  # To JSON
+  result = json.dumps(grouped_data, default=str)
+  
   # Disconnect
   dbClient.disconnect()
 
