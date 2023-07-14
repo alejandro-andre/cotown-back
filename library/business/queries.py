@@ -3,7 +3,6 @@
 # ######################################################
 
 # System includes
-import pandas as pd
 import logging
 import datetime
 import json
@@ -106,9 +105,10 @@ def dashboard(dbClient, status = None):
 
 
 # ######################################################
-# Web buildings info
+# Web
 # ######################################################
 
+# Buildings info
 def buildings(dbClient, year):
 
   # Connect
@@ -117,22 +117,22 @@ def buildings(dbClient, year):
   # Get buildings
   sql = '''
     SELECT 
-      r."Building_id", b."Name" AS "Building_name", 
-      rpt."Code" AS "Place_type", rpt."Name" AS "Place_type_name", rpt."Name_en"  AS "Place_type_name_en", 
-      rft."Code" AS "Flat_type", rft."Name" AS "Flat_type_name", rft."Name_en" AS "Flat_type_name_en", 
+      r."Building_id", rpt."Code" AS "Place_type", rft."Code" AS "Flat_type",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
       COUNT(*) AS "Qty"
-    FROM "Resource"."Resource" r
-    INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-    INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id"  = rft.id
-    INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id"  = rpt.id
-    INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
-    INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
+    FROM 
+      "Resource"."Resource" r
+      INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+      INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+      INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
+      INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+      INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
     WHERE pd."Year" = %s
-    AND rpt.id < 300
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+      AND rpt.id < 300
+    GROUP BY 1, 2, 3
+    ORDER BY 1, 2, 3
   '''
   dbClient.select(sql, (year,))
 
@@ -145,59 +145,66 @@ def buildings(dbClient, year):
   # Procesar los resultados y agruparlos en tres niveles (Building, Place_type, Flat_type)
   for row in results:
       
+    # Building
     building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
     if building_index is None:
-      building = {
+      grouped_data.append({
         'id': row['Building_id'],
-        'Name': row['Building_name'],
-        'Place_types': [{
-          'Code': row['Place_type'],
-          'Name': row['Place_type_name'],
-          'Name_en': row['Place_type_name_en'],
-          'Flat_types': [{
-            'Code': row['Flat_type'],
-            'Name': row['Flat_type_name'],
-            'Name_en': row['Flat_type_name_en'],
-            'Rent_long': row['Rent_long'],
-            'Rent_medium': row['Rent_medium'],
-            'Rent_short': row['Rent_short'],
-            'Qty': row['Qty']
-          }]
-        }]
-      }
-      grouped_data.append(building)
-    else:
-      place_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Place_types']) if d['Code'] == row['Place_type']), None)
-      if place_type_index is None:
-        place_type_obj = {
-          'Code': row['Place_type'],
-          'Name': row['Place_type_name'],
-          'Name_en': row['Place_type_name_en'],
-          'Flat_types': [{
-            'Code': row['Flat_type'],
-            'Name': row['Flat_type_name'],
-            'Name_en': row['Flat_type_name_en'],
-            'Rent_long': row['Rent_long'],
-            'Rent_medium': row['Rent_medium'],
-            'Rent_short': row['Rent_short'],
-            'Qty': row['Qty']
-          }]
-        }
-        grouped_data[building_index]['Place_types'].append(place_type_obj)
-      else:
-        flat_type_obj = {
-          'Code': row['Flat_type'],
-          'Name': row['Flat_type_name'],
-          'Name_en': row['Flat_type_name_en'],
-          'Rent_long': row['Rent_long'],
-          'Rent_medium': row['Rent_medium'],
-          'Rent_short': row['Rent_short'],
-          'Qty': row['Qty']
-        }
-        grouped_data[building_index]['Place_types'][place_type_index]['Flat_types'].append(flat_type_obj)
+        'Place_types': []
+      })
+      building_index = len(grouped_data) - 1
+
+    # Place type
+    place_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Place_types']) if d['Code'] == row['Place_type']), None)
+    if place_type_index is None:
+      grouped_data[building_index]['Place_types'].append({
+        'Code': row['Place_type'],
+        'Flat_types': []
+      })
+      place_type_index = len(grouped_data[building_index]['Place_types']) - 1
+
+    # Flat type
+    grouped_data[building_index]['Place_types'][place_type_index]['Flat_types'].append({
+      'Code': row['Flat_type'],
+      'Rent_long': int(row['Rent_long']),
+      'Rent_medium': int(row['Rent_medium']),
+      'Rent_short': int(row['Rent_short']),
+      'Qty': row['Qty']
+    })
 
   # To JSON
   result = json.dumps(grouped_data, default=str)
+  
+  # Disconnect
+  dbClient.disconnect()
+
+  # Return
+  return result
+
+# Amenities info
+def amenities(dbClient):
+
+  # Connect
+  dbClient.connect()
+
+  # Get buildings
+  sql = '''
+  SELECT 
+    b.id, rpt."Code" AS "Place_type", rft."Code" AS "Flat_type", rat."Name", rat."Name_en", rat."Increment"::INTEGER, COUNT(*) AS "Qty"
+  FROM 
+    "Resource"."Resource_amenity" ra
+    INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
+    INNER JOIN "Resource"."Resource" r ON r.id = ra."Resource_id"
+    INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+    INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
+    INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+  GROUP BY 1, 2, 3, 4, 5, 6
+  ORDER BY 1, 2, 3, 4
+  '''
+  dbClient.select(sql)
+
+  # To JSON
+  result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
   
   # Disconnect
   dbClient.disconnect()

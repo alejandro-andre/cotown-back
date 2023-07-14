@@ -297,7 +297,7 @@ def runapp():
 
   # Availability
   def post_availability():
-
+    
     data = request.get_json()
     result = availability(
       dbClient, 
@@ -318,24 +318,24 @@ def runapp():
       return 'ok'
     return 'ko'
   
-
   # Dashboard
   def get_dashboard(status = None):
 
     return dashboard(dbClient, status)
 
-
-  # Dashboard
+  # Web
   def get_buildings(year = 2023):
 
     return buildings(dbClient, year)
+  
+  def get_amenities(status = None):
 
+    return amenities(dbClient)
 
   # Labels
   def get_labels(id, locale):
 
     return labels(dbClient, id, locale)
-  
   
   # Change booking status
   def get_booking_status(id, status):
@@ -448,33 +448,30 @@ def runapp():
   # Requests with  token    
   # ---------------------------------
 
-  # Payment functions
+  # Internal area
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
+
+  # Status buttons
+  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
   # Planning
   app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
 
-  # Download files
+  # Reports
   app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=get_download, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
 
   # Dashboard
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
-  # Occupancy report
-  app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
-
-  # Status buttons
-  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
-
-  # Export
-  app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
-
-  # Other
+  # Web
   app.add_url_rule(settings.API_PREFIX + '/buildings/<int:year>', view_func=get_buildings, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
 
   # Return app
   return app
