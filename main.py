@@ -324,9 +324,9 @@ def runapp():
     return dashboard(dbClient, status)
 
   # Web
-  def get_buildings(year = 2023):
+  def get_prices(year = 2023):
 
-    return buildings(dbClient, year)
+    return prices(dbClient, year)
   
   def get_amenities():
 
@@ -469,7 +469,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Web
-  app.add_url_rule(settings.API_PREFIX + '/buildings/<int:year>', view_func=get_buildings, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/prices/<int:year>', view_func=get_prices, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
 

@@ -108,13 +108,13 @@ def dashboard(dbClient, status = None):
 # Web
 # ######################################################
 
-# Buildings info
-def buildings(dbClient, year):
+# Price by place/flat types info
+def prices(dbClient, year):
 
   # Connect
   dbClient.connect()
 
-  # Get buildings
+  # Get prices
   sql = '''
     SELECT 
       r."Building_id", rpt."Code" AS "Place_type", rft."Code" AS "Flat_type",
@@ -187,7 +187,7 @@ def amenities(dbClient):
   # Connect
   dbClient.connect()
 
-  # Get buildings
+  # Get amenities
   sql = '''
   SELECT 
     b.id, rpt."Code" AS "Place_type", rft."Code" AS "Flat_type", rat."Name", rat."Name_en", rat."Increment"::INTEGER, COUNT(*) AS "Qty"
