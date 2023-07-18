@@ -11,6 +11,8 @@
         Code_SAP
         Description
         Description_en
+        Details
+        Details_en
         District: DistrictViaDistrict_id {
             Name
             Location: LocationViaLocation_id {
