@@ -14,8 +14,8 @@ loki:
 
 promtail:
 	docker run -d --name promtail --link=loki --net=cotownnet \
-		-v $(HOME)/cotown/config:/mnt/config \
-		-v ${HOME}/cotown/app/log:/var/log/cotown \
+		-v $(HOME)/config:/mnt/config \
+		-v ${HOME}/app/log:/var/log/cotown \
 		grafana/promtail -config.file=/mnt/config/promtail-config.yaml
 
 monitor:
@@ -33,7 +33,7 @@ monitor:
 grafana:
 	docker volume create grafana-data
 	docker run -d -p 3000:3000 --name=grafana --net=cotownnet\
-		-v ${HOME}/cotown/config/grafana.ini:/etc/grafana/grafana.ini \
+		-v ${HOME}/config/grafana.ini:/etc/grafana/grafana.ini \
 		-v grafana-data:/var/lib/grafana \
 		grafana/grafana
 
@@ -41,7 +41,7 @@ prometheus:
 	docker volume create prometheus-data
 	docker run -d -p 9090:9090 --name=prometheus --net=cotownnet \
 		-v prometheus-data:/prometheus \
-		-v $(HOME)/cotown/config/prometheus.yml:/etc/prometheus/prometheus.yml \
+		-v $(HOME)/config/prometheus.yml:/etc/prometheus/prometheus.yml \
 		prom/prometheus
 
 # ###################################
@@ -50,17 +50,32 @@ prometheus:
 
 nginx:
 	docker run -d -p 80:80 -p 443:443 --name nginx --net=cotownnet \
-        	-v ${HOME}/cotown/www:/usr/share/nginx/www:ro \
-        	-v ${HOME}/cotown/config/nginx.conf:/etc/nginx/nginx.conf:ro \
-        	-v /etc/letsencrypt:/certs \
-        	nginx
+		-v ${HOME}/config/nginx.conf:/etc/nginx/nginx.conf:ro \
+		-v ${HOME}/www/sites:/usr/share/nginx/www:ro \
+		-v /etc/letsencrypt:/certs \
+		nginx
 
 # ###################################
-# Containers
+# Backoffice
 # ###################################
 
 back:
 	docker run -d --name back --restart=unless-stopped --net=cotownnet \
 		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
-		-e COTOWN_ENV='development' \
-		-v ${HOME}/cotown/app:/app cotown
+		-e COTOWN_ENV='production' \
+		-v ${HOME}/app:/app \
+		cotown
+
+# ###################################
+# Web
+# ###################################
+
+web:
+	docker run -d --name web --net=cotownnet \
+		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
+		-v ${HOME}/www/.base.js:/app/.base.js \
+		-v ${HOME}/www/.cotown.js:/app/.cotown.js \
+		-v ${HOME}/www/.vanguard.js:/app/.vanguard.js \
+		-v ${HOME}/www/src:/app/src \
+		-v ${HOME}/www/sites:/app/sites \
+		11ty

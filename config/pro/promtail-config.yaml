@@ -15,6 +15,6 @@ scrape_configs:
       - localhost
     labels:
       container_name: batch
-      host: mv-cotown-core-dev
+      host: Back
       job: varlogs
       __path__: /var/log/cotown/*.log
