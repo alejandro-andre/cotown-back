@@ -6,6 +6,7 @@ DBUSER='postgres'
 DATABASE='niledb'
 GQLUSER='modelsadmin'
 SSHUSER='themes'
+AC_URL='https://vanguard-student-housing.api-us1.com/api/3/'
 
 # Log level: CRITICAL=50, ERROR=40, WARNING=30, INFO=20, DEBUG=10
 LOGLEVEL=20
