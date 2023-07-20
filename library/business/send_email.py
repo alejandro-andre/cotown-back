@@ -4,7 +4,9 @@
 
 # External includes
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
+from email import encoders
 from jinja2 import Environment 
 import smtplib
 import markdown
@@ -98,7 +100,7 @@ def generate_email(apiClient, email):
 # Send email thru SMTP
 # ###################################################
 
-def smtp_mail(to, subject, body):
+def smtp_mail(to, subject, body, file=None):
 
     # Receivers
     receivers = [to,]
@@ -109,6 +111,15 @@ def smtp_mail(to, subject, body):
     msg['To']      = to
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'html'))
+
+    # Attach file
+    if file:
+      payload = MIMEBase('application', 'octate-stream', Name=file.filename)
+      payload["Content-Disposition"] = f'attachment; filename="{file.filename}"'
+      payload.add_header('Content-Decomposition', 'attachment', filename=file.filename)
+      payload.set_payload(file.read())
+      encoders.encode_base64(payload)
+      msg.attach(payload)
 
     # Send mail
     context = ssl.SSLContext(ssl.PROTOCOL_TLS)

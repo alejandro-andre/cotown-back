@@ -25,6 +25,7 @@ from library.services.ac import add_contact
 from library.business.export import query_to_excel
 from library.business.occupancy import occupancy
 from library.business.download import download
+from library.business.send_email import smtp_mail
 from library.business.queries import *
 
 # Logging
@@ -221,9 +222,33 @@ def runapp():
     contact = {}
     for item in request.form:
       contact[item] = request.form.get(item)
+
+    # Attachment?
+    file = None
+    if 'file' in request.files:
+      file = request.files['file']
+      if file.filename == '':
+        file = None
+
+    # Add contact
     listid = contact['listid']
     if listid:
-      id = add_contact(contact, listid)
+      #id = add_contact(contact, listid)
+      pass
+
+    # Send email
+    logger.info(settings.EMAIL_TO)
+    logger.info('Formulario ' + listid) 
+    logger.info(json.dumps(contact)) 
+    smtp_mail(
+      settings.EMAIL_TO, 
+      'Formulario ' + listid, 
+      json.dumps(contact, indent=2), 
+      file=file
+    )
+
+    # Return contact ID
+    return 'ok'
     return id
 
 
