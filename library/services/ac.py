@@ -5,25 +5,34 @@
 # System includes
 import requests
 
+# Cotown includes
+from library.services.config import settings
+
+# Logging
+import logging
+logger = logging.getLogger('COTOWN')
+
 
 # #####################################
 # Constants
 # #####################################
 
-AC_URL     = 'https://vanguard-student-housing.api-us1.com/api/3/'
-AC_HEADERS = { 'Api-Token': 'b7c07c266ebc3fa5b5b55f9d17c702387b7130b2edd8194e3e9d3900c62cbbe9b3b27859' }
+AC_URL     = settings.AC_URL
+AC_HEADERS = { 'Api-Token': settings.AC_KEY }
 
 FIELDS = [
-    { 'field':   '1', 'value': '+44' },         # Edad
-    { 'field':   '3', 'value': 'España' },      # Nacionalidad
-    { 'field':   '5', 'value': 'Inglés' },      # Idioma
-    { 'field':  '95', 'value': '1000 - 1200' }, # Presupuesto
-    { 'field':  '96', 'value': '2023-07-19' },  # F Desde
-    { 'field':  '97', 'value': '2023-08-18' },  # F Hasta
-    { 'field':  '98', 'value': 'Work' },        # Razón
-    { 'field':  '99', 'value': ' Individual room  Standard single' }, # Tipo de habitación
-    { 'field': '100', 'value': 'Balmes 335 ' }, # Edificio
-    { 'field': '101', 'value': 'Barcelona' },   # Ciudad
+    { 'field':   '1', 'value': '+44' },           # Edad
+    { 'field':   '3', 'value': 'España' },        # Nacionalidad
+    { 'field':   '5', 'value': 'Inglés' },        # Idioma
+    { 'field':  '27', 'value': 'Experis' },       # Empresa
+    { 'field':  '95', 'value': '1000 - 1200' },   # Presupuesto
+    { 'field':  '96', 'value': '2023-07-19' },    # F Desde
+    { 'field':  '97', 'value': '2023-08-18' },    # F Hasta
+    { 'field':  '98', 'value': 'Work' },          # Razón
+    { 'field':  '99', 'value': 'LARGE / I_ECO' }, # Tipo de habitación
+    { 'field': '100', 'value': 'Balmes 335 ' },   # Edificio
+    { 'field': '101', 'value': 'Barcelona' },     # Ciudad
+    { 'field': '---', 'value': 'Mensaje...' },    # Mensaje
 ]
 
 
@@ -128,45 +137,21 @@ def post_ac_add_to_list(id, list):
 # Test
 # #####################################
 
-def main(data, listid):
+def add_contact(data, listid):
 
     # Check if contact exists
     id = get_ac_contact_id(data['email'])
-    print(id)
+    logger.info(id)
 
     # Upsert contact
     if not id:
-        print('Creating')
+        logger.info('Creating')
         id = post_ac_contact(data)   
     else:
-        print('Updating')
-        result = put_ac_contact(id, data)
+        logger.info('Updating')
+        put_ac_contact(id, data)
 
     # Add existing contact to list
     if id:
         post_ac_add_to_list(id, listid)
-
-
-# #####################################
-# Test
-# #####################################
-
-if __name__ == '__main__':
-
-    main({
-        'email':     'alejandroandre@hotmail.com',
-        'firstName': 'Alejandro',
-        'lastName':  'André',
-        'phone':     '+34 629 25 26 13',
-
-        '1':         '+44',           # Edad
-        '3':         'España',        # Nacionalidad
-        '37':        'Ciber',         # Empresa
-        '95':        '400 - 800',     # Presupuesto
-        '96':        '2023-08-01',    # Desde
-        '97':        '2024-01-31',    # Hasta
-        '98':        'Work',          # Motivo
-        '99':        'LARGE / D_SUP', # Tipo de plaza
-        '100':       'ART030',        # Edificio
-        '101':       'Barcelona',     # Ciudad
-    }, 25)
+    return id

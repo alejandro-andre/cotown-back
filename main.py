@@ -21,6 +21,7 @@ from library.services.apiclient import APIClient
 from library.services.cipher import encrypt, decrypt
 from library.services.config import settings
 from library.services.redsys import pay, validate
+from library.services.ac import add_contact
 from library.business.export import query_to_excel
 from library.business.occupancy import occupancy
 from library.business.download import download
@@ -208,6 +209,22 @@ def runapp():
       domain=".cotown.com"
     )
     return response
+
+
+  # ###################################################
+  # Form
+  # ###################################################
+
+  def post_form():
+
+    # Get form fields
+    contact = {}
+    for item in request.form:
+      contact[item] = request.form.get(item)
+    listid = contact['listid']
+    if listid:
+      id = add_contact(contact, listid)
+    return id
 
 
   # ###################################################
@@ -469,6 +486,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Web
+  app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/prices/<int:year>', view_func=get_prices, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
