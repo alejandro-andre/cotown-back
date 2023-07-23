@@ -233,7 +233,7 @@ def runapp():
     # Add contact
     listid = contact['listid']
     if listid:
-      #id = add_contact(contact, listid)
+      id = add_contact(contact, listid)
       pass
 
     # Send email
@@ -248,7 +248,6 @@ def runapp():
     )
 
     # Return contact ID
-    return 'ok'
     return id
 
 
@@ -365,15 +364,6 @@ def runapp():
 
     return dashboard(dbClient, status)
 
-  # Web
-  def get_prices(year = 2023):
-
-    return prices(dbClient, year)
-  
-  def get_amenities():
-
-    return amenities(dbClient)
-
   # Labels
   def get_labels(id, locale):
 
@@ -386,6 +376,20 @@ def runapp():
       return 'ok'
     return 'ko'
   
+
+  # ###################################################
+  # Web
+  # ###################################################
+
+  def get_flats(year = 2023):
+    return flat_prices(dbClient, year)
+  
+  def get_rooms(year = 2023):
+    return room_prices(dbClient, year)
+  
+  def get_amenities():
+    return room_amenities(dbClient)
+
 
   # ###################################################
   # Payments
@@ -512,7 +516,8 @@ def runapp():
 
   # Web
   app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/prices/<int:year>', view_func=get_prices, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
 

@@ -103,13 +103,80 @@ def dashboard(dbClient, status = None):
   # Return
   return result
 
+ 
+# ######################################################
+# Web - Flat prices
+# ######################################################
+
+def flat_prices(dbClient, year):
+
+  # Connect
+  dbClient.connect()
+
+  # Get prices
+  sql = '''
+    SELECT 
+      r."Building_id", rft."Code" AS "Flat_type",
+      MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
+      MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
+      MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
+      COUNT(*) AS "Qty"
+    FROM 
+      "Resource"."Resource" r
+      INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+      INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+      INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+      INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
+    WHERE pd."Year" = 2023
+    GROUP BY 1, 2
+    ORDER BY 1, 2;
+  '''
+  dbClient.select(sql, (year,))
+
+# Obtener los resultados de la consulta
+  results = dbClient.fetchall()
+
+  # Crear una estructura de datos para almacenar los resultados agrupados
+  grouped_data = []
+
+  # Procesar los resultados y agruparlos en dos niveles (Building, Flat_type)
+  for row in results:
+      
+    # Building
+    building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
+    if building_index is None:
+      grouped_data.append({
+        'id': row['Building_id'],
+        'Flat_types': []
+      })
+      building_index = len(grouped_data) - 1
+
+    # Place type
+    flat_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Flat_types']) if d['Code'] == row['Flat_type']), None)
+    if flat_type_index is None:
+      grouped_data[building_index]['Flat_types'].append({
+        'Code': row['Flat_type'],
+        'Rent_long': int(row['Rent_long']),
+        'Rent_medium': int(row['Rent_medium']),
+        'Rent_short': int(row['Rent_short']),
+        'Qty': row['Qty']
+      })
+
+  # To JSON
+  result = json.dumps(grouped_data, default=str)
+  
+  # Disconnect
+  dbClient.disconnect()
+
+  # Return
+  return result
+
 
 # ######################################################
-# Web
+# Web - Price by place/flat types info
 # ######################################################
 
-# Price by place/flat types info
-def prices(dbClient, year):
+def room_prices(dbClient, year):
 
   # Connect
   dbClient.connect()
@@ -181,8 +248,12 @@ def prices(dbClient, year):
   # Return
   return result
 
-# Amenities info
-def amenities(dbClient):
+
+# ######################################################
+# Web - Amenities
+# ######################################################
+
+def room_amenities(dbClient):
 
   # Connect
   dbClient.connect()
