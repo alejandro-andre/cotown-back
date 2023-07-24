@@ -234,7 +234,6 @@ def runapp():
     listid = contact['listid']
     if listid:
       id = add_contact(contact, listid)
-      pass
 
     # Send email
     logger.info(settings.EMAIL_TO)
