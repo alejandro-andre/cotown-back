@@ -116,7 +116,7 @@ def flat_prices(dbClient, year):
   # Get prices
   sql = '''
     SELECT 
-      r."Building_id", rft."Code" AS "Flat_type",
+      r."Building_id", rfst."Code" AS "Flat_subtype",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
@@ -124,10 +124,10 @@ def flat_prices(dbClient, year):
     FROM 
       "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-      INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+      INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
-    WHERE pd."Year" = 2023
+    WHERE pd."Year" = %s
     GROUP BY 1, 2
     ORDER BY 1, 2;
   '''
@@ -147,15 +147,15 @@ def flat_prices(dbClient, year):
     if building_index is None:
       grouped_data.append({
         'id': row['Building_id'],
-        'Flat_types': []
+        'Flat_subtypes': []
       })
       building_index = len(grouped_data) - 1
 
     # Place type
-    flat_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Flat_types']) if d['Code'] == row['Flat_type']), None)
+    flat_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Flat_subtypes']) if d['Code'] == row['Flat_subtype']), None)
     if flat_type_index is None:
-      grouped_data[building_index]['Flat_types'].append({
-        'Code': row['Flat_type'],
+      grouped_data[building_index]['Flat_subtypes'].append({
+        'Code': row['Flat_subtype'],
         'Rent_long': int(row['Rent_long']),
         'Rent_medium': int(row['Rent_medium']),
         'Rent_short': int(row['Rent_short']),
