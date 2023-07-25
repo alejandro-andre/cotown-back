@@ -81,6 +81,19 @@ def load_resources(dbClient, data):
               id = aux['id']
           record['Flat_type_id'] = id
 
+        # Resource_flat_subtype.Code
+        elif column == 'Flat_subtype.Code':
+          id = None
+          if cell.value is not None and cell.value != '':
+            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_flat_subtype" WHERE "Code"=%s', [cell.value])
+            aux = dbClient.fetch()
+            if aux is None:
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Subtipo de piso "' + str(cell.value) + '" no encontrado\n'
+              ok = False
+            else:  
+              id = aux['id']
+          record['Flat_subtype_id'] = id
+
         # Resource_place_type.Code
         elif column == 'Place_type.Code':
           id = None
