@@ -5,6 +5,7 @@
 "Street",
 "Address",
 "Resource_flat_type.Code",
+"Resource_flat_subtype.Code",
 "Resource_place_type.Code",
 "Amenities:Amenity:Code",
 "Amenities:Amenity:Increment",

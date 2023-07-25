@@ -1,5 +1,5 @@
 *.zip
 **/__pycache__/*
-/log
+**/log
 /download
 /upload/content/**
