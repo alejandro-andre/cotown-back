@@ -233,18 +233,39 @@ def runapp():
     # Add contact
     listid = contact['listid']
     if listid:
-      id = add_contact(contact, listid)
+      id = str((add_contact(contact, listid))
 
-    # Send email
-    logger.info(settings.EMAIL_TO)
-    logger.info('Formulario ' + listid) 
-    logger.info(json.dumps(contact)) 
-    smtp_mail(
-      settings.EMAIL_TO, 
-      'Formulario ' + listid, 
-      json.dumps(contact, indent=2), 
-      file=file
-    )
+    # Prepare and send email
+    forms = {
+      "27": "Disponibilidad",
+      "28": "Visita",
+      "29": "Contacto",
+      "30": "Ventajas",
+      "31": "Equipo"
+    }
+    fields = {
+      "email": "Email",
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "phone": "Teléfono",
+      "1": "Edad",
+      "3": "Nacionalidad",
+      "27": "Empresa",
+      "95": "Presupuesto",
+      "96": "Desde",
+      "97": "Hasta",
+      "98": "Motivo",
+      "99": "Tipo de plaza",
+      "100": "Edificio",
+      "101": "Ciudad",
+      "180": "Fecha visita",
+      "181": "Mensaje"
+    }
+    message = '<h2>vanguard-student-housing-com</h2><h3>Formulario: ' + forms[str(listid)] + '</h3>' 
+    for item in contact:
+      if fields.get(item):
+        message = message + '<li><b>' + fields[item] + '</b>: ' + contact[item] + '</li>'
+    smtp_mail(settings.EMAIL_TO, 'Formulario ' + forms[str(listid)], message, file=file)
 
     # Return contact ID
     return id

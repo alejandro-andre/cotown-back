@@ -6,7 +6,7 @@ DBUSER='postgres'
 DATABASE='niledb'
 GQLUSER='modelsadmin'
 SSHUSER='themes'
-EMAIL_TO='alejandroandref@gmail.com'
+EMAIL_TO='book@cotown.com'
 AC_URL='https://vanguard-student-housing.api-us1.com/api/3/'
 
 # Log level: CRITICAL=50, ERROR=40, WARNING=30, INFO=20, DEBUG=10
