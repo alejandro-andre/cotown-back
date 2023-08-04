@@ -233,7 +233,7 @@ def runapp():
     # Add contact
     listid = contact['listid']
     if listid:
-      id = str((add_contact(contact, listid))
+      id = str(add_contact(contact, listid))
 
     # Prepare and send email
     forms = {
