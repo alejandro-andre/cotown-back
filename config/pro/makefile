@@ -73,9 +73,10 @@ back:
 web:
 	docker run -d --name web --net=cotownnet \
 		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
-		-v ${HOME}/www/.base.js:/app/.base.js \
-		-v ${HOME}/www/.cotown.js:/app/.cotown.js \
-		-v ${HOME}/www/.vanguard.js:/app/.vanguard.js \
-		-v ${HOME}/www/src:/app/src \
+		-v ${HOME}/www/webs/code/start.sh:/app/start.sh \
+		-v ${HOME}/www/webs/code/.base.js:/app/.base.js \
+		-v ${HOME}/www/webs/code/.cotown.js:/app/.cotown.js \
+		-v ${HOME}/www/webs/code/.vanguard.js:/app/.vanguard.js \
+		-v ${HOME}/www/webs/code/src:/app/src \
 		-v ${HOME}/www/sites:/app/sites \
 		11ty
