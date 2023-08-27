@@ -1,0 +1,4 @@
+# /etc/systemd/system/web.service
+
+[Service]
+ExecStart=/home/cotown/www/webs/gen.sh
