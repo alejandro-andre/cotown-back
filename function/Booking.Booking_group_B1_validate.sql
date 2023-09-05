@@ -45,7 +45,9 @@ BEGIN
   -- Create rooms in the list
   IF room_ids IS NOT NULL THEN
     FOREACH room_id IN ARRAY(room_ids) LOOP
-      INSERT INTO "Booking"."Booking_rooming" ("Booking_id", "Resource_id") VALUES (NEW.id, room_id)
+      INSERT 
+        INTO "Booking"."Booking_rooming" ("Booking_id", "Resource_id", "Check_in", "Check_out") 
+        VALUES (NEW.id, room_id, NEW.Date_from, NEW.Date_to)
       ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING;
     END LOOP;
   END IF;
