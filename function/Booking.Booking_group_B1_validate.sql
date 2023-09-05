@@ -40,6 +40,7 @@ BEGIN
   SELECT array_agg(id) INTO room_ids FROM "Resource"."Resource" WHERE "Code" = ANY(NEW."Room_ids");
  
   -- Delete rooms not in the list
+  RESET ROLE;
   DELETE FROM "Booking"."Booking_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
  
   -- Create rooms in the list
