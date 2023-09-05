@@ -48,7 +48,7 @@ BEGIN
     FOREACH room_id IN ARRAY(room_ids) LOOP
       INSERT 
         INTO "Booking"."Booking_rooming" ("Booking_id", "Resource_id", "Check_in", "Check_out") 
-        VALUES (NEW.id, room_id, NEW.Date_from, NEW.Date_to)
+        VALUES (NEW.id, room_id, NEW."Date_from", NEW."Date_to")
       ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING;
     END LOOP;
   END IF;
