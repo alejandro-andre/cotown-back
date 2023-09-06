@@ -179,13 +179,10 @@ def do_email(apiClient, email):
     # Call graphQL endpoint
     apiClient.call(query, variables)
 
-    # Debug
-    if '@test.com' in email['Customer']['Email']:
-        return
-
     # Send email
     if subject != 'ERROR':
       logger.debug(email['Customer']['Email'])
       logger.debug(subject)
       logger.debug(body)
-      smtp_mail(email['Customer']['Email'], subject, body)
+      #smtp_mail(email['Customer']['Email'], subject, body)
+      smtp_mail('test@cotown.com', subject, body)
