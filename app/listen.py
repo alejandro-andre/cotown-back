@@ -50,7 +50,15 @@ def main():
   apiClient = APIClient(settings.SERVER)
 
   # DB API
-  dbClient = DBClient(settings.SERVER, settings.DATABASE, settings.DBUSER, settings.DBPASS, settings.SSHUSER, settings.SSHPASS)
+  dbClient = DBClient(
+    host=settings.SERVER, 
+    dbname=settings.DATABASE, 
+    user=settings.DBUSER, 
+    password=settings.DBPASS,
+    sshuser=settings.SSHUSER, 
+    sshpassword=settings.get('SSHPASS', None),
+    sshprivatekey=settings.get('SSHPKEY', None)
+  )
   dbClient.connect()
 
 

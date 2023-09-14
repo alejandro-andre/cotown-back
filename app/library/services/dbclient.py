@@ -18,7 +18,7 @@ logger = logging.getLogger('COTOWN')
 class DBClient:
 
   # Init
-  def __init__(self, host, dbname, user, password, sshuser=None, sshpassword=None, schema='public'):
+  def __init__(self, host, dbname, user, password, sshuser=None, sshpassword=None, sshprivatekey=None, schema='public'):
 
     self.host = host
     self.dbname = dbname
@@ -26,6 +26,7 @@ class DBClient:
     self.password = password
     self.sshuser = sshuser
     self.sshpassword = sshpassword
+    self.sshprivatekey = sshprivatekey
     self.schema = schema
 
     self.con = None
@@ -51,12 +52,20 @@ class DBClient:
 
     # Open SSH tunnel
     if self.sshuser is not None:
-      self.tunnel = SSHTunnelForwarder(
-        (self.host, 22),
-        ssh_username=self.sshuser,
-        ssh_password=self.sshpassword,
-        remote_bind_address=('localhost', 5432)
-      )
+      if self.sshprivatekey is not None:
+        self.tunnel = SSHTunnelForwarder(
+          (self.host, 22),
+          ssh_username=self.sshuser,
+          ssh_pkey=self.sshprivatekey,
+          remote_bind_address=('127.0.0.1', 5432)
+        )
+      else:
+        self.tunnel = SSHTunnelForwarder(
+          (self.host, 22),
+          ssh_username=self.sshuser,
+          ssh_password=self.sshpassword,
+          remote_bind_address=('127.0.0.1', 5432)
+        )
       self.tunnel.start()
   
     # Connect to DB
