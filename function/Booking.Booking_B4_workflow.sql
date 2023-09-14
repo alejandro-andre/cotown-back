@@ -50,7 +50,7 @@ BEGIN
     -- Si hay que pagar garantía, pasa a confirmada
     IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       NEW."Status" := 'confirmada';
-    -- Si no hay que pagar garantía, pasa a firma contrato
+    -- Si no hay que pagar garantía o ya está pagada, pasa a firma contrato
     ELSE
       NEW."Status" := 'firmacontrato';
     END IF;
@@ -152,6 +152,15 @@ BEGIN
         NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
       END IF;
     END IF;
+    -- Depósito
+    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
+      DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
+      IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
+        INSERT 
+          INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  
+          VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
+      END IF;
+    END IF;
     -- Email
     INSERT 
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
@@ -179,13 +188,6 @@ BEGIN
     NEW."Confirmation_date" := CURRENT_DATE;
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
-    -- Depósito
-    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
-    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
-      INSERT 
-        INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  
-        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
-    END IF;
     -- EMail
     INSERT 
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") 
