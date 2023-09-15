@@ -66,7 +66,8 @@ def get_ac_contact(id):
         url = AC_URL + 'contacts/' + str(id)
         response = requests.get(url, headers=AC_HEADERS)
         return response.json()
-    except:
+    except Exception as error:
+        logger.error(error)
         return None
 
 def get_ac_contact_id(email):
@@ -77,7 +78,8 @@ def get_ac_contact_id(email):
         result = response.json()
         if result and result['contacts']:
             return result['contacts'][0]['id']
-    except:
+    except Exception as error:
+        logger.error(error)
         return None
 
 
@@ -94,7 +96,8 @@ def post_ac_contact(data):
         if result and result['contact']:
             return result['contact']['id']
 
-    except:
+    except Exception as error:
+        logger.error(error)
         return None
 
 
@@ -108,7 +111,8 @@ def put_ac_contact(id, data):
         url = AC_URL + 'contacts/' + str(id)
         response = requests.put(url, json=prepare_contact(data), headers=AC_HEADERS)
         return response.json()
-    except:
+    except Exception as error:
+        logger.error(error)
         return None
 
 
@@ -129,7 +133,8 @@ def post_ac_add_to_list(id, list):
     try:
         response = requests.post(url, json=payload, headers=AC_HEADERS)
         return response.json()
-    except:
+    except Exception as error:
+        logger.error(error)
         return None
 
 
