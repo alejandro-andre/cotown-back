@@ -107,7 +107,7 @@ def smtp_mail(to, subject, body, file=None):
 
     # Prepare mail
     msg = MIMEMultipart()
-    msg['From']    = settings.SMTPADDR
+    msg['From']    = settings.SMTPFROM
     msg['To']      = to
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'html'))
