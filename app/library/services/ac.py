@@ -20,21 +20,6 @@ logger = logging.getLogger('COTOWN')
 AC_URL     = settings.AC_URL
 AC_HEADERS = { 'Api-Token': settings.AC_KEY }
 
-FIELDS = [
-    { 'field':   '1', 'value': '+44' },           # Edad
-    { 'field':   '3', 'value': 'España' },        # Nacionalidad
-    { 'field':   '5', 'value': 'Inglés' },        # Idioma
-    { 'field':  '27', 'value': 'Experis' },       # Empresa
-    { 'field':  '95', 'value': '1000 - 1200' },   # Presupuesto
-    { 'field':  '96', 'value': '2023-07-19' },    # F Desde
-    { 'field':  '97', 'value': '2023-08-18' },    # F Hasta
-    { 'field':  '98', 'value': 'Work' },          # Razón
-    { 'field':  '99', 'value': 'LARGE / I_ECO' }, # Tipo de habitación
-    { 'field': '100', 'value': 'Balmes 335 ' },   # Edificio
-    { 'field': '101', 'value': 'Barcelona' },     # Ciudad
-    { 'field': '---', 'value': 'Mensaje...' },    # Mensaje
-]
-
 
 # #####################################
 # Prepare contact
