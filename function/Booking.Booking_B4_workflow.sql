@@ -5,6 +5,7 @@ DECLARE
   record_id INTEGER = 0;
   payment_method_id INTEGER = 1;
   curr_user VARCHAR;
+  deposit BOOLEAN = FALSE;
 
 BEGIN
 
@@ -30,16 +31,17 @@ BEGIN
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" :='pendientepago';
+    deposit := TRUE;
   END IF;
 
   -- PENDIENTE DE PAGO A CADUCADA
-  -- Actualiza al estado 'Pendiente de pago' cuando la solicitud ya no esta caducada
+  -- Actualiza al estado 'caducada'
   IF (NEW."Status" = 'pendientepago' AND NEW."Expiry_date" < CURRENT_DATE)  THEN
     NEW."Status" :='caducada';
   END IF;
 
   -- CADUCADA A PENDIENTE DE PAGO
-  -- Actualiza al estado 'Pendiente de pago' cuando la solicitud esta caducada
+  -- Actualiza al estado 'Pendiente de pago'
   IF (NEW."Status" = 'caducada' AND NEW."Expiry_date" >= CURRENT_DATE)  THEN
     NEW."Status" :='pendientepago';
   END IF;
@@ -50,6 +52,7 @@ BEGIN
     -- Si hay que pagar garantía, pasa a confirmada
     IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       NEW."Status" := 'confirmada';
+      deposit := TRUE;
     -- Si no hay que pagar garantía o ya está pagada, pasa a firma contrato
     ELSE
       NEW."Status" := 'firmacontrato';
@@ -132,6 +135,18 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE; 
  
+  -- Depósito
+  IF deposito THEN
+    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
+      DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
+      IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
+        INSERT 
+          INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  
+          VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
+      END IF;
+    END IF;
+  END IF;
+
   -- A ALTERNATIVA o ALTERNATIVAS PAGADA
   IF (NEW."Status" = 'alternativas' OR NEW."Status" = 'alternativaspagada') THEN
     -- Email
@@ -150,15 +165,6 @@ BEGIN
     ELSE
       IF (NEW."Expiry_date" < (CURRENT_DATE + INTERVAL '2 days')) THEN
         NEW."Expiry_date" := (CURRENT_DATE + INTERVAL '2 days');
-      END IF;
-    END IF;
-    -- Depósito
-    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
-      DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
-      IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
-        INSERT 
-          INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )  
-          VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Booking deposit', 'deposito');
       END IF;
     END IF;
     -- Email
@@ -180,7 +186,6 @@ BEGIN
 	END IF;
 
   -- A CONFIRMADA 
-  -- Inserta pago de garantía pendiente y envía mail
   IF (NEW."Status" = 'confirmada') THEN
     -- Borra fecha expiración
     NEW."Expiry_date" := NULL;

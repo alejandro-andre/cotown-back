@@ -364,17 +364,31 @@ def runapp():
   # Special queries
   # ###################################################
 
-  # Availability
-  def post_availability():
+  # Available resources
+  def post_available_resources():
     
     data = request.get_json()
-    result = availability(
+    result = available_resources(
       dbClient, 
       date_from=data.get('date_from'), 
       date_to=data.get('date_to'), 
       building=data.get('building', ''), 
       flat_type=data.get('flat_type', ''),
       place_type=data.get('place_type', '')
+    )
+    if result is None:
+      return {}
+    return result
+  
+  # Available typologies
+  def post_available_types():
+    
+    data = request.get_json()
+    result = available_types(
+      dbClient, 
+      date_from=data.get('date_from'), 
+      date_to=data.get('date_to'), 
+      location=data.get('location', '')
     )
     if result is None:
       return {}
@@ -529,9 +543,6 @@ def runapp():
   # Status buttons
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
-  # Planning
-  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
-
   # Reports
   app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=get_download, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
@@ -542,12 +553,16 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
-  # Web
+  # Static web
   app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
+
+  # Booking and Planning
+  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_available_resources, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=post_available_types, methods=['POST'])
 
   # Return app
   return app

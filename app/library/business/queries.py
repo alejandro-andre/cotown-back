@@ -468,33 +468,80 @@ def booking_status(dbClient, id, status):
 # Availability
 # ######################################################
 
-def availability(dbClient, date_from, date_to, building, flat_type, place_type):
+# Get ids of available resources of required typology between dates
+def available_resources(dbClient, date_from, date_to, building, flat_type, place_type):
 
   if building is None:
-    building = ''
+    building = 0
 
   if place_type is None:
-    place_type = ''
+    place_type = 0
     
   if flat_type is None:
-    flat_type = ''
+    flat_type = 0
 
   try:
     dbClient.connect()
     dbClient.select('''
     SELECT r."Code"
     FROM "Resource"."Resource" r
-    INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
-    INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
-    LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-    LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
-    AND bd."Date_from" <= %s 
-    AND bd."Date_to" >= %s
+      INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
+      INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
+      LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
+      LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
+        AND bd."Date_from" <= %s 
+        AND bd."Date_to" >= %s
     WHERE bd.id IS NULL 
-    AND (b.id = %s OR %s = 0)
-    AND (rft.id = %s OR %s = 0)
-    AND (rpt.id = %s OR %s = 0)
-    ORDER BY r."Code";''', (date_to, date_from, building, building, flat_type, flat_type,place_type, place_type))
+      AND (b.id = %s OR %s = 0)
+      AND (rft.id = %s OR %s = 0)
+      AND (rpt.id = %s OR %s = 0)
+    ORDER BY 1;
+    ''', (date_to, date_from, building, building, flat_type, flat_type,place_type, place_type))
+    aux = dbClient.fetchall()
+    dbClient.disconnect()
+    list = [item for sub_list in aux for item in sub_list]
+    logger.debug(list)
+    return list
+
+  except Exception as error:
+    logger.error(error)
+    dbClient.rollback()
+    return None
+
+
+# Get information and prices of available typologies between dates
+def available_types(dbClient, date_from, date_to, location):
+
+  # Tarif year
+  year = int(date_from[:4])
+
+  try:
+    dbClient.connect()
+    dbClient.select('''
+    SELECT 
+      b."Name", r."Flat_type_id", r."Place_type_id", 
+      ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0) AS "Rent_long",
+      ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0) AS "Rent_medium",
+      ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0) AS "Rent_short",
+      COUNT(*) AS "Qty"
+    FROM 
+      "Resource"."Resource" r
+      INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+      INNER JOIN "Geo"."District" d on d.id = b."District_id"
+      INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+      INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" 
+        AND pd."Flat_type_id" = r."Flat_type_id" 
+        AND (pd."Place_type_id" = r."Place_type_id" OR pd."Place_type_id" IS NULL) 
+      LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
+        AND bd."Date_from" <= %s
+        AND bd."Date_to" >= %s
+    WHERE b."Active"
+      AND pd."Year" = %s
+      AND d."Location_id" = %s
+      AND bd.id IS NULL
+    GROUP BY 1, 2, 3, 4, 5, 6
+    ORDER BY 1, 2, 3;
+    ''', (date_to, date_from, year, location))
     aux = dbClient.fetchall()
     dbClient.disconnect()
     list = [item for sub_list in aux for item in sub_list]
