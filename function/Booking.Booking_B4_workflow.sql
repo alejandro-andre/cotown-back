@@ -136,7 +136,7 @@ BEGIN
   RESET ROLE; 
  
   -- Depósito
-  IF deposito THEN
+  IF deposit THEN
     IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
       IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
