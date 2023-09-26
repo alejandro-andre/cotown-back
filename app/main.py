@@ -15,18 +15,21 @@ from datetime import timedelta
 from io import BytesIO
 import base64
 
-# Cotown includes
+# Cotown includes - services
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
 from library.services.cipher import encrypt, decrypt
 from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.services.ac import add_contact
+
+# Cotown includes - business functions
 from library.business.export import query_to_excel
 from library.business.occupancy import occupancy
 from library.business.download import download
 from library.business.send_email import smtp_mail
 from library.business.queries import *
+from library.business.booking import *
 
 # Logging
 import logging
@@ -129,19 +132,16 @@ def runapp():
 
 
   # ###################################################
-  # Hi
+  # Misc functions
   # ###################################################
 
+  # Hi
   def get_hello():
 
     logger.debug('Hi')
     return 'Hi!'
 
-
-  # ###################################################
   # Static files
-  # ###################################################
-
   def get_html(filename):
 
     # Debug
@@ -155,9 +155,10 @@ def runapp():
 
 
   # ###################################################
-  # Signature
+  # Airflows plugins
   # ###################################################
 
+  # Signature
   def get_signature(id):
 
     # Debug
@@ -168,62 +169,113 @@ def runapp():
     response = send_file(BytesIO(image.content), mimetype=image.headers['content-type'])
     return response
 
+  # Download files
+  def get_download(name):
 
-  # ###################################################
-  # Logout
-  # ###################################################
+    # Debug
+    logger.debug('Download ' + name)
 
-  def post_logout():
-
-    response = make_response(send_file('static/login.html'))
-    response.set_cookie('user', '', max_age=0)
-    return response
-
-
-  # ###################################################
-  # Login
-  # ###################################################
-
-  def post_login():
+    # Querystring variables
+    vars = {}
+    for item in dict(request.args).keys():
+      try:
+        vars[item] = int(request.args[item])
+      except:
+        vars[item] = request.args[item]
+  
+    # Download zip
+    result = download(apiClient, name, vars)
+    if result is None:
+      abort(404)
 
     # Response
-    response = make_response(send_file('static/login.html'))
-
-    # Get login data
-    usr = request.form.get('usr')
-    pwd = request.form.get('pwd')
-
-    # Call backend
-    apiClient.auth(user=usr, password=pwd)
-    if apiClient.token is None:
-      return response
-
-    # Get user name
-    result = apiClient.call('{ data: Customer_CustomerList (orderBy: [{ attribute: id }] limit:2) { Name } }')
-    if len(result['data']) != 1:
-      return response
-
-    # Set cookie
-    creds = json.dumps({ 'usr': usr, 'pwd': pwd, 'token': apiClient.token })
-    ctext, nonce = encrypt(creds)
-    cookie = {
-      'name': result['data'][0]['Name'],
-      'credentials': base64.b64encode(ctext).decode('utf-8'),
-      'nonce': base64.b64encode(nonce).decode('utf-8')
-    }
-    response.set_cookie(
-      'user', 
-      base64.b64encode(json.dumps(cookie).encode()).decode('utf-8'), 
-      max_age=timedelta(days=60),
-      domain=".cotown.com"
-    )
+    response = send_file(result, mimetype='application/zip')
+    response.headers['Content-Disposition'] = 'inline; filename="' + name + '.zip"'
     return response
+  
+  # Export to excel
+  def get_export(name):
 
+    # Debug
+    logger.debug('Export ' + name)
+
+    # Querystring variables
+    vars = {}
+    for item in dict(request.args).keys():
+      try:
+        vars[item] = int(request.args[item])
+      except:
+        vars[item] = request.args[item]
+  
+    # Export
+    result = query_to_excel(apiClient, dbClient, name, vars)
+    if result is None:
+      abort(404)
+
+    # Response
+    response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response.headers['Content-Disposition'] = 'inline; filename="' + name + '.xlsx"'
+    return response    
+        
+  # Occupancy report
+  def get_occupancy():
+
+    # Querystring variables
+    vars = {}
+    for item in dict(request.args).keys():
+      try:
+        vars[item] = int(request.args[item])
+      except:
+        vars[item] = request.args[item]
+  
+    result = occupancy(dbClient, vars)
+    if result is None:
+      abort(404)
+
+    # Response
+    response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response.headers['Content-Disposition'] = 'inline; filename="occupancy.xlsx"'
+    return response    
+
+  # Available resources
+  def post_available_resources():
+    
+    data = request.get_json()
+    result = available_resources(
+      dbClient, 
+      date_from=data.get('date_from'), 
+      date_to=data.get('date_to'), 
+      building=data.get('building', ''), 
+      flat_type=data.get('flat_type', ''),
+      place_type=data.get('place_type', '')
+    )
+    if result is None:
+      return {}
+    return result
+  
+  # Change booking status
+  def get_booking_status(id, status):
+
+    if booking_status(dbClient, id, status):
+      return 'ok'
+    return 'ko'
+  
+  # Dashboard
+  def get_dashboard(status = None):
+
+    return dashboard(dbClient, status)
+
+  # Labels
+  def get_labels(id, locale):
+
+    return labels(dbClient, id, locale)
+  
 
   # ###################################################
-  # Form
+  # Static web
   # ###################################################
 
+  # Forms posts
   def post_form():
 
     # Get form fields
@@ -278,108 +330,66 @@ def runapp():
     # Return contact ID
     return id
 
-
-  # ###################################################
-  # Download files
-  # ###################################################
-
-  def get_download(name):
-
-    # Debug
-    logger.debug('Download ' + name)
-
-    # Querystring variables
-    vars = {}
-    for item in dict(request.args).keys():
-      try:
-        vars[item] = int(request.args[item])
-      except:
-        vars[item] = request.args[item]
+  # Get flat types
+  def get_flats(year = 2023):
+    return flat_prices(dbClient, year)
   
-    # Download zip
-    result = download(apiClient, name, vars)
-    if result is None:
-      abort(404)
+  # Get room types
+  def get_rooms(year = 2023):
+    return room_prices(dbClient, year)
+  
+  # Get amenities
+  def get_amenities():
+    return room_amenities(dbClient)
 
-    # Response
-    response = send_file(result, mimetype='application/zip')
-    response.headers['Content-Disposition'] = 'inline; filename="' + name + '.zip"'
+
+  # ###################################################
+  # Dynamic web
+  # ###################################################
+
+  # Web logout
+  def post_logout():
+
+    response = make_response(send_file('static/login.html'))
+    response.set_cookie('user', '', max_age=0)
     return response
-  
 
-  # ###################################################
-  # Export to excel
-  # ###################################################
-
-  def get_export(name):
-
-    # Debug
-    logger.debug('Export ' + name)
-
-    # Querystring variables
-    vars = {}
-    for item in dict(request.args).keys():
-      try:
-        vars[item] = int(request.args[item])
-      except:
-        vars[item] = request.args[item]
-  
-    # Export
-    result = query_to_excel(apiClient, dbClient, name, vars)
-    if result is None:
-      abort(404)
+  # Web login
+  def post_login():
 
     # Response
-    response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response.headers['Content-Disposition'] = 'inline; filename="' + name + '.xlsx"'
-    return response    
-        
+    response = make_response(send_file('static/login.html'))
 
-  # ###################################################
-  # Occupancy report
-  # ###################################################
+    # Get login data
+    usr = request.form.get('usr')
+    pwd = request.form.get('pwd')
 
-  # Occupancy
-  def get_occupancy():
+    # Call backend
+    apiClient.auth(user=usr, password=pwd)
+    if apiClient.token is None:
+      return response
 
-    # Querystring variables
-    vars = {}
-    for item in dict(request.args).keys():
-      try:
-        vars[item] = int(request.args[item])
-      except:
-        vars[item] = request.args[item]
-  
-    result = occupancy(dbClient, vars)
-    if result is None:
-      abort(404)
+    # Get user name
+    result = apiClient.call('{ data: Customer_CustomerList (orderBy: [{ attribute: id }] limit:2) { Name } }')
+    if len(result['data']) != 1:
+      return response
 
-    # Response
-    response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response.headers['Content-Disposition'] = 'inline; filename="occupancy.xlsx"'
-    return response    
-
-
-  # ###################################################
-  # Special queries
-  # ###################################################
-
-  # Available resources
-  def post_available_resources():
-    
-    data = request.get_json()
-    result = available_resources(
-      dbClient, 
-      date_from=data.get('date_from'), 
-      date_to=data.get('date_to'), 
-      building=data.get('building', ''), 
-      flat_type=data.get('flat_type', ''),
-      place_type=data.get('place_type', '')
+    # Set cookie
+    creds = json.dumps({ 'usr': usr, 'pwd': pwd, 'token': apiClient.token })
+    ctext, nonce = encrypt(creds)
+    cookie = {
+      'name': result['data'][0]['Name'],
+      'credentials': base64.b64encode(ctext).decode('utf-8'),
+      'nonce': base64.b64encode(nonce).decode('utf-8')
+    }
+    response.set_cookie(
+      'user', 
+      base64.b64encode(json.dumps(cookie).encode()).decode('utf-8'), 
+      max_age=timedelta(days=60),
+      domain=".cotown.com"
     )
-    if result is None:
-      return {}
-    return result
-  
+    return response
+
   # Available typologies
   def post_available_types():
     
@@ -393,44 +403,6 @@ def runapp():
     if result is None:
       return {}
     return result
-  
-  # Change booking status
-  def get_booking_status(id, status):
-
-    if booking_status(dbClient, id, status):
-      return 'ok'
-    return 'ko'
-  
-  # Dashboard
-  def get_dashboard(status = None):
-
-    return dashboard(dbClient, status)
-
-  # Labels
-  def get_labels(id, locale):
-
-    return labels(dbClient, id, locale)
-  
-  # Change booking status
-  def get_booking_status(id, status):
-
-    if booking_status(dbClient, id, status):
-      return 'ok'
-    return 'ko'
-  
-
-  # ###################################################
-  # Web
-  # ###################################################
-
-  def get_flats(year = 2023):
-    return flat_prices(dbClient, year)
-  
-  def get_rooms(year = 2023):
-    return room_prices(dbClient, year)
-  
-  def get_amenities():
-    return room_amenities(dbClient)
 
 
   # ###################################################
@@ -458,8 +430,7 @@ def runapp():
     logger.debug(params)
 
     # Return both information
-    return payment | params
-  
+    return payment | params 
   
   # Notification
   def post_notification():
@@ -517,52 +488,47 @@ def runapp():
       logger.debug(value)
       abort(value) 
 
-
   # ---------------------------------
-  # Requests without token    
+  # Requests mapping
   # ---------------------------------
 
-  # Web login/logout
-  app.add_url_rule(settings.API_PREFIX + '/login', view_func=post_login, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/logout', view_func=post_logout, methods=['POST'])
-
-  # Other functions
+  # Misc functions
   app.add_url_rule(settings.API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
 
-  # Payment functions
-  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
-
-  # ---------------------------------
-  # Requests with  token    
-  # ---------------------------------
-
-  # Internal area
-  app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+  # Contracts, get signature image
   app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
 
-  # Status buttons
+  # Airflows plugins - Reports
+  app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=get_download, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
+
+  # Airflows plugins - Planning
+  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_available_resources, methods=['POST'])
+
+  # Airflows plugins - Buttons
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
 
-  # Reports
-  app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=get_download, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=get_export, methods=['GET'])
-
-  # Dashboard
+  # Airflows plugins - Dashboard
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Static web
   app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
 
-  # Booking and Planning
-  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_available_resources, methods=['POST'])
+  # Dynamic web - Booking process
+  app.add_url_rule(settings.API_PREFIX + '/logout', view_func=post_logout, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/login', view_func=post_login, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=post_available_types, methods=['POST'])
+
+  # Payment functions
+  app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
 
   # Return app
   return app

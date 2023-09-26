@@ -48,7 +48,7 @@ BEGIN
   		FROM "Customer"."Customer_email" 
   		WHERE "Customer_id" = customer_id 
   		AND "Entity_id" = entity_id 
-  		AND "Template" = 'deposito'
+  		AND "Template" LIKE 'deposito%'
   		AND "Created_at" > (CURRENT_DATE - INTERVAL '2 days')
   	) THEN
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")  VALUES (customer_id, 'depositorecall', entity_id);
