@@ -1,7 +1,0 @@
-# /etc/systemd/system/web.path
-
-[Path]
-PathChanged=/home/cotown/app/web/
-
-[Install]
-WantedBy=multi-user.target
