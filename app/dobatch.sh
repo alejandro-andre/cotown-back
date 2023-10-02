@@ -6,5 +6,5 @@ if [ -f $LOCK_FILE ]; then
 else
   touch $LOCK_FILE
 fi
-docker exec back$2 python3 batch_$1.py
+docker exec cotown$2 python3 batch_$1.py
 rm $LOCK_FILE
