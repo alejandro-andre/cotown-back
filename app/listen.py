@@ -64,24 +64,28 @@ def main():
   # Main
   # ###################################################
 
+  # Infinite loop
   while True:
 
-    # Connect
-    dbClient.connect()
+    # Manage any exception
+    try:
 
-    # Listen to 'canal'
-    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-    dbClient.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-    dbClient.execute("LISTEN email")
-    logger.info('Listening to ''email''...')
+      # Connect
+      logger.info('Connecting...')
+      dbClient.connect()
 
-    # Infinite loop
-    while dbClient.con.poll() == psycopg2.extensions.POLL_OK:
+      # Listen to 'canal'
+      psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+      dbClient.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+      dbClient.execute("LISTEN email")
+      logger.info('Listening to ''email''...')
 
-      # Wait for notification
-      while dbClient.con.notifies:
+      # Infinite loop
+      while dbClient.con.poll() == psycopg2.extensions.POLL_OK:
 
-        try:
+        # Wait for notification
+        while dbClient.con.notifies:
+
           # Notification received
           notify = dbClient.con.notifies.pop(0)
           logger.info(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
@@ -114,18 +118,19 @@ def main():
           # Send email
           do_email(apiClient, email['data'][0])
 
-        # Error
-        except Exception as error:
-          logger.error(error)
+        # Wait 10 seconds
+        time.sleep(10)
 
-      # Wait 10 seconds
-      time.sleep(10)
+    # Error
+    except Exception as error:
+      logger.error(error)
 
     # Close connection and tunnel
     dbClient.disconnect()
 
     # Wait 30 seconds and try to connect again
     time.sleep(30)
+    logger.info('Trying again...')
 
 
 # #####################################
