@@ -59,67 +59,73 @@ def main():
     sshpassword=settings.get('SSHPASS', None),
     sshprivatekey=settings.get('SSHPKEY', None)
   )
-  dbClient.connect()
-
 
   # ###################################################
   # Main
   # ###################################################
 
-  # Listen to 'canal'
-  psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-  dbClient.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-  dbClient.execute("LISTEN email")
-  logger.info('Listening to ''email''...')
+  while True:
 
-  # Infinite loop
-  while dbClient.con.poll() == psycopg2.extensions.POLL_OK:
+    # Connect
+    dbClient.connect()
 
-    # Wait for notification
-    while dbClient.con.notifies:
+    # Listen to 'canal'
+    psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+    dbClient.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    dbClient.execute("LISTEN email")
+    logger.info('Listening to ''email''...')
 
-      try:
-        # Notification received
-        notify = dbClient.con.notifies.pop(0)
-        logger.info(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
+    # Infinite loop
+    while dbClient.con.poll() == psycopg2.extensions.POLL_OK:
 
-        # Get email
-        apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
-        email = apiClient.call('''
-          query EmailById ($id: Int!) {
-            data: Customer_Customer_emailList ( 
-              where: { id: { EQ: $id } }
-            ) {
-              id
-              Customer: CustomerViaCustomer_id {
-                Name
-                Address
-                Email
-                Lang
+      # Wait for notification
+      while dbClient.con.notifies:
+
+        try:
+          # Notification received
+          notify = dbClient.con.notifies.pop(0)
+          logger.info(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
+
+          # Get email
+          apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
+          email = apiClient.call('''
+            query EmailById ($id: Int!) {
+              data: Customer_Customer_emailList ( 
+                where: { id: { EQ: $id } }
+              ) {
+                id
+                Customer: CustomerViaCustomer_id {
+                  Name
+                  Address
+                  Email
+                  Lang
+                }
+                Template
+                Entity_id
+                Subject
+                Body
+                Sent_at
               }
-              Template
-              Entity_id
-              Subject
-              Body
-              Sent_at
             }
-          }
-          ''',
-          { 'id': int(notify.payload) }
-        )
+            ''',
+            { 'id': int(notify.payload) }
+          )
 
-        # Send email
-        do_email(apiClient, email['data'][0])
+          # Send email
+          do_email(apiClient, email['data'][0])
 
-      # Error
-      except Exception as error:
-        logger.error(error)
+        # Error
+        except Exception as error:
+          logger.error(error)
 
-    # Wait X seconds
-    time.sleep(5)
+      # Wait 10 seconds
+      time.sleep(10)
 
-  # Close connection and tunnel
-  dbClient.disconnect()
+    # Close connection and tunnel
+    dbClient.disconnect()
+
+    # Wait 30 seconds and try to connect again
+    time.sleep(30)
 
 
 # #####################################
