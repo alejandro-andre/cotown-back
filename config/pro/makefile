@@ -60,8 +60,8 @@ nginx:
 # Backoffice
 # ###################################
 
-cotown:
-	docker run -d --name cotown --restart=unless-stopped --net=cotownnet \
+back:
+	docker run -d --name back --restart=unless-stopped --net=cotownnet \
 		--log-driver=lokidriver --log-opt loki-url="http://localhost:3100/loki/api/v1/push" \
 		-e COTOWN_ENV='production' \
 		-v ${HOME}/app:/app \
