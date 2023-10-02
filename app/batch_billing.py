@@ -604,7 +604,7 @@ def main():
   # Main
   # ###################################################
 
-  # 0. Get structure data
+  # 0. Get structure data (products)
   get_data(dbClient)
 
   # 1. Generate invoice for each booking fee and deposit payment 
@@ -618,7 +618,7 @@ def main():
   pay_bills(dbClient)
 
   # Disconnect
-  dbClient.connect()
+  dbClient.disconnect()
 
 
 # #####################################
