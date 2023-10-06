@@ -124,6 +124,7 @@ vanguardstudenthousing
 myvanguardstudenthousing
 Qi80#GW1AA7N
  
+-- Customers
 SELECT r.id as "Customer_id",
        br.id, 
        r.email as "Email", 
