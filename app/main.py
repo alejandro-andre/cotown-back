@@ -135,13 +135,13 @@ def runapp():
   # Misc functions
   # ###################################################
 
-  # Hi
+  # Hi - I'm live endpoint
   def get_hello():
 
     logger.debug('Hi')
     return 'Hi!'
 
-  # Static files
+  # Static files - Returns an static html page, not used
   def get_html(filename):
 
     # Debug
@@ -158,7 +158,7 @@ def runapp():
   # Airflows plugins
   # ###################################################
 
-  # Signature
+  # Signature - Returns the signature image
   def get_signature(id):
 
     # Debug
@@ -169,7 +169,7 @@ def runapp():
     response = send_file(BytesIO(image.content), mimetype=image.headers['content-type'])
     return response
 
-  # Download files
+  # Download files (PDFs) in ZIP format - Contracts, bills...
   def get_download(name):
 
     # Debug
@@ -193,7 +193,7 @@ def runapp():
     response.headers['Content-Disposition'] = 'inline; filename="' + name + '.zip"'
     return response
   
-  # Export to excel
+  # Export data (queries) to excel
   def get_export(name):
 
     # Debug
@@ -463,6 +463,23 @@ def runapp():
 
 
   # ###################################################
+  # Pages
+  # ###################################################
+
+  def get_booking_page1():
+
+    return 'page1'
+
+  def get_booking_page2():
+
+    return 'page2'
+  
+  def get_booking_page3():
+
+    return 'page3'
+  
+
+  # ###################################################
   # Flask
   # ###################################################
 
@@ -515,20 +532,25 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=get_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
-  # Static web
-  app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
+  # Static web (11ty data retrieving)
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
 
-  # Dynamic web - Booking process
+  # Payment functions
+  app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
+
+  # Dynamic web - Booking process - API
+  app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/logout', view_func=post_logout, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/login', view_func=post_login, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=post_available_types, methods=['POST'])
 
-  # Payment functions
-  app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
+  # Dynamic web - Booking process - Pages
+  app.add_url_rule('/booking/page1', view_func=get_booking_page1, methods=['GET'])
+  app.add_url_rule('/booking/page2', view_func=get_booking_page2, methods=['GET'])
+  app.add_url_rule('/booking/page3', view_func=get_booking_page3, methods=['GET'])
 
   # Return app
   return app

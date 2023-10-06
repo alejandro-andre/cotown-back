@@ -24,9 +24,18 @@ PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
 
 def clean_email(email):
 
+    # Starts with mailto:
+    if email.startswith('mailto:'):
+        email = email[7:]
+
+    # Remove strange chars
     valid = re.sub(r'[^a-zA-Z0-9-_.@]', '', email)
     if valid != email:
         print(valid, email)
+
+    # Validate structure
+    if re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email) is None:
+        return None
     return valid
 
 
@@ -103,8 +112,22 @@ def consolidate(group):
 # #####################################
 
 '''
-SELECT br.id, 
+Backoffice:
+https://www.3kcoliving.es/backoffice/login
+dalarcon@cotown.com
+l3$MjE1VHQ69
+
+Base de datos:
+https://3kcoliving.es/phpmyadmin/
+vanguardstudenthousing
+5vA*7aJouT8%
+myvanguardstudenthousing
+Qi80#GW1AA7N
+ 
+SELECT r.id as "Customer_id",
+       br.id, 
        r.email as "Email", 
+       r.locale_id as "Locale",
        concat(r.name, ' ', r.surname) AS "Name", 
        d.card_type_id + 2 AS "Id_type_id", 
        d.card AS "Document", 
@@ -136,7 +159,7 @@ df = pd.read_csv('migration/customers.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
 # 0. Debug. Change email addresses
-df['Email'] = df['Email'].str.split('@').str[0] + '@test.com'
+# df['Email'] = df['Email'].str.split('@').str[0] + '@test.com'
 
 # 1. Remove columns
 df.drop('id', axis=1, inplace=True)
@@ -146,8 +169,10 @@ df.dropna(subset=['Name'], inplace=True)
 print('Filas con nombre...........: ', df.shape[0])
 
 # 3. Clean fields
-df["Email"] = df["Email"].apply(lambda x: clean_email(x))
-df["Birth_date"] = df["Birth_date"].apply(lambda x: clean_date(x))
+df['Email'] = df['Email'].apply(lambda x: clean_email(x))
+df['Birth_date'] = df['Birth_date'].apply(lambda x: clean_date(x))
+df['Lang'] = df['Locale'].apply(lambda x: 'en' if x in [2, 5] else 'es')
+df.drop('Locale', axis=1, inplace=True)
 
 # 4. Consolidate by 'Email'
 df = df.groupby(['Email']).apply(consolidate)
@@ -164,8 +189,10 @@ df.insert(0, 'id', range(1, 1 + len(df)))
 # 7. Calculated & cleaned up columns
 df['Name'] = df['Name'].str.title()
 df['Type'] = 'persona'
+df['Black_list'] = False
 df['User_name'] = 'N' + df['id'].astype(str).str.zfill(6)
-df['Comments'] = np.where(df['Language_id'].ne(''), 'Idiomas: ' + df['Language_id'].astype(str), '')
+df['Comments'] = '(' + df['Customer_id'].astype(str) + ') ' + np.where(df['Language_id'].ne(''), 'Idiomas: ' + df['Language_id'].astype(str), '')
+df.drop('Customer_id', axis=1, inplace=True)
 df.drop('Language_id', axis=1, inplace=True)
 
 # 8. NIF/NIE

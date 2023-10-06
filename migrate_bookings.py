@@ -16,8 +16,8 @@ import xlwt
 import re
 
 # Cotown includes
-from library.services.config import settings
-from library.services.dbclient import DBClient
+from app.library.services.config import settings
+from app.library.services.dbclient import DBClient
 
 # Constants
 PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
@@ -28,6 +28,18 @@ PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
 # #####################################
 
 '''
+Backoffice:
+https://www.3kcoliving.es/backoffice/login
+dalarcon@cotown.com
+l3$MjE1VHQ69
+
+Base de datos:
+https://3kcoliving.es/phpmyadmin/
+vanguardstudenthousing
+5vA*7aJouT8%
+myvanguardstudenthousing
+Qi80#GW1AA7N
+ 
 -- 7a. Datos de reserva individuales
 SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
 	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
