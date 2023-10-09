@@ -111,7 +111,11 @@ BEGIN
     SELECT NEW."Customer_id", id
     FROM "Customer"."Customer_doc_type" cdt
     WHERE "Mandatory" = TRUE
-    AND (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = id_type_id)
+    AND (
+      cdt."Reason_id" = NEW."Reason_id" OR 
+      cdt."Id_type_id" = id_type_id OR
+      (cdt."Reason_id" IS NULL AND cdt."Id_type_id" IS NULL)
+    )
   ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
   
   -- Return record
