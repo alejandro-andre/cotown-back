@@ -5,6 +5,7 @@ DECLARE
   issued BOOLEAN;
   tax_id INTEGER;
   invoice_id INTEGER;
+  concept VARCHAR;
 
 BEGIN
 
@@ -24,6 +25,12 @@ BEGIN
   -- Tax
   SELECT "Tax_id" INTO tax_id FROM "Billing"."Product" WHERE id = NEW."Product_id";
   NEW."Tax_id" := tax_id;
+
+  -- Concept
+  IF NEW."Concept" IS NULL THEN
+    SELECT "Name" INTO concept FROM "Billing"."Product" WHERE id = NEW."Product_id";
+    NEW."Concept" := concept;
+  END IF;
 
   -- Return
   IF TG_OP = 'DELETE' THEN
