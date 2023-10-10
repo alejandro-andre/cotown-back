@@ -116,22 +116,6 @@ def runapp():
 
 
   # ###################################################
-  # Get user from cookies
-  # ###################################################
-
-  def get_user():
-
-    # Get and decypher cookie
-    cookie = request.cookies.get('user')
-    if cookie:
-      try:
-        cookie = json.loads(base64.b64decode(cookie).decode('utf-8'))
-        return json.loads(decrypt(base64.b64decode(cookie['credentials']), base64.b64decode(cookie['nonce'])))
-      except:
-        return None
-
-
-  # ###################################################
   # Misc functions
   # ###################################################
 
@@ -238,7 +222,7 @@ def runapp():
     return response    
 
   # Available resources
-  def post_available_resources():
+  def post_availability():
     
     data = request.get_json()
     result = available_resources(
@@ -391,14 +375,13 @@ def runapp():
     return response
 
   # Available typologies
-  def post_available_types():
+  def get_available_types():
     
-    data = request.get_json()
     result = available_types(
       dbClient, 
-      date_from=data.get('date_from'), 
-      date_to=data.get('date_to'), 
-      location=data.get('location', '')
+      date_from=request.args.get('date_from'), 
+      date_to=request.args.get('date_to'), 
+      location=request.args.get('location', '')
     )
     if result is None:
       return {}
@@ -522,7 +505,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=get_occupancy, methods=['GET'])
 
   # Airflows plugins - Planning
-  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_available_resources, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=post_availability, methods=['POST'])
 
   # Airflows plugins - Buttons
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=get_booking_status, methods=['GET'])
@@ -533,6 +516,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=get_labels, methods=['GET'])
 
   # Static web (11ty data retrieving)
+  app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
@@ -542,10 +526,9 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/notify', view_func=post_notification, methods=['POST'])
 
   # Dynamic web - Booking process - API
-  app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/logout', view_func=post_logout, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/login', view_func=post_login, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=post_available_types, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=get_available_types, methods=['GET'])
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/booking/page1', view_func=get_booking_page1, methods=['GET'])
