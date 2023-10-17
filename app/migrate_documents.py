@@ -9,7 +9,6 @@
 # #####################################
 
 import pandas as pd
-import requests
 
 
 # #####################################
@@ -55,7 +54,7 @@ https://www.3kcoliving.es/backoffice/admin/students/1358/documents/2/download
 
 # Load data, csv in Excel format
 print('DOCUMENTOS')
-df = pd.read_csv('migration/files.in.csv', delimiter=';', encoding='utf-8')
+df = pd.read_csv('../migration/files.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
 # Process each row
@@ -72,8 +71,12 @@ for index, row in df.iterrows():
     else:
         url = f'https://www.3kcoliving.es/backoffice/admin/bookings/{id}/documents/download/{doc_id}'
     
-    # Request
-    print(url)
-    response = requests.get(url)
-    print(response.content)
-    break
+    # 1: Front DNI
+    # 2: Back DNI
+    # 3: Registration ¿?
+    # 4: SEPA
+    
+    # Path
+    filepath = '../migration/' + row['path']
+    with open(filepath, 'rb') as file:
+        print(file.name)

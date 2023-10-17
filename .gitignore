@@ -3,3 +3,5 @@
 **/log
 /download
 /upload/content/**
+/migration/bookings/**
+/migration/users/**
