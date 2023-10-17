@@ -11,7 +11,11 @@ BEGIN
   END IF;
 
   -- Obtiene el valor del booking fee
-  SELECT "Booking_fee" INTO booking_fee_amount FROM "Building"."Building" WHERE id = NEW."Building_id";
+  IF NEW."Resource_type" = 'piso' THEN
+    SELECT "Booking_fee_flat" INTO booking_fee_amount FROM "Building"."Building" WHERE id = NEW."Building_id";
+  ELSE
+    SELECT "Booking_fee" INTO booking_fee_amount FROM "Building"."Building" WHERE id = NEW."Building_id";
+  END IF;
   NEW."Booking_fee" := booking_fee_amount;
 
   -- Return

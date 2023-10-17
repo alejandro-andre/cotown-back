@@ -25,16 +25,25 @@ DECLARE
    
 BEGIN
 
-  -- No se puede cambiar
+  -- Facturas emitidas
   IF OLD."Issued" = TRUE THEN
+
+    -- No se puede borrar
     IF TG_OP = 'DELETE' THEN
       RAISE EXCEPTION '!!!Cannot delete issued bill!!!No se puede borrar una factura emitida!!!';
     END IF;
-    IF (OLD."Rectified" = TRUE OR NEW."Rectified" = FALSE) THEN
+
+    -- No se puede cambiar
+    IF OLD."Issued"      <> NEW."Issued"      OR
+       OLD."Bill_type"   <> NEW."Bill_type"   OR
+       OLD."Booking_id"  <> NEW."Booking_id"  OR
+       OLD."Customer_id" <> NEW."Customer_id" OR
+       OLD."Provider_id" <> NEW."Provider_id" OR
+       OLD."Concept"     <> NEW."Concept"     OR
+       OLD."Issued_date" <> NEW."Issued_date" OR
+      (OLD."Rectified" = TRUE AND NEW."Rectified" = FALSE) THEN
       RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
     END IF;
-    NEW := OLD;
-    NEW."Rectified" := TRUE;
   END IF;
 
   -- Cliente de la reserva

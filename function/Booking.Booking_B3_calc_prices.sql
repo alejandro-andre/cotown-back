@@ -20,22 +20,23 @@ DECLARE
 
   cy_rent NUMERIC;
   cy_services NUMERIC;
-  cy_second NUMERIC;
   cy_limit NUMERIC;
   cy_deposit NUMERIC;
+  cy_second NUMERIC;
+  cy_final_cleaning NUMERIC;
 
   ny_rent NUMERIC;
   ny_services NUMERIC;
-  ny_second NUMERIC;
   ny_limit NUMERIC;
   ny_deposit NUMERIC;
-
-  final_cleaning NUMERIC;
+  ny_second NUMERIC;
+  ny_final_cleaning NUMERIC;
 
   m_rent NUMERIC;
   m_services NUMERIC;
-  m_deposit NUMERIC;
   m_limit NUMERIC;
+  m_deposit NUMERIC;
+  m_final_cleaning NUMERIC;
 
   num INTEGER;
 
@@ -111,7 +112,7 @@ BEGIN
     "Deposit",
     "Limit",
     "Final_cleaning"
-  INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit, final_cleaning
+  INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit, cy_final_cleaning
   FROM "Billing"."Pricing_detail"
   WHERE "Building_id" = building_id
   AND "Flat_type_id" = flat_type
@@ -128,8 +129,9 @@ BEGIN
     "Services",
     "Second_resident",
     "Deposit",
-    "Limit"
-  INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit
+    "Limit",
+    "Final_cleaning"
+  INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit, ny_final_cleaning
   FROM "Billing"."Pricing_detail"
   WHERE "Building_id" = building_id
   AND "Flat_type_id" = flat_type
@@ -139,7 +141,7 @@ BEGIN
   -- Default prices to 0
   SELECT coalesce(cy_rent, 0), coalesce(cy_services, 0), coalesce(cy_second, 0), coalesce(cy_deposit, 0), coalesce(cy_limit, 0) INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit;
   SELECT coalesce(ny_rent, 0), coalesce(ny_services, 0), coalesce(ny_second, 0), coalesce(ny_deposit, 0), coalesce(ny_limit, 0) INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit;
-  SELECT coalesce(final_cleaning, 0) INTO final_cleaning;
+  SELECT coalesce(cy_final_cleaning, 0), coalesce(ny_final_cleaning, 0) INTO cy_final_cleaning, ny_final_cleaning;
 
   -- Second resident
   IF NEW."Second_resident" THEN
@@ -157,11 +159,13 @@ BEGIN
   m_services := ROUND(cy_services,0);
   m_deposit := ROUND(cy_deposit,0);
   m_limit := ROUND(cy_limit,0);
+  m_final_cleaning := ROUND(cy_final_cleaning,0);
   IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
     m_rent := ROUND(ny_rent);
     m_services := ROUND(ny_services,0);
     m_deposit := ROUND(ny_deposit,0);
     m_limit := ROUND(ny_limit,0);
+    m_final_cleaning := ROUND(ny_final_cleaning,0);
   END IF;  
 
   -- Insert base values
@@ -172,9 +176,7 @@ BEGIN
   NEW."Services" := m_services;
   NEW."Deposit" := m_deposit;
   NEW."Limit" := m_limit;
-  IF final_cleaning > 0 THEN
-    NEW."Final_cleaning" := final_cleaning; 
-  END IF;
+  NEW."Final_cleaning" := m_final_cleaning; 
 
   -- Insert prices
   WHILE dt_curr < dt_to LOOP
@@ -209,7 +211,7 @@ BEGIN
     
     -- Final cleaning
     IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to AND place_type IS NULL THEN
-      m_services := ROUND(m_services + coalesce(final_cleaning, 0),0);
+      m_services := ROUND(m_services + coalesce(m_final_cleaning, 0),0);
     END IF;
   
     -- Insert price
