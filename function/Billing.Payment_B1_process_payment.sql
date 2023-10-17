@@ -72,6 +72,8 @@ BEGIN
     -- CONFIRMADA a FIRMA CONTRATO
     IF (status_record = 'confirmada') THEN
       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+    ELSE
+      UPDATE "Booking"."Booking" SET "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
     END IF;
 
   END IF;
