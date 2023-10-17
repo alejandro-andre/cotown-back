@@ -4,6 +4,7 @@ DECLARE
   invoice_id INTEGER;
   customer_id INTEGER;
   status_record VARCHAR;
+  deposit NUMERIC;
   y VARCHAR;
   curr_user VARCHAR;
 
@@ -31,7 +32,7 @@ BEGIN
   NEW."Pay" := NULL;
 
   -- Seleccionamos el estado actual de la reserva
-  SELECT "Status" INTO status_record FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+  SELECT "Status", "Deposit" INTO status_record, deposit FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
   
   -- Superuser ROLE
   curr_user := CURRENT_USER;
@@ -55,10 +56,18 @@ BEGIN
       UPDATE "Booking"."Booking" SET "Status" ='alternativaspagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
     END IF;
   
-    -- PENDIENTE PAGO a CONFIRMADA
+    -- PENDIENTE PAGO a CONFIRMADA o FIRMACONTRATO
     -- Comprobamos si el estado es 'pendientepago'
     IF (status_record = 'pendientepago') THEN
-      UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+
+      -- Deposito no pagado aun
+      IF deposit IS NULL THEN
+        UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      -- Deposito pagado ANTES QUE EL BOOKING FEE
+      ELSE
+        UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      END IF;
+      
     END IF;    
 
   END IF;
