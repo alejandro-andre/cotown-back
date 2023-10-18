@@ -3,6 +3,6 @@
 **/log
 **/migration/*
 download/**
+migration/**
 upload/content/**
-migration/bookings.out.xlsx
-migration/prices.out.xlsx
+

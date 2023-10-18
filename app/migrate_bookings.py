@@ -160,7 +160,6 @@ def set_status(row):
 
   # Pending
   if row['Status'] == 'pending':
-    row['Resource_id'] = None
     return 'solicitud'
 
   # Dates
@@ -240,7 +239,6 @@ def lookup_customer(email):
   except:
     pass
 
-  print(email)
   return -1
 
 
@@ -299,6 +297,8 @@ df_bookings['Resource_id'] = df_bookings['Resource'].apply(lambda x: lookup_reso
 df_bookings['Building_id']   = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 3))
 df_bookings['Flat_type_id']  = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 4))
 df_bookings['Place_type_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 5))
+df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Building_id'].isnull()].index)
+print('Filas con edificio.........: ', df_bookings.shape[0])
 
 # 4. Calculated & cleaned up columns
 df_bookings['Booking_referral_id'] = 1
@@ -321,12 +321,12 @@ df_bookings['Date_from'] = df_bookings.apply(lambda row: check_dates(row, 'Date_
 df_bookings['Date_to']   = df_bookings.apply(lambda row: check_dates(row, 'Date_to'),   axis=1)
 df_bookings['Check_in']  = df_bookings.apply(lambda row: check_dates(row, 'Check_in'),  axis=1)
 df_bookings['Check_out'] = df_bookings.apply(lambda row: check_dates(row, 'Check_out'), axis=1)
-print(df_bookings[df_bookings['Date_from'] == PAST])
 df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Date_from'] == PAST].index)
 print('Filas con fechas correctas.: ', df_bookings.shape[0])
 
 # 7. Calculate status
 df_bookings['Status'] = df_bookings.apply(lambda row: set_status(row), axis=1)
+df_bookings.loc[df_bookings['Status'] == 'solicitud', 'Resource_id'] = None
 
 # 8. Drop columns
 df_bookings.drop('Customer', axis=1, inplace=True)
