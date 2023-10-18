@@ -30,16 +30,16 @@ En adelante denominada la "**Arrendataria**"
 
 I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_flat_street}} (la "**habitación**"), 
 
-II.- Que, el Proveedor de Servicios es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
+II.- Que, **el Proveedor de Servicios** es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
 
-III.- Y, siendo la voluntad del Arrendatario contratar los servicios del el Proveedor de Servicios y este en prestarlos, los sujetan a los siguientes.
+III.- Y, siendo la voluntad del Arrendatario contratar los servicios de **el Proveedor de Servicios**S y este en prestarlos, los sujetan a los siguientes.
 
 
 ## ESTIPULACIONES
 
 1.- El Arrendatario contrata a el Proveedor de Servicios para que lleve a cabo los servicios de limpieza de las zonas comunes del piso donde el Arrendatario tiene arrendada la habitación (el "**Servicio**") con total autonomía a independencia, conforme a los usos y costumbres del sector de actividad del Proveedor de Servicios, con el uso de su propio personal con la cualificación y experiencia adecuadas, medios materiales y  todos aquellos necesarios para la correcta prestación del servicio aquí contratado.
 
-El Proveedor de Servicios asumirá el coste del personal, medios, material, gastos e impuestos necesarios para la prestación del servicio aquí contratado.
+**El Proveedor de Servicios** asumirá el coste del personal, medios, material, gastos e impuestos necesarios para la prestación del servicio aquí contratado.
 
 2.- Los servicios a prestar consistirán en la limpieza periódica según condiciones de la reserva de las zonas comunes del piso donde el Arrendatario tiene arrendada una habitación.
 
@@ -51,7 +51,7 @@ El Proveedor de Servicios asumirá el coste del personal, medios, material, gast
 
 que se llevará a cabo de forma mensual por el Arrendatario y durante todo el tiempo que dure el arrendamiento de la habitación/piso, mediante su pago con tarjeta bancaria o bien mediante domiciliación bancaria en caso de disponer de una cuenta bancaria española previa la firma del documento SEPA.
 
-4.- El Proveedor de Servicios será el único responsable por el personal por ella contratado para la prestación del servicio.
+4.- **El Proveedor de Servicios** será el único responsable por el personal por ella contratado para la prestación del servicio.
 
 5.- El impago de una sola mensualidad del servicio será causa de resolución del presente contrato de servicios.
 
@@ -73,7 +73,7 @@ Por último, Las partes quedan informadas de que sus datos se conservarán duran
 
 Asimismo, las comunicaciones se podrán llevar a cabo a las direcciones de correo electrónico siguientes, siempre que se tenga constancia escrita de su recepción.
 
-Las notificaciones al Proveedor de Servicios se efectuarán en la persona de contacto de {{Service_signers[0].Service_signer_name}} a la dirección de correo electrónico: {{Service_email}}
+Las notificaciones a **el Proveedor de Servicios** se efectuarán en la persona de contacto de {{Service_signers[0].Service_signer_name}} a la dirección de correo electrónico: {{Service_email}}
 
 Las notificaciones al Arrendatario se efectuarán a la dirección de correo electrónico: {{Customer_email}}
 

@@ -16,6 +16,9 @@ import mimetypes
 import base64
 import requests
 
+from pillow_heif import register_heif_opener
+register_heif_opener()
+
 # Cotown includes
 from library.services.config import settings
 from library.services.apiclient import APIClient
@@ -88,6 +91,7 @@ def add_doc(index, type_id, customer_id, filepath_front, filepath_back):
         mimetype_front, _ = mimetypes.guess_type('../migration/' + filepath_front)
     if filepath_back:
         mimetype_back, _ = mimetypes.guess_type('../migration/' + filepath_back)
+    print(mimetype_front, mimetype_back)
 
     # Thumbnail
     thumbnail_front = ''
@@ -210,6 +214,9 @@ for index, row in df.iterrows():
     # Path
     if len(data['data']) > 0:
 
+        if index < 41:
+            continue
+
         # Customer data
         customer = data['data'][0]
         ecount += 1
@@ -230,9 +237,6 @@ for index, row in df.iterrows():
             type_id = 9
             add_doc(index, type_id, customer['id'], row['doc_4'], None)
             dcount += 1
-
-    if index > 4:
-        break
 
 print('Emails procesados..........: ', ecount)
 print('Documentos procesados......: ', dcount)
