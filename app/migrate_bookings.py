@@ -43,7 +43,7 @@ Qi80#GW1AA7N
 -- 7a. Datos de reserva individuales
 SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
 	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   DATE_FORMAT(b.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out, 
+	   DATE_FORMAT(br.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(br.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out, 
        r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS Confirmation_date, 
 	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
 FROM booking_resource br 
@@ -160,6 +160,7 @@ def set_status(row):
 
   # Pending
   if row['Status'] == 'pending':
+    row['Resource_id'] = None
     return 'solicitud'
 
   # Dates
@@ -207,7 +208,7 @@ def lookup_resource(code, index=0):
   except:
     pass
 
-  return -1
+  return None
 
 def lookup_booking(id):
 
@@ -293,7 +294,6 @@ print('Filas con cliente..........: ', df_bookings.shape[0])
 
 # 2. Resource
 df_bookings['Resource_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x))
-df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Resource_id'] == -1].index)
 
 # 3. Request
 df_bookings['Building_id']   = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 3))
@@ -321,6 +321,7 @@ df_bookings['Date_from'] = df_bookings.apply(lambda row: check_dates(row, 'Date_
 df_bookings['Date_to']   = df_bookings.apply(lambda row: check_dates(row, 'Date_to'),   axis=1)
 df_bookings['Check_in']  = df_bookings.apply(lambda row: check_dates(row, 'Check_in'),  axis=1)
 df_bookings['Check_out'] = df_bookings.apply(lambda row: check_dates(row, 'Check_out'), axis=1)
+print(df_bookings[df_bookings['Date_from'] == PAST])
 df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Date_from'] == PAST].index)
 print('Filas con fechas correctas.: ', df_bookings.shape[0])
 
