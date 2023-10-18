@@ -1,9 +1,6 @@
 *.zip
 **/__pycache__/*
 **/log
-/download
-/upload/content/**
-/migration/**
-/migration/*.csv
-/migration/*.xls*
-
+download
+upload/content/**
+migration/**
