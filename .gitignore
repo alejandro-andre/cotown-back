@@ -4,3 +4,6 @@
 /download
 /upload/content/**
 /migration/**
+/migration/*.csv
+/migration/*.xls*
+
