@@ -1,6 +1,6 @@
 *.zip
 **/__pycache__/*
 **/log
-download
+**/migration/*
+download/**
 upload/content/**
-migration/**
