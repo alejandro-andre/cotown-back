@@ -83,94 +83,96 @@ https://www.3kcoliving.es/backoffice/admin/students/1358/documents/2/download
 def add_doc(index, type_id, customer_id, filepath_front, filepath_back):
 
     print(index, type_id, customer_id, filepath_front, filepath_back)
+    if type_id is None:
+        return
 
-    # File data
-    mimetype_front = ''
-    mimetype_back = ''
-    if filepath_front:
-        mimetype_front, _ = mimetypes.guess_type('../migration/' + filepath_front)
-    if filepath_back:
-        mimetype_back, _ = mimetypes.guess_type('../migration/' + filepath_back)
-    print(mimetype_front, mimetype_back)
-
-    # Thumbnail
-    thumbnail_front = ''
-    thumbnail_back = ''
-    if filepath_front and 'image/' in mimetype_front:
-        image = Image.open('../migration/' + filepath_front)
-        width_fromt, height_front = image.size
-        image.thumbnail((256 , 256))
-        bio = BytesIO()
-        image.save(bio, format='PNG')
-        bio.seek(0)
-        thumbnail_front = base64.b64encode(bio.read()).decode('utf-8')
-    if filepath_back and 'image/' in mimetype_back:
-        image = Image.open('../migration/' + filepath_back)
-        width_back, height_back = image.size
-        image.thumbnail((256 , 256))
-        bio = BytesIO()
-        image.save(bio, format='PNG')
-        bio.seek(0)
-        thumbnail_back = base64.b64encode(bio.read()).decode('utf-8')
-
-    # Open file
-    oid_front = 0
-    oid_back = 0
-    if filepath_front:
-        with open('../migration/' + filepath_front, 'rb') as file:
-            url = 'https://' + apiClient.server + '/document/Customer/Customer_doc/' + str(index + 1) + '/' + 'Document/contents?access_token=' + apiClient.token
-            response = requests.post(url, data=file.read(), headers={ 'Content-Type': mimetype_front })
-            oid_front = int(response.content)
-
-    if filepath_back:
-        with open('../migration/' + filepath_back, 'rb') as file:
-            url = 'https://' + apiClient.server + '/document/Customer/Customer_doc/' + str(index + 1) + '/' + 'Document_back/contents?access_token=' + apiClient.token
-            response = requests.post(url, data=file.read(), headers={ 'Content-Type': mimetype_front })
-            oid_back = int(response.content)
-
-    # Insert query
-    query = '''
-        mutation ($cid: Int! $tid: Int! $file_front: Models_DocumentTypeInputType $file_back: Models_DocumentTypeInputType) {
-            data: Customer_Customer_docCreate (
-                entity: {
-                    Customer_id: $cid
-                    Customer_doc_type_id: $tid
-                    Document: $file_front
-                    Document_back: $file_back
-                }
-            ) { 
-                id 
-            }
-        }'''
-
-    # Variables
-    vars = {
-        'authorization': apiClient.token,
-        'cid': int(customer_id),
-        'tid': int(type_id)
-    }
-    if filepath_front:
-        vars['file_front'] = { 
-            'oid': oid_front, 
-            'type': mimetype_front,
-            'name': filepath_front.split('/')[-1],
-            'thumbnail': 'data:' + mimetype_front + ';base64,' + thumbnail_front if thumbnail_front != '' else None
-        }
-    if filepath_back:
-        vars['file_back'] = { 
-            'oid': oid_back, 
-            'type': mimetype_back,
-            'name': filepath_back.split('/')[-1],
-            'thumbnail': 'data:' + mimetype_back + ';base64,' + thumbnail_back if thumbnail_back != '' else None
-        }
-
-    # Insert record
-    #print(vars)
     try:
+        # File data
+        mimetype_front = ''
+        mimetype_back = ''
+        if filepath_front:
+            mimetype_front, _ = mimetypes.guess_type('./migration/' + filepath_front)
+        if filepath_back:
+            mimetype_back, _ = mimetypes.guess_type('./migration/' + filepath_back)
+        print(mimetype_front, mimetype_back)
+
+        # Thumbnail
+        thumbnail_front = ''
+        thumbnail_back = ''
+        if filepath_front and 'image/' in mimetype_front:
+            image = Image.open('./migration/' + filepath_front)
+            width_fromt, height_front = image.size
+            image.thumbnail((256 , 256))
+            bio = BytesIO()
+            image.save(bio, format='PNG')
+            bio.seek(0)
+            thumbnail_front = base64.b64encode(bio.read()).decode('utf-8')
+        if filepath_back and 'image/' in mimetype_back:
+            image = Image.open('./migration/' + filepath_back)
+            width_back, height_back = image.size
+            image.thumbnail((256 , 256))
+            bio = BytesIO()
+            image.save(bio, format='PNG')
+            bio.seek(0)
+            thumbnail_back = base64.b64encode(bio.read()).decode('utf-8')
+
+        # Open file
+        oid_front = 0
+        oid_back = 0
+        if filepath_front:
+            with open('./migration/' + filepath_front, 'rb') as file:
+                url = 'https://' + apiClient.server + '/document/Customer/Customer_doc/' + str(index + 1) + '/' + 'Document/contents?access_token=' + apiClient.token
+                response = requests.post(url, data=file.read(), headers={ 'Content-Type': mimetype_front })
+                oid_front = int(response.content)
+
+        if filepath_back:
+            with open('./migration/' + filepath_back, 'rb') as file:
+                url = 'https://' + apiClient.server + '/document/Customer/Customer_doc/' + str(index + 1) + '/' + 'Document_back/contents?access_token=' + apiClient.token
+                response = requests.post(url, data=file.read(), headers={ 'Content-Type': mimetype_front })
+                oid_back = int(response.content)
+
+        # Insert query
+        query = '''
+            mutation ($cid: Int! $tid: Int! $file_front: Models_DocumentTypeInputType $file_back: Models_DocumentTypeInputType) {
+                data: Customer_Customer_docCreate (
+                    entity: {
+                        Customer_id: $cid
+                        Customer_doc_type_id: $tid
+                        Document: $file_front
+                        Document_back: $file_back
+                    }
+                ) { 
+                    id 
+                }
+            }'''
+
+        # Variables
+        vars = {
+            'authorization': apiClient.token,
+            'cid': int(customer_id),
+            'tid': int(type_id)
+        }
+        if filepath_front:
+            vars['file_front'] = { 
+                'oid': oid_front, 
+                'type': mimetype_front,
+                'name': filepath_front.split('/')[-1],
+                'thumbnail': 'data:' + mimetype_front + ';base64,' + thumbnail_front if thumbnail_front != '' else None
+            }
+        if filepath_back:
+            vars['file_back'] = { 
+                'oid': oid_back, 
+                'type': mimetype_back,
+                'name': filepath_back.split('/')[-1],
+                'thumbnail': 'data:' + mimetype_back + ';base64,' + thumbnail_back if thumbnail_back != '' else None
+            }
+
+        # Insert record
+        #print(vars)
         apiClient.call(query, vars)
+
     except Exception as e:
         print(e)
-
 
 # #####################################
 # Main
@@ -183,7 +185,7 @@ apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 # Load data, csv in Excel format
 print('DOCUMENTOS')
 pd.options.display.max_columns = 0
-df = pd.read_csv('../migration/files.in.csv', delimiter=';', encoding='utf-8')
+df = pd.read_csv('./migration/files.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
 # Group by email
@@ -224,6 +226,8 @@ for index, row in df.iterrows():
         # Document type
         if row['doc_1'] or row['doc_2']:
             type_id = customer['Id_type_id']
+            if type_id is None:
+                type_id = 1
             add_doc(index, type_id, customer['id'], row['doc_1'], row['doc_2'])
             dcount += 1
 

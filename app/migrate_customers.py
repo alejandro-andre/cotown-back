@@ -156,7 +156,7 @@ ORDER BY r.email;
 
 # Load data, csv in Excel format
 print('CLIENTES')
-df = pd.read_csv('../migration/customers.in.csv', delimiter=';', encoding='utf-8')
+df = pd.read_csv('./migration/customers.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
 # 0. Debug. Change email addresses
@@ -213,7 +213,7 @@ df['City'] = df['City'].str.slice(0, 50)
 df['Zip'] = df['Zip'].str.slice(0, 20)
 
 # Save data to XLSX
-file = '../migration/customers.out.xlsx'
+file = './migration/customers.out.xlsx'
 df.to_excel(file, index=False, startrow=1)
 wb = openpyxl.load_workbook(file)
 sheet = wb.active

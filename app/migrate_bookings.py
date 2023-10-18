@@ -185,7 +185,7 @@ def set_status(row):
       return 'inhouse'
 
   # Confirmed
-  return 'pendientepago'
+  return 'confirmada'
 
 def lookup_resource(code, index=0):
 
@@ -282,7 +282,7 @@ dbClient.disconnect()
 
 # Load data, csv in Excel format
 print('\nRESERVAS')
-df_bookings = pd.read_csv('../migration/bookings.in.csv', delimiter=';', encoding='utf-8')
+df_bookings = pd.read_csv('./migration/bookings.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df_bookings.shape[0])
 
 # 1. Customer
@@ -338,7 +338,7 @@ df_bookings.drop('cleaning_service_amount', axis=1, inplace=True)
 df_bookings.drop('Payment_method_id', axis=1, inplace=True)
 
 # Save data to XLSX
-file = '../migration/bookings.out.xlsx'
+file = './migration/bookings.out.xlsx'
 df_bookings.to_excel(file, index=False, startrow=1)
 wb = openpyxl.load_workbook(file)
 sheet = wb.active
@@ -359,7 +359,7 @@ xls_workbook.save(file[:-1])
 
 # Load data, csv in Excel format
 print('\nPRECIOS')
-df_prices = pd.read_csv('../migration/prices.in.csv', delimiter=';', encoding='utf-8')
+df_prices = pd.read_csv('./migration/prices.in.csv', delimiter=';', encoding='utf-8')
 df_prices = df_prices.drop_duplicates(subset=['Booking_id', 'Rent_date'])
 print('Filas no duplicadas........: ', df_prices.shape[0])
 
@@ -379,7 +379,7 @@ df_prices['Services'] = df_prices['Services'].round(0);
 df_prices.insert(0, 'id', range(1, 1 + len(df_prices)))
 
 # Save data to XLSX
-file = '../migration/prices.out.xlsx'
+file = './migration/prices.out.xlsx'
 df_prices.to_excel(file, index=False, startrow=1)
 wb = openpyxl.load_workbook(file)
 sheet = wb.active
