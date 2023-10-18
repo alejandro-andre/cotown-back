@@ -185,4 +185,4 @@ def do_email(apiClient, email):
       logger.debug(subject)
       logger.debug(body)
       #smtp_mail(email['Customer']['Email'], subject, body)
-      smtp_mail('test@cotown.com', subject, body)
+      #smtp_mail('test@cotown.com', subject, body)

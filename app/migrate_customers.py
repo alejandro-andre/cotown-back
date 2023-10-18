@@ -179,7 +179,14 @@ df.drop('Locale', axis=1, inplace=True)
 df = df.groupby(['Email']).apply(consolidate)
 print('Filas con diferente email..: ', df.shape[0])
 
-# 5. Drop duplicates in 'Document'
+# 5.1 Concat all customer ids
+df['Customer_id'] = df['Customer_id'].astype(str)
+df['Ids'] = df.groupby('Document')['Customer_id'].transform(lambda x: ', '.join(x))
+df['Ids'] = df.apply(lambda row: row['Customer_id'] if row['Document'] == '' else row['Ids'], axis=1)
+# 5.2 Concat all emails
+df['Emails'] = df.groupby('Document')['Email'].transform(lambda x: ', '.join(x))
+df['Emails'] = df.apply(lambda row: row['Email'] if row['Document'] == '' else row['Emails'], axis=1)
+# 5.3 Consolidate by 'Document'
 df = df[~(df['Document'].duplicated(keep='last') & (df['Document'] != ''))]
 print('Filas sin id duplicado.....: ', df.shape[0])
 
@@ -192,9 +199,11 @@ df['Name'] = df['Name'].str.title()
 df['Type'] = 'persona'
 df['Black_list'] = False
 df['User_name'] = 'N' + df['id'].astype(str).str.zfill(6)
-df['Comments'] = '(' + df['Customer_id'].astype(str) + ') ' + np.where(df['Language_id'].ne(''), 'Idiomas: ' + df['Language_id'].astype(str), '')
+df['Comments'] = '[' + df['Ids'].astype(str) + '] (' + df['Emails'] + ') ' + np.where(df['Language_id'].ne(''), 'Idiomas: ' + df['Language_id'].astype(str), '')
 df.drop('Customer_id', axis=1, inplace=True)
 df.drop('Language_id', axis=1, inplace=True)
+df.drop('Ids', axis=1, inplace=True)
+df.drop('Emails', axis=1, inplace=True)
 
 # 8. NIF/NIE
 df['Id_type_id'] = df.apply(lambda row: nif_nie(row['Document'], row['Id_type_id']), axis=1)

@@ -16,8 +16,8 @@ import xlwt
 import re
 
 # Cotown includes
-from app.library.services.config import settings
-from app.library.services.dbclient import DBClient
+from library.services.config import settings
+from library.services.dbclient import DBClient
 
 # Constants
 PAST = datetime.strptime('1900-01-01', '%Y-%m-%d')
@@ -55,32 +55,42 @@ LEFT JOIN requesters r ON r.id = rq.requester_id
 LEFT JOIN resources re ON re.id = br.resource_id
 LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
 WHERE bl.id IS NULL
+AND b.to > '2023-10-01'
 AND re.id IS NOT NULL
 
 UNION
 
--- 7b. Solicitudes
 SELECT rq.id, rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
 	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   DATE_FORMAT(b.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(b.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out, 
+	   DATE_FORMAT(rq.from, "%Y-%m-%d") AS Date_from, DATE_FORMAT(rq.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out, 
        r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, NULL AS Confirmation_date, 
 	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
 FROM requests rq
 LEFT JOIN requesters r ON r.id = rq.requester_id 
 LEFT JOIN resources re ON re.id = rq.resource_id
-LEFT JOIN bookings b ON b.request_id = rq.id
 WHERE rq.state IN ('pending', 'accepted')
 AND re.id IS NOT NULL
-AND b.id IS NULL;
+AND rq.to > '2023-10-01';
 
 -- 4. Precios
 SELECT br.id AS "Booking_id", CONCAT (y.number, '-', LPAD(m.number, 2, '0'), '-01') AS "Rent_date", cp.amount AS "Rent", cp.amount_cleaning_service AS "Services"
 FROM booking_resource br
 LEFT JOIN bookings b ON b.id = br.booking_id
 LEFT JOIN requests r ON r.id = b.request_id
+LEFT JOIN confirmed_prices cp ON br.id = cp.booking_resource_id
+INNER JOIN months m ON m.id = cp.month_id 
+INNER JOIN years y ON y.id = m.year_id 
+WHERE b.to > '2023-10-01'
+
+UNION 
+
+SELECT r.id AS "Booking_id", CONCAT (y.number, '-', LPAD(m.number, 2, '0'), '-01') AS "Rent_date", cp.amount AS "Rent", cp.amount_cleaning_service AS "Services"
+FROM requests r
 LEFT JOIN confirmed_prices cp ON r.id = cp.request_id
 INNER JOIN months m ON m.id = cp.month_id 
 INNER JOIN years y ON y.id = m.year_id 
+WHERE r.to > '2023-10-01'
+
 ORDER BY 1, 2, 3;
 '''
 
@@ -212,15 +222,24 @@ def lookup_booking(id):
 
 def lookup_customer(email):
 
-  email = email.split('@')[0] + '@test.com'
+  #email = email.split('@')[0] + '@test.com'
   email = re.sub(r'[^a-zA-Z0-9-_.@]', '', email)
 
+  # Search main email
   try:
     id = df_cus.loc[df_cus[1] == email, 0].values[0]
     return id
   except:
     pass
 	
+  # Search other emails
+  try:
+    id = df_cus.loc[df_cus[2].str.contains(email, case=False, na=False), 0].values[0]
+    return id
+  except:
+    pass
+
+  print(email)
   return -1
 
 
@@ -246,7 +265,7 @@ print('ACCESO A BD')
 # #####################################
 
 # Load customers
-dbClient.select('''SELECT id, "Email" FROM "Customer"."Customer"''')
+dbClient.select('''SELECT id, "Email", "Comments" FROM "Customer"."Customer"''')
 df_cus = pd.DataFrame.from_records(dbClient.fetchall())
 print('Clientes...................: ', df_cus.shape[0])
 
@@ -315,6 +334,7 @@ df_bookings.drop('rental_deposit_amount', axis=1, inplace=True)
 df_bookings.drop('rental_deposit_amount_contract', axis=1, inplace=True)
 df_bookings.drop('hiring_expense_amount', axis=1, inplace=True)
 df_bookings.drop('cleaning_service_amount', axis=1, inplace=True)
+df_bookings.drop('Payment_method_id', axis=1, inplace=True)
 
 # Save data to XLSX
 file = '../migration/bookings.out.xlsx'
@@ -339,7 +359,8 @@ xls_workbook.save(file[:-1])
 # Load data, csv in Excel format
 print('\nPRECIOS')
 df_prices = pd.read_csv('../migration/prices.in.csv', delimiter=';', encoding='utf-8')
-print('Filas originales...........: ', df_prices.shape[0])
+df_prices = df_prices.drop_duplicates(subset=['Booking_id', 'Rent_date'])
+print('Filas no duplicadas........: ', df_prices.shape[0])
 
 # 1. Create row
 df_prices['Rent_date'] = df_prices['Rent_date'].apply(lambda x: get_date(x))
