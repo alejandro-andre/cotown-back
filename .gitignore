@@ -4,3 +4,5 @@
 **/migration/*
 download/**
 upload/content/**
+migration/bookings.out.xlsx
+migration/prices.out.xlsx
