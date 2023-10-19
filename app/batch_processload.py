@@ -122,7 +122,7 @@ def main():
         ok, l = load_rooming(dbClient, workbook[sheet])
 
       # Ignore list
-      elif sheet in ('Id_type', 'Gender', 'Country', 'Language'):
+      elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
         ok, l = True, ''
 
       # Other
