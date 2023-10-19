@@ -3,6 +3,7 @@ query Rooms ($id: Int) {
         orderBy: [{attribute: Resource_id}]
         where: { Booking_id: { EQ: $id } }
     ) {
+        id
         Booking_id
         Resource: ResourceViaResource_id {
             id
