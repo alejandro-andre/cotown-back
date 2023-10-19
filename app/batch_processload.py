@@ -18,6 +18,7 @@ from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
 from library.business.load_prices import load_prices
 from library.business.load_resources import load_resources
+from library.business.load_rooming import load_rooming
 
 # Logging
 import logging
@@ -105,19 +106,28 @@ def main():
     # Process each sheet
     for sheet in workbook.sheetnames:
 
-      # Processing
-      log += sheet + '\n'
-
       # Resources
       if sheet == 'Recursos':
+        log += sheet + '\n'
         ok, l = load_resources(dbClient, workbook[sheet])
 
       # Prices
       elif sheet == 'Precios':
+        log += sheet + '\n'
         ok, l = load_prices(dbClient, workbook[sheet])
+
+      # Rooming list
+      elif sheet == 'Rooming':
+        log += sheet + '\n'
+        ok, l = load_rooming(dbClient, workbook[sheet])
+
+      # Ignore list
+      elif sheet in ('Id_type', 'Gender', 'Country', 'Language'):
+        ok, l = True, ''
 
       # Other
       else:
+        log += sheet + '\n'
         ok, l = False, 'Error: Tipo de carga desconcida.'
 
       # Append log
