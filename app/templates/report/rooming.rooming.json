@@ -1,12 +1,13 @@
 [
-"Booking_id",
 "Resource.id",
 "Resource.Code",
 "Check_in",
 "Check_out",
+"Booking_id",
 "Id_type.Name",
 "Document",
 "Name",
+"Gender.Name",
 "Email",
 "Phones",
 "Address",
@@ -14,7 +15,6 @@
 "City",
 "Province",
 "Country.Name",
-"Gender.Name",
 "Language.Name",
 "Nationality.Name",
 "Origin.Name"

@@ -1,0 +1,7 @@
+{
+    data: Geo_CountryList ( orderBy: [{attribute: Name}] ) 
+    {
+        id
+        Name
+    }
+}

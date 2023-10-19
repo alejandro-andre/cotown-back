@@ -6,6 +6,7 @@
 from openpyxl import load_workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.formula.translate import Translator
+from openpyxl.worksheet.datavalidation import DataValidation
 from datetime import datetime
 from io import BytesIO
 import pandas as pd
@@ -27,6 +28,33 @@ logger = logging.getLogger('COTOWN')
 
 def fill_sheet(df, columns, sheet):
 
+  # Validations
+  if sheet.title.lower() == 'rooming':
+
+    #IdType
+    dvIdType = DataValidation(type='list', formula1='=Id_type!$B$3:$B$9999', allow_blank=True)
+    dvIdType.showInputMessage = True 
+    dvIdType.showErrorMessage = True
+    sheet.add_data_validation(dvIdType)
+
+    # Gender
+    dvGender = DataValidation(type='list', formula1='=Gender!$B$3:$B$9999', allow_blank=True)
+    dvGender.showInputMessage = True 
+    dvGender.showErrorMessage = True
+    sheet.add_data_validation(dvGender)
+
+    # Country
+    dvCountry = DataValidation(type='list', formula1='=Country!$B$3:$B$9999', allow_blank=True)
+    dvCountry.showInputMessage = True 
+    dvCountry.showErrorMessage = True
+    sheet.add_data_validation(dvCountry)
+
+    # Language
+    dvLanguage = DataValidation(type='list', formula1='=Language!$B$3:$B$9999', allow_blank=True)
+    dvLanguage.showInputMessage = True 
+    dvLanguage.showErrorMessage = True
+    sheet.add_data_validation(dvLanguage)
+
   # Select and sort columns
   df = df.reindex([item.split(':')[0] for item in columns], axis=1)
 
@@ -45,6 +73,17 @@ def fill_sheet(df, columns, sheet):
 
       # Get cell
       cell = sheet.cell(row = r + start - 2, column = c + 1)
+
+      # Test validation
+      if sheet.title.lower() == 'rooming':
+        if columns[c] == 'Id_type.Name':
+          dvIdType.add(cell)
+        if columns[c] == 'Gender.Name':
+          dvGender.add(cell)
+        if columns[c] == 'Country.Name' or columns[c] == 'Nationality.Name' or columns[c] == 'Origin.Name':
+          dvCountry.add(cell)
+        if columns[c] == 'Language.Name':
+          dvLanguage.add(cell)
 
       # Copy style
       cell._style = styles[c]
@@ -80,6 +119,8 @@ def fill_sheet(df, columns, sheet):
         else:
           cell.value = row[c]
 
+  #http://localhost:5000/api/v1/export/rooming?id=1
+
 
 # ###################################################
 # Export graphql to excel
@@ -96,7 +137,9 @@ def query_to_excel(apiClient, dbClient, name, variables=None):
   # Get template
   fi = open('templates/report/' + name + '.xlsx', 'rb')
   template = BytesIO(fi.read())
-  
+
+  #http://localhost:5000/api/v1/export/rooming?id=1
+
   # Open template
   warnings.simplefilter(action='ignore', category=UserWarning)
   wb = load_workbook(filename=BytesIO(template.read()))
