@@ -47,13 +47,13 @@ El proveedor de servicios asumirá el coste del personal, medios, material, gast
 
 2. - Los servicios a prestar consistirán en: 
 
-- Limpieza de las zonas comunes del piso / pisos arrendados con periodicidad quincenal. 
+- Limpieza de las zonas comunes del piso / pisos arrendados con periodicidad {{Booking_cleaning_freq}}. 
 
 - Limpieza de salida.
 
 - Atención a incidencias de mantenimiento .
 
-3. - La retribución global por la prestación del servicio consistirá en el pago de {{Booking_services}} euros mensuales (21% IVA incluido) por plaza que se llevará a cabo de forma mensual por el ARRENDATARIO y durante todo el tiempo que dure el arrendamiento, más el pago de 45 euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia, mediante transferencia bancaria al número de cuenta bancaria designada por **el Proveedor de servicios**. 
+3. - La retribución global por la prestación del servicio consistirá en el pago de {{Booking_services}} euros mensuales (21% IVA incluido) por plaza que se llevará a cabo de forma mensual por el ARRENDATARIO y durante todo el tiempo que dure el arrendamiento, más el pago de {{Booking_final_cleaning}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia, mediante transferencia bancaria al número de cuenta bancaria designada por **el Proveedor de servicios**. 
 
 4. - **El proveedor de servicios** será el único responsable por el personal por ella contratado para la prestación del servicio. 
 

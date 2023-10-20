@@ -243,6 +243,8 @@ query Booking_groupById ($id: Int!) {
     Booking_services: Services
     Booking_deposit: Deposit
     Booking_limit: Limit
+    Booking_final_cleaning: Final_cleaning
+    Bookling_cleaning_freq: Cleaning_freq
     CustomerViaPayer_id {
       Id_typeViaId_type_id {
         Customer_id_type: Name
