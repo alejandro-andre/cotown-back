@@ -79,14 +79,14 @@ print(len(model_oids))
 print(len(db_oids))
 print(len(orphan))
 print(len(errors))
-print()
+print(errors)
 
 # Unlink (test)
-for index, oid in enumerate(sorted(orphan)):
-  print(oid)
-  dbClient.execute(f'select lo_unlink({oid})''')
-  if index % 100 == 0:
-    dbClient.commit()
+#for index, oid in enumerate(sorted(orphan)):
+#  print(oid)
+#  dbClient.execute(f'select lo_unlink({oid})''')
+#  if index % 100 == 0:
+#    dbClient.commit()
 
 # End
 dbClient.commit()
