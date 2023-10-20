@@ -36,7 +36,7 @@ Los comparecientes tienen, según se reconocen recíprocamente, la capacidad jur
 
 I. Que, la Arrendadora es propietaria de la siguiente finca: 
 
-- Calle:  {{Rooms[0].Resource_flat_address}}
+- Calle:  {{Rooms[0].Resource_flat_street}}
 - Ciudad: {{Rooms[0].Resource_building_city}}
 - Piso/s: {{Flats}}
 
