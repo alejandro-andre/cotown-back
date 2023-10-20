@@ -246,6 +246,7 @@ query Booking_groupById ($id: Int!) {
     Booking_final_cleaning: Final_cleaning
     Booking_cleaning_freq: Cleaning_freq
     CustomerViaPayer_id {
+      Customer_type: Type
       Id_typeViaId_type_id {
         Customer_id_type: Name
       }
