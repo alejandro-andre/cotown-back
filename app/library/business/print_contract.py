@@ -244,7 +244,7 @@ query Booking_groupById ($id: Int!) {
     Booking_deposit: Deposit
     Booking_limit: Limit
     Booking_final_cleaning: Final_cleaning
-    Bookling_cleaning_freq: Cleaning_freq
+    Booking_cleaning_freq: Cleaning_freq
     CustomerViaPayer_id {
       Id_typeViaId_type_id {
         Customer_id_type: Name
@@ -602,22 +602,23 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    # template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
-    # if template is not None:
-    #   file = generate_doc_file(context, template.content)
-    #   response = requests.post(
-    #     'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
-    #     files={'file': file}
-    #   )
-    #   json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+    template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
+    if template is not None:
+      file = generate_doc_file(context, template.content)
+      response = requests.post(
+        'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token, 
+        files={'file': file}
+      )
+      json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
     query = '''
-    mutation ($id: Int! $rent: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
       Booking_Booking_groupUpdate (
         where:  { id: {EQ: $id} }
         entity: { 
           Contract_rent: $rent 
+          Contract_services: $svcs 
         }
       ) { id }
     }

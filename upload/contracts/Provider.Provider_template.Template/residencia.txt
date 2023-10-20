@@ -1,0 +1,359 @@
+# CONTRATO DE HOSPEDAJE: RESIDENCIA DE ESTUDIANTES.
+
+
+
+En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
+
+
+## LAS PARTES
+
+**La Empresa.**
+
+{%if Owner_id_type=='CIF'%}
+De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+{%else%}
+De una parte, {{Owner_name}}, mayor de edad, con {{Owner_id_type}} núm. {{Owner_id}}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}} actuando en su nombre y representación.
+{%endif%}
+
+En adelante denominada "**Empresa**".
+
+**Residente.**
+
+{%if Customer_type=='empresa'%}
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} {{Customer_id}}.
+{%elif Customer_birth_date|age >= 18%}
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
+{%else%}
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
+{%endif%}
+
+En adelante denominada la "**Residente**"
+
+La Empresa y la Residente serán referidas conjuntamente en adelante como las "Partes".
+
+Las Partes acuerdan conjuntamente suscribir el presente contrato de hospedaje que se regirá por las siguientes condiciones particulares (las "Condiciones Particulares") y las condiciones generales (las "Condiciones Generales"):
+
+
+## CONDICIONES PARTICULARES
+
+## 1. Objeto.
+
+1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Residente y la Empresa en todo lo relativo al contrato de Hospedaje, (en adelante el "Contrato de Hospedaje"), en el edificio de la calle {{Resource_flat_street}} de la ciudad de {{Resource_building_city}}, y para el tipo de habitación acordado en el documento de reserva (la "Habitación") y por el plazo que luego se dirá. 
+
+### 1.2. Vinculación con las Condiciones Generales.
+
+Las Condiciones Particulares están vinculadas necesaria y obligatoriamente con las condiciones generales que se contienen a continuación de las condiciones particulares (las "Condiciones Generales") y que completan a las presentes condiciones particulares en todo lo no previsto en las mismas, siendo éstas de obligado cumplimiento, las cuales se dan aquí por reproducidas y por tanto aceptadas mediante la firma del presente documento, formando desde ese momento las condiciones Particulares y la Generales de forma conjunta e indisoluble las condiciones del presente Contrato de Hospedaje.
+
+### 1.3 Vinculación con las Normas de Uso.
+
+Las Condiciones Particulares del presente Contrato de Habitación están vinculadas necesariamente con las normas de uso que constan en anexo y en la página web  de la Empresa y de la Gestora (las "Normas de Uso"), y completan a las Condiciones Particulares y las Condiciones Generales del Contrato de Habitación, siendo de obligado cumplimiento para la Residente en todo momento durante la duración del presente Contrato de Hospedaje.
+
+### 1.4 Designación de la gestora.
+
+La Empresa tiene designada para la gestión de este contrato de Hospedaje y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "Gestora"). 
+
+La Empresa tiene delegada en la web de la gestora https://vandguard-student-housing.com el área privada a la que se podrá dirigir la Residente para algunas de las gestiones de su Contrato de Hospedaje durante todo el plazo de duración.
+
+## 2. Descripción del arrendamiento
+
+La Residente contrata el servicio de Hospedaje sobre la habitación indicada en la Condición Particular 1 anterior, (según consta en el documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por motivos de estudio, con el mobiliario y equipamiento que constan por anexo, y con el uso de las zonas comunes y los servicios que se indica en las Condiciones Generales.
+
+## 3. Plazo
+
+El Contrato de Habitación tiene un plazo de obligado cumplimiento que va desde el 1 de septiembre del año de firma del contrato al 30 de junio del año siguiente (el "Plazo"). Una vez cumplido este Plazo, el Contrato de Hospedaje quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso. 
+La entrada y puesta a disposición de la Habitación en la residencia tendrá lugar el primer día del Plazo y se llevará a cabo en la forma pactada por las Partes en el formulario de entrada y registro que se remitirá a la Residente por mail o que estará a su disposición en el área privada de la web de la Gestora. 
+
+## 4. Precio
+
+Por el arrendamiento y uso de la Habitación por la Residente conforme al presente Contrato de Hospedaje, la Residente abonará obligatoriamente a partir del inicio del Plazo, la cantidad de {{(Booking_rent+Booking_services)|decimal}} euros mensuales (la "Renta"), mediante los cargos recurrentes que efectuará la Empresa en la cuenta corriente o tarjeta de crédito designada por la Residente durante todo el Plazo del Contrato de Hospedaje.
+
+Conceptos incluidos en el Contrato de Hospedaje.
+
+- Los consumos de los suministros de agua, gas y electricidad de la habitación. 
+
+- El servicio de internet.
+
+{%for s in Services%}
+- {{s.Name}}
+{%endfor%}
+
+
+### 5. Facturación y pago. 
+
+La facturación por el importe de la Renta y cualesquiera otros conceptos aparte de aquella se realizará con carácter mensual, expresando separadamente el periodo o periodos al que corresponda y detallando cada concepto facturado.
+
+El importe total a pagar se pasará al cobro entre los días 1 a 5 de cada mes.
+
+En cualquiera de los casos, la Residente reconoce y confirma el mandato para el cobro de las facturas correspondientes a través de la cuenta corriente o tarjeta de crédito por ella designada según lo indicado en esta cláusula.
+
+En este contexto, mediante la suscripción del presente Contrato de Hospedaje, la Residente acepta de forma expresa recibir la factura expresada con el aviso de cobro en su área interna, sin perjuicio de su derecho a recibir la factura en papel.
+
+## 6. Prestación de Garantía.
+
+Coincidiendo con la firma del Contrato de Hospedaje, la Residente ha efectuado el pago a favor de la Empresa de una garantía en la suma de {{Booking_deposit|decimal}} euros (la "Garantía"), para garantizar el cumplimiento por la Residente de todas las obligaciones que asume en el Contrato de Hospedaje, compuesto por las Condiciones Particulares y Generales, Normas de Uso y responsabilidades económicas asumidas por la Residente. 
+
+Las Partes acuerdan la devolución de la Garantía a la Residente y sin intereses, en un plazo máximo de treinta (30) días contados desde la finalización del Contrato de Hospedaje, previa verificación del correcto estado de la Habitación, así como de la no existencia de deudas o cantidades a reclamar a la Residente.
+
+La liquidación de daños y deuda que tuviera pendiente la Residente y que sea presentada por la Empresa o persona que ésta designe a la Residente será suficiente para acreditar el saldo resultante adeudado por la Residente (saldo deudor) en la fecha de resolución o vencimiento del Contrato de Hospedaje, a cuyo pago vendrá obligada la Residente. La Residente autoriza irrevocablemente y desde ahora a la Empresa a la ejecución de la Garantía para hacer frente a cualquier obligación o pago pendiente de la Residente, debiendo rembolsar el resto, de haberlo, a la Residente.
+
+## 7. Notificaciones.
+
+A efectos de recepción de notificaciones, las Partes han designado las personas y los domicilios indicados al principio, así como las direcciones de correo electrónico que se indican a continuación.
+
+- Correo electrónico de la gestora de la Empresa: hola@cotown.es
+
+- Correo electrónico de la Residente: {{Customer_email}}
+
+Las Partes podrán variar las direcciones que figuran en el apartado anterior, comunicándolo a la otra Parte por escrito y con mensaje de recepción.
+
+## CONDICIONES GENERALES
+
+**Cláusulas**
+
+## 1. Objeto del Contrato de Hospedaje.
+
+1.1 Es objeto del presente Contrato el uso por parte del Residente de la Habitación con el Mobiliario e Instalaciones.
+
+1.2 Juntamente con la Habitación, el Residente tiene derecho a utilizar las Zonas Comunes de la Residencia conforme a  lo establecido en las Normas Internas de  Funcionamiento.
+
+1.3 El Empresario se reserva el derecho de cerrar las Zonas Comunes de la Residencia en el caso que lo considere necesario como, por ejemplo, por causas relacionadas con la salud pública, seguridad, higiene o cualesquiera otras establecidas por las administraciones públicas o la legalidad vigente.
+
+1.4 A efectos aclaratorios, los siguientes casos no afectarán al presente Contrato en ninguna forma:
+(a) cualquier (total o parcial) interrupción, suspensión o finalización de las clases, opción a clases online u otras actividades del centro educativo donde el Residente esté inscrito; o
+(b) que el Residente finalice o suspenda sus estudios por cualquier motivo.
+## 2. Entrada en vigor y duración del Contrato
+
+2.1 El presente Contrato entrará en vigor en la Fecha del Contrato.
+
+2.2 El plazo de duración del Contrato es el que se indica en la condición particular 3.
+
+2.3 La estancia del Residente en la Residencia solo podrá ser prorrogada por acuerdo expreso entre el Empresario y el Residente, mediante el otorgamiento de un nuevo contrato de hospedaje conforme a lo establecido en las Cláusulas 2.4 y 2.5 a continuación.
+
+## 3. Matrícula.
+
+La Matrícula se configura como un importe para asegurar al Residente la reserva de una habitación en la Residencia (la "Habitación"), cuyo importe ha sido abonado con anterioridad a la fecha de firma del presente Contrato y, a más tardar, ha sido abonado en la fecha de firma de este, mediante [transferencia bancaria / tarjeta de crédito]. En consecuencia, el Residente entiende y está de acuerdo en que dicha Matrícula no será reembolsable al Residente.
+
+## 4. Reserva, cancelación y renovación.
+
+4.1 Reserva.
+
+En unidad de acto con la firma del presente Contrato, el Residente abona, además de la Matrícula que ha sido abonada de  conformidad con lo establecido en la Cláusula 3 anterior, la garantía; y con posterioridad a la firma del presente Contrato y con el pago de las cantidades mencionadas en la presente Cláusula 4.1, la Habitación quedará reservada para el Residente durante el Plazo.
+
+4.2 Política de cancelación anticipada
+
+(a) El presente Contrato se establece por un plazo de obligado cumplimiento, por lo que el Residente no está facultado para desistir anticipadamente del mismo, exceptuando los supuestos que se establecen a continuación:
+
+(i) Política de cancelación anticipada con anterioridad a la Fecha de Entrada:
+El Residente estará facultado para desistir del presente Contrato con anterioridad a la Fecha de Entrada, siempre y cuando lo notifique por escrito al Empresario, sujeto a las indemnizaciones por cancelación anticipada que se establecen a continuación:
+
+(A) en caso de que lo notifique al Empresario con cuarenta y cinco (45) días de antelación a la Fecha de Entrada, el Residente perderá, como indemnización por cancelación anticipada, la cantidad abonada como Matrícula, por  lo que la Garantía (y cualquier otro pago realizado conforme a la Cláusula 4.1(a)) será reembolsada al Residente.
+
+(B) en caso de que lo notifique al Empresario con menos de cuarenta y cinco (45) días de antelación a la Fecha de Entrada, el Residente perderá, como indemnización por cancelación anticipada, la cantidad abonada como Matrícula y la Garantía. Cualquier otro pago realizado distinto a la Garantía realizado conforme a la Cláusula 4.1(a) será reembolsada al Residente.
+
+(ii) Política de cancelación anticipada con posterioridad a la Fecha de Entrada:
+
+(A) El Residente estará facultado para resolver el presente Contrato en cualquier momento con anterioridad a la fecha de finalización del Plazo, siempre y cuando lo notifique al Empresario con al menos quince (15) días de antelación a la fecha de Fecha de Salida (la "Resolución Anticipada"). En caso de Resolución Anticipada, el Residente perderá el importe de la Matrícula y la Garantía. Cualesquiera cantidades que hayan sido abonadas por el Residente con anterioridad o en la fecha de firma del presente Contrato (de acuerdo con lo establecido en la Cláusula 3 o la Cláusula 4.1 (a)), se tendrán como incluidas en la penalización por Resolución Anticipada y no serán devueltas al Residente.
+
+## 4.3 Renovación del contrato.
+
+(a) El proceso de solicitud para la renovación del presente Contrato será el mismo que el establecido para las nuevas solicitudes. Aquellos residentes que soliciten  la renovación del Contrato, tendrán prioridad para reservar el mismo Tipo de Habitación que ocupen en ese momento, sujeto a su disponibilidad. En dicho supuesto, el Residente no deberá volver a abonar el  importe de la Matrícula.
+
+(b) No obstante lo anterior, el Empresario no garantiza la renovación o la disponibilidad del Tipo de Habitación solicitada por el Residente.
+
+## 5. Incumplimiento de pago.
+
+(a) En caso de falta de pago de las cuotas mensuales por parte del Residente, en las condiciones establecidas en el presente Contrato, facultará al Empresario a exigir, con carácter inmediato y por escrito, el pago pendiente de las mismas (la "Notificación por Falta de Pago"). En este supuesto, el Empresario estará asimismo facultado para notificar por escrito al Garante, de forma simultánea, la falta de pago de las Cuotas.
+
+(b) En el supuesto de que el Residente no abone al Empresario las Cuotas pendientes en el plazo de un (1) mes a contar desde el envío de la Notificación por Falta de Pago, el Empresario quedará facultado a su discreción para:
+
+(i) instar la resolución del Contrato por dicho motivo;
+
+(ii) denegar la entrada a la Habitación al Residente y, por lo tanto, retener los objetos personales del Residente que permanezcan en la Habitación, de conformidad con el apartado 5º del artículo 1922 del Código Civil; y/o
+
+(iii) iniciar las correspondientes acciones legales.
+
+(c) En todo caso, el retraso en el pago de las Cuotas por parte del Residente aplicará automáticamente a la parte de las Cuotas no satisfechas un interés por retraso en el pago del 10% más IVA; y (ii) una tarifa máxima por retraso en el pago de las Cuotas de 300€.
+
+(d) Todo gasto derivado de la falta de pago de las Cuotas por el Residente, incluidos los gastos derivados de cualesquiera acciones legales y/o judiciales será asumido por el Residente.
+
+## 5.2 Factura.
+
+El Empresario emitirá la/s factura/s conforme a la Forma de Pago, en la que se incluirá el detalle del Precio Total y cualesquiera otras cantidades que deban abonarse junto con el Precio Total.
+
+## 6. Obligaciones
+
+6.1 Del Residente
+
+(a) El Residente deberá cumplir, sin restricción o reserva alguna, con lo siguiente:
+
+(i) las Cláusulas del presente Contrato;
+
+(ii) las Normas Internas de Funcionamiento; y
+
+(iii) la legalidad vigente en cada momento.
+
+(b) El Residente asume las responsabilidades de cualquier tipo (administrativas, civiles, penales, etc.) que conllevasen el incumplimiento de la legalidad vigente en cada momento.
+
+(c) El Residente es responsable de actuar con la diligencia debida en relación con sus bienes y con la Habitación. El Residente se hará responsable de cualesquiera actuaciones negligentes propias y/o de sus invitados, en relación con sus bienes o la de los otros residentes. El Residente deberá informar inmediatamente al Empresario en el caso que se produzca algún daño en la Habitación, el Mobiliario o Instalaciones, a cuyo efecto será responsable el Residente de cualesquiera costes de reparación.
+
+## 6.2 Del Empresario.
+
+(a) El Empresario está obligado a poner a disposición del Residente la Habitación y proveer los Consumos y Servicios y, en su caso, los Servicios Adicionales, en la medida, tiempo y condiciones acordadas en el presente Contrato.
+
+(b) El Empresario deberá disponer de la infraestructura necesaria para la recepción regular de paquetes y mensajería.
+
+## 7. Derechos del Empresario.
+
+7.1 De conformidad con las Normas Internas de Funcionamiento, el Empresario se reserva el derecho de acceso a la Habitación, sin necesidad de comunicado previo al Residente, en los supuestos que se listan a continuación:
+
+(a) servicio de limpieza;
+
+(b) reparaciones urgentes;
+
+(c) en casos de seguridad; y
+
+(d) para comprobar el correcto estado y funcionamiento de las Habitaciones y/o la Residencia.
+
+7.2 El ejercicio del derecho mencionado en el apartado 7.1 anterior se realizará en la medida de lo razonable y con observancia de la privacidad del Residente, y se configura para permitir el adecuado cumplimiento de los servicios contratados, la seguridad de los residentes y el mantenimiento y salubridad, entre otros.
+
+7.3 El Empresario podrá reagrupar a los residentes en las habitaciones de la Residencia por razones organizativas. 
+
+## 8. Garantía.
+
+8.1 El Empresario podrá ejecutar la garantía para pagar:
+
+(a) los daños ocasionados en la Habitación o sus equipamientos;
+
+(b) los daños ocasionados en el Mobiliario e Instalaciones;
+
+(c) los daños ocasionados en las Zonas Comunes de la Residencia;
+
+(d) los costes derivados de la limpieza de la Habitación en la Fecha de Salida para  el caso que el Residente desalojara la Habitación sin dejarla en un buen estado de conservación; y/o
+
+(e) cualquier importe exigible al Residente de conformidad con los términos y condiciones del presente Contrato (incluidas cualesquiera indemnizaciones por Resolución Anticipada o retraso en el pago de las Cuotas) que no haya sido efectivamente satisfecho.
+
+8.2 La Garantía será devuelta al final del Plazo, así como al Periodo Adicional, en caso de que procediera su devolución por el Empresario, mediante transferencia bancaria en la Cuenta Corriente del Residente o su tutor legal, dentro de los treinta (30) días posteriores a la Fecha de Salida.
+
+8.3 En todo caso, el Empresario quedará facultado para retener, total o parcialmente, el importe de la Garantía para hacer frente a los gastos ocasionados como consecuencia de los daños descritos en la Cláusula 8.2.
+
+8.4 La Garantía no será devuelta al Residente en los siguientes casos:
+
+(a) que el Residente abandone la Residencia, por cualquier motivo, antes de la finalización del Plazo (de acuerdo con lo establecido en cuanto a la Resolución Anticipada);
+
+(b) que con posterioridad a la notificación al Empresario de renovar la Habitación, el Residente comunique al Empresario su intención de causar baja; o
+
+(c) que sea expulsado de la Residencia por incumplimiento material de las obligaciones (incluidas las que se establecen en el Reglamento de Régimen Interior).
+
+## 9. Garante (menores de edad)
+
+9.1 El Garante, para aquellos estudiantes menores de edad, en tanto que obligado solidario y parte del Contrato, garantiza: (i) el pago del Precio Total y de cualesquiera otras cantidades que pudieran ser debidas por el Residente al Empresario, de conformidad con sus obligaciones contractuales y legales; y (ii) el cumplimiento de las Normas Internas de Funcionamiento.
+
+9.2 En particular, el Garante responderá solidariamente con el Residente:
+
+(a) de los daños ocasionados por el Residente en la Residencia, del incumplimiento de las Normas Internas de Funcionamiento, así como los daños ocasionados por aquellos invitados que el Residente pudiera traer a la Residencia; y
+
+(b) del pago del Precio Total o cualquier otra cantidad que tuviera que abonar el Residente conforme a las estipulaciones del presente Contrato y de sus Anexos.
+
+9.3 El Empresario informará al Garante de los importes adeudados por el Residente de conformidad con lo establecido en la Cláusula 5.4.
+
+9.4 El Garante responderá por el incumplimiento de las obligaciones del Residente durante el Plazo de duración del Contrato y, en su caso, durante el Periodo Adicional.
+
+9.5 El Residente manifiesta conocer y aceptar que el Empresario podrá informar al Garante de
+
+(i) el contenido del presente Contrato, (ii) las Normas Internas de Funcionamiento y (iii) la conducta y comportamiento del Residente.
+
+## 10. Condiciones de entrada, cambio y salida de Habitación
+
+10.1 Entrada en la Habitación
+
+(a) La entrada del Residente en la Residencia y en la Habitación se producirá en la Fecha de Entrada. En el caso de que el Residente por motivos razonablemente justificados tuviera que retrasar la entrada en la Residencia, deberá comunicárselo al Empresario por escrito y con una (1) semana de antelación a la Fecha de Entrada.
+
+(b) El retraso de la entrada efectiva del Residente en la Residencia no tendrá efectos en el Precio Total ni en la Fecha de Salida. Si, como consecuencia del retraso en la entrada en la Residencia, el Residente se retrasara en el pago del Precio Total, dicho retraso no se entenderá como un ajuste del Precio Total ni del Plazo.
+
+10.2 En la Fecha de Entrada de la Habitación el Empresario entregará al Residente una hoja de revisión, donde se harán constar los desperfectos o anomalías observadas en la Habitación (la "Hoja de Revisión"). Se presumirá que la Habitación fue entregada en perfecto estado si, en un plazo máximo de 24 horas, la Hoja de Revisión no fuere cumplimentada y entregada a la recepción de la Residencia 
+
+10.3 Cambio de Habitación
+
+(a) Durante el periodo de duración del presente Contrato, el Residente estará facultado para solicitar un cambio de Tipo de Habitación, debiendo abonar por ello al Empresario un importe de 75€ en concepto de gastos de gestión.
+
+10.4 Salida de la Habitación
+
+(a) La Fecha de Salida se producirá el último día del Plazo antes de las 12:00 horas. 
+
+(b) En la Fecha de Salida el Residente deberá desalojar la Habitación dejándola en buen estado de conservación y en las mismas condiciones en las que se encontraba en la Fecha de Entrega, salvo por el desgaste normal de su uso. En  el caso que sea necesario realizar alguna reparación en la Habitación, Mobiliario o Instalaciones, el Residente deberá abonar al Empresario los gastos que sean necesarios para la restitución de esta al estado en el que se encontraba en la Fecha de Entrada (los "Gastos de Restitución").
+
+(c) El Empresario deducirá de la Garantía el importe preciso para la limpieza de la Habitación en el caso que el Residente no deje la Habitación en buen estado de conservación y mantenimiento en la Fecha de Salida.
+
+## 11. Pérdida de llave de acceso a la Habitación.
+
+Con el objeto de garantizar la seguridad de la Habitación, y atendiendo a las circunstancias de cada caso, la pérdida y robo de la llave/tarjeta de acceso a la Habitación supondrá su inmediata sustitución siendo los gastos de su reposición de cuenta y cargo del Residente. Resolución del Contrato
+
+## 12. Causas de Resolución
+
+(a) El Empresario estará facultado para resolver el presente Contrato por cualquiera de los siguientes motivos:
+
+(i) el retraso en el pago de las Cuotas, del Precio Total o de cualquier otra cantidad que el Residente esté obligado a pagar, por un plazo superior a treinta (30) días;
+
+(ii) la comisión de una falta grave conforme a lo establecido en las Normas Internas de Funcionamiento, así como la comisión de tres faltas leves, durante el período de vigencia del Contrato. Toda falta será debidamente registrada por el Empresario;
+
+(iii) la realización, comisión o permisión por parte del Residente, de actividades que tengan la consideración de ilícitas o que pongan en peligro la salud de los residentes, personal de la Residencia o empresas colaboradoras con la misma;
+
+(iv) la realización por parte del Residente de actos vejatorios que menoscaben la dignidad de las personas, y aquellas acciones que atenten contra la seguridad, higiene o integridad de los otros residentes, personal de la Residencia o empresas colaboradoras con la misma;
+
+(v) los comportamientos que menoscaben la tranquilidad y sosiego de la Residencia, de sus residentes, vecinos o de las personas que trabajen en la misma;
+
+(vi) la alteración en el uso y/o destino de la Habitación, de su Mobiliario e Instalaciones o de las Zonas Comunes de la Residencia;
+
+(vii) el incumplimiento por parte del Residente de las obligaciones del presente Contrato;
+
+(viii) en caso de condena judicial al Residente por la comisión de un delito; y
+
+(ix) cualesquiera otras causas previstas en la legalidad vigente en cada momento, el presente Contrato o en las Normas Internas de Funcionamiento.
+
+12.2 Procedimiento y consecuencias de resolución del Contrato
+
+(a) La resolución del presente Contrato no podrá producirse sin previa comunicación por escrito al Residente (la "Notificación de Resolución"). En el plazo de cuarenta y ocho (48) horas a partir de la recepción de la Notificación de Resolución (el "Plazo de Desalojo") el Residente deberá:
+
+(i) entregar la llave de acceso de su Habitación; y
+
+(ii) dejar la Habitación libre vacua y expedita.
+
+(b) Si transcurrido el Plazo de Desalojo la Habitación no hubiera quedado libre, vacua y expedita, el Empresario quedará facultado para:
+
+(i) denegar el acceso a la Habitación y cambiar el sistema de acceso a la misma; y
+
+(ii) tomar posesión de todos los objetos y enseres personales del Residente que no hubiesen sido retirados por él durante el Plazo de Desalojo.
+Todos cuantos objetos y enseres permanezcan en la Habitación después del Plazo de Desalojo, quedaran en poder definitivo del Empresario, quien podrá hacer de ellos el uso que mejor le convenga.
+
+(c) En caso de resolución del Contrato, el Residente deberá abonar toda la cantidad que quede pendiente del Precio Total, sin perjuicio de cualesquiera otros derechos o acciones que pudieran asistir al Empresario.
+
+## 13. Protección de Datos.
+
+13.1 Se adjunta a este Contrato como Anexo 1 información sobre el tratamiento de los datos personales del Residente y del Garante (Política de Privacidad).
+
+## 14. Notificaciones.
+
+14.1 Las Partes acuerdan que cualquier notificación, requerimiento, reclamación, solicitud o comunicación que haya de realizarse en el marco del presente Contrato, deberá hacerse por escrito a las direcciones que las Partes hayan indicado en las Condiciones Particulares del presente Contrato, siendo enviada por cualquier medio que permita comprobar la recepción de la comunicación.
+
+14.2 Las Partes podrán modificar su dirección mediante notificación a la contraparte de conformidad con el procedimiento establecido en el apartado anterior.
+
+14.3 Cualquier notificación, requerimiento, reclamación, solicitud o comunicación será efectiva desde su recepción y se entenderá que ha sido recibida (i) en el momento de entrega, si se entrega en mano o por correo; o (ii) en el momento de su lectura si se entrega por email.
+
+## 15. Ley Aplicable y Jurisdicción.
+
+15.1 En todo aquello no previsto en el Contrato, será de aplicación el Código Civil.
+
+15.2 El Empresario y el Residente se comprometen a resolver de manera amistosa cualquier desacuerdo que pudiera surgir en el desarrollo del presente Contrato. De no ser posible la resolución de la controversia mediante acuerdo amistoso, las Partes se someterán a los Tribunales de [●], con renuncia a su propio fuero.
+
+## 16. Aceptación.
+
+La aceptación sin reservas de las presentes Condiciones Particulares, Condiciones Generales y Normas de Uso deviene obligatoria para la suscripción del presente Contrato de Hospedaje por parte de la Empresa. La Residente manifiesta, por lo tanto, haber leído y entendido las presentes Condiciones Particulares junto con las Condiciones Generales y Normas de Uso que han sido puestas a su disposición, en todo momento, con carácter previo a la contratación y aceptarlas todas ellas sin objeción alguna. 
+
+| | |
+|:-|:-|
+|**El Arrendador**|**El Arrendatario**|
+{%-for s in Owner_signers-%}
+| | |
+|![firma]({{Server}}/signature/{{s.Owner_signer}})| |
+|Fdo: {{s.Owner_signer_name}}|{%if loop.index==1%}Fdo: {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}{%endif%}|
+{%-endfor-%}
