@@ -63,6 +63,7 @@ query BillById ($id: Int!) {
             Provider_address: Address
             Provider_zip: Zip
             Provider_city: City
+            Provider_bill_line: Bill_line
             CountryViaCountry_id {
                 Provider_country: Name
             }
