@@ -22,12 +22,11 @@ BEGIN
     DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = OLD.id;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN OLD;
-  ELSE
-    DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
-    IF TG_OP = 'DELETE' OR NEW."Resource_id" IS NULL THEN
-      EXECUTE 'SET ROLE "' || curr_user || '"';
-      RETURN NEW;
-    END IF;
+  END IF;
+  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_id" = NEW.id;
+  IF NEW."Resource_id" IS NULL THEN
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    RETURN NEW;
   END IF;
   
   -- Ignora los estados que no bloquean

@@ -2,6 +2,7 @@
 DECLARE
 
   code VARCHAR;
+  curr_user VARCHAR;
   booking RECORD;
   re RECORD;
   res CURSOR FOR 
@@ -12,12 +13,28 @@ DECLARE
 
 BEGIN
 
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+  
   -- Borra todas reservas de esa plaza
+  IF TG_OP = 'DELETE' THEN
+    DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    RETURN OLD;
+  END IF;
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
   IF NEW."Resource_id" IS NULL THEN
+    EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
-  
+
+  -- Ignora los estados que no bloquean
+  IF NEW."Status" IN ('cancelada') THEN
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    RETURN NEW;
+  END IF;
+
   -- Obtiene la reserva padre/grupo
   SELECT * INTO booking FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
 
