@@ -411,7 +411,7 @@ section > h2 {
     text-align: center;
     margin-top: 1em;
 }
-.content-booking section .city-selector {
+.content-booking section .booking-selector {
     width: 98%;
     text-align: center;
     display: flex;
@@ -419,7 +419,7 @@ section > h2 {
     justify-content: center;
     align-items: center;
 }
-.content-booking section .city-selector select {
+.content-booking section .booking-selector select {
     width: 50%;
     border: 1.5px solid #d1d1d1;
     border-radius: 12px;
@@ -440,7 +440,7 @@ section > h2 {
     background: url("..//img/br_down.png") white no-repeat 95% !important; /* !important used for overriding all other customisations */
     background: url("..//img/br_down.png") white no-repeat calc(100% - 30px) !important; /* Better placement regardless of input width */
 }
-.content-booking section .city-selector .city-icons {
+.content-booking section .booking-selector .booking-icons {
     width: 100%;
     text-align: center;
     display: flex;
@@ -449,10 +449,10 @@ section > h2 {
     align-items: center;
     gap: 1em;
 }
-.content-booking section .city-selector .city-icons .city {
+.content-booking section .booking-selector .booking-icons .selector {
     width: 24%;
 }
-.content-booking section .city-selector .city-icons .city .content-selector{
+.content-booking section .booking-selector .booking-icons .selector .content-selector {
     width: 60%;
     margin: 0 auto;
     padding: 2em;
@@ -464,18 +464,23 @@ section > h2 {
     cursor: pointer;
     transition: all .4s ease-in-out;
 }
-.content-booking section .city-selector .city-icons .city .content-selector:hover,
-.content-booking section .city-selector .city-icons .city .content-selector:active,
-.content-booking section .city-selector .city-icons .city .content-selector:focus-visible,
-.content-booking section .city-selector .city-icons .city .content-selector:focus-visible {
+.content-booking section .booking-selector .booking-icons .selector .content-selector:hover,
+.content-booking section .booking-selector .booking-icons .selector .content-selector:active,
+.content-booking section .booking-selector .booking-icons .selector .content-selector:focus-visible,
+.content-booking section .booking-selector .booking-icons .selector .content-selector:focus-visible {
     transform: scale(1.1);
     background-color: var(--primary-bg);
     border-radius: 16px;
 }
-.content-booking section .city-selector .city-icons .city img {
+.content-booking section .booking-selector .booking-icons .selector .content-selector.active {
+    border: 3px solid var(--primary-bg);
+    transform: scale(1.1);
+    border-radius: 16px;
+}
+.content-booking section .booking-selector .booking-icons .selector img {
     order:1;
 }
-.content-booking section .city-selector .city-icons .city p {
+.content-booking section .booking-selector .booking-icons .selector p {
     order:2;
     margin: 0;
 }
@@ -560,10 +565,12 @@ flex-flow: row wrap;
 }
 button.back {
 display: flex;
+width: 100%;
 flex-flow: row wrap;
-justify-content: space-between;
-align-items: center;
+justify-content: right;
 background-color: transparent;
+text-decoration: none;
+color: black;
 }
 button.back em {
 font-size: 20px;
@@ -575,6 +582,8 @@ margin-bottom: 0;
 .tabs-container .header-tabs .left {
 justify-content: flex-start;
 align-items: flex-start;
+align-content: center;
+height: 40px;
 }
 .tabs-container .header-tabs .left button.back {
 justify-content: flex-start;
@@ -590,6 +599,8 @@ height: 50px;
 .tabs-container .header-tabs .right {
 justify-content: flex-end;
 align-items: flex-start;
+height: 40px;
+align-content: center;
 }
 .tabs-container .header-tabs .right button.back {
 justify-content: flex-end;
@@ -1531,7 +1542,7 @@ align-items: center;
         font-size: 24px;
         text-align: start;
     }
-    .content-booking section .city-selector {
+    .content-booking section .booking-selector {
         width: -webkit-fill-available;
         text-align: center;
         display: flex;
@@ -1539,12 +1550,12 @@ align-items: center;
         justify-content: center;
         align-items: center;
     }
-    .content-booking section .city-selector select {
+    .content-booking section .booking-selector select {
         width: -webkit-fill-available;
         font-size: 16px;
         height: 56px;
     }
-    .content-booking section .city-selector .city-icons {
+    .content-booking section .booking-selector .booking-icons {
         width: 100%;
         text-align: center;
         display: flex;
@@ -1553,10 +1564,10 @@ align-items: center;
         align-items: center;
         margin: 1em 0 0;
     }
-    .content-booking section .city-selector .city-icons .city {
+    .content-booking section .booking-selector .booking-icons .selector {
         width: 100%;
     }
-    .content-booking section .city-selector .city-icons .city .content-selector{
+    .content-booking section .booking-selector .booking-icons .selector .content-selector{
         width: -webkit-fill-available;
         margin: 0;
         padding: 8px 20px;
@@ -1568,19 +1579,19 @@ align-items: center;
         background: var(--white-background);
         box-shadow: 0px 20px 30px 0px rgba(22, 22, 22, 0.06);
     }
-    .content-booking section .city-selector .city-icons .city .content-selector:hover,
-    .content-booking section .city-selector .city-icons .city .content-selector:active,
-    .content-booking section .city-selector .city-icons .city .content-selector:focus-visible,
-    .content-booking section .city-selector .city-icons .city .content-selector:focus-visible   {
+    .content-booking section .booking-selector .booking-icons .selector .content-selector:hover,
+    .content-booking section .booking-selector .booking-icons .selector .content-selector:active,
+    .content-booking section .booking-selector .booking-icons .selector .content-selector:focus-visible,
+    .content-booking section .booking-selector .booking-icons .selector .content-selector:focus-visible   {
         transform: scale(1);
         background-color: var(--primary-bg);
         border-radius: 8px;
     }
-    .content-booking section .city-selector .city-icons .city img {
+    .content-booking section .booking-selector .booking-icons .selector img {
         order:2;
         width: 40px;
     }
-    .content-booking section .city-selector .city-icons .city p {
+    .content-booking section .booking-selector .booking-icons .selector p {
         order:1;
     }
     .content-booking section.results button.btn-secondary {

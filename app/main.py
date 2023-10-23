@@ -376,7 +376,7 @@ def runapp():
   # Dynamic web API
   # ###################################################
 
-  # Available typologies
+  # Available typologies for a location between some dates
   def get_available_types():
     
     result = available_types(
@@ -451,20 +451,30 @@ def runapp():
   # Pages
   # ###################################################
 
+  def get_asset(filename):
+
+    # Debug
+    logger.info('ASSET ' + filename)
+
+    # return
+    return send_from_directory('assets', filename)
+
   def get_booking(filename):
 
     # Debug
-    logger.debug('BOOKING ' + filename)
+    logger.info('BOOKING ' + filename + ':' + request.path)
 
-    # Return static file
-    if filename.split('.')[-1] != 'html':
-      try:
-        return send_from_directory('booking', filename)
-      except:
-        abort(404)
+    # Language
+    lang = 'es' if request.path.startswith('es/') else 'en'
+
+    # Get existing locations, types, etc.
+    data = {
+      'lang': lang,
+      'data': existing_types(dbClient) 
+    }
 
     # Render dynamic page
-    return env.get_template(filename).render()
+    return env.get_template(filename).render(data=data)
 
 
   # ###################################################
@@ -482,12 +492,12 @@ def runapp():
     logger.info('Recibido ' + request.path)
 
     # Skip token validaton on public endpoints
-    if request.endpoint in ('get_hello', 'post_notification', 'get_booking'):
+    if request.endpoint in ('get_hello', 'post_notification', 'get_asset', 'get_booking'):
       return
 
     # Token invalid?
     value = validate_token(request.args.get('access_token'))
-    if validate_token(request.args.get('access_token')) != 0:
+    if value != 0:
       logger.debug(value)
       abort(value) 
 
@@ -530,9 +540,10 @@ def runapp():
   # Dynamic web - Booking process - API
   app.add_url_rule(settings.API_PREFIX + '/logout', view_func=post_logout, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/login', view_func=post_login, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=get_available_types, methods=['GET'])
 
   # Dynamic web - Booking process - Pages
+  app.add_url_rule('/assets/<path:filename>', view_func=get_asset, methods=['GET'])
+  app.add_url_rule('/es/booking/<path:filename>', view_func=get_booking, methods=['GET'])
   app.add_url_rule('/booking/<path:filename>', view_func=get_booking, methods=['GET'])
 
   # Return app

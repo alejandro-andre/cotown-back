@@ -8,108 +8,154 @@
 <body>
   <main class="content-booking">
 
-      <section>
-        <h2>
-          ¿En qué ciudad quieres vivir?
-        </h2>
-        <div class="city-selector">
-          <div class="city-icons">
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__ciudad_barcelona.svg"/>
-                <p>BARCELONA</p>
-              </div>
-            </div>
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__ciudad_valencia.svg"/>
-              <p>VALENCIA</p>
-              </div>
-            </div>
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__ciudad_madrid.svg"/>
-                <p>MADRID</p> 
-              </div>
-            </div>
-          </div>        
-        </div>
-      </section>
-
-      <section>
-        <h2>
-          ¿Qué estás buscando?
-        </h2>
-        <div class="city-selector">
-          <div class="city-icons">
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__tipo_piso_compartido.svg">
-                <p>PISO COMPARTIDO</p>
-              </div>
-            </div>
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__tipo_apartamento_privado.svg">
-                <p>APARTAMENTO PRIVADO</p>
-              </div>
-            </div>
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__tipo_residencia_universitaria.svg">
-                <p>RESIDENCIA</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>
-          ¿Qué tipo de habitación?
-        </h2>
-        <div class="city-selector">
-          <div class="city-icons">
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__hab_habitacion_individual.svg">
-                <p>HABITACIÓN INDIVIDUAL</p>
-              </div>
-            </div>
-            <div class="city">
-              <div class="content-selector">
-                <img class="img" alt="city" src="./assets/icon/vanguard/icono__hab_habitacion_compartida.svg">
-                <p>HABITACIÓN COMPARTIDA</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>
-          ¿Cuándo?
-        </h2>
-          <!-- CALENDAR -->
-        <div class="calendar pure-u-1">
-          <div class="reservas_form" id="reservas_form" name="form_multi" method="GET">
-            <button class="date-button">
-              <label class="labels">Fechas</label>
-              <input type="text" id="in" onfocus="" class="inputs" name="in" placeholder="dd/mm/aaaa"/>
-            </button>            
-          </div>
-        </div>
-      </section>
-
-      <section class="results">
-        <button class="btn-secondary">
-            Ver Resultados
-        </button>
-      </section>
-
+    <div style="width:100%;display:flex;justify-content:right;">
+      <button class="back" onclick="window.location.href='/{{data.lang}}';"></button>
+        <em class="icon-close"></em>
+      </button>
     </div>
-        
+
+    <section>
+      <h2>¿En qué ciudad quieres vivir?</h2>
+      <div class="booking-selector">
+        <div class="booking-icons">
+          {% for item in data.data %}
+          <div class="selector">
+            <div id="{{item.Name}}" class="city content-selector" onclick="select_city('{{item.Name}}');">
+              <img class="img" alt="city" src="/assets/icon/vanguard/icono__ciudad_{{item.Name|lower}}.svg"/>
+              <p>{{item.Name}}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>        
+      </div>
+    </section>
+
+    <section>
+      <h2>¿Qué estás buscando?</h2>
+      <div class="booking-selector">
+        <div class="booking-icons">
+          <div class="selector">
+            <div id="compartido" class="type content-selector" onclick="select_type('compartido');">
+              <img class="img" alt="city" src="/assets/icon/vanguard/icono__tipo_piso_compartido.svg">
+              <p>PISO COMPARTIDO</p>
+            </div>
+          </div>
+          <div class="selector">
+            <div id="privado" class="type content-selector" onclick="select_type('privado');">
+              <img class="img" alt="city" src="/assets/icon/vanguard/icono__tipo_apartamento_privado.svg">
+              <p>APARTAMENTO PRIVADO</p>
+            </div>
+          </div>
+          <div class="selector">
+            <div id="residencia" class="type content-selector" onclick="select_type('residencia');">
+              <img class="img" alt="city" src="/assets/icon/vanguard/icono__tipo_residencia_universitaria.svg">
+              <p>RESIDENCIA</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roomtype">
+      <h2>¿Qué tipo de habitación?</h2>
+      <div class="booking-selector">
+        <div class="booking-icons">
+          <div class="selector">
+            <div id="individual" class="room content-selector" onclick="select_room('individual');">
+              <img class="img" alt="city" src="/assets/icon/vanguard/icono__hab_habitacion_individual.svg">
+              <p>HABITACIÓN INDIVIDUAL</p>
+            </div>
+          </div>
+          <div class="selector">
+            <div id="compartida" class="room content-selector" onclick="select_room('compartida');">
+              <img class="img" alt="city" src="/assets/icon/vanguard/icono__hab_habitacion_compartida.svg">
+              <p>HABITACIÓN COMPARTIDA</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>¿Cuándo?</h2>
+      <div class="calendar pure-u-1">
+        <div class="reservas_form" id="reservas_form" name="form_multi" method="GET">
+          <button class="date-button">
+            <label class="labels">Fechas</label>
+            <input type="text" id="in" onfocus="" class="inputs" name="in" placeholder="dd/mm/aaaa"/>
+          </button>            
+        </div>
+      </div>
+    </section>
+
+    <section class="results">
+      <button class="btn-secondary">
+          Ver Resultados
+      </button>
+    </section>
+
   </main>
+
+<script>
+
+const tipology={{data.data|safe}};
+let city = '';
+let type = '';
+
+function select_city(id) {
+  // Select city
+  city = id;
+  document.querySelectorAll('div.city').forEach(elem => elem.classList.remove('active'));
+  document.querySelectorAll('div.type').forEach(elem => elem.classList.remove('active'));
+  document.querySelectorAll('div.room').forEach(elem => elem.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  // Private apartment
+  document.getElementById('roomtype').style.display = 'block';
+
+  // Hide tipologies
+  document.querySelectorAll('div.type').forEach(elem => elem.style.display = 'none');
+  for (let l of tipology) {
+    if (l.Name === id) {
+      for (let t of l.Sale_types) {
+        el = document.getElementById(t.Sale_type);
+        el.style.display = 'block';
+      }
+    }
+  }
+}
+function select_type(id) {
+  // Select type
+  document.querySelectorAll('div.type').forEach(elem => elem.classList.remove('active'));
+  document.querySelectorAll('div.room').forEach(elem => elem.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  // Private apartment
+  document.getElementById('roomtype').style.display = (id == 'privado') ? 'none' : 'block';
+
+  // Hide rooms
+  document.querySelectorAll('div.room').forEach(elem => elem.style.display = 'none');
+  console.log(city);
+  for (let l of tipology) {
+    if (l.Name === city) {
+      for (let t of l.Sale_types) {
+        console.log(t, id);
+        if (t.Sale_type === id) {
+          for (let r of t.Room_types) {
+            el = document.getElementById(r.Room_type);
+            el.style.display = 'block';
+          }
+        }
+      }
+    }
+  }
+}
+function select_room(id) {
+  // Select type
+  document.querySelectorAll('div.room').forEach(elem => elem.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
 
 </body>
 
