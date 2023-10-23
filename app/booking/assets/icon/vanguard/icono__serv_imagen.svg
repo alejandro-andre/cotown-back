@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<style type="text/css">
+	.svg_base{fill:#343434;}
+	.svg_accent{fill:#FF5166;}
+</style>
+<g>
+	<path class="svg_base" d="M39.9,39.9v432.2h432.2V39.9H39.9z M438.8,438.8H73.2V73.2h365.7V438.8z"/>
+	<path class="svg_base" d="M106.4,106.7v265.9h299.2V106.7H106.4z M372.3,339.4h-133v0.1l-0.2-0.1h-99.5V139.9h232.7V339.4z"/>
+	<polygon class="svg_base" points="239.3,339.4 239.3,339.5 239.1,339.4 		"/>
+	<polygon class="svg_accent" points="372.3,230.6 372.3,305.8 372.1,306 333,242.3 262.6,339.4 239.3,339.4 239.3,339.5 239.1,339.4 
+		191.1,299.9 153.2,339.4 139.7,339.4 139.7,296.2 187.9,245.9 246.5,294.1 335.7,171 		"/>
+	<path class="svg_accent" d="M189.5,147.9c-24.4,0-44.1,19.8-44.1,44.1s19.8,44.1,44.1,44.1c24.4,0,44.1-19.8,44.1-44.1
+		S213.9,147.9,189.5,147.9z M189.5,215.5c-13,0-23.5-10.5-23.5-23.5c0-13,10.5-23.5,23.5-23.5c13,0,23.5,10.5,23.5,23.5
+		C213,205,202.5,215.5,189.5,215.5z"/>
+</g>
+</svg>

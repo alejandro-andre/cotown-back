@@ -1,0 +1,240 @@
+@font-face {
+  font-family: 'icons';
+  src:  url('fonts/icons.eot?v7lc4o');
+  src:  url('fonts/icons.eot?v7lc4o#iefix') format('embedded-opentype'),
+    url('fonts/icons.ttf?v7lc4o') format('truetype'),
+    url('fonts/icons.woff?v7lc4o') format('woff'),
+    url('fonts/icons.svg?v7lc4o#icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icons' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-log-in:before {
+  content: "\e900";
+}
+.icon-arrow-left:before {
+  content: "\e901";
+}
+.icon-arrow-left-2:before {
+  content: "\e902";
+}
+.icon-arrow-left-hover:before {
+  content: "\e903";
+}
+.icon-arrow-right:before {
+  content: "\e904";
+}
+.icon-arrow-right-2:before {
+  content: "\e905";
+}
+.icon-arrow-right-hover:before {
+  content: "\e908";
+}
+.icon-checkbox-off:before {
+  content: "\e906";
+}
+.icon-checkbox-on:before {
+  content: "\e907";
+}
+.icon-close:before {
+  content: "\e909";
+}
+.icon-corchete-down:before {
+  content: "\e90a";
+}
+.icon-corchete-left:before {
+  content: "\e90b";
+}
+.icon-corchete-right:before {
+  content: "\e90c";
+}
+.icon-corchete-up:before {
+  content: "\e90d";
+}
+.icon-meh:before {
+  content: "\e90e";
+}
+.icon-picture:before {
+  content: "\e90f";
+}
+.icon-writte:before {
+  content: "\e910";
+}
+.icon-close-round:before {
+  content: "\e911";
+}
+.icon-chat:before {
+  content: "\e912";
+}
+.icon-spotify:before {
+  content: "\e913";
+}
+.icon-star:before {
+  content: "\e914";
+}
+.icon-linkedin:before {
+  content: "\e915";
+}
+.icon-facebook:before {
+  content: "\e916";
+}
+.icon-instagram:before {
+  content: "\e918";
+}
+.icon-loading:before {
+  content: "\e91a";
+}
+.icon-flat:before {
+  content: "\e91e";
+}
+.icon-search:before {
+  content: "\e91f";
+}
+.icon-tiktok:before {
+  content: "\e920";
+}
+.icon-trash:before {
+  content: "\e922";
+}
+.icon-user:before {
+  content: "\e923";
+}
+.icon-whatsapp:before {
+  content: "\e924";
+}
+.icon-air-conditioner:before {
+  content: "\e927";
+}
+.icon-bathroom:before {
+  content: "\e92f";
+}
+.icon-bed:before {
+  content: "\e936";
+}
+.icon-coffee-room:before {
+  content: "\e93b";
+}
+.icon-common-areas-cleaning:before {
+  content: "\e940";
+}
+.icon-documents:before {
+  content: "\e946";
+}
+.icon-downstairs:before {
+  content: "\e94a";
+}
+.icon-elevator:before {
+  content: "\e94c";
+}
+.icon-extinguisher:before {
+  content: "\e951";
+}
+.icon-filters:before {
+  content: "\e953";
+}
+.icon-fridge:before {
+  content: "\e954";
+}
+.icon-gym:before {
+  content: "\e957";
+}
+.icon-heating:before {
+  content: "\e95d";
+}
+.icon-keys:before {
+  content: "\e967";
+}
+.icon-lift:before {
+  content: "\e96c";
+}
+.icon-luggage:before {
+  content: "\e970";
+}
+.icon-maintenance:before {
+  content: "\e972";
+}
+.icon-map:before {
+  content: "\e974";
+}
+.icon-no-bother:before {
+  content: "\e976";
+}
+.icon-oven:before {
+  content: "\e97a";
+}
+.icon-phone:before {
+  content: "\e981";
+}
+.icon-porter:before {
+  content: "\e986";
+}
+.icon-restaurant:before {
+  content: "\e98a";
+}
+.icon-smart-locker:before {
+  content: "\e990";
+}
+.icon-study-room:before {
+  content: "\e993";
+}
+.icon-terrace:before {
+  content: "\e99c";
+}
+.icon-tv:before {
+  content: "\e9a0";
+}
+.icon-upstairs:before {
+  content: "\e9a4";
+}
+.icon-washing-machine:before {
+  content: "\e9a6";
+}
+.icon-wc:before {
+  content: "\e9ae";
+}
+.icon-wifi:before {
+  content: "\e9b0";
+}
+.icon-calendar:before {
+  content: "\e91b";
+}
+.icon-map-point:before {
+  content: "\e91c";
+}
+.icon-house:before {
+  content: "\e91d";
+}
+.icon-heart:before {
+  content: "\e926";
+}
+.icon-circle:before {
+  content: "\e928";
+}
+.icon-circle-checked:before {
+  content: "\e929";
+}
+.icon-envelope:before {
+  content: "\e92a";
+}
+.icon-call:before {
+  content: "\e92b";
+}
+.icon-add:before {
+  content: "\e917";
+}

@@ -9,7 +9,8 @@
 # #####################################
 
 # System includes
-from flask import Flask, request, abort, make_response, send_file, send_from_directory
+from flask import Flask, request, abort, make_response, send_file, send_from_directory, render_template
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from cachetools import TTLCache
 from datetime import timedelta
 from io import BytesIO
@@ -82,6 +83,15 @@ def runapp():
 
 
   # #####################################
+  # Templating
+  # #####################################
+
+  env = Environment(
+    loader=FileSystemLoader('./booking'),
+    autoescape=select_autoescape(['html', 'xml'])
+  )
+
+  # #####################################
   # Validate token
   # #####################################
 
@@ -124,19 +134,6 @@ def runapp():
 
     logger.debug('Hi')
     return 'Hi!'
-
-  # Static files - Returns an static html page, not used
-  def get_html(filename):
-
-    # Debug
-    logger.debug('HTML ' + filename)
-
-    # Return static file
-    try:
-      return send_from_directory('static', filename + '.html')
-    except:
-      return send_from_directory('static', filename)
-
 
   # ###################################################
   # Airflows plugins
@@ -328,7 +325,7 @@ def runapp():
 
 
   # ###################################################
-  # Dynamic web
+  # Dynamic web pages
   # ###################################################
 
   # Web logout
@@ -373,6 +370,11 @@ def runapp():
       domain=".cotown.com"
     )
     return response
+
+
+  # ###################################################
+  # Dynamic web API
+  # ###################################################
 
   # Available typologies
   def get_available_types():
@@ -449,18 +451,21 @@ def runapp():
   # Pages
   # ###################################################
 
-  def get_booking_page1():
+  def get_booking(filename):
 
-    return 'page1'
+    # Debug
+    logger.debug('BOOKING ' + filename)
 
-  def get_booking_page2():
+    # Return static file
+    if filename.split('.')[-1] != 'html':
+      try:
+        return send_from_directory('booking', filename)
+      except:
+        abort(404)
 
-    return 'page2'
-  
-  def get_booking_page3():
+    # Render dynamic page
+    return env.get_template(filename).render()
 
-    return 'page3'
-  
 
   # ###################################################
   # Flask
@@ -476,15 +481,13 @@ def runapp():
     # Debug
     logger.info('Recibido ' + request.path)
 
-    # Get & validate token, if present
-    value = validate_token(request.args.get('access_token'))
-
     # Skip token validaton on public endpoints
-    if request.endpoint in ('get_hello', 'post_notification'):
+    if request.endpoint in ('get_hello', 'post_notification', 'get_booking'):
       return
 
     # Token invalid?
-    if value != 0:
+    value = validate_token(request.args.get('access_token'))
+    if validate_token(request.args.get('access_token')) != 0:
       logger.debug(value)
       abort(value) 
 
@@ -494,7 +497,6 @@ def runapp():
 
   # Misc functions
   app.add_url_rule(settings.API_PREFIX + '/hi', view_func=get_hello, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/html/<path:filename>', view_func=get_html, methods=['GET'])
 
   # Contracts, get signature image
   app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=get_signature, methods=['GET'])
@@ -531,9 +533,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/available_types', view_func=get_available_types, methods=['GET'])
 
   # Dynamic web - Booking process - Pages
-  app.add_url_rule('/booking/page1', view_func=get_booking_page1, methods=['GET'])
-  app.add_url_rule('/booking/page2', view_func=get_booking_page2, methods=['GET'])
-  app.add_url_rule('/booking/page3', view_func=get_booking_page3, methods=['GET'])
+  app.add_url_rule('/booking/<path:filename>', view_func=get_booking, methods=['GET'])
 
   # Return app
   return app

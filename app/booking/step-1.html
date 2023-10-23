@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    {% include 'includes/head.html' %}
+</head>
+
+<body>
+  <main class="content-booking">
+
+      <section>
+        <h2>
+          ¿En qué ciudad quieres vivir?
+        </h2>
+        <div class="city-selector">
+          <div class="city-icons">
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__ciudad_barcelona.svg"/>
+                <p>BARCELONA</p>
+              </div>
+            </div>
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__ciudad_valencia.svg"/>
+              <p>VALENCIA</p>
+              </div>
+            </div>
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__ciudad_madrid.svg"/>
+                <p>MADRID</p> 
+              </div>
+            </div>
+          </div>        
+        </div>
+      </section>
+
+      <section>
+        <h2>
+          ¿Qué estás buscando?
+        </h2>
+        <div class="city-selector">
+          <div class="city-icons">
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__tipo_piso_compartido.svg">
+                <p>PISO COMPARTIDO</p>
+              </div>
+            </div>
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__tipo_apartamento_privado.svg">
+                <p>APARTAMENTO PRIVADO</p>
+              </div>
+            </div>
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__tipo_residencia_universitaria.svg">
+                <p>RESIDENCIA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>
+          ¿Qué tipo de habitación?
+        </h2>
+        <div class="city-selector">
+          <div class="city-icons">
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__hab_habitacion_individual.svg">
+                <p>HABITACIÓN INDIVIDUAL</p>
+              </div>
+            </div>
+            <div class="city">
+              <div class="content-selector">
+                <img class="img" alt="city" src="./assets/icon/vanguard/icono__hab_habitacion_compartida.svg">
+                <p>HABITACIÓN COMPARTIDA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>
+          ¿Cuándo?
+        </h2>
+          <!-- CALENDAR -->
+        <div class="calendar pure-u-1">
+          <div class="reservas_form" id="reservas_form" name="form_multi" method="GET">
+            <button class="date-button">
+              <label class="labels">Fechas</label>
+              <input type="text" id="in" onfocus="" class="inputs" name="in" placeholder="dd/mm/aaaa"/>
+            </button>            
+          </div>
+        </div>
+      </section>
+
+      <section class="results">
+        <button class="btn-secondary">
+            Ver Resultados
+        </button>
+      </section>
+
+    </div>
+        
+  </main>
+
+</body>
+
+</html>

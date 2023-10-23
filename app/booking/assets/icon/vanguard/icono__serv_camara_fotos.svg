@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<style type="text/css">
+	.svg_base{fill:#343434;}
+	.svg_accent{fill:#FF5166;}
+</style>
+<g>
+	<rect x="339.1" y="106.4" class="svg_base" width="66.5" height="33.2"/>
+	<rect x="139.6" y="206.1" class="svg_base" width="33.2" height="33.2"/>
+	<polygon class="svg_base" points="438.8,272.6 438.8,405.6 73.2,405.6 73.2,272.6 106.4,272.6 106.4,372.3 405.6,372.3 405.6,272.6 
+					"/>
+	<polygon class="svg_accent" points="438.8,139.7 438.8,272.6 405.6,272.6 405.6,172.9 106.4,172.9 106.4,272.6 73.2,272.6 73.2,139.7 		
+		"/>
+	<path class="svg_accent" d="M305.9,363.1c-49.9,0-90.5-40.6-90.5-90.5c0-49.9,40.6-90.5,90.5-90.5s90.5,40.6,90.5,90.5
+		C396.4,322.5,355.8,363.1,305.9,363.1z M305.9,213.8c-32.4,0-58.8,26.4-58.8,58.8c0,32.4,26.4,58.8,58.8,58.8s58.8-26.4,58.8-58.8
+		C364.6,240.2,338.3,213.8,305.9,213.8z"/>
+</g>
+</svg>

@@ -1,0 +1,104 @@
+:root {
+
+  /* // Fonts */
+--title-font: "Raleway", "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
+--text-font: "Open Sans","Helvetica Neue", Helvetica, sans-serif;
+
+
+/* COLORS 
+-------------------------------- */
+
+  /* // Main color */
+  --primary: #ff5166;
+  --primary-light: #fff5f7;
+  --primary-dark: #c14256;
+  --primary-underline: #ff516574;
+
+  /* // Background color */
+  --secondary-header: #ffffff;
+  --secondary-black: #121212;
+  --primary-background: #FFF5F7;
+  --grey-background: #D9D9D9;
+  --light-grey-background: #FAFAFA;
+  --grey-light-background: #FCFCFC;
+  --white-background: #f4f4f4;
+  --footer: #121212;
+  --primary-bg: #ff516587;
+  
+  /* // Text color */
+  --primary-text: #ffffff;
+  --second-header-text: #121212;
+  --secondary-text-header: #000000;    
+  --white: #ffffff;
+  --black: #000000;
+  
+  /* // Secondary color */
+  --grey-light: #3c434a;
+  --grey-dark: #30363b;
+  --grey-light: #d1d1d1;
+  --grey-light-dark: #a7a7a7;
+  --blue: #384289;
+  --blue-dark: #2d356e;
+  --purple: #ab92e1;
+  --purple-dark: #8975b4;
+  --yellow: #ecf166;
+  --yellow-dark: #bdc152;
+  --grey-advise: #77889A;
+
+  /* // Header border */    
+  --border-header: 2px solid #D1D1D1;
+  --border-bottom: 1px solid #D1D1D1;
+  --h2-border: 2px 0 #FF5166, -2px 0 #FF5166, 0 2px #FF5166, 0 -2px #FF5166,
+  1px 1px #FF5166, -1px -1px #FF5166, 1px -1px #FF5166, -1px 1px #fff;
+
+  /* // Feedback color */
+  --green-success-light: #e3f2e0;
+  --green-success: #8dc881;
+  --green-success-dark: #459a33;
+  --yellow-warning-light: #f8f3d8; 
+  --yellow-warning: #e2ca64; 
+  --yellow-warning-dark: #c9a81c;
+  --red-error-light: #FF5555;
+  --red-error: #FF0000;
+  --red-error-dark: #CC0000;
+  
+  --shadow: rgba(22, 22, 22, 0.06);
+  --shadow-soft: rgba(2, 0, 2, 15%);
+  --shadow-medium: rgba(8, 0, 4, 15%);
+  --shadow-strong: rgba(16, 0, 8, 20%);
+  /* box-shadow: 2px 3px 12px rgba(16, 0, 8, 20%); */
+
+  /* // border radius boxes */
+  --radius-1: 0px 0px 48px 0px;
+  --radius-2: 0px 12px;
+}
+
+/* SVG Fill colours */
+.svg_base { fill: #363434 !important; }
+.svg_accent { fill: #ff5166 !important; }
+
+.btn-secondary {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: fit-content;
+  height: 32px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 63px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 0 1.5em;
+  border: 1px solid var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-text);
+}
+.btn-secondary:hover {
+  border-color: var(--primary-dark);
+  background-color: var(--white);
+  color: var(--primary-dark);
+}
+
+
+
