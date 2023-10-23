@@ -513,7 +513,7 @@ section > h2 {
     border: 1.5px solid var(--grey-light);
 	box-sizing: border-box;
     border-radius: 6px;
-    padding: 10px 0 10px 10px;
+    padding: 10px;
 }
 .content-booking section .calendar .reservas_form button.date-button label.labels {
     width: 100%;
@@ -524,12 +524,12 @@ section > h2 {
 }
 .content-booking section  .calendar .reservas_form button.date-button input.inputs {	
     height: 16px;
-    text-align: left;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 16px;
     background-color: transparent;
     border: none;
+    text-align: center;
 }
 
 

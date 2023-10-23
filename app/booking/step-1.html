@@ -37,19 +37,19 @@
           <div class="selector">
             <div id="compartido" class="type content-selector" onclick="select_type('compartido');">
               <img class="img" alt="city" src="/assets/icon/vanguard/icono__tipo_piso_compartido.svg">
-              <p>PISO COMPARTIDO</p>
+              <p>Piso compartido</p>
             </div>
           </div>
           <div class="selector">
             <div id="privado" class="type content-selector" onclick="select_type('privado');">
               <img class="img" alt="city" src="/assets/icon/vanguard/icono__tipo_apartamento_privado.svg">
-              <p>APARTAMENTO PRIVADO</p>
+              <p>Apartamento privado</p>
             </div>
           </div>
           <div class="selector">
             <div id="residencia" class="type content-selector" onclick="select_type('residencia');">
               <img class="img" alt="city" src="/assets/icon/vanguard/icono__tipo_residencia_universitaria.svg">
-              <p>RESIDENCIA</p>
+              <p>Residencia universitaria</p>
             </div>
           </div>
         </div>
@@ -63,13 +63,13 @@
           <div class="selector">
             <div id="individual" class="room content-selector" onclick="select_room('individual');">
               <img class="img" alt="city" src="/assets/icon/vanguard/icono__hab_habitacion_individual.svg">
-              <p>HABITACIÓN INDIVIDUAL</p>
+              <p>Habitación individual</p>
             </div>
           </div>
           <div class="selector">
             <div id="compartida" class="room content-selector" onclick="select_room('compartida');">
               <img class="img" alt="city" src="/assets/icon/vanguard/icono__hab_habitacion_compartida.svg">
-              <p>HABITACIÓN COMPARTIDA</p>
+              <p>Habitación compartida</p>
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@
         <div class="reservas_form" id="reservas_form" name="form_multi" method="GET">
           <button class="date-button">
             <label class="labels">Fechas</label>
-            <input type="text" id="in" onfocus="" class="inputs" name="in" placeholder="dd/mm/aaaa"/>
+            <input type="text" id="dates" name="dates" onclick="open_calendar('dates');" class="inputs" placeholder="dd/mm/aaaa - dd/mm/aaaa"/>
           </button>            
         </div>
       </div>
@@ -96,8 +96,9 @@
 
   </main>
 
-<script>
+{% include 'includes/calendar-es.html' %}
 
+<script>
 const tipology={{data.data|safe}};
 let city = '';
 let type = '';
@@ -135,11 +136,9 @@ function select_type(id) {
 
   // Hide rooms
   document.querySelectorAll('div.room').forEach(elem => elem.style.display = 'none');
-  console.log(city);
   for (let l of tipology) {
     if (l.Name === city) {
       for (let t of l.Sale_types) {
-        console.log(t, id);
         if (t.Sale_type === id) {
           for (let r of t.Room_types) {
             el = document.getElementById(r.Room_type);

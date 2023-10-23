@@ -1,0 +1,185 @@
+<link rel="stylesheet" href="/assets/css/calendar.css"><div id="calendar" class="calendar-modal"><div class="calendar-modal-content"><div class="calendar-container"><section class="dates-selector"><div class="mobile"><div class="close" onclick="close_calendar();"><em class="icon-close"></em></div><div class="clean-dates"><a onclick="empty();">Clear dates</a></div></div><div class="selector-header"><div class="left"><h2>Select dates</h2><p>Minimum stay: 1 month</p></div><div class="right"><div class="calendar"><div class="reservas_form_div"><form id="reservas_form" name="form_multi" method="GET"><button class="date-button"><label class="labels">Check in</label> <input type="text" id="in" class="inputs" name="in" disabled="disabled"></button> <button class="date-button"><label class="labels">Check out</label> <input type="text" id="out" class="inputs" name="out" disabled="disabled"></button></form></div></div></div></div><div class="selector-main"><div class="left"><table id="daysleft" summary="a calendar"><thead class="mobile"><tr><th scope="col">Mo</th><th scope="col">Tu</th><th scope="col">We</th><th scope="col">Th</th><th scope="col">Fr</th><th scope="col">Sa</th><th scope="col">Su</th></tr></thead><caption><div class="calendar-header"><a class="icon-left" rel="prev" onclick="back();"><em class="icon-corchete-left"></em></a><p id="monthleft"></p></div></caption><thead class="desktop"><tr><th scope="col">Mo</th><th scope="col">Tu</th><th scope="col">We</th><th scope="col">Th</th><th scope="col">Fr</th><th scope="col">Sa</th><th scope="col">Su</th></tr></thead><tbody></tbody></table><div id="calerror" class="error">Minimum stay 1 month, maximum stay 11 months</div></div><div class="right"><table id="daysright" summary="a calendar"><caption><div class="calendar-header"><p id="monthright"></p><a class="icon-right" rel="next" onclick="forward();"><em class="icon-corchete-right"></em></a></div></caption><thead class="desktop"><tr><th scope="col">Mo</th><th scope="col">Tu</th><th scope="col">We</th><th scope="col">Th</th><th scope="col">Fr</th><th scope="col">Sa</th><th scope="col">Su</th></tr></thead><tbody></tbody></table><div class="buttons"><a onclick="empty();">Clear dates</a> <button id="ok" class="btn-secondary" onclick="close_calendar();">Close</button></div></div></div></section></div></div></div><script>// Numero de meses entre dos fechas
+function months(fin, fout) {
+    f1 = new Date(fin);
+    f2 = new Date(fout);
+    f2.setDate(f2.getDate() + 1)
+    const meses = (f2.getFullYear() - f1.getFullYear()) * 12 + (f2.getMonth() - f1.getMonth());
+    if (meses < 1 || meses > 11) return false;
+    if (meses == 1 && f2.getDate() < f1.getDate()) return false;
+    if (meses == 11 && f2.getDate() > f1.getDate()) return false;
+    return true;
+}
+
+// Formato de fecha interno
+function internal_date(yy, mm, dd) {
+    return yy + '-' + mm.toString().padStart(2, '0') + '-' + dd.toString().padStart(2, '0');
+}
+
+// Formato de fecha visualizacion
+function format_date(str) {
+    if (idioma == 'es-ES')
+        return str.slice(8,10) + '/' + str.slice(5,7) + '/' + str.slice(0,4);
+    return str.slice(5,7) + '/' + str.slice(8,10) + '/' + str.slice(0,4);
+}
+
+// Nombre del mes, en el idioma deseado
+function month(mes) {
+    var d = new Date(1965, mes);
+    var text = d.toLocaleString(idioma, { month: 'long' });
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+// Pinta los dias de un mes
+function pm(cal, yy, mm) {
+
+    // Tabla
+    var c = document.querySelector('#days' + cal + ' tbody');
+    c.innerHTML = '';
+
+    // Nombre del mes
+    var name = document.querySelector('#month' + cal);
+    name.textContent = month(mm, 'es-ES') + ' ' + yy;
+
+    // Rango de días
+    var ud = new Date(yy, mm + 1, 0).getDate(); // Obtiene el último día del mes
+    var pd = new Date(yy, mm, 1).getDay();      // Obtiene el primer día del mes
+    pd = (pd === 0 ? 7 : pd) - 1;               // Ajusta el primer día de la semana a Lunes
+
+    // Crea la cuadrícula del calendario
+    var dd = 1;
+    for (var y = 0; y < 6; y++) {
+        var rowHTML = document.createElement('tr');
+        for (var x = 0; x < 7; x++) {
+        var colHTML = document.createElement('td');
+        if (y === 0 && x < pd || dd > ud) {
+            colHTML.textContent = '';
+        } else {
+            colHTML.textContent = dd;
+            colHTML.id = internal_date(yy, mm + 1, dd);
+            if (colHTML.id > itoday) {
+            colHTML.classList.add('hover');
+            colHTML.addEventListener('click', select);
+            if (colHTML.id == fin.dataset.id || colHTML.id == fout.dataset.id) {
+                colHTML.classList.add('selected');
+            }
+            if (colHTML.id > fin.dataset.id && colHTML.id < fout.dataset.id) {
+                colHTML.classList.add('inside-selected');
+            }
+            }
+            dd++;
+        }
+        rowHTML.appendChild(colHTML);
+        }
+        c.appendChild(rowHTML);
+    }
+}
+
+// Pinta ambos meses
+function cal(date) {
+    yy = Math.floor(date / 12);
+    mm = date % 12
+    pm('left', yy, mm)
+
+    yy = Math.floor((date + 1) / 12);
+    mm = (date + 1) % 12
+    pm('right', yy, mm)
+    }
+
+    // Mes anterior
+    function back() {
+    if (ftoday > fnow) {
+        ftoday -= 1;
+        cal(ftoday);
+    }
+}
+
+// Mes posterior
+function forward() {
+    ftoday += 1;
+    cal(ftoday);
+}
+
+// Borrar fechas
+function empty() {
+    fin.value = '';
+    fout.value = '';
+    fin.dataset.id = undefined;
+    fout.dataset.id = undefined;
+    ftoday = fnow
+    document.getElementById("calerror").style.display = "none";
+    cal(ftoday);
+    return true;
+}
+
+// Selecciona fecha
+function select(event) {
+    event.preventDefault();
+    date = event.target.id;
+    if (!flag || date < fin.dataset.id) {
+        document.getElementById("calerror").style.display = "none";
+        fin.dataset.id = event.target.id;
+        fout.dataset.id = event.target.id;
+        fin.value = format_date(event.target.id);
+        document.getElementById("ok").innerHTML = "Close";
+        fout.value = '';
+        flag = true;
+    } else {
+        fout.dataset.id = event.target.id;
+        fout.value = format_date(event.target.id);
+        document.getElementById("ok").innerHTML = "Ok";
+        flag = false;
+        close_calendar()
+    }
+    cal(ftoday);
+    return true;
+}
+
+// Abre el calendario
+function open_calendar(field) {
+  result = document.getElementById(field);
+  calendar.style.display = "block";
+}
+
+// Valida y cierra el calendario
+function close_calendar(event) {
+  console.log(event);
+  localStorage.removeItem("dates");
+  localStorage.removeItem("checkin");
+  localStorage.removeItem("checkout");
+  if (fout.value == '') {
+    fin.value = '';
+    result.value = fin.value + ' - ' + fout.value
+    document.getElementById("calerror").style.display = "none";
+  }
+  if (!months(fin.dataset.id, fout.dataset.id)) {
+    document.getElementById("calerror").style.display = "flex";
+    return;
+  }
+  result.value = fin.value + ' - ' + fout.value
+  localStorage.setItem('dates', result.value);
+  localStorage.setItem('checkin', fin.dataset.id);
+  localStorage.setItem('checkout', fout.dataset.id);
+  calendar.style.display = "none";
+}
+
+// Calendar
+calendar = document.getElementById("calendar");
+
+// Today
+fnow   = new Date().getFullYear() * 12 + new Date().getMonth();
+itoday = internal_date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())
+ftoday = fnow
+
+// Params
+idioma = 'en-US';
+fdesde = '';
+fhasta = '';
+result = '';
+flag = false;
+
+// Fields
+const fin = document.getElementById('in');
+const fout =  document.getElementById('out');
+
+// Start calendar
+empty(ftoday);</script>
