@@ -536,7 +536,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/types', view_func=get_amenities, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/types', view_func=get_types, methods=['GET'])
 
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
