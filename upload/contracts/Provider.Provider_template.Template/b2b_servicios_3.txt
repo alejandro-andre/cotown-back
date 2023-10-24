@@ -5,10 +5,11 @@
 En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 
+
 ## LAS PARTES
 
 {%if Rooms[0].Service_id_type=='CIF'%}
-De una parte, {%for s in Rooms[0].Service_signers%}{%-if loop.index>1%} y {%endif%}{{s.Service_signer_name}}, mayor de edad, provisto de {{s.Service_signer_id_type}} {{s.Service_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Service_address}}, {{Rooms[0].Service_zip}} {{Rooms[0].Service_city}}, actuando en nombre y representación de {{Rooms[0].Service_name}} con el mismo domicilio, {{Rooms[0].Service_id_type}} {{Service_id}}{%if Service_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+De una parte, {%for s in Rooms[0].Service_signers%}{%-if loop.index>1%} y {%endif%}{{s.Service_signer_name}}, mayor de edad, provisto de {{s.Service_signer_id_type}} {{s.Service_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Service_address}}, {{Rooms[0].Service_zip}} {{Rooms[0].Service_city}}, actuando en nombre y representación de {{Rooms[0].Service_name}} con el mismo domicilio, {{Rooms[0].Service_id_type}} {{Rooms[0].Service_id}}{%if Service_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 {%else%}
 De una parte, {{Rooms[0].Service_name}}, mayor de edad, con {{Rooms[0].Service_id_type}} núm. {{Rooms[0].Service_id}}, con domicilio profesional en {{Rooms[0].Service_address}}, {{Rooms[0].Service_zip}} {{Rooms[0].Service_city}} actuando en su nombre y representación.
 {%endif%}
@@ -31,8 +32,7 @@ En adelante el "**Arrendatario**"
 
 I.- Que, el Arrendatario tiene arrendados el piso o los pisos que se indican a continuación en la finca sita en {{Rooms[0].Resource_flat_street}}, {{Rooms[0].Resource_building_city}}:
  
-{{Flats}}
-
+- {{Flats}}
 
 II.- Que, El proveedor de servicios es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza. 
 
@@ -53,7 +53,7 @@ El proveedor de servicios asumirá el coste del personal, medios, material, gast
 
 - Atención a incidencias de mantenimiento.
 
-3) La retribución global por la prestación del servicio consistirá en el pago de {{Booking_services}} euros mensuales (21% IVA incluido) por plaza que se llevará a cabo de forma mensual por el ARRENDATARIO y durante todo el tiempo que dure el arrendamiento, más el pago de {{Booking_final_cleaning}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia, mediante transferencia bancaria al número de cuenta bancaria designada por **el Proveedor de servicios**. 
+3) La retribución global por la prestación del servicio consistirá en el pago de {{Booking_services|decimal}} euros mensuales (21% IVA incluido) por plaza que se llevará a cabo de forma mensual por el ARRENDATARIO y durante todo el tiempo que dure el arrendamiento, más el pago de {{Booking_final_cleaning}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia, mediante transferencia bancaria al número de cuenta bancaria designada por **el Proveedor de servicios**. 
 
 4) **El proveedor de servicios** será el único responsable por el personal por ella contratado para la prestación del servicio. 
 

@@ -590,7 +590,7 @@ def do_group_contracts(apiClient, id):
     room = context['Rooms'][0]
 
     # Consolidate flats
-    context['Flats'] = ', '.join(list({r["Resource_flat_address"] for r in context['Rooms']}))
+    context['Flats'] = ', '.join(sorted(list({r["Resource_flat_address"] for r in context['Rooms']})))
 
     # Generate rent contract
     template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])

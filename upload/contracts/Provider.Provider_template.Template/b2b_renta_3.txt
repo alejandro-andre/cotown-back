@@ -5,10 +5,11 @@
 En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 
 
+
 ## LAS PARTES
 
 {%if Rooms[0].Owner_id_type=='CIF'%}
-De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
+De una parte, {%for s in Rooms[0].Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}}, actuando en nombre y representación de {{Rooms[0].Owner_name}} con el mismo domicilio, {{Rooms[0].Owner_id_type}} {{Rooms[0].Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}.
 {%else%}
 De una parte, {{Rooms[0].Owner_name}}, mayor de edad, con {{Rooms[0].Owner_id_type}} núm. {{Rooms[0].Owner_id}}, con domicilio profesional en {{Rooms[0].Owner_address}}, {{Rooms[0].Owner_zip}} {{Rooms[0].Owner_city}} actuando en su nombre y representación.
 {%endif%}
@@ -56,7 +57,7 @@ IV. Y, estando ambas partes interesadas en el arrendamiento de conformidad con l
 1.1.- La Arrendadora cede en arrendamiento a la Arrendataria el piso o los pisos que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**"). 
 
 {%for r in Rooms-%}
-- {{r.Resource_flat_street}}- {{r.Resource_address}}
+- {{r.Resource_flat_street}} - {{r.Resource_address}}
 {%endfor%}
 
 1.2.- Los pisos se entregarán libres de arrendatarios y ocupantes, con la extensión, usos, circunstancias y estado físico que la Arrendataria declara conocer y aceptar expresamente. 
