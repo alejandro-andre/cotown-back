@@ -17,19 +17,19 @@ logger = logging.getLogger('COTOWN')
 # ######################################################
 
 # Get information of existing typologies
-def existing_types(dbClient):
+def typologies(dbClient):
 
   # SQL 
   sql = '''
-    SELECT l."Name", 
+    SELECT l.id, l."Name", 
       CASE 
-        WHEN b."Building_type_id" = 3 THEN 'residencia'
-        WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'plazas') THEN 'compartido'
-        WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'completo') THEN 'privado'
+        WHEN b."Building_type_id" = 3 THEN 'rs'
+        WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'plazas') THEN 'pc'
+        WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'completo') THEN 'ap'
       END as "Sale_type",
       CASE 
-        WHEN rpt."Code" LIKE 'I_%' THEN 'individual'
-        WHEN rpt."Code" LIKE 'D_%' THEN 'compartida'
+        WHEN rpt."Code" LIKE 'I_%' THEN 'ind'
+        WHEN rpt."Code" LIKE 'D_%' THEN 'sha'
       END as "Room_type",
       COUNT(*)
     FROM "Resource"."Resource" r
@@ -39,7 +39,7 @@ def existing_types(dbClient):
     INNER JOIN "Geo"."Location" l on l.id = d."Location_id" 
     WHERE "Sale_type" IS NOT NULL
     AND rpt."Code" NOT LIKE 'DUI_%'
-    GROUP BY 1, 2, 3
+    GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3
     '''
 
@@ -54,11 +54,12 @@ def existing_types(dbClient):
     # Prepare JSON
     output = []
     for item in data:
+      id = item['id']
       name = item['Name']
       sale_type = item['Sale_type']
       room_type = item['Room_type']
       count = item['count']
-      city_entry = next((entry for entry in output if entry['Name'] == name), None)
+      city_entry = next((entry for entry in output if entry['id'] == id), None)
       if not city_entry:
           city_entry = {'Name': name, 'Sale_types': []}
           output.append(city_entry)

@@ -324,8 +324,8 @@ def runapp():
     return room_amenities(dbClient)
 
   # Get types
-  def get_types():
-    return existing_types(dbClient)
+  def get_typologies():
+    return typologies(dbClient)
 
 
   # ###################################################
@@ -463,7 +463,7 @@ def runapp():
     # return
     return send_from_directory('assets', filename)
 
-  def get_booking(filename):
+  def get_booking(lang, filename):
 
     # Debug
     logger.info('BOOKING ' + filename + ':' + request.path)
@@ -474,7 +474,7 @@ def runapp():
     # Get existing locations, types, etc.
     data = {
       'lang': lang,
-      'data': existing_types(dbClient) 
+      'data': typologies(dbClient) 
     }
 
     # Render dynamic page
@@ -536,7 +536,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/types', view_func=get_types, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/typologies', view_func=get_typologies, methods=['GET'])
 
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
@@ -548,8 +548,7 @@ def runapp():
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=get_asset, methods=['GET'])
-  app.add_url_rule('/es/booking/<path:filename>', view_func=get_booking, methods=['GET'])
-  app.add_url_rule('/booking/<path:filename>', view_func=get_booking, methods=['GET'])
+  app.add_url_rule('/booking/<string:lang>/<path:filename>', view_func=get_booking, methods=['GET'])
 
   # Return app
   return app
