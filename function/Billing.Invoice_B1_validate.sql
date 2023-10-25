@@ -17,6 +17,8 @@ DECLARE
   num INTEGER;
   yy INTEGER;
   
+  total NUMERIC;
+  
   reg RECORD;
   lines CURSOR FOR 
     SELECT *
@@ -65,7 +67,15 @@ BEGIN
   IF NOT NEW."Issued" AND NEW."Code" IS NULL THEN   
     RETURN NEW;
   END IF;
-  NEW."Issued" := TRUE;
+
+  -- Sin lineas de factura
+  SELECT SUM("Amount")
+  INTO total
+  FROM "Billing"."Invoice_line"
+  WHERE "Invoice_id" = NEW.id;
+  IF total IS NULL OR total <= 0 THEN
+    RAISE EXCEPTION '!!!Invoice with amount less or equal to 0!!!Factura con importe menor o igual a 0!!!';
+  END IF;
 
   -- Ya emitida?
   IF NEW."Issued" = TRUE AND NEW."Code" IS NOT NULL THEN
@@ -113,14 +123,11 @@ BEGIN
   END IF;
 
   -- Lee la info del recurso
-  booking_id := NEW."Booking_id";
-  IF booking_id IS NULL THEN
-    booking_id := NEW."Booking_group_id";
-  END IF;
   SELECT r.id, r."Code", r."Building_id"
   INTO resource_id, resource_code, building_id
-  FROM "Resource"."Resource" r
-  INNER JOIN "Booking"."Booking" b ON b.id = booking_id;
+  FROM "Booking"."Booking" b
+  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  WHERE b.id = NEW."Booking_id";
 
   -- Lee el formato de numeración y prefijo SAP del proveedor
   SELECT
@@ -141,7 +148,9 @@ BEGIN
   WHERE b.id = building_id;
 
   -- SAP Code
-  NEW."SAP_code" := CONCAT(prefix_provider, prefix_building, '_', SUBSTRING (resource_code, 8, 5));
+  IF resource_code IS NOT NULL THEN
+    NEW."SAP_code" := CONCAT(prefix_provider, prefix_building, '_', SUBSTRING (resource_code, 8, 5));
+  END IF;
   
   -- Año de emisión
   SELECT EXTRACT(YEAR FROM NEW."Issued_date") INTO yy;

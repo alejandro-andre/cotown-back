@@ -52,10 +52,12 @@ def download_bills(apiClient, variables=None):
   query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     data: Billing_InvoiceList (
       where: {
-        Issued_date: { GE: $fdesde }
-        Issued_date: { LE: $fhasta }
-        Provider_id: { GE: $pdesde }
-        Provider_id: { LE: $phasta }
+        AND: [
+          { Issued_date: { GE: $fdesde } }
+          { Issued_date: { LE: $fhasta } }
+          { Provider_id: { GE: $pdesde } }
+          { Provider_id: { LE: $phasta } }
+        ]
       }
     ) { 
       id
@@ -104,8 +106,10 @@ def download_contracts(apiClient, variables=None):
   query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     data: Booking_BookingList (
       where: { 
-        Date_from: { GE: $fdesde } 
-        Date_from: { LE: $fhasta } 
+        AND: [
+          { Date_from: { GE: $fdesde } }
+          { Date_from: { LE: $fhasta } }
+        ]
       }
     ) {
       id
