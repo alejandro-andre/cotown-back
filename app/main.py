@@ -9,8 +9,8 @@
 # #####################################
 
 # System includes
-from flask import Flask, request, abort, make_response, send_file, send_from_directory, render_template
-from jinja2 import Environment, FileSystemLoader, TemplateError, select_autoescape
+from flask import Flask, request, session, abort, make_response, send_file, send_from_directory
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from cachetools import TTLCache
 from datetime import timedelta
 from io import BytesIO
@@ -19,7 +19,7 @@ import base64
 # Cotown includes - services
 from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
-from library.services.cipher import encrypt, decrypt
+from library.services.cipher import encrypt
 from library.services.config import settings
 from library.services.redsys import pay, validate
 from library.services.ac import add_contact
@@ -455,6 +455,26 @@ def runapp():
   # Pages
   # ###################################################
 
+  def get_var(name, default):
+
+    # Get var from querystring
+    aux = request.args.get(name)
+
+    # Or get var from form
+    if aux is None:
+       aux = request.form.get(name)
+
+    # And store in session
+    if aux is not None:
+      session[name] = aux
+
+    # Get value from session or default
+    if name not in session:
+        session[name] = default
+
+    # Get value from session
+    return session[name]
+
   def get_asset(filename):
 
     # Debug
@@ -471,14 +491,32 @@ def runapp():
     # Language
     lang = 'es' if request.path.startswith('es/') else 'en'
 
-    # Get existing locations, types, etc.
-    data = {
-      'lang': lang,
-      'step': step,
-      'data': typologies(dbClient) 
-    }
-    print(data)
+    # Data
+    city  = int(get_var('book_city_id', 1))
+    acom  = get_var('book_acom', 'pc')
+    room  = get_var('book_room', 'ind')
+    dfrom = get_var('book_checkin', None)
+    dto   = get_var('book_checkout', None)
 
+    # Session vars
+    # http://localhost:5000/booking/en/1?book_city_id=2&book_acom=ap&book_room=sha&book_checkin=01/11/2023&book_checkout=31/03/2024
+    vars = {
+      'city':     city,
+      'acom':     acom,
+      'room':     room,
+      'checkin':  dfrom[8:10] + '/' + dfrom[5:7] + '/' + dfrom[:4],
+      'checkout': dto[8:10] + '/' + dto[5:7] + '/' + dto[:4],
+      'lang':     lang,
+      'step':     step,
+    }
+
+    # Get existing locations, types, etc.
+    data = { 'vars': vars }
+    if step == '1':
+      data['typologies'] = typologies(dbClient) 
+    elif step == '2':
+      data['results'] = available_rooms(dbClient, dfrom, dto, city, room)
+    
     # Render dynamic page
     return env.get_template(lang + '/step-' + step + '.html').render(data=data)
    
@@ -489,7 +527,8 @@ def runapp():
 
   # Flask
   app = Flask(__name__)
-  
+  app.secret_key = settings.COOKIE_KEY
+
   # Error handler
   @app.errorhandler(500)
   def internal_error(error):
@@ -555,7 +594,7 @@ def runapp():
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=get_asset, methods=['GET'])
-  app.add_url_rule('/booking/<string:lang>/<string:step>', view_func=get_booking, methods=['GET'])
+  app.add_url_rule('/booking/<string:lang>/<string:step>', view_func=get_booking, methods=['GET', 'POST'])
 
   # Return app
   return app
@@ -569,4 +608,4 @@ if __name__ == '__main__':
 
   # Run app
   app = runapp()
-  app.run(host='0.0.0.0', port=5000, debug=False)
+  app.run(host='0.0.0.0', port=5000, debug=True)

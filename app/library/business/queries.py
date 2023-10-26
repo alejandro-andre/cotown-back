@@ -133,7 +133,7 @@ def flat_prices(dbClient, year):
   '''
   dbClient.select(sql, (year,))
 
-# Obtener los resultados de la consulta
+  # Obtener los resultados de la consulta
   results = dbClient.fetchall()
 
   # Crear una estructura de datos para almacenar los resultados agrupados
@@ -500,7 +500,6 @@ def available_resources(dbClient, date_from, date_to, building, flat_type, place
     aux = dbClient.fetchall()
     dbClient.disconnect()
     list = [item for sub_list in aux for item in sub_list]
-    logger.debug(list)
     return list
 
   except Exception as error:
