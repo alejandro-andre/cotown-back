@@ -1,6 +1,6 @@
 <div class="nav-booking  pure-u-1">
     <ul class="black-nav pure-menu-list">
-        <li class="pure-menu-item checked">
+        <li class="pure-menu-item{% if data.step == '1'%} checked{% endif %}">
             <label class="label">
                 <a href="tabs-flow.html">
                     <span>1. Ubicación y fechas</span>
@@ -12,7 +12,7 @@
                 </a>
             </label> 
         </li>
-        <li class="pure-menu-item">
+        <li class="pure-menu-item{% if data.step == '2'%} checked{% endif %}">
             <label class="label">
                 <a href="tabs-flow-2.html">
                     <span>2. Tipo de habitación</span>
@@ -24,7 +24,7 @@
                 </a>		
             </label>
         </li>
-        <li class="pure-menu-item">
+        <li class="pure-menu-item{% if data.step == '3'%} checked{% endif %}">
             <label class="label">
                 <a href="tabs-flow-3.html">
                     <span>3. Detalles de la reserva</span>
@@ -36,7 +36,7 @@
                 </a>		
             </label>
         </li>
-        <li class="pure-menu-item">
+        <li class="pure-menu-item{% if data.step == '4'%} checked{% endif %}">
             <label class="label">
                 <a href="tabs-flow-4.html">
                     <span>4. Confirmación</span>

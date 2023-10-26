@@ -10,7 +10,7 @@
 
 # System includes
 from flask import Flask, request, abort, make_response, send_file, send_from_directory, render_template
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, TemplateError, select_autoescape
 from cachetools import TTLCache
 from datetime import timedelta
 from io import BytesIO
@@ -463,10 +463,10 @@ def runapp():
     # return
     return send_from_directory('assets', filename)
 
-  def get_booking(lang, filename):
+  def get_booking(lang, step):
 
     # Debug
-    logger.info('BOOKING ' + filename + ':' + request.path)
+    logger.info('BOOKING ' + step + ':' + request.path)
 
     # Language
     lang = 'es' if request.path.startswith('es/') else 'en'
@@ -474,12 +474,14 @@ def runapp():
     # Get existing locations, types, etc.
     data = {
       'lang': lang,
+      'step': step,
       'data': typologies(dbClient) 
     }
+    print(data)
 
     # Render dynamic page
-    return env.get_template(filename).render(data=data)
-
+    return env.get_template(lang + '/step-' + step + '.html').render(data=data)
+   
 
   # ###################################################
   # Flask
@@ -487,6 +489,11 @@ def runapp():
 
   # Flask
   app = Flask(__name__)
+  
+  # Error handler
+  @app.errorhandler(500)
+  def internal_error(error):
+      return "Lo sentimos, ha ocurrido un error interno.", 500  
   
   # Before each request
   @app.before_request
@@ -548,7 +555,7 @@ def runapp():
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=get_asset, methods=['GET'])
-  app.add_url_rule('/booking/<string:lang>/<path:filename>', view_func=get_booking, methods=['GET'])
+  app.add_url_rule('/booking/<string:lang>/<string:step>', view_func=get_booking, methods=['GET'])
 
   # Return app
   return app
@@ -562,4 +569,4 @@ if __name__ == '__main__':
 
   # Run app
   app = runapp()
-  app.run(host='0.0.0.0', port=5000, debug=True)
+  app.run(host='0.0.0.0', port=5000, debug=False)

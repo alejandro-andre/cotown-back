@@ -1,24 +1,29 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
-    {% include 'includes/head.html' %}
+    {% include 'en/includes/head.html' %}
 </head>
 
 <body>
+
 	<div class="tabs-container">
-		{% include 'includes/header-tabs.html' %}
-		{% include 'includes/header-nav.html' %}
+		{% include 'en/includes/header-tabs.html' %}
+		{% include 'en/includes/header-nav.html' %}
 		<div class="main-booking">
 			<div id="section1" class="main-contain">
 				<div class="panel-container">
 					<div class="left">
+
 						<div class="error-message">
 							<p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
 						</div>
+
 						<h2>¿Dónde quieres vivir?</h2>
+
 						<form class="pure-form pure-u-1">
-							<fieldset>	
+							<fieldset>
+
 								<label class="label1">Selecciona una ubicación</label>					
 								<select class="pure-u-1-1 select1">
 									<option>Barcelona</option>
@@ -26,6 +31,7 @@
 									<option>Residencia universitaria</option>
 									<option>Piso compartido</option>
 								</select>
+
 								<h3>¿Qué tipo de piso estás buscando?</h3>
 								<div class="background">
 									<input name="piso compartido" type="radio" value="compartido" >
@@ -37,6 +43,7 @@
 									<em class="checkmark"></em>
 									<label class="labels">Apartamento Privado</label>
 								</div>
+
 								<h3>¿En qué tipo de habitación?</h3>
 								<div class="background">
 									<input name="Habitación Individual" type="radio" value="individual">
@@ -48,20 +55,9 @@
 									<em class="checkmark"></em>
 									<label class="labels">Habitación Compartida</label>
 								</div>								
-								<h3>¿En qué tipo de habitación?</h3>
-								<div class="background">
-									<input name="Habitación Individual" type="radio" value="individual">
-									<em class="checkmark"></em>
-									<label class="labels">Habitación Individual</label>
-								</div>
-								<div class="background">
-									<input name="Habitación Compartida" type="radio" value="compartida">
-									<em class="checkmark"></em>
-									<label class="labels">Habitación Compartida</label>
-								</div>
+
 								<h3>¿En qué fechas?</h3>
 								<div class="inputs-container">
-									
 									<div class="dates">
 										<button class="date-button">
 											<label>Fecha de entrada</label>	
@@ -69,23 +65,28 @@
 										</button>
 									</div>									
 								</div>
+
 								<section class="next">
 									<button class="btn-secondary">
 										Continuar
 									</button>
 								</section>
+
 							</fieldset>
 						</form>						
 					</div>
+
 					<div class="right">
 						<div class="img-big">
 							<img class="big" alt="cotownity-big" src="/assets/img/cotownity-big.png">
 						</div>
 					</div>					
+
 				</div>
 			</div>
 		</div>
 	</div>
+
 </body>
 
 </html>
