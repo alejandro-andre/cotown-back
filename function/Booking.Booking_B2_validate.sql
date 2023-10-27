@@ -41,12 +41,12 @@ BEGIN
     RAISE exception '!!!Locked booking!!!Reserva bloqueada!!!';
   END IF;
 
-  -- Se ha intentado quitar el recurso?
-  --IF TG_OP = 'UPDATE' THEN
-  --  IF OLD."Resource_id" IS NOT NULL AND NEW."Resource_id" IS NULL THEN
-  --    RAISE exception '!!!Resource % cannot be removed!!!El recurso % no se puede quitar!!!', OLD."Resource_id", OLD."Resource_id";
-  --  END IF;
-  --END IF;
+  --? Se ha intentado quitar el recurso?
+  --?IF TG_OP = 'UPDATE' THEN
+  --?  IF OLD."Resource_id" IS NOT NULL AND NEW."Resource_id" IS NULL THEN
+  --?    RAISE exception '!!!Resource % cannot be removed!!!El recurso % no se puede quitar!!!', OLD."Resource_id", OLD."Resource_id";
+  --?  END IF;
+  --?END IF;
 
   -- Verifica las fechas
   IF NEW."Check_in" < '2000-01-01' THEN

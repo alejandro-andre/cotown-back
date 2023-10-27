@@ -27,12 +27,48 @@ DECLARE
    
 BEGIN
 
-  -- Facturas emitidas
+  -- Trick
+  IF current_setting('myapp.admin', true) = 'true' THEN
+    IF TG_OP = 'DELETE' THEN
+      RETURN OLD;
+    END IF;
+    OLD."Issued" = FALSE;
+  END IF;
+
+  -- Facturas ya emitidas
   IF OLD."Issued" = TRUE THEN
 
     -- No se puede borrar
     IF TG_OP = 'DELETE' THEN
       RAISE EXCEPTION '!!!Cannot delete issued bill!!!No se puede borrar una factura emitida!!!';
+    END IF;
+
+    -- Rectificativa?
+    IF NEW."Bill_type" = 'factura' AND OLD."Rectified" = FALSE AND NEW."Rectified" = TRUE THEN
+
+      -- Inserta factura rectificativa
+ 	    INSERT INTO "Billing"."Invoice" 
+        ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
+      VALUES 
+        ('rectificativa', False, False, CURRENT_DATE, OLD."Provider_id", OLD."Customer_id", OLD."Booking_id", OLD."Payment_method_id", OLD."Payment_id", CONCAT('Factura rectificativa de la ', OLD."Code"))
+      RETURNING id INTO i_id;
+     
+      -- Inserta lineas
+      OPEN lines;
+      FETCH lines INTO reg;
+      WHILE (FOUND) LOOP
+        INSERT INTO "Billing"."Invoice_line" 
+          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept") 
+        VALUES
+          (i_id, -reg."Amount", reg."Product_id", reg."Tax_id", reg."Concept");
+        FETCH lines INTO reg;
+      END LOOP;     
+      CLOSE lines;
+
+      -- Emite factura
+ 	    UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = i_id;
+      RETURN NEW;
+      
     END IF;
 
     -- No se puede cambiar
@@ -46,6 +82,7 @@ BEGIN
       (OLD."Rectified" = TRUE AND NEW."Rectified" = FALSE) THEN
       RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
     END IF;
+
   END IF;
 
   -- Cliente de la reserva
@@ -75,51 +112,6 @@ BEGIN
   WHERE "Invoice_id" = NEW.id;
   IF total IS NULL OR total <= 0 THEN
     RAISE EXCEPTION '!!!Invoice with amount less or equal to 0!!!Factura con importe menor o igual a 0!!!';
-  END IF;
-
-  -- Ya emitida?
-  IF NEW."Issued" = TRUE AND NEW."Code" IS NOT NULL THEN
-
-    -- Rectificativa?
-    IF NEW."Bill_type" = 'factura' AND OLD."Rectified" = FALSE AND NEW."Rectified" = TRUE  THEN
-
-      -- Inserta factura rectificativa
- 	    INSERT INTO "Billing"."Invoice" 
-        ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
-      VALUES 
-        ('rectificativa', False, False, CURRENT_DATE, OLD."Provider_id", OLD."Customer_id", OLD."Booking_id", OLD."Payment_method_id", OLD."Payment_id", CONCAT('Factura rectificativa de la ', OLD."Code"))
-      RETURNING id INTO i_id;
-     
-      -- Inserta lineas
-      OPEN lines;
-      FETCH lines INTO reg;
-      WHILE (FOUND) LOOP
-        INSERT INTO "Billing"."Invoice_line" 
-          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept") 
-        VALUES
-          (i_id, -reg."Amount", reg."Product_id", reg."Tax_id", reg."Concept");
-        FETCH lines INTO reg;
-      END LOOP;     
-      CLOSE lines;
-
-      -- Emite factura
- 	    UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = i_id;
-      RETURN NEW;
- 	  
-    END IF;
-   
-    -- No permite cambios
-    IF OLD."Bill_type" <> NEW."Bill_type"
-    OR OLD."Booking_group_id" <> NEW."Booking_group_id"
-    OR OLD."Booking_id" <> NEW."Booking_id"
-    OR OLD."Concept" <> NEW."Concept"
-    OR OLD."Customer_id" <> NEW."Customer_id"
-    OR OLD."Issued_date" <> NEW."Issued_date"
-    OR OLD."Provider_id" <> NEW."Provider_id" THEN
-      RAISE EXCEPTION '!!!Bill has been already issued, cannot change!!!La factura ya ha sido emitida, no puede cambiarse!!!'; 
-    END IF;
-    RETURN NEW;
-   
   END IF;
 
   -- Lee la info del recurso
