@@ -16,27 +16,39 @@
 
           <div class="left tab2">
 
-            {%for item in data.results%}
+            {% for item in data.results %}
+            {% set img = (item.Building_code + '-' + item.Place_type_code + '-' + (item.Photo | string)) | replace('_', '-') | lower %}
             <div class="description">
 
               <div class="img">
-                <img class="mini" alt="cotownity-big" 
-                     src="https://vanguard-student-housing.com/assets/img/{{item.Building_code}}{{item.Place_type_code}}{{item.Photo}}.webp">
+                <picture>
+                  <source type="image/webp" srcset="http://localhost:8080/assets/img/{{img}}-500.webp 500w">
+                  <img 
+                    class="mini" loading="lazy" decoding="async" 
+                    src="http://localhost:8080/assets/img/{{img}}-500.jpeg" width="500" h="333">
+                </picture>                
               </div>
 
               <div class="desc-container">
 
                 <div class="first secc">
                   <p class="desc">{{item.Place_type_name}}</p>
+                  <div class="price">
+                    <p>
+                      {{item.Flat_types[0].Price}}  €
+                      <br><span>{% if item.Flat_types | length > 1 %}desde {% endif %}al mes</span>
+                    </p>
+                  </div>
                 </div>
 
                 <div class="second secc">
                   <p>{{item.Building_name}}</p>            
                 </div>
 
-                <div class="prices secc">
-
-                  {%for share in item.Flat_types%}
+                {% if item.Flat_types | length > 1 %}
+                <p>Compartiendo con:</p>
+                <div class="prices secc">               
+                  {% for share in item.Flat_types %}
                   <div class="share">
                     <div class="sharing">
                       <div class="partners">
@@ -46,11 +58,14 @@
                         </label>
                       </div>
                       <div class="price">
-                        <p>{{share.Price}} €/month</p>
+                        <p>{{share.Price}}€<span style="font-size:14px;font-weight:400;"> al mes</span>
+                        </p>
                       </div>
                     </div>
                   </div>
-                  {%endfor%}
+                  {% else %}
+                  <p><br><br></p>
+                  {% endfor %}
 
                   <!--
                   <div class="extra">
@@ -68,15 +83,15 @@
                   </div>
                   -->
                 </div>
-                
-                <div class="third  secc">                
+                {% endif %}
+
+                <div class="third secc">                
                   <button class="btn-secondary">
                     Reservar
                     <em class="icon-arrow-right"></em>
                   </button>
                 </div>
 
-                <!--
                 <div class="panel-expan secc">
                   <div class="expansion pure-u-1">
                     <input type="checkbox" class="expan pure-u-1-2" id="tab1" tabindex="0"/>
@@ -89,11 +104,10 @@
                     </div>       
                   </div>
                 </div>
-                -->
 
               </div>
             </div>
-            {%endfor%}
+            {% endfor %}
 
           </div>  
 
@@ -102,7 +116,7 @@
               <h3>Resumen de reserva</h3>
               <p>Ubicación</p>
               <div class="resume-edit">
-                <h4>{{data.vars.city}}</h4>
+                <h4>{{data.vars.city.Name}}</h4>
                 <button class="btn-text">
                   <em class="icon-writte"></em>
                   <p>Editar</p>

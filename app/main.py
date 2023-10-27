@@ -455,7 +455,7 @@ def runapp():
   # Pages
   # ###################################################
 
-  def get_var(name, default):
+  def get_var(name, default=None):
 
     # Get var from querystring
     aux = request.args.get(name)
@@ -491,31 +491,36 @@ def runapp():
     # Language
     lang = 'es' if request.path.startswith('es/') else 'en'
 
+    # Typologies
+    types = typologies(dbClient) 
+
     # Data
-    city  = int(get_var('book_city_id', 1))
+    id    = int(get_var('book_city_id', 1))
+    city  = [dic for dic in types if dic.get('id') == id][0]
     acom  = get_var('book_acom', 'pc')
     room  = get_var('book_room', 'ind')
-    dfrom = get_var('book_checkin', None)
-    dto   = get_var('book_checkout', None)
+    dfrom = get_var('book_checkin', '2023-11-01')
+    dto   = get_var('book_checkout', '2099-12-31')
 
     # Session vars
-    # http://localhost:5000/booking/en/1?book_city_id=2&book_acom=ap&book_room=sha&book_checkin=01/11/2023&book_checkout=31/03/2024
+    # http://localhost:5000/booking/en/2?book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
     vars = {
       'city':     city,
       'acom':     acom,
       'room':     room,
-      'checkin':  dfrom[8:10] + '/' + dfrom[5:7] + '/' + dfrom[:4],
-      'checkout': dto[8:10] + '/' + dto[5:7] + '/' + dto[:4],
+      'checkin':  dfrom,
+      'checkout': dto,
       'lang':     lang,
       'step':     step,
     }
+    print(vars)
 
     # Get existing locations, types, etc.
     data = { 'vars': vars }
     if step == '1':
-      data['typologies'] = typologies(dbClient) 
+      data['typologies'] = types
     elif step == '2':
-      data['results'] = available_rooms(dbClient, dfrom, dto, city, room)
+      data['results'] = available_rooms(dbClient, dfrom, dto, id, room)
     
     # Render dynamic page
     return env.get_template(lang + '/step-' + step + '.html').render(data=data)

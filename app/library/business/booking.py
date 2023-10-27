@@ -130,8 +130,6 @@ def available_rooms(dbClient, date_from, date_to, city, room):
     dbClient.connect()
     dbClient.select(sql, (year, date_to, date_from, city, type, ))
     results = dbClient.fetchall()
-    print(sql, (year, date_to, date_from, city, type, ))
-    print(results)
     grouped_data = []
     for row in results:
         
@@ -144,19 +142,23 @@ def available_rooms(dbClient, date_from, date_to, city, room):
           'Place_type_code': row['Place_type_code'],
           'Place_type_name': row['Place_type_name'],
           'Photo': row['Photo'],
+          'Price': 99999,
           'Flat_types': []
         })
         building_index = len(grouped_data) - 1
 
       # Flat type
+      price = int(row['Price'])
+      if grouped_data[building_index]['Price'] > price:
+        grouped_data[building_index]['Price'] = price
       grouped_data[building_index]['Flat_types'].append({
         'Flat_type_code': row['Flat_type_code'],
         'Flat_type_name': row['Flat_type_name'],
-        'Price': int(row['Price'])
+        'Price': price
       })
 
     dbClient.disconnect()
-    return grouped_data
+    return sorted(grouped_data, key=lambda x: x['Price'])
   
   except Exception as error:
     logger.error(error)
