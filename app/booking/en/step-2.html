@@ -2,19 +2,25 @@
 <html lang="es">
 
 <head>
-    [% include 'en/includes/head.html' %]
+  [% include 'en/includes/head.html' %]
 </head>
 
 <body>
-
   <div class="tabs-container">
-    [% include 'en/includes/header-tabs.html' %]
-    [% include 'en/includes/header-nav.html' %]
+
+    [% include 'en/includes/header.html' %]
+
     <div class="main-booking">
       <div id="section2" class="main-contain">
         <div class="panel-container">
 
           <div class="left tab2">
+
+            [% if data.results | length == 0 %]
+            <div class="error-message">
+              <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
+            </div>
+            [% endif %]
 
             [% for item in data.results %]
             [% set img = (item.Building_code + '-' + item.Place_type_code + '-' + (item.Photo | string)) | replace('_', '-') | lower %]
@@ -22,10 +28,10 @@
 
               <div class="img">
                 <picture>
-                  <source type="image/webp" srcset="/assets/img/[[img]]-500.webp 500w">
+                  <source type="image/webp" srcset="https://vanguard-student-housing.com/assets/img/[[img]]-500.webp 500w">
                   <img 
                     class="mini" loading="lazy" decoding="async" 
-                    src="/assets/img/[[img]]-500.jpeg" width="500" h="333">
+                    src="https://vanguard-student-housing.com/assets/img/[[img]]-500.jpeg" width="500" h="333">
                 </picture>                
               </div>
 
@@ -52,8 +58,12 @@
                   <div class="share">
                     <div class="sharing">
                       <div class="partners">
-                        <label for="radio" class="pure-radio">
-                        <input type="radio" id="radio" name="radio" value="radio" checked />
+                        <label class="pure-radio" 
+                          for="radio_[[item.Building_code]]_[[item.Place_type_code]]_[[share.Flat_type_code]]" >
+                        <input type="radio" 
+                          data-id="[[share.Flat_type_code]]"
+                          name="radio_[[item.Building_code]]_[[item.Place_type_code]]"
+                          [% if loop.index == 1 %]checked[% endif %] />
                           [[share.Flat_type_name]]
                         </label>
                       </div>
@@ -86,7 +96,7 @@
                 [% endif %]
 
                 <div class="third secc">                
-                  <button class="btn-secondary">
+                  <button class="btn-secondary" onclick="go_book('[[item.Building_code]]', '[[item.Place_type_code]]')">
                     Reservar
                     <em class="icon-arrow-right"></em>
                   </button>
@@ -127,11 +137,11 @@
               <div class="dates">
                 <div class="in">
                   <p>ENTRADA</p>
-                  <h4>[[data.vars.checkin]]</h4>
+                  <h4>[[data.vars.date_from]]</h4>
                 </div>
                 <div class="out">
                   <p>SALIDA</p>
-                  <h4>[[data.vars.checkout]]</h4>
+                  <h4>[[data.vars.date_to]]</h4>
                 </div>                
               </div>
             </div>
@@ -140,7 +150,37 @@
         </div>
       </div>
     </div>
+  
   </div>
 
+  <form id="book_form" action="/booking/3" method="post">
+    <input type="hidden" id="book_building_id" name="book_building_id" value="">
+    <input type="hidden" id="book_place_type_id" name="book_place_type_id" value="">
+    <input type="hidden" id="book_flat_type_id" name="book_flat_type_id" value="">
+  </form>
+
+<script>
+function set_field(field, value) {
+  localStorage.setItem(field, value);
+  document.getElementById(field).value = value;
+}
+
+function go_book(b_id, pt_id) {
+  ft_id = '';
+  var radios = document.querySelectorAll('input[name="radio_' + b_id + '_' + pt_id + '"]');
+  for (var i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      ft_id = radios[i].getAttribute("data-id");
+      break;
+    }
+  }
+  set_field("book_building_id", b_id);
+  set_field("book_place_type_id", pt_id);
+  set_field("book_flat_type_id", ft_id);
+  document.getElementById("book_form").submit();
+}
+</script>
+
 </body>
+
 </html>

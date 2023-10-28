@@ -97,23 +97,11 @@ def rent_info(date_from, date_to):
 
 
 # Get available typologies between dates
-def available_rooms(dbClient, segment, lang, date_from, date_to, city, acom, room):
+def book_search(dbClient, segment, lang, date_from, date_to, city, acom, room):
   
-  # Calculate length type
-  df = datetime.strptime(date_from, "%Y-%m-%d")
-  dt = datetime.strptime(date_to, "%Y-%m-%d")
-  difference = relativedelta.relativedelta(dt, df)
-  months = difference.years * 12 + difference.months
-  if months < 3:
-    field = 'Rent_short'
-  elif months < 7:
-    field = 'Rent_medium'
-  else:
-    field = 'Rent_long'
-
-  # Search parameters
+  # Query parameters
   l = '_en' if lang == 'en' else ''
-  year = df.year if df.month < 9 else df.year + 1
+  year, field = rent_info(date_from, date_to)
   place_type = 'I_%' if room == 'ind' else 'D\_%'
   building_type = (3,) if acom == 'rs' else (1, 2)
 
@@ -132,16 +120,16 @@ def available_rooms(dbClient, segment, lang, date_from, date_to, city, acom, roo
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
         INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
         INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
-        INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Flat_subtype_id" = rfst.id)
+        LEFT JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Flat_subtype_id" = rfst.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
       WHERE bd.id IS NULL 
-        AND b."Segment_id" = %s
         AND pd."Year" = %s
+        AND b."Segment_id" = %s
         AND b."Building_type_id" < 3
         AND d."Location_id" = %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7
       '''
-    params = (date_to, date_from, segment, year, city, )
+    params = (date_to, date_from, year, segment, city, )
   else:
     sql = f'''
       SELECT 
@@ -155,23 +143,22 @@ def available_rooms(dbClient, segment, lang, date_from, date_to, city, acom, roo
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
         INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
-        INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
+        LEFT JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
       WHERE bd.id IS NULL 
-        AND b."Segment_id" = %s
         AND pd."Year" = %s 
+        AND b."Segment_id" = %s
         AND b."Building_type_id" IN %s
         AND d."Location_id" = %s
         AND rpt."Code" LIKE %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7
       '''
-    params = (date_to, date_from, segment, year, building_type, city, place_type, )
+    params = (date_to, date_from, year, segment, building_type, city, place_type, )
 
   try:
     dbClient.connect()
     dbClient.select(sql, params)
     results = dbClient.fetchall()
-    print(results)
     grouped_data = []
     for row in results:
         
@@ -206,3 +193,38 @@ def available_rooms(dbClient, segment, lang, date_from, date_to, city, acom, roo
     logger.error(error)
     dbClient.rollback()
     return None
+  
+# Get available typologies between dates
+def book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id):
+
+  # Query parameters
+  l = '_en' if lang == 'en' else ''
+  year, field = rent_info(date_from, date_to)
+
+  # Rooms
+  sql = f'''
+    SELECT DISTINCT
+      b."Name" as "Building_name", rpt."Name" AS "Place_type_name", rft."Name" AS "Flat_type_name", 
+      pr."Name", ROUND(pr."Multiplier" * pd."Rent_long", 0) AS "Rent",
+      pd."Services", pd."Deposit" AS "Deposit", pd."Limit", pd."Booking_fee"
+    FROM "Resource"."Resource" r
+      INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+      INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+      INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
+      INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
+      INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
+    '''
+
+  try:
+    dbClient.connect()
+    dbClient.select(sql, (year, building_id, place_type_id, flat_type_id))
+    results = dbClient.fetchall()
+    dbClient.disconnect()
+    if len(results) > 0:
+      return results[0]
+    return None
+  
+  except Exception as error:
+    logger.error(error)
+    dbClient.rollback()
+    return None  

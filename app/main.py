@@ -470,46 +470,55 @@ def runapp():
     # return
     return send_from_directory('assets', filename)
 
-  def get_booking(segment, lang, step):
+  def do_booking(step):
+
+    # Step, language and segment
+    lang = get_var('lang', 'es')
+    segment = get_var('segment', 1)
 
     # Debug
-    logger.info('BOOKING ' + step + ':' + request.path)
-
-    # Language
-    lang = 'es' if request.path.startswith('es/') else 'en'
+    logger.info('BOOKING [' + str(segment) + '] / STEP-' + str(step) + ':' + request.path)
 
     # Typologies
     types = typologies(dbClient, segment) 
 
-    # Data
-    id    = int(get_var('book_city_id', 1))
-    city  = [dic for dic in types if dic.get('id') == id][0]
-    acom  = get_var('book_acom', 'pc')
-    room  = get_var('book_room', 'ind')
-    dfrom = get_var('book_checkin', '2023-11-01')
-    dto   = get_var('book_checkout', '2099-12-31')
+    # Data - Step 2
+    city_id    = int(get_var('book_city_id', 1))
+    acom_type  = get_var('book_acom', 'pc')
+    room_type  = get_var('book_room', 'ind')
+    date_from  = get_var('book_checkin', '2023-11-01')
+    date_to    = get_var('book_checkout', '2099-12-31')
+
+    # Data - Step 3
+    building_id   = get_var('book_building_id')
+    place_type_id = get_var('book_place_type_id')
+    flat_type_id  = get_var('book_flat_type_id')
 
     # Session vars
-    # http://localhost:5000/booking/en/2?book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
+    # http://localhost:5000/booking/1?lang=en&segment=1&book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
     vars = {
-      'city':     city,
-      'acom':     acom,
-      'room':     room,
-      'checkin':  dfrom,
-      'checkout': dto,
-      'lang':     lang,
-      'step':     step,
+      'lang':       lang,
+      'segment':    segment,
+      'step':       step,
+      'city':       [dic for dic in types if dic.get('id') == city_id][0],
+      'acom_type':  acom_type,
+      'room_type':  room_type,
+      'date_from':  date_from,
+      'date_to':    date_to,
     }
 
     # Get existing locations, types, etc.
     data = { 'vars': vars }
-    if step == '1':
+    if step == 1:
       data['typologies'] = types
-    elif step == '2':
-      data['results'] = available_rooms(dbClient, segment, lang, dfrom, dto, id, acom, room)
+    elif step == 2:
+      data['results'] = book_search(dbClient, segment, lang, date_from, date_to, city_id, acom_type, room_type)
+    elif step == 3:
+      data['results'] = book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id)
     
     # Render dynamic page
-    return env.get_template(lang + '/step-' + step + '.html').render(data=data)
+    tpl = env.get_template(lang + '/step-' + str(step) + '.html')
+    return tpl.render(data=data)
    
 
   # ###################################################
@@ -585,7 +594,7 @@ def runapp():
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=get_asset, methods=['GET'])
-  app.add_url_rule('/booking/<string:lang>/<int:segment>/<string:step>', view_func=get_booking, methods=['GET', 'POST'])
+  app.add_url_rule('/booking/<int:step>', view_func=do_booking, methods=['GET', 'POST'])
 
   # Return app
   return app

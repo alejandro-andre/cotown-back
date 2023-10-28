@@ -2,20 +2,23 @@
 <html lang="es">
 
 <head>
-    [% include 'en/includes/head.html' %]
+  [% include 'en/includes/head.html' %]
 </head>
 
 <body>
   <div class="tabs-container">
-    [% include 'en/includes/header-tabs.html' %]
-    [% include 'en/includes/header-nav.html' %]
+
+    [% include 'en/includes/header.html' %]
+
     <div class="main-booking">
       <div id="section3" class="main-contain">
         <div class="panel-container">                
+
           <div class="left tab3">          
             <h2>Reserva tu habitación</h2>  
             <form class="pure-form pure-u-1">
               <fieldset>
+
                 <div class="login">
                   <h3>Iniciar sesión</h3>
                   <p>Utiliza tus credenciales para acceder a tu área privada.</p>
@@ -35,6 +38,7 @@
                     </button>
                   </section>
                 </div>
+
                 <div class="logged-booking">
                   <h3>Reservar</h3>
                   <p>Comprueba tus datos si ya estás registrado.</p>
@@ -97,7 +101,6 @@
                   </section>
                 </div>
 
-
                 <div class="registry">
                   <h3 class="record">Registro</h3>
                 <p>En caso que no te hayas registrado todavía, necesitaremos los siguientes datos de contacto para formalizar tu reserva.</p>
@@ -159,15 +162,17 @@
                   </button>
                 </section>
                 </div>
+
               </fieldset>
             </form>
           </div>
+
           <div class="right tab3">
             <div class="resume">
               <h3>Resumen de reserva</h3>
               <p>Ubicación</p>
               <div class="resume-edit">
-                <h4>Barcelona</h4>
+                <h4>[[data.vars.city.Name]]</h4>
                 <!--
                 <button class="btn-text">
                   <em class="icon-write"></em>
@@ -175,46 +180,54 @@
                 </button>
                 -->
               </div>
+
               <div class="dates">
                 <div class="in">
                   <p>ENTRADA</p>
-                  <h4>22/04/2023</h4>
+                  <h4>[[data.vars.date_from]]</h4>
                 </div>
                 <div class="out">
                   <p>SALIDA</p>
-                  <h4>22/04/2023</h4>
+                  <h4>[[data.vars.date_to]]</h4>
                 </div>                
               </div>
+
               <div class="type-resume">
-                <h4>Habitación estándar con 
-                  baño privado</h4>                
-                <p>C/ Nàpols 206</p>                                                          
+                <h4>[[data.results.Room_type]]</h4>
+                <p>[[data.results.Building_name]]</p>                                                          
               </div>
+
               <div class="breakdown">
                 <h4>Desglose del precio</h4>
                 <div class="prices">
-                  <p>Booking fee (?)</p>
-                  <p>XXX€</p>
+                  <p>Booking fee</p>
+                  <p>[[data.results.Booking_fee]]€</p>
                 </div>              
                 <div class="prices">
-                  <p>Garantía (?)</p>
-                  <p>XXX€</p>
+                  <p>Garantía</p>
+                  <p>[[data.results.Deposit]]€</p>
                 </div>
                 <div class="total">
-                  <p>Total pago único (?)</p>
-                  <p>XXX€</p>
+                  <p>Total pago único</p>
+                  <p>[[data.results.Booking_fee + data.results.Deposit]]€</p>
                 </div>            
               </div>
+
               <div class="renta">
                 <h3>Renta media mensual</h3>
-                <h3>925€ (+)</h3>
+                <h3>[[data.results.Rent + data.results.Services]]€</h3>
               </div>
-              <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta X€/mes.</p>
+
+              <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.results.Limit]]€/mes.</p>
+
             </div>
           </div>
+
         </div>
       </div>      
     </div>
+
   </div>
 </body>
+
 </html>

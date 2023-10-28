@@ -6,10 +6,10 @@
 </head>
 
 <body>
-
   <div class="tabs-container">
-    [% include 'en/includes/header-tabs.html' %]
-    [% include 'en/includes/header-nav.html' %]
+
+    [% include 'en/includes/header.html' %]
+
     <div class="main-booking">
       <div id="section1" class="main-contain">
         <div class="panel-container">
@@ -29,35 +29,35 @@
                 <h3>¿Dónde quieres vivir?</h3>
                 <select class="pure-u-1-1 select1" readonly>
                   [%for item in data.typologies%]
-                  <option value="[[item.id]]"[%if data.vars.city == item.id%] selected[%endif%]>[[item.Name]]</option>
+                  <option value="[[item.id]]"[%if data.vars.city_id == item.id%] selected[%endif%]>[[item.Name]]</option>
                   [%endfor%]
                 </select>
 
                 <h3>¿Qué tipo de piso estás buscando?</h3>
                 <div class="background">
-                  <input id="pc" name="acom" type="radio" value="compartido" readonly[%if data.vars.acom=='pc'%] checked[%endif%]>
+                  <input id="pc" name="acom" type="radio" value="compartido" readonly[%if data.vars.acom_type=='pc'%] checked[%endif%]>
                   <em class="checkmark"></em>
                   <label class="labels">Piso Compartido</label>
                 </div>
                 <div class="background">
-                  <input id="ap" name="acom" type="radio" value="privado" readonly[%if data.vars.acom=='ap'%] checked[%endif%]>
+                  <input id="ap" name="acom" type="radio" value="privado" readonly[%if data.vars.acom_type=='ap'%] checked[%endif%]>
                   <em class="checkmark"></em>
                   <label class="labels">Apartamento Privado</label>
                 </div>
                 <div class="background">
-                  <input id="rs" name="acom" type="radio" value="privado" readonly[%if data.vars.acom=='rs'%] checked[%endif%]>
+                  <input id="rs" name="acom" type="radio" value="privado" readonly[%if data.vars.acom_type=='rs'%] checked[%endif%]>
                   <em class="checkmark"></em>
                   <label class="labels">Residencia universitaria</label>
                 </div>
 
                 <h3>¿En qué tipo de habitación?</h3>
                 <div class="background"> 
-                  <input id="ind" name="room" type="radio" value="ind" readonly[%if data.vars.room=='ind'%] checked[%endif%]>
+                  <input id="ind" name="room" type="radio" value="ind" readonly[%if data.vars.room_type=='ind'%] checked[%endif%]>
                   <em class="checkmark"></em>
                   <label class="labels">Habitación Individual</label>
                 </div>
                 <div class="background">
-                  <input id="sha" name="room" type="radio" value="sha" readonly[%if data.vars.room=='sha'%] checked[%endif%]>
+                  <input id="sha" name="room" type="radio" value="sha" readonly[%if data.vars.room_type=='sha'%] checked[%endif%]>
                   <em class="checkmark"></em>
                   <label class="labels">Habitación Compartida</label>
                 </div>                
@@ -69,7 +69,7 @@
                       <input 
                         type="text" class="inputs" readonly
                         id="dates" name="dates" placeholder="dd/mm/aaaa"
-                        value="[[data.vars.checkin]] - [[data.vars.checkout]]"
+                        value="[[data.vars.date_from]] - [[data.vars.date_to]]"
                         />
                     </button>
                   </div>                  
@@ -95,7 +95,6 @@
       </div>
     </div>
   </div>
-
 </body>
 
 </html>
