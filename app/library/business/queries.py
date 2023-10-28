@@ -108,7 +108,7 @@ def dashboard(dbClient, status = None):
 # Web - Flat prices
 # ######################################################
 
-def flat_prices(dbClient, year, segment):
+def flat_prices(dbClient, segment, year):
 
   # Connect
   dbClient.connect()
@@ -177,7 +177,7 @@ def flat_prices(dbClient, year, segment):
 # Web - Price by place/flat types info
 # ######################################################
 
-def room_prices(dbClient, year, segment):
+def room_prices(dbClient, segment, year):
 
   # Connect
   dbClient.connect()
