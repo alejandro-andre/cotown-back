@@ -50,7 +50,7 @@ def get_data(dbClient):
   # Capture exceptions
   try:
 
-    # Get all payments without bill
+    # Get product list
     dbClient.select('''
       SELECT p.id, p."Name", p."Name_en", t.id, t."Name", t."Name_en", t."Value" 
       FROM "Billing"."Product" p
@@ -499,7 +499,7 @@ def bill_group_rent(dbClient):
 
 
 # ###################################################
-# Generate monthly bills for group bookints
+# Generate payments for new bills
 # ###################################################
 
 def pay_bills(dbClient):
