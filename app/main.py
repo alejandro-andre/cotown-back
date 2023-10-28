@@ -463,15 +463,15 @@ def runapp():
 
     # Or get var from form
     if aux is None:
-       aux = request.form.get(name)
+      aux = request.form.get(name)
 
     # And store in session
     if aux is not None:
       session[name] = aux
 
-    # Get value from session or default
+    # Or store default value in session
     if name not in session:
-        session[name] = default
+      session[name] = default
 
     # Get value from session
     return session[name]
@@ -514,14 +514,13 @@ def runapp():
       'lang':     lang,
       'step':     step,
     }
-    print(vars)
 
     # Get existing locations, types, etc.
     data = { 'vars': vars }
     if step == '1':
       data['typologies'] = types
     elif step == '2':
-      data['results'] = available_rooms(dbClient, dfrom, dto, id, room)
+      data['results'] = available_rooms(dbClient, dfrom, dto, id, acom, room)
     
     # Render dynamic page
     return env.get_template(lang + '/step-' + step + '.html').render(data=data)

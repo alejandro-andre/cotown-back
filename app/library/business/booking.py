@@ -95,41 +95,69 @@ def rent_info(date_from, date_to):
 
 
 # Get available typologies between dates
-def available_rooms(dbClient, date_from, date_to, city, room):
+def available_rooms(dbClient, date_from, date_to, city, acom, room):
   
-  # Rent info
+  # Search parameters
+  lang = ''
   year, field = rent_info(date_from, date_to)
-  type = 'I_%' if room == 'ind' else 'D\_%'
+  place_type = 'I_%' if room == 'ind' else 'D\_%'
+  building_type = (3,) if acom == 'rs' else (1, 2)
 
-  sql = '''
-    SELECT b."Code" as "Building_code", 
-          rpt."Code" AS "Place_type_code", 
-          rft."Code" AS "Flat_type_code", 
-          b."Name" as "Building_name", 
-          rpt."Name" AS "Place_type_name", 
-          rft."Name" AS "Flat_type_name", 
-          pd."{}" AS "Price",
-          MIN(mrt.id) AS "Photo"
-    FROM "Resource"."Resource" r
+  # Rooms
+  if acom == 'ap':
+    sql = f'''
+      SELECT 
+        b."Code" AS "Building_code", rfst."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code",
+        b."Name" AS "Building_name", rfst."Name{lang}" AS "Place_type_name", rft."Name{lang}" AS "Flat_type_name",
+        ROUND(pd."Services" + pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
+      FROM 
+        "Resource"."Resource" r
+        INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+        INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
+        INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
+        INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
+        INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
+        INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Flat_subtype_id" = rfst.id)
+        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+      WHERE bd.id IS NULL 
+        AND b."Segment_id" = 1
+        AND pd."Year" = %s
+        AND b."Building_type_id" < 3
+        AND d."Location_id" = %s
+      GROUP BY 1, 2, 3, 4, 5, 6, 7
+      '''
+    params = (date_to, date_from, year, city, )
+  else:
+    sql = f'''
+      SELECT 
+        b."Code" as "Building_code", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code", 
+        b."Name" as "Building_name", rpt."Name{lang}" AS "Place_type_name", rft."Name{lang}" AS "Flat_type_name", 
+        ROUND(pd."Services" + pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
+      FROM "Resource"."Resource" r
         INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
         INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
+        INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
         INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-        INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Year" = %s AND pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
+        INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
         INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-    WHERE bd.id IS NULL 
-      AND b."Segment_id" = 1
-      AND b."Building_type_id" < 3
-      AND d."Location_id" = %s
-      AND rpt."Code" LIKE %s
-    GROUP BY 1, 2, 3, 4, 5, 6, 7
-  '''.format(field)
+      WHERE bd.id IS NULL 
+        AND b."Segment_id" = 1
+        AND pd."Year" = %s 
+        AND b."Building_type_id" IN %s
+        AND d."Location_id" = %s
+        AND rpt."Code" LIKE %s
+      GROUP BY 1, 2, 3, 4, 5, 6, 7
+      '''
+    params = (date_to, date_from, year, building_type, city, place_type, )
 
   try:
     dbClient.connect()
-    dbClient.select(sql, (year, date_to, date_from, city, type, ))
+    dbClient.select(sql, params)
     results = dbClient.fetchall()
+    print(results)
     grouped_data = []
     for row in results:
         
@@ -169,7 +197,7 @@ def available_rooms(dbClient, date_from, date_to, city, room):
 def available_types(dbClient, date_from, date_to, location):
 
   # Rent info
-  year, field = rent_info(date_from, date_to), y
+  year, field = rent_info(date_from, date_to),
 
   # SQL 
   sql = '''
