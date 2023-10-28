@@ -37,8 +37,11 @@ class APIClient:
       return
   
     # Get auth token
-    result = self.client.execute(gql('mutation { login(username:"' + user + '", password:"' + password + '") }'))
-    self.token = result['login']
+    try:
+      result = self.client.execute(gql('mutation { login(username:"' + user + '", password:"' + password + '") }'))
+      self.token = result['login']
+    except Exception as e:
+      logger.error(e)
 
 
   # Call endpoint

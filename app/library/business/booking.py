@@ -54,8 +54,9 @@ def q_typologies(dbClient, segment):
         WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'completo') THEN 'ap'
       END as "Sale_type",
       CASE 
-        WHEN rpt."Code" LIKE 'I_%' THEN 'ind'
-        WHEN rpt."Code" LIKE 'D_%' THEN 'sha'
+        WHEN rpt."Code" LIKE 'I\_%' THEN 'ind'
+        WHEN rpt."Code" LIKE 'D\_%' THEN 'sha'
+        ELSE 'apt'
       END as "Room_type",
       COUNT(*)
     FROM "Resource"."Resource" r
@@ -66,9 +67,9 @@ def q_typologies(dbClient, segment):
     WHERE b."Building_type_id" < 4
       AND b."Segment_id" = {}
       AND "Sale_type" IS NOT NULL
-      AND rpt."Code" NOT LIKE 'DUI_%'
+      AND (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI_%')
     GROUP BY 1, 2, 3, 4
-    ORDER BY 1, 2, 3
+    ORDER BY 1, 2, 3, 4
     '''.format(segment)
 
   try:
@@ -146,7 +147,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom, room)
       SELECT 
         b."Code" as "Building_code", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code", 
         b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name", 
-        ROUND(pd."Services" + pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
+        pd."Services" + ROUND(pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
       FROM "Resource"."Resource" r
         INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
         INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
@@ -207,7 +208,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom, room)
   
 
 # ------------------------------------------------------
-# Get available typologies between dates
+# Get summary
 # ------------------------------------------------------
 
 def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id):
@@ -219,8 +220,8 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
   # Rooms
   sql = f'''
     SELECT DISTINCT
-      b."Name" as "Building_name", rpt."Name" AS "Place_type_name", rft."Name" AS "Flat_type_name", 
-      pr."Name", ROUND(pr."Multiplier" * pd."Rent_long", 0) AS "Rent",
+      b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name", 
+      ROUND(pr."Multiplier" * pd."{field}", 0) AS "Rent",
       pd."Services", pd."Deposit" AS "Deposit", pd."Limit", pd."Booking_fee"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
@@ -228,10 +229,16 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
       INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
       INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
+    WHERE pd."Year" = %s
+      AND b."Code" = %s
+      AND rpt."Code" = %s
+      AND rft."Code" = %s
+    LIMIT 1
     '''
 
   try:
     dbClient.connect()
+    print(sql, (year, building_id, place_type_id, flat_type_id))
     dbClient.select(sql, (year, building_id, place_type_id, flat_type_id))
     results = dbClient.fetchall()
     dbClient.disconnect()

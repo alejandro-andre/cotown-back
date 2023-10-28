@@ -113,7 +113,7 @@ def req_login():
     pwd = request.form.get('pwd')
 
     # Call backend
-    g.g.apiClient.auth(user=usr, password=pwd)
+    g.apiClient.auth(user=usr, password=pwd)
     if g.apiClient.token is None:
       return response
 
@@ -147,8 +147,9 @@ def req_typologies(segment):
 
     return q_typologies(g.dbClient, segment)
 
+
 # ###################################################
-# Pages
+# Auxiliary functions
 # ###################################################
 
 def get_var(name, default=None):
@@ -186,7 +187,7 @@ def req_booking(step):
     segment = get_var('segment', 1)
 
     # Debug
-    logger.info('BOOKING [' + str(segment) + '] / STEP-' + str(step) + ':' + request.path)
+    logger.info('BOOKING [' + str(segment) + ']:STEP-' + str(step) + ':' + request.path)
 
     # Typologies
     types = q_typologies(g.dbClient, segment) 
@@ -204,7 +205,7 @@ def req_booking(step):
     flat_type_id  = get_var('book_flat_type_id')
 
     # Session vars
-    # http://localhost:5000/booking/1?lang=en&segment=1&book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
+    # http://localhost:5000/booking/2?lang=en&segment=1&book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
     vars = {
       'lang':       lang,
       'segment':    segment,
