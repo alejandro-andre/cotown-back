@@ -106,8 +106,8 @@ def runapp():
     logger.info('Recibido ' + request.path)
 
     # Global variables
-    g.dbClient = dbClient
-    g.apiCleint = apiClient
+    g.dbClient = dbClient 
+    g.apiClient = apiClient
     g.env = env
     
     # Skip token validaton on public endpoints
