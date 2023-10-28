@@ -377,24 +377,6 @@ def runapp():
 
 
   # ###################################################
-  # Dynamic web API
-  # ###################################################
-
-  # Available typologies for a location between some dates
-  def get_available_types():
-    
-    result = available_types(
-      dbClient, 
-      date_from=request.args.get('date_from'), 
-      date_to=request.args.get('date_to'), 
-      location=request.args.get('location', '')
-    )
-    if result is None:
-      return {}
-    return result
-
-
-  # ###################################################
   # Payments
   # ###################################################
 
@@ -520,7 +502,7 @@ def runapp():
     if step == '1':
       data['typologies'] = types
     elif step == '2':
-      data['results'] = available_rooms(dbClient, dfrom, dto, id, acom, room)
+      data['results'] = available_rooms(dbClient, lang, dfrom, dto, id, acom, room)
     
     # Render dynamic page
     return env.get_template(lang + '/step-' + step + '.html').render(data=data)
