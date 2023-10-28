@@ -88,7 +88,11 @@ def runapp():
 
   env = Environment(
     loader=FileSystemLoader('./booking'),
-    autoescape=select_autoescape(['html', 'xml'])
+    autoescape=select_autoescape(['html', 'xml']),
+    block_start_string='[%',
+    block_end_string='%]',
+    variable_start_string='[[',
+    variable_end_string=']]'
   )
 
   # #####################################
