@@ -312,20 +312,20 @@ def runapp():
     return id
 
   # Get flat types
-  def get_flats(year = 2023):
-    return flat_prices(dbClient, year)
+  def get_flats(segment, year):
+    return flat_prices(dbClient, segment, year)
   
   # Get room types
-  def get_rooms(year = 2023):
-    return room_prices(dbClient, year)
+  def get_rooms(segment, year):
+    return room_prices(dbClient, segment, year)
   
   # Get amenities
-  def get_amenities():
-    return room_amenities(dbClient)
+  def get_amenities(segment):
+    return room_amenities(dbClient, segment)
 
   # Get types
-  def get_typologies():
-    return typologies(dbClient)
+  def get_typologies(segment):
+    return typologies(dbClient, segment)
 
 
   # ###################################################
@@ -466,7 +466,7 @@ def runapp():
     # return
     return send_from_directory('assets', filename)
 
-  def get_booking(lang, step):
+  def get_booking(segment, lang, step):
 
     # Debug
     logger.info('BOOKING ' + step + ':' + request.path)
@@ -475,7 +475,7 @@ def runapp():
     lang = 'es' if request.path.startswith('es/') else 'en'
 
     # Typologies
-    types = typologies(dbClient) 
+    types = typologies(dbClient, segment) 
 
     # Data
     id    = int(get_var('book_city_id', 1))
@@ -502,7 +502,7 @@ def runapp():
     if step == '1':
       data['typologies'] = types
     elif step == '2':
-      data['results'] = available_rooms(dbClient, lang, dfrom, dto, id, acom, room)
+      data['results'] = available_rooms(dbClient, segment, lang, dfrom, dto, id, acom, room)
     
     # Render dynamic page
     return env.get_template(lang + '/step-' + step + '.html').render(data=data)
@@ -566,10 +566,10 @@ def runapp():
 
   # Static web (11ty data retrieving)
   app.add_url_rule(settings.API_PREFIX + '/form', view_func=post_form, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/flats/<int:year>', view_func=get_flats, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:year>', view_func=get_rooms, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/amenities', view_func=get_amenities, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/typologies', view_func=get_typologies, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/flats/<int:segment>/<int:year>', view_func=get_flats, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:segment>/<int:year>', view_func=get_rooms, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/amenities/<int:segment>', view_func=get_amenities, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/typologies/<int:segment>', view_func=get_typologies, methods=['GET'])
 
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=get_pay, methods=['GET'])
@@ -581,7 +581,7 @@ def runapp():
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=get_asset, methods=['GET'])
-  app.add_url_rule('/booking/<string:lang>/<string:step>', view_func=get_booking, methods=['GET', 'POST'])
+  app.add_url_rule('/booking/<string:lang>/<int:segment>/<string:step>', view_func=get_booking, methods=['GET', 'POST'])
 
   # Return app
   return app

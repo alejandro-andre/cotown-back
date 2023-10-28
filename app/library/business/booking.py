@@ -17,7 +17,7 @@ logger = logging.getLogger('COTOWN')
 # ######################################################
 
 # Get information of existing typologies
-def typologies(dbClient):
+def typologies(dbClient, segment):
 
   # SQL 
   sql = '''
@@ -33,15 +33,17 @@ def typologies(dbClient):
       END as "Room_type",
       COUNT(*)
     FROM "Resource"."Resource" r
-    INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
-    LEFT JOIN "Resource"."Resource_place_type" rpt on rpt.id = r."Place_type_id" 
-    INNER JOIN "Geo"."District" d on d.id = b."District_id" 
-    INNER JOIN "Geo"."Location" l on l.id = d."Location_id" 
-    WHERE "Sale_type" IS NOT NULL
-    AND rpt."Code" NOT LIKE 'DUI_%'
+      INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
+      INNER JOIN "Geo"."District" d on d.id = b."District_id" 
+      INNER JOIN "Geo"."Location" l on l.id = d."Location_id" 
+      LEFT JOIN "Resource"."Resource_place_type" rpt on rpt.id = r."Place_type_id" 
+    WHERE b."Building_type_id" < 4
+      AND b."Segment_id" = {}
+      AND "Sale_type" IS NOT NULL
+      AND rpt."Code" NOT LIKE 'DUI_%'
     GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3
-    '''
+    '''.format(segment)
 
   try:
 
@@ -95,7 +97,7 @@ def rent_info(date_from, date_to):
 
 
 # Get available typologies between dates
-def available_rooms(dbClient, lang, date_from, date_to, city, acom, room):
+def available_rooms(dbClient, segment, lang, date_from, date_to, city, acom, room):
   
   # Calculate length type
   df = datetime.strptime(date_from, "%Y-%m-%d")
@@ -133,13 +135,13 @@ def available_rooms(dbClient, lang, date_from, date_to, city, acom, room):
         INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Flat_subtype_id" = rfst.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
       WHERE bd.id IS NULL 
-        AND b."Segment_id" = 1
+        AND b."Segment_id" = %s
         AND pd."Year" = %s
         AND b."Building_type_id" < 3
         AND d."Location_id" = %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7
       '''
-    params = (date_to, date_from, year, city, )
+    params = (date_to, date_from, segment, year, city, )
   else:
     sql = f'''
       SELECT 
@@ -156,14 +158,14 @@ def available_rooms(dbClient, lang, date_from, date_to, city, acom, room):
         INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
       WHERE bd.id IS NULL 
-        AND b."Segment_id" = 1
+        AND b."Segment_id" = %s
         AND pd."Year" = %s 
         AND b."Building_type_id" IN %s
         AND d."Location_id" = %s
         AND rpt."Code" LIKE %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7
       '''
-    params = (date_to, date_from, year, building_type, city, place_type, )
+    params = (date_to, date_from, segment, year, building_type, city, place_type, )
 
   try:
     dbClient.connect()

@@ -108,7 +108,7 @@ def dashboard(dbClient, status = None):
 # Web - Flat prices
 # ######################################################
 
-def flat_prices(dbClient, year):
+def flat_prices(dbClient, year, segment):
 
   # Connect
   dbClient.connect()
@@ -128,10 +128,11 @@ def flat_prices(dbClient, year):
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
     WHERE pd."Year" = %s
+      AND b."Segment_id" = %s
     GROUP BY 1, 2
     ORDER BY 1, 2;
   '''
-  dbClient.select(sql, (year,))
+  dbClient.select(sql, (year, segment))
 
   # Obtener los resultados de la consulta
   results = dbClient.fetchall()
@@ -176,7 +177,7 @@ def flat_prices(dbClient, year):
 # Web - Price by place/flat types info
 # ######################################################
 
-def room_prices(dbClient, year):
+def room_prices(dbClient, year, segment):
 
   # Connect
   dbClient.connect()
@@ -197,11 +198,12 @@ def room_prices(dbClient, year):
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
     WHERE pd."Year" = %s
+      AND b."Segment_id" = %s
       AND rpt.id < 300
     GROUP BY 1, 2, 3
     ORDER BY 1, 2, 3
   '''
-  dbClient.select(sql, (year,))
+  dbClient.select(sql, (year, segment))
 
 # Obtener los resultados de la consulta
   results = dbClient.fetchall()
@@ -253,7 +255,7 @@ def room_prices(dbClient, year):
 # Web - Amenities
 # ######################################################
 
-def room_amenities(dbClient):
+def room_amenities(dbClient, segment):
 
   # Connect
   dbClient.connect()
@@ -269,10 +271,11 @@ def room_amenities(dbClient):
     INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
     INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
     INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+  WHERE b."Segment_id" = %s
   GROUP BY 1, 2, 3, 4, 5, 6
   ORDER BY 1, 2, 3, 4
   '''
-  dbClient.select(sql)
+  dbClient.select(sql, (segment, ))
 
   # To JSON
   result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
