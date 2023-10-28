@@ -161,7 +161,7 @@ def download_contracts(apiClient, variables=None):
 # Download
 # ##################################################
 
-def download(apiClient, name, variables=None):
+def do_download(apiClient, name, variables=None):
 
   # Variables
   if variables.get('fdesde') is None:

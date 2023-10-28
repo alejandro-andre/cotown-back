@@ -23,7 +23,7 @@ logger = logging.getLogger('COTOWN')
 # Main
 # ###################################################
 
-def occupancy(dbClient, vars):
+def do_occupancy(dbClient, vars):
 
   # ###################################################
   # Lambda functions

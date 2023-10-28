@@ -3,9 +3,9 @@
 # ######################################################
 
 # System includes
+from flask import g, request, session, send_from_directory
 from datetime import datetime
 from dateutil import relativedelta
-import json
 
 # Logging
 import logging
@@ -13,11 +13,37 @@ logger = logging.getLogger('COTOWN')
 
 
 # ######################################################
-# Booking process
+# Misc functions
 # ######################################################
 
+def rent_info(date_from, date_to):
+
+  # Calculate length type
+  df = datetime.strptime(date_from, "%Y-%m-%d")
+  dt = datetime.strptime(date_to, "%Y-%m-%d")
+  difference = relativedelta.relativedelta(dt, df)
+  months = difference.years * 12 + difference.months
+  if months < 3:
+    field = 'Rent_short'
+  elif months < 7:
+    field = 'Rent_medium'
+  else:
+    field = 'Rent_long'
+
+  # Rates year
+  year = df.year if df.month < 9 else df.year + 1
+  return year, field
+
+
+# ######################################################
+# Booking queries
+# ######################################################
+
+# ------------------------------------------------------
 # Get information of existing typologies
-def typologies(dbClient, segment):
+# ------------------------------------------------------
+
+def q_typologies(dbClient, segment):
 
   # SQL 
   sql = '''
@@ -77,27 +103,12 @@ def typologies(dbClient, segment):
     logger.error(error)
     return None
 
-def rent_info(date_from, date_to):
 
-  # Calculate length type
-  df = datetime.strptime(date_from, "%Y-%m-%d")
-  dt = datetime.strptime(date_to, "%Y-%m-%d")
-  difference = relativedelta.relativedelta(dt, df)
-  months = difference.years * 12 + difference.months
-  if months < 3:
-    field = 'Rent_short'
-  elif months < 7:
-    field = 'Rent_medium'
-  else:
-    field = 'Rent_long'
-
-  # Rates year
-  year = df.year if df.month < 9 else df.year + 1
-  return year, field
-
-
+# ------------------------------------------------------
 # Get available typologies between dates
-def book_search(dbClient, segment, lang, date_from, date_to, city, acom, room):
+# ------------------------------------------------------
+
+def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom, room):
   
   # Query parameters
   l = '_en' if lang == 'en' else ''
@@ -194,8 +205,12 @@ def book_search(dbClient, segment, lang, date_from, date_to, city, acom, room):
     dbClient.rollback()
     return None
   
+
+# ------------------------------------------------------
 # Get available typologies between dates
-def book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id):
+# ------------------------------------------------------
+
+def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id):
 
   # Query parameters
   l = '_en' if lang == 'en' else ''
@@ -227,4 +242,4 @@ def book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id,
   except Exception as error:
     logger.error(error)
     dbClient.rollback()
-    return None  
+    return None

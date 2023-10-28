@@ -126,7 +126,7 @@ def fill_sheet(df, columns, sheet):
 # Export graphql to excel
 # ###################################################
 
-def query_to_excel(apiClient, dbClient, name, variables=None):
+def do_export_to_excel(apiClient, dbClient, name, variables=None):
 
   # Process variables (convert lists to tuple, for SQL WHERE IN)
   for var in variables:

@@ -19,7 +19,7 @@ from library.services.config import settings
 # Dashboard
 # ######################################################
 
-def labels(dbClient, id, locale):
+def q_labels(dbClient, id, locale):
 
   # Get labels
   dbClient.connect()
@@ -38,7 +38,7 @@ def labels(dbClient, id, locale):
 # Dashboard
 # ######################################################
 
-def dashboard(dbClient, status = None):
+def q_dashboard(dbClient, status = None):
 
   # Connect
   dbClient.connect()
@@ -108,7 +108,7 @@ def dashboard(dbClient, status = None):
 # Web - Flat prices
 # ######################################################
 
-def flat_prices(dbClient, segment, year):
+def q_flat_prices(dbClient, segment, year):
 
   # Connect
   dbClient.connect()
@@ -177,7 +177,7 @@ def flat_prices(dbClient, segment, year):
 # Web - Price by place/flat types info
 # ######################################################
 
-def room_prices(dbClient, segment, year):
+def q_room_prices(dbClient, segment, year):
 
   # Connect
   dbClient.connect()
@@ -255,7 +255,7 @@ def room_prices(dbClient, segment, year):
 # Web - Amenities
 # ######################################################
 
-def room_amenities(dbClient, segment):
+def q_room_amenities(dbClient, segment):
 
   # Connect
   dbClient.connect()
@@ -291,7 +291,7 @@ def room_amenities(dbClient, segment):
 # Get payment
 # ######################################################
 
-def get_payment(dbClient, id, generate_order=False):
+def q_get_payment(dbClient, id, generate_order=False):
 
   try:
     # Get payment
@@ -332,7 +332,7 @@ def get_payment(dbClient, id, generate_order=False):
 # Update payment
 # ######################################################
 
-def put_payment(dbClient, id, auth, date):
+def q_put_payment(dbClient, id, auth, date):
 
   try:
     dbClient.connect()
@@ -452,7 +452,7 @@ def delete_airflows_user(dbClient, id):
 # Booking status
 # ######################################################
 
-def booking_status(dbClient, id, status):
+def q_booking_status(dbClient, id, status):
 
   try:
     dbClient.connect()
@@ -472,7 +472,7 @@ def booking_status(dbClient, id, status):
 # ######################################################
 
 # Get ids of available resources of required typology between dates
-def available_resources(dbClient, date_from, date_to, building, flat_type, place_type):
+def q_available_resources(dbClient, date_from, date_to, building, flat_type, place_type):
 
   if building is None:
     building = 0
