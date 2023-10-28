@@ -413,10 +413,10 @@ def runapp():
       order     = payment['Payment_order'], 
       amount    = int(100 * float(payment['Amount'])), 
       id        = payment['id'],
-      url       = settings.REDSYS_URL,
       urlok     = 'https://' + settings.BACK + '/customer/#/pago_ok?id=' + payment['Payment_order'],
       urlko     = 'https://' + settings.BACK + '/customer/#/pago_ko?id=' + payment['Payment_order'],
     )
+    params['url']= settings.REDSYS_URL
     logger.debug(params)
 
     # Return both information
