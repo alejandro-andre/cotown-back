@@ -32,6 +32,7 @@ SERVER='experis.flows.ninja'
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://dev.cotown.ciber.es/api/v1/notify'
+REDSYS_URL='https://sis-t.redsys.es:25443/sis/realizarPago'
 
 [production]
 
@@ -44,3 +45,5 @@ SERVER='core.cotown.com'
 REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://back.cotown.com/api/v1/notify'
+REDSYS_URL='https://sis-t.redsys.es:25443/sis/realizarPago'
+#REDSYS_URL='https://sis.redsys.es/sis/realizarPago'
