@@ -1,7 +1,7 @@
 {
-   data: Auxiliar_LanguageList ( orderBy: [{attribute: Name}] ) 
-   {
-       id
-       Name
-   }
+    data: Auxiliar_LanguageList ( orderBy: [{attribute: Name}] )
+    {
+        id
+        Name
+    }
 }

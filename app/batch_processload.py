@@ -32,119 +32,119 @@ logger = logging.getLogger('COTOWN')
 
 def main():
 
- # ###################################################
- # Logging
- # ###################################################
+  # ###################################################
+  # Logging
+  # ###################################################
 
- logger.setLevel(settings.LOGLEVEL)
- formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
- console_handler = logging.StreamHandler()
- console_handler.setLevel(settings.LOGLEVEL)
- console_handler.setFormatter(formatter)
- file_handler = RotatingFileHandler('log/batch_processload.log', maxBytes=1000000, backupCount=5)
- file_handler.setLevel(settings.LOGLEVEL)
- file_handler.setFormatter(formatter)
- logger.addHandler(console_handler)
- logger.addHandler(file_handler)
- logger.info('Started')
-
-
- # ###################################################
- # GraphQL and DB client
- # ###################################################
-
- # graphQL API
- apiClient = APIClient(settings.SERVER)
- apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
-
- # DB API
- dbClient = DBClient(
-   host=settings.SERVER, 
-   dbname=settings.DATABASE, 
-   user=settings.DBUSER, 
-   password=settings.DBPASS,
-   sshuser=settings.SSHUSER, 
-   sshpassword=settings.get('SSHPASS', None),
-   sshprivatekey=settings.get('SSHPKEY', None)
- )
- dbClient.connect()
+  logger.setLevel(settings.LOGLEVEL)
+  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
+  console_handler = logging.StreamHandler()
+  console_handler.setLevel(settings.LOGLEVEL)
+  console_handler.setFormatter(formatter)
+  file_handler = RotatingFileHandler('log/batch_processload.log', maxBytes=1000000, backupCount=5)
+  file_handler.setLevel(settings.LOGLEVEL)
+  file_handler.setFormatter(formatter)
+  logger.addHandler(console_handler)
+  logger.addHandler(file_handler)
+  logger.info('Started')
 
 
- # ###################################################
- # Main
- # ###################################################
+  # ###################################################
+  # GraphQL and DB client
+  # ###################################################
 
- # Get upload requests
- dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
- data = dbClient.fetchall()
+  # graphQL API
+  apiClient = APIClient(settings.SERVER)
+  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
- # Loop thru files
- num = 0
- for file in data:
+  # DB API
+  dbClient = DBClient(
+    host=settings.SERVER,
+    dbname=settings.DATABASE,
+    user=settings.DBUSER,
+    password=settings.DBPASS,
+    sshuser=settings.SSHUSER,
+    sshpassword=settings.get('SSHPASS', None),
+    sshprivatekey=settings.get('SSHPKEY', None)
+  )
+  dbClient.connect()
 
-   # Result
-   ok = False
-   log = ''
 
-   # Get request files
-   entity = 'Batch/Upload'
-   id = str(file['id'])
-   data = apiClient.getFile(id, entity, 'File')
+  # ###################################################
+  # Main
+  # ###################################################
 
-   # Load excel book
-   file = io.BytesIO(data.content)
-   workbook = load_workbook(filename=file, read_only=True, data_only=True)
+  # Get upload requests
+  dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
+  data = dbClient.fetchall()
 
-   # Log
-   log = ''
+  # Loop thru files
+  num = 0
+  for file in data:
 
-   # Processing
-   sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-   dbClient.execute(sql, ('Procesando...', '', id))
-   dbClient.commit()         
+    # Result
+    ok = False
+    log = ''
 
-   # Process each sheet
-   for sheet in workbook.sheetnames:
+    # Get request files
+    entity = 'Batch/Upload'
+    id = str(file['id'])
+    data = apiClient.getFile(id, entity, 'File')
 
-     # Resources
-     if sheet == 'Recursos':
-       log += sheet + '\n'
-       ok, l = load_resources(dbClient, workbook[sheet])
+    # Load excel book
+    file = io.BytesIO(data.content)
+    workbook = load_workbook(filename=file, read_only=True, data_only=True)
 
-     # Prices
-     elif sheet == 'Precios':
-       log += sheet + '\n'
-       ok, l = load_prices(dbClient, workbook[sheet])
+    # Log
+    log = ''
 
-     # Rooming list
-     elif sheet == 'Rooming':
-       log += sheet + '\n'
-       ok, l = load_rooming(dbClient, workbook[sheet])
+    # Processing
+    sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
+    dbClient.execute(sql, ('Procesando...', '', id))
+    dbClient.commit()        
 
-     # Ignore list
-     elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
-       ok, l = True, ''
+    # Process each sheet
+    for sheet in workbook.sheetnames:
 
-     # Other
-     else:
-       log += sheet + '\n'
-       ok, l = False, 'Error: Tipo de carga desconcida.'
+      # Resources
+      if sheet == 'Recursos':
+        log += sheet + '\n'
+        ok, l = load_resources(dbClient, workbook[sheet])
 
-     # Append log
-     log += l + '\n'
+      # Prices
+      elif sheet == 'Precios':
+        log += sheet + '\n'
+        ok, l = load_prices(dbClient, workbook[sheet])
 
-     # Ok?
-     if not ok:
-       break
+      # Rooming list
+      elif sheet == 'Rooming':
+        log += sheet + '\n'
+        ok, l = load_rooming(dbClient, workbook[sheet])
 
-   # Save result
-   sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-   dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
-   dbClient.commit()         
-   num += 1
+      # Ignore list
+      elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
+        ok, l = True, ''
 
- # Info
- logger.info('{} files processed'.format(num))
+      # Other
+      else:
+        log += sheet + '\n'
+        ok, l = False, 'Error: Tipo de carga desconcida.'
+
+      # Append log
+      log += l + '\n'
+
+      # Ok?
+      if not ok:
+        break
+
+    # Save result
+    sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
+    dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
+    dbClient.commit()        
+    num += 1
+
+  # Info
+  logger.info('{} files processed'.format(num))
 
 
 # #####################################
@@ -153,5 +153,5 @@ def main():
 
 if __name__ == '__main__':
 
- main()
- logger.info('Finished')
+  main()
+  logger.info('Finished')

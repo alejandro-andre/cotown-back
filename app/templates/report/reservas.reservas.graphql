@@ -1,128 +1,128 @@
 query Bookings ($fdesde: String, $fhasta:String) {
-   data: Booking_BookingList (
-       orderBy: [
-           {attribute: id}
-       ]
-       where: { 
-           AND: [
-               { Date_from: { LE: $fhasta } }
-               { Date_to:   { GE: $fdesde } }
-           ]
-       }
-   ) {
-       id
-       Status
-       Booking_channel: Booking_channelViaBooking_channel_id { 
-           Name 
-       }
-       Booking_referral: Booking_referralViaBooking_referral_id { 
-           Name 
-       }
-       Booking_who: Booking_whoViaBooking_who_id { Name }
-       Agent: AgentViaAgent_id { 
-           Name 
-           Agent_type: Agent_typeViaAgent_type_id {
-               Name
-           }
-       }
-       Date_from
-       Date_to
-       Check_in
-       Check_out
-       Request_date
-       Confirmation_date
-       Expiry_date
-       Cancel_date
-       Contract_signed
-       Rent
-       Services
-       Limit
-       Booking_fee
-       Booking_fee_actual
-       Booking_fee_returned
-       Deposit
-       Deposit_actual
-       Deposit_returned
-       Link_id
-       Comments
-       Cancelation_fee
-       Second_resident
-       Lock
-       Arrival
-       Flight
-       Checkin_option: Checkin_typeViaCheck_in_option_id {
-           Name
-       }
-       Building: BuildingViaBuilding_id {
-           Code
-           Name
-           Address
-           District: DistrictViaDistrict_id {
-               Location: LocationViaLocation_id {
-                   Name
-               }
-           }
-       }
-       Flat_type: Resource_flat_typeViaFlat_type_id { 
-           Code 
-           Name 
-       }
-       Place_type: Resource_place_typeViaPlace_type_id { 
-           Code 
-           Name 
-       }
-       Reason: Customer_reasonViaReason_id {
-           Name
-       } 
-       School: SchoolViaSchool_id {
-           Name
-       }
-       Resource: ResourceViaResource_id {
-           Code
-           Resource_type
-           Part
-           Address
-           Flat: ResourceViaFlat_id {
-               Code
-               Address
-           }
-           Building: BuildingViaBuilding_id {
-               Code
-               Address
-               District: DistrictViaDistrict_id {
-                   Location: LocationViaLocation_id {
-                       Name
-                   }
-               }
-           }
-           Owner: ProviderViaOwner_id {
-               Name
-           }
-           Services: ProviderViaService_id {
-               Name
-           }
-       }
-       Customer: CustomerViaCustomer_id {
-           Type
-           Id_type: Id_typeViaId_type_id {
-               Name
-           }
-           Document
-           Name
-           Address
-           Zip
-           City
-           Province
-           Country: CountryViaCountry_id {
-               Name
-           }
-           Email
-           Birth_date
-           Signer_name
-           Signer_id_type: Id_typeViaSigner_id_type_id {
-               Name
-           }
-           Signer_document
-       }
-   }
+    data: Booking_BookingList (
+        orderBy: [
+            {attribute: id}
+        ]
+        where: {
+            AND: [
+                { Date_from: { LE: $fhasta } }
+                { Date_to:   { GE: $fdesde } }
+            ]
+        }
+    ) {
+        id
+        Status
+        Booking_channel: Booking_channelViaBooking_channel_id {
+            Name
+        }
+        Booking_referral: Booking_referralViaBooking_referral_id {
+            Name
+        }
+        Booking_who: Booking_whoViaBooking_who_id { Name }
+        Agent: AgentViaAgent_id {
+            Name
+            Agent_type: Agent_typeViaAgent_type_id {
+                Name
+            }
+        }
+        Date_from
+        Date_to
+        Check_in
+        Check_out
+        Request_date
+        Confirmation_date
+        Expiry_date
+        Cancel_date
+        Contract_signed
+        Rent
+        Services
+        Limit
+        Booking_fee
+        Booking_fee_actual
+        Booking_fee_returned
+        Deposit
+        Deposit_actual
+        Deposit_returned
+        Link_id
+        Comments
+        Cancelation_fee
+        Second_resident
+        Lock
+        Arrival
+        Flight
+        Checkin_option: Checkin_typeViaCheck_in_option_id {
+            Name
+        }
+        Building: BuildingViaBuilding_id {
+            Code
+            Name
+            Address
+            District: DistrictViaDistrict_id {
+                Location: LocationViaLocation_id {
+                    Name
+                }
+            }
+        }
+        Flat_type: Resource_flat_typeViaFlat_type_id {
+            Code
+            Name
+        }
+        Place_type: Resource_place_typeViaPlace_type_id {
+            Code
+            Name
+        }
+        Reason: Customer_reasonViaReason_id {
+            Name
+        }
+        School: SchoolViaSchool_id {
+            Name
+        }
+        Resource: ResourceViaResource_id {
+            Code
+            Resource_type
+            Part
+            Address
+            Flat: ResourceViaFlat_id {
+                Code
+                Address
+            }
+            Building: BuildingViaBuilding_id {
+                Code
+                Address
+                District: DistrictViaDistrict_id {
+                    Location: LocationViaLocation_id {
+                        Name
+                    }
+                }
+            }
+            Owner: ProviderViaOwner_id {
+                Name
+            }
+            Services: ProviderViaService_id {
+                Name
+            }
+        }
+        Customer: CustomerViaCustomer_id {
+            Type
+            Id_type: Id_typeViaId_type_id {
+                Name
+            }
+            Document
+            Name
+            Address
+            Zip
+            City
+            Province
+            Country: CountryViaCountry_id {
+                Name
+            }
+            Email
+            Birth_date
+            Signer_name
+            Signer_id_type: Id_typeViaSigner_id_type_id {
+                Name
+            }
+            Signer_document
+        }
+    }
 }

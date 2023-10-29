@@ -2,180 +2,180 @@
 <html lang="es">
 
 <head>
- [% include 'en/includes/head.html' %]
+  [% include 'en/includes/head.html' %]
 </head>
 
 <body>
- <div class="tabs-container">
+  <div class="tabs-container">
 
-   [% include 'en/includes/header.html' %]
+    [% include 'en/includes/header.html' %]
 
-   <div class="main-booking">
-     <div id="section2" class="main-contain">
-       <div class="panel-container">
+    <div class="main-booking">
+      <div id="section2" class="main-contain">
+        <div class="panel-container">
 
-         <div class="left tab2">
+          <div class="left tab2">
 
-           [% if data.results | length == 0 %]
-           <div class="error-message">
-             <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
-           </div>
-           [% endif %]
+            [% if data.results | length == 0 %]
+            <div class="error-message">
+              <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
+            </div>
+            [% endif %]
 
-           [% for item in data.results %]
-           [% set img = (item.Building_code + '-' + item.Place_type_code + '-' + (item.Photo | string)) | replace('_', '-') | lower %]
-           <div class="description">
+            [% for item in data.results %]
+            [% set img = (item.Building_code + '-' + item.Place_type_code + '-' + (item.Photo | string)) | replace('_', '-') | lower %]
+            <div class="description">
 
-             <div class="img">
-               <picture>
-                 <source type="image/webp" srcset="https://vanguard-student-housing.com/assets/img/[[img]]-500.webp 500w">
-                 <img 
-                   class="mini" loading="lazy" decoding="async" 
-                   src="https://vanguard-student-housing.com/assets/img/[[img]]-500.jpeg" width="500" h="333">
-               </picture>                
-             </div>
+              <div class="img">
+                <picture>
+                  <source type="image/webp" srcset="https://vanguard-student-housing.com/assets/img/[[img]]-500.webp 500w">
+                  <img
+                    class="mini" loading="lazy" decoding="async"
+                    src="https://vanguard-student-housing.com/assets/img/[[img]]-500.jpeg" width="500" h="333">
+                </picture>               
+              </div>
 
-             <div class="desc-container">
+              <div class="desc-container">
 
-               <div class="first secc">
-                 <p class="desc">[[item.Place_type_name]]</p>
-                 <div class="price">
-                   <p>
-                     [[item.Flat_types[0].Price]]  €
-                     <br><span>[% if item.Flat_types | length > 1 %]desde [% endif %]al mes</span>
-                   </p>
-                 </div>
-               </div>
+                <div class="first secc">
+                  <p class="desc">[[item.Place_type_name]]</p>
+                  <div class="price">
+                    <p>
+                      [[item.Flat_types[0].Price]]  €
+                      <br><span>[% if item.Flat_types | length > 1 %]desde [% endif %]al mes</span>
+                    </p>
+                  </div>
+                </div>
 
-               <div class="second secc">
-                 <p>[[item.Building_name]]</p>            
-               </div>
+                <div class="second secc">
+                  <p>[[item.Building_name]]</p>           
+                </div>
 
-               <div class="prices secc"[% if item.Flat_types | length < 2%] style="display:none;"[% endif %]>
-                 <p>Compartiendo con:</p>
-                 [% for share in item.Flat_types %]
-                 <div class="share">
-                   <div class="sharing">
-                     <div class="partners">
-                       <label 
-                         for="radio_[[item.Building_code]]_[[item.Place_type_code]]_[[share.Flat_type_code]]" >
-                       <input type="radio" 
-                         data-id="[[share.Flat_type_code]]"
-                         name="radio_[[item.Building_code]]_[[item.Place_type_code]]"
-                         [% if loop.index == 1 %]checked[% endif %] />
-                         [[share.Flat_type_name]]
-                       </label>
-                     </div>
-                     <div class="price">
-                       <p>[[share.Price]]€<span style="font-size:14px;font-weight:400;"> al mes</span>
-                       </p>
-                     </div>
-                   </div>
-                 </div>
-                 [% else %]
-                 <p><br><br></p>
-                 [% endfor %]
+                <div class="prices secc"[% if item.Flat_types | length < 2%] style="display:none;"[% endif %]>
+                  <p>Compartiendo con:</p>
+                  [% for share in item.Flat_types %]
+                  <div class="share">
+                    <div class="sharing">
+                      <div class="partners">
+                        <label
+                          for="radio_[[item.Building_code]]_[[item.Place_type_code]]_[[share.Flat_type_code]]" >
+                        <input type="radio"
+                          data-id="[[share.Flat_type_code]]"
+                          name="radio_[[item.Building_code]]_[[item.Place_type_code]]"
+                          [% if loop.index == 1 %]checked[% endif %] />
+                          [[share.Flat_type_name]]
+                        </label>
+                      </div>
+                      <div class="price">
+                        <p>[[share.Price]]€<span style="font-size:14px;font-weight:400;"> al mes</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  [% else %]
+                  <p><br><br></p>
+                  [% endfor %]
 
-                 <!--
-                 <div class="extra">
-                   <div class="extras">
-                     <div class="data">
-                       <label for="extra_Ducha Privada">
-                         <input type="checkbox" id="extra_Ducha Privada" name="extra_Ducha Privada" value="Ducha Privada"/>
-                           Private Shower
-                       </label>
-                     </div>
-                     <div class="price">
-                       <p>+6%/month</p>
-                     </div>                    
-                   </div>
-                 </div>
-                 -->
-               </div>
+                  <!--
+                  <div class="extra">
+                    <div class="extras">
+                      <div class="data">
+                        <label for="extra_Ducha Privada">
+                          <input type="checkbox" id="extra_Ducha Privada" name="extra_Ducha Privada" value="Ducha Privada"/>
+                            Private Shower
+                        </label>
+                      </div>
+                      <div class="price">
+                        <p>+6%/month</p>
+                      </div>                   
+                    </div>
+                  </div>
+                  -->
+                </div>
 
-               <div class="third secc">                
-                 <button class="btn-secondary" onclick="go_book('[[item.Building_code]]', '[[item.Place_type_code]]')">
-                   Reservar
-                   <em class="icon-arrow-right"></em>
-                 </button>
-               </div>
+                <div class="third secc">               
+                  <button class="btn-secondary" onclick="go_book('[[item.Building_code]]', '[[item.Place_type_code]]')">
+                    Reservar
+                    <em class="icon-arrow-right"></em>
+                  </button>
+                </div>
 
-               <div class="panel-expan secc">
-                 <div class="expansion">
-                   <input type="checkbox" class="expan-2" id="tab1" tabindex="0"/>
-                   <label name="tab" for="tab1" tabindex="-1" class="tab_lab-2" role="tab">
-                   <span class="open-close-icon"><em class="icon-add"></em></span>
-                   <p>Ver más información</p>
-                   </label>
-                   <div class="content">
-                   <p>Se deberá abonar en único pago, una fianza de 900€ o el equivalente a una mensualidad si la renta supera los 900€. Este depósito será devuelto en un plazo máximo de 30 días posterior a la fecha de salida siempre y cuando no haya habido ningún desperfecto en el apartamento. ​Se deberán abonar en un único pago, 375€ en calidad de gastos de gestión de contrato. ​Si necesitas más información acerca de las condiciones de reserva, puedes hacerlo mediante este enlace</p>
-                   </div>       
-                 </div>
-               </div>
+                <div class="panel-expan secc">
+                  <div class="expansion">
+                    <input type="checkbox" class="expan-2" id="tab1" tabindex="0"/>
+                    <label name="tab" for="tab1" tabindex="-1" class="tab_lab-2" role="tab">
+                    <span class="open-close-icon"><em class="icon-add"></em></span>
+                    <p>Ver más información</p>
+                    </label>
+                    <div class="content">
+                    <p>Se deberá abonar en único pago, una fianza de 900€ o el equivalente a una mensualidad si la renta supera los 900€. Este depósito será devuelto en un plazo máximo de 30 días posterior a la fecha de salida siempre y cuando no haya habido ningún desperfecto en el apartamento. ​Se deberán abonar en un único pago, 375€ en calidad de gastos de gestión de contrato. ​Si necesitas más información acerca de las condiciones de reserva, puedes hacerlo mediante este enlace</p>
+                    </div>      
+                  </div>
+                </div>
 
-             </div>
-           </div>
-           [% endfor %]
+              </div>
+            </div>
+            [% endfor %]
 
-         </div>  
+          </div> 
 
-         <div class="right tab2">
-           <div class="resume">
-             <h3>Resumen de reserva</h3>
-             <p>Ubicación</p>
-             <div class="resume-edit">
-               <h4>[[data.vars.city.Name]]</h4>
-               <!--
-               <button class="btn-text">
-                 <em class="icon-write"></em>
-                 <p>Editar</p>
-               </button>
-               -->
-               </div>
-             <div class="dates">
-               <div class="in">
-                 <p>ENTRADA</p>
-                 <h4>[[data.vars.date_from]]</h4>
-               </div>
-               <div class="out">
-                 <p>SALIDA</p>
-                 <h4>[[data.vars.date_to]]</h4>
-               </div>                
-             </div>
-           </div>
-         </div>        
+          <div class="right tab2">
+            <div class="resume">
+              <h3>Resumen de reserva</h3>
+              <p>Ubicación</p>
+              <div class="resume-edit">
+                <h4>[[data.city.Name]]</h4>
+                <!--
+                <button class="btn-text">
+                  <em class="icon-write"></em>
+                  <p>Editar</p>
+                </button>
+                -->
+                </div>
+              <div class="dates">
+                <div class="in">
+                  <p>ENTRADA</p>
+                  <h4>[[data.date_from]]</h4>
+                </div>
+                <div class="out">
+                  <p>SALIDA</p>
+                  <h4>[[data.date_to]]</h4>
+                </div>               
+              </div>
+            </div>
+          </div>       
 
-       </div>
-     </div>
-   </div>
+        </div>
+      </div>
+    </div>
  
- </div>
+  </div>
 
- <form id="book_form" action="/booking/3" method="post">
-   <input type="hidden" id="book_building_id" name="book_building_id" value="">
-   <input type="hidden" id="book_place_type_id" name="book_place_type_id" value="">
-   <input type="hidden" id="book_flat_type_id" name="book_flat_type_id" value="">
- </form>
+  <form id="book_form" action="/booking/3" method="post">
+    <input type="hidden" id="book_building_id" name="book_building_id" value="">
+    <input type="hidden" id="book_place_type_id" name="book_place_type_id" value="">
+    <input type="hidden" id="book_flat_type_id" name="book_flat_type_id" value="">
+  </form>
 
 <script>
 function set_field(field, value) {
- localStorage.setItem(field, value);
- document.getElementById(field).value = value;
+  localStorage.setItem(field, value);
+  document.getElementById(field).value = value;
 }
 
 function go_book(b_id, pt_id) {
- ft_id = '';
- var radios = document.querySelectorAll('input[name="radio_' + b_id + '_' + pt_id + '"]');
- for (var i = 0; i < radios.length; i++) {
-   if (radios[i].checked) {
-     ft_id = radios[i].getAttribute("data-id");
-     break;
-   }
- }
- set_field("book_building_id", b_id);
- set_field("book_place_type_id", pt_id);
- set_field("book_flat_type_id", ft_id);
- document.getElementById("book_form").submit();
+  ft_id = '';
+  var radios = document.querySelectorAll('input[name="radio_' + b_id + '_' + pt_id + '"]');
+  for (var i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      ft_id = radios[i].getAttribute("data-id");
+      break;
+    }
+  }
+  set_field("book_building_id", b_id);
+  set_field("book_place_type_id", pt_id);
+  set_field("book_flat_type_id", ft_id);
+  document.getElementById("book_form").submit();
 }
 </script>
 

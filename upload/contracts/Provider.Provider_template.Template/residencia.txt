@@ -38,7 +38,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato de hospedaje qu
 
 ## 1. Objeto.
 
-1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Residente y la Empresa en todo lo relativo al contrato de Hospedaje, (en adelante el "Contrato de Hospedaje"), en el edificio de la calle {{Resource_flat_street}} de la ciudad de {{Resource_building_city}}, y para el tipo de habitación acordado en el documento de reserva (la "Habitación") y por el plazo que luego se dirá. 
+1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Residente y la Empresa en todo lo relativo al contrato de Hospedaje, (en adelante el "Contrato de Hospedaje"), en el edificio de la calle {{Resource_flat_street}} de la ciudad de {{Resource_building_city}}, y para el tipo de habitación acordado en el documento de reserva (la "Habitación") y por el plazo que luego se dirá.
 
 ### 1.2. Vinculación con las Condiciones Generales.
 
@@ -50,7 +50,7 @@ Las Condiciones Particulares del presente Contrato de Habitación están vincula
 
 ### 1.4 Designación de la gestora.
 
-La Empresa tiene designada para la gestión de este contrato de Hospedaje y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "Gestora"). 
+La Empresa tiene designada para la gestión de este contrato de Hospedaje y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "Gestora").
 
 La Empresa tiene delegada en la web de la gestora https://vandguard-student-housing.com el área privada a la que se podrá dirigir la Residente para algunas de las gestiones de su Contrato de Hospedaje durante todo el plazo de duración.
 
@@ -60,8 +60,8 @@ La Residente contrata el servicio de Hospedaje sobre la habitación indicada en 
 
 ## 3. Plazo
 
-El Contrato de Habitación tiene un plazo de obligado cumplimiento que va desde el 1 de septiembre del año de firma del contrato al 30 de junio del año siguiente (el "Plazo"). Una vez cumplido este Plazo, el Contrato de Hospedaje quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso. 
-La entrada y puesta a disposición de la Habitación en la residencia tendrá lugar el primer día del Plazo y se llevará a cabo en la forma pactada por las Partes en el formulario de entrada y registro que se remitirá a la Residente por mail o que estará a su disposición en el área privada de la web de la Gestora. 
+El Contrato de Habitación tiene un plazo de obligado cumplimiento que va desde el 1 de septiembre del año de firma del contrato al 30 de junio del año siguiente (el "Plazo"). Una vez cumplido este Plazo, el Contrato de Hospedaje quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso.
+La entrada y puesta a disposición de la Habitación en la residencia tendrá lugar el primer día del Plazo y se llevará a cabo en la forma pactada por las Partes en el formulario de entrada y registro que se remitirá a la Residente por mail o que estará a su disposición en el área privada de la web de la Gestora.
 
 ## 4. Precio
 
@@ -69,7 +69,7 @@ Por el arrendamiento y uso de la Habitación por la Residente conforme al presen
 
 Conceptos incluidos en el Contrato de Hospedaje.
 
-- Los consumos de los suministros de agua, gas y electricidad de la habitación. 
+- Los consumos de los suministros de agua, gas y electricidad de la habitación.
 
 - El servicio de internet.
 
@@ -78,7 +78,7 @@ Conceptos incluidos en el Contrato de Hospedaje.
 {%endfor%}
 
 
-### 5. Facturación y pago. 
+### 5. Facturación y pago.
 
 La facturación por el importe de la Renta y cualesquiera otros conceptos aparte de aquella se realizará con carácter mensual, expresando separadamente el periodo o periodos al que corresponda y detallando cada concepto facturado.
 
@@ -90,7 +90,7 @@ En este contexto, mediante la suscripción del presente Contrato de Hospedaje, l
 
 ## 6. Prestación de Garantía.
 
-Coincidiendo con la firma del Contrato de Hospedaje, la Residente ha efectuado el pago a favor de la Empresa de una garantía en la suma de {{Booking_deposit|decimal}} euros (la "Garantía"), para garantizar el cumplimiento por la Residente de todas las obligaciones que asume en el Contrato de Hospedaje, compuesto por las Condiciones Particulares y Generales, Normas de Uso y responsabilidades económicas asumidas por la Residente. 
+Coincidiendo con la firma del Contrato de Hospedaje, la Residente ha efectuado el pago a favor de la Empresa de una garantía en la suma de {{Booking_deposit|decimal}} euros (la "Garantía"), para garantizar el cumplimiento por la Residente de todas las obligaciones que asume en el Contrato de Hospedaje, compuesto por las Condiciones Particulares y Generales, Normas de Uso y responsabilidades económicas asumidas por la Residente.
 
 Las Partes acuerdan la devolución de la Garantía a la Residente y sin intereses, en un plazo máximo de treinta (30) días contados desde la finalización del Contrato de Hospedaje, previa verificación del correcto estado de la Habitación, así como de la no existencia de deudas o cantidades a reclamar a la Residente.
 
@@ -216,7 +216,7 @@ El Empresario emitirá la/s factura/s conforme a la Forma de Pago, en la que se 
 
 7.2 El ejercicio del derecho mencionado en el apartado 7.1 anterior se realizará en la medida de lo razonable y con observancia de la privacidad del Residente, y se configura para permitir el adecuado cumplimiento de los servicios contratados, la seguridad de los residentes y el mantenimiento y salubridad, entre otros.
 
-7.3 El Empresario podrá reagrupar a los residentes en las habitaciones de la Residencia por razones organizativas. 
+7.3 El Empresario podrá reagrupar a los residentes en las habitaciones de la Residencia por razones organizativas.
 
 ## 8. Garantía.
 
@@ -270,7 +270,7 @@ El Empresario emitirá la/s factura/s conforme a la Forma de Pago, en la que se 
 
 (b) El retraso de la entrada efectiva del Residente en la Residencia no tendrá efectos en el Precio Total ni en la Fecha de Salida. Si, como consecuencia del retraso en la entrada en la Residencia, el Residente se retrasara en el pago del Precio Total, dicho retraso no se entenderá como un ajuste del Precio Total ni del Plazo.
 
-10.2 En la Fecha de Entrada de la Habitación el Empresario entregará al Residente una hoja de revisión, donde se harán constar los desperfectos o anomalías observadas en la Habitación (la "Hoja de Revisión"). Se presumirá que la Habitación fue entregada en perfecto estado si, en un plazo máximo de 24 horas, la Hoja de Revisión no fuere cumplimentada y entregada a la recepción de la Residencia 
+10.2 En la Fecha de Entrada de la Habitación el Empresario entregará al Residente una hoja de revisión, donde se harán constar los desperfectos o anomalías observadas en la Habitación (la "Hoja de Revisión"). Se presumirá que la Habitación fue entregada en perfecto estado si, en un plazo máximo de 24 horas, la Hoja de Revisión no fuere cumplimentada y entregada a la recepción de la Residencia
 
 10.3 Cambio de Habitación
 
@@ -278,7 +278,7 @@ El Empresario emitirá la/s factura/s conforme a la Forma de Pago, en la que se 
 
 10.4 Salida de la Habitación
 
-(a) La Fecha de Salida se producirá el último día del Plazo antes de las 12:00 horas. 
+(a) La Fecha de Salida se producirá el último día del Plazo antes de las 12:00 horas.
 
 (b) En la Fecha de Salida el Residente deberá desalojar la Habitación dejándola en buen estado de conservación y en las mismas condiciones en las que se encontraba en la Fecha de Entrega, salvo por el desgaste normal de su uso. En  el caso que sea necesario realizar alguna reparación en la Habitación, Mobiliario o Instalaciones, el Residente deberá abonar al Empresario los gastos que sean necesarios para la restitución de esta al estado en el que se encontraba en la Fecha de Entrada (los "Gastos de Restitución").
 
@@ -347,7 +347,7 @@ Todos cuantos objetos y enseres permanezcan en la Habitación después del Plazo
 
 ## 16. Aceptación.
 
-La aceptación sin reservas de las presentes Condiciones Particulares, Condiciones Generales y Normas de Uso deviene obligatoria para la suscripción del presente Contrato de Hospedaje por parte de la Empresa. La Residente manifiesta, por lo tanto, haber leído y entendido las presentes Condiciones Particulares junto con las Condiciones Generales y Normas de Uso que han sido puestas a su disposición, en todo momento, con carácter previo a la contratación y aceptarlas todas ellas sin objeción alguna. 
+La aceptación sin reservas de las presentes Condiciones Particulares, Condiciones Generales y Normas de Uso deviene obligatoria para la suscripción del presente Contrato de Hospedaje por parte de la Empresa. La Residente manifiesta, por lo tanto, haber leído y entendido las presentes Condiciones Particulares junto con las Condiciones Generales y Normas de Uso que han sido puestas a su disposición, en todo momento, con carácter previo a la contratación y aceptarlas todas ellas sin objeción alguna.
 
 | | |
 |:-|:-|

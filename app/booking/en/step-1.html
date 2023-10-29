@@ -1,100 +1,100 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 
 <head>
- [% include 'en/includes/head.html' %]
+  [% include 'en/includes/head.html' %]
 </head>
 
 <body>
- <div class="tabs-container">
+  <div class="tabs-container">
 
-   [% include 'en/includes/header.html' %]
+    [% include 'en/includes/header.html' %]
 
-   <div class="main-booking">
-     <div id="section1" class="main-contain">
-       <div class="panel-container">
-         <div class="left">
+    <div class="main-booking">
+      <div id="section1" class="main-contain">
+        <div class="panel-container">
+          <div class="left">
 
-           <!--
-           <div class="error-message">
-             <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
-           </div>
-           -->
+            <!--
+            <div class="error-message">
+              <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
+            </div>
+            -->
 
-           <h2>1. Ubicación y fechas</h2>
+            <h2>1. Ubicación y fechas</h2>
 
-           <form action="/booking/[[data.vars.lang]]/2" method="post">
-             <fieldset>
+            <form action="/booking/[[data.lang]]/2" method="post">
+              <fieldset>
 
-               <h3>¿Dónde quieres vivir?</h3>
-               <select class="select1" readonly>
-                 [%for item in data.typologies%]
-                 <option value="[[item.id]]"[%if data.vars.city_id == item.id%] selected[%endif%]>[[item.Name]]</option>
-                 [%endfor%]
-               </select>
+                <h3>¿Dónde quieres vivir?</h3>
+                <select class="select1" readonly>
+                  [%for item in data.typologies%]
+                  <option value="[[item.id]]"[%if data.city_id == item.id%] selected[%endif%]>[[item.Name]]</option>
+                  [%endfor%]
+                </select>
 
-               <h3>¿Qué tipo de piso estás buscando?</h3>
-               <div class="background">
-                 <input id="pc" name="acom" type="radio" value="compartido" readonly[%if data.vars.acom_type=='pc'%] checked[%endif%]>
-                 <em class="checkmark"></em>
-                 <label class="labels">Piso Compartido</label>
-               </div>
-               <div class="background">
-                 <input id="ap" name="acom" type="radio" value="privado" readonly[%if data.vars.acom_type=='ap'%] checked[%endif%]>
-                 <em class="checkmark"></em>
-                 <label class="labels">Apartamento Privado</label>
-               </div>
-               <div class="background">
-                 <input id="rs" name="acom" type="radio" value="privado" readonly[%if data.vars.acom_type=='rs'%] checked[%endif%]>
-                 <em class="checkmark"></em>
-                 <label class="labels">Residencia universitaria</label>
-               </div>
+                <h3>¿Qué tipo de piso estás buscando?</h3>
+                <div class="background">
+                  <input id="pc" name="acom" type="radio" value="compartido" readonly[%if data.acom_type=='pc'%] checked[%endif%]>
+                  <em class="checkmark"></em>
+                  <label class="labels">Piso Compartido</label>
+                </div>
+                <div class="background">
+                  <input id="ap" name="acom" type="radio" value="privado" readonly[%if data.acom_type=='ap'%] checked[%endif%]>
+                  <em class="checkmark"></em>
+                  <label class="labels">Apartamento Privado</label>
+                </div>
+                <div class="background">
+                  <input id="rs" name="acom" type="radio" value="privado" readonly[%if data.acom_type=='rs'%] checked[%endif%]>
+                  <em class="checkmark"></em>
+                  <label class="labels">Residencia universitaria</label>
+                </div>
 
-               <h3>¿En qué tipo de habitación?</h3>
-               <div class="background"> 
-                 <input id="ind" name="room" type="radio" value="ind" readonly[%if data.vars.room_type=='ind'%] checked[%endif%]>
-                 <em class="checkmark"></em>
-                 <label class="labels">Habitación Individual</label>
-               </div>
-               <div class="background">
-                 <input id="sha" name="room" type="radio" value="sha" readonly[%if data.vars.room_type=='sha'%] checked[%endif%]>
-                 <em class="checkmark"></em>
-                 <label class="labels">Habitación Compartida</label>
-               </div>                
+                <h3>¿En qué tipo de habitación?</h3>
+                <div class="background">
+                  <input id="ind" name="room" type="radio" value="ind" readonly[%if data.room_type=='ind'%] checked[%endif%]>
+                  <em class="checkmark"></em>
+                  <label class="labels">Habitación Individual</label>
+                </div>
+                <div class="background">
+                  <input id="sha" name="room" type="radio" value="sha" readonly[%if data.room_type=='sha'%] checked[%endif%]>
+                  <em class="checkmark"></em>
+                  <label class="labels">Habitación Compartida</label>
+                </div>               
 
-               <h3>¿En qué fechas?</h3>
-               <div class="inputs-container">
-                 <div class="dates">
-                   <button class="date-button">
-                     <input 
-                       type="text" class="inputs" readonly
-                       id="dates" name="dates" placeholder="dd/mm/aaaa"
-                       value="[[data.vars.date_from]] - [[data.vars.date_to]]"
-                       />
-                   </button>
-                 </div>                  
-               </div>
+                <h3>¿En qué fechas?</h3>
+                <div class="inputs-container">
+                  <div class="dates">
+                    <button class="date-button">
+                      <input
+                        type="text" class="inputs" readonly
+                        id="dates" name="dates" placeholder="dd/mm/aaaa"
+                        value="[[data.date_from]] - [[data.date_to]]"
+                        />
+                    </button>
+                  </div>                 
+                </div>
 
-               <section class="next">
-                 <button class="btn-secondary">
-                   Continuar
-                 </button>
-               </section>
+                <section class="next">
+                  <button class="btn-secondary">
+                    Continuar
+                  </button>
+                </section>
 
-             </fieldset>
-           </form>            
-         </div>
+              </fieldset>
+            </form>           
+          </div>
 
-         <div class="right">
-           <div class="img-big">
-             <img class="big" alt="cotownity-big" src="/assets/img/cotownity-big.png">
-           </div>
-         </div>          
+          <div class="right">
+            <div class="img-big">
+              <img class="big" alt="cotownity-big" src="/assets/img/cotownity-big.png">
+            </div>
+          </div>         
 
-       </div>
-     </div>
-   </div>
- </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

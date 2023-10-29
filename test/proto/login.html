@@ -2,50 +2,50 @@
 <html>
 
 <head>
- <title>Formulario de Login</title>
- <style>.hide { display: none; }</style>
+  <title>Formulario de Login</title>
+  <style>.hide { display: none; }</style>
 </head>
 
 <body>
 
- <h2>Cookie login</h2>
+  <h2>Cookie login</h2>
 
- <!-- Not logged => Login form -->
- <form class="hide" id="login" action="/api/v1/login" method="POST">
-   <label for="usr">Usuario:</label>
-   <input type="text" id="usr" name="usr" required><br><br>
-   <label for="pwd">Contraseña:</label>
-   <input type="password" id="pwd" name="pwd" required><br><br>
-   <input type="submit" value="Iniciar sesión">
- </form>
+  <!-- Not logged => Login form -->
+  <form class="hide" id="login" action="/api/v1/login" method="POST">
+    <label for="usr">Usuario:</label>
+    <input type="text" id="usr" name="usr" required><br><br>
+    <label for="pwd">Contraseña:</label>
+    <input type="password" id="pwd" name="pwd" required><br><br>
+    <input type="submit" value="Iniciar sesión">
+  </form>
 
- <!-- Logged => User name and logout form -->
- <form class="hide" id="logout" action="/api/v1/logout" method="POST">
-   <p>Usuario: <span id="name"></span></p>
-   <input type="submit" value="Cerrar sesión">
- </form>
+  <!-- Logged => User name and logout form -->
+  <form class="hide" id="logout" action="/api/v1/logout" method="POST">
+    <p>Usuario: <span id="name"></span></p>
+    <input type="submit" value="Cerrar sesión">
+  </form>
 
 </body>
 
 <script>
- function getCookie(name) {
-   const arr = document.cookie.split(';');
-   for(var i = 0; i < arr.length; i++) {
-     const pair = arr[i].split('=');
-     if(name === pair[0].trim()) {
-       return JSON.parse(atob(pair[1]));
-     }
-   }
-   return null;
- }
- user = getCookie('user');
- console.log(user);
- if (user) {
-   document.getElementById('name').innerText = user.name;
-   document.getElementById('logout').style.display = 'block';
- } else {
-   document.getElementById('login').style.display = 'block';
- }
+  function getCookie(name) {
+    const arr = document.cookie.split(';');
+    for(var i = 0; i < arr.length; i++) {
+      const pair = arr[i].split('=');
+      if(name === pair[0].trim()) {
+        return JSON.parse(atob(pair[1]));
+      }
+    }
+    return null;
+  }
+  user = getCookie('user');
+  console.log(user);
+  if (user) {
+    document.getElementById('name').innerText = user.name;
+    document.getElementById('logout').style.display = 'block';
+  } else {
+    document.getElementById('login').style.display = 'block';
+  }
 </script>
 
 </html>

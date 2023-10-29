@@ -25,71 +25,71 @@ logger = logging.getLogger('COTOWN')
 
 def main():
 
- # ###################################################
- # Logging
- # ###################################################
+  # ###################################################
+  # Logging
+  # ###################################################
 
- logger.setLevel(settings.LOGLEVEL)
- formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
- console_handler = logging.StreamHandler()
- console_handler.setLevel(settings.LOGLEVEL)
- console_handler.setFormatter(formatter)
- file_handler = RotatingFileHandler('log/batch_sendemail.log', maxBytes=1000000, backupCount=5)
- file_handler.setLevel(settings.LOGLEVEL)
- file_handler.setFormatter(formatter)
- logger.addHandler(console_handler)
- logger.addHandler(file_handler)
- logger.info('Started')
-
-
- # ###################################################
- # GraphQL client
- # ###################################################
-
- # graphQL API
- apiClient = APIClient(settings.SERVER)
- apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
+  logger.setLevel(settings.LOGLEVEL)
+  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
+  console_handler = logging.StreamHandler()
+  console_handler.setLevel(settings.LOGLEVEL)
+  console_handler.setFormatter(formatter)
+  file_handler = RotatingFileHandler('log/batch_sendemail.log', maxBytes=1000000, backupCount=5)
+  file_handler.setLevel(settings.LOGLEVEL)
+  file_handler.setFormatter(formatter)
+  logger.addHandler(console_handler)
+  logger.addHandler(file_handler)
+  logger.info('Started')
 
 
- # ###################################################
- # Main
- # ###################################################
+  # ###################################################
+  # GraphQL client
+  # ###################################################
 
- # Get pending emails
- emails = apiClient.call('''
- {
-   data: Customer_Customer_emailList ( 
-     where: { Sent_at: { IS_NULL: true } }
-   ) {
-     id
-     Customer: CustomerViaCustomer_id {
-       Name
-       Address
-       Email
-       Lang
-     }
-     Template
-     Entity_id
-     Subject
-     Body
-     Sent_at
-   }
- }
- ''')
+  # graphQL API
+  apiClient = APIClient(settings.SERVER)
+  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
- # No emails
- if emails is None:
-   return
 
- # Loop thru emails
- num = 0
- for email in emails.get('data'):
-   try:
-     do_email(apiClient, email)
-     num += 1
-   except:
-       pass
- logger.info('{} emails sent'.format(num))
+  # ###################################################
+  # Main
+  # ###################################################
+
+  # Get pending emails
+  emails = apiClient.call('''
+  {
+    data: Customer_Customer_emailList (
+      where: { Sent_at: { IS_NULL: true } }
+    ) {
+      id
+      Customer: CustomerViaCustomer_id {
+        Name
+        Address
+        Email
+        Lang
+      }
+      Template
+      Entity_id
+      Subject
+      Body
+      Sent_at
+    }
+  }
+  ''')
+
+  # No emails
+  if emails is None:
+    return
+
+  # Loop thru emails
+  num = 0
+  for email in emails.get('data'):
+    try:
+      do_email(apiClient, email)
+      num += 1
+    except:
+        pass
+  logger.info('{} emails sent'.format(num))
 
 
 # #####################################
@@ -98,5 +98,5 @@ def main():
 
 if __name__ == '__main__':
 
- main()
- logger.info('Finished')
+  main()
+  logger.info('Finished')

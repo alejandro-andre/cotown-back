@@ -28,7 +28,7 @@ En adelante denominada la "**Arrendataria**"
 
 ## MANIFIESTAN
 
-I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_flat_street}} (la "**habitación**"), 
+I.- Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_flat_street}} (la "**habitación**"),
 
 II.- Que, **el Proveedor de Servicios** es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
 
@@ -63,7 +63,7 @@ Tal y como disponen los artículos 6.1.b y 6.1.c del citado Reglamento, los dato
 
 Las partes quedan informadas de que el responsable del tratamiento es respectivamente cada parte, cuyos domicilios figuran en el encabezamiento del contrato.
 
-Las partes quedan informadas de su derecho a solicitar a la otra parte el acceso a sus datos, su rectificación o supresión, la limitación de su tratamiento, la oposición a su tratamiento y su portabilidad. 
+Las partes quedan informadas de su derecho a solicitar a la otra parte el acceso a sus datos, su rectificación o supresión, la limitación de su tratamiento, la oposición a su tratamiento y su portabilidad.
 
 Las partes quedan informadas de su derecho a presentar una reclamación ante una autoridad de control y a retirar el consentimiento que haya otorgado al tratamiento de datos para finalidades específicas en cualquier momento, sin que ello afecte a la licitud del tratamiento basado en el consentimiento previo a su retirada.
 

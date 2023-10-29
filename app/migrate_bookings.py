@@ -41,17 +41,17 @@ myvanguardstudenthousing
 Qi80#GW1AA7N
 
 -- 7a. Datos de reserva individuales
-SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer, 
-	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   DATE_FORMAT(br.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(br.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out, 
-      r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS Confirmation_date, 
+SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
+	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount,
+	   DATE_FORMAT(br.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(br.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out,
+       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS Confirmation_date,
 	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
-FROM booking_resource br 
-LEFT JOIN bookings b ON b.id = br.booking_id 
+FROM booking_resource br
+LEFT JOIN bookings b ON b.id = br.booking_id
 LEFT JOIN booking_information bi ON bi.booking_id = b.id
 LEFT JOIN booking_resource_resident brr ON brr.booking_resource_id = br.resource_id
-LEFT JOIN requests rq ON rq.id = b.request_id 
-LEFT JOIN requesters r ON r.id = rq.requester_id 
+LEFT JOIN requests rq ON rq.id = b.request_id
+LEFT JOIN requesters r ON r.id = rq.requester_id
 LEFT JOIN resources re ON re.id = br.resource_id
 LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
 WHERE bl.id IS NULL
@@ -61,12 +61,12 @@ AND re.id IS NOT NULL
 UNION
 
 SELECT rq.id, rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
-	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount, 
-	   DATE_FORMAT(rq.from, "%Y-%m-%d") AS Date_from, DATE_FORMAT(rq.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out, 
-      r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, NULL AS Confirmation_date, 
+	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount,
+	   DATE_FORMAT(rq.from, "%Y-%m-%d") AS Date_from, DATE_FORMAT(rq.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out,
+       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, NULL AS Confirmation_date,
 	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
 FROM requests rq
-LEFT JOIN requesters r ON r.id = rq.requester_id 
+LEFT JOIN requesters r ON r.id = rq.requester_id
 LEFT JOIN resources re ON re.id = rq.resource_id
 WHERE rq.state IN ('pending', 'accepted')
 AND re.id IS NOT NULL
@@ -78,17 +78,17 @@ FROM booking_resource br
 LEFT JOIN bookings b ON b.id = br.booking_id
 LEFT JOIN requests r ON r.id = b.request_id
 LEFT JOIN confirmed_prices cp ON br.id = cp.booking_resource_id
-INNER JOIN months m ON m.id = cp.month_id 
-INNER JOIN years y ON y.id = m.year_id 
+INNER JOIN months m ON m.id = cp.month_id
+INNER JOIN years y ON y.id = m.year_id
 WHERE b.to > '2023-10-01'
 
-UNION 
+UNION
 
 SELECT r.id AS "Booking_id", CONCAT (y.number, '-', LPAD(m.number, 2, '0'), '-01') AS "Rent_date", cp.amount AS "Rent", cp.amount_cleaning_service AS "Services"
 FROM requests r
 LEFT JOIN confirmed_prices cp ON r.id = cp.request_id
-INNER JOIN months m ON m.id = cp.month_id 
-INNER JOIN years y ON y.id = m.year_id 
+INNER JOIN months m ON m.id = cp.month_id
+INNER JOIN years y ON y.id = m.year_id
 WHERE r.to > '2023-10-01'
 
 ORDER BY 1, 2, 3;
@@ -101,145 +101,145 @@ ORDER BY 1, 2, 3;
 
 def get_date(string):
 
- try:
-   return datetime.strptime(str(string), '%Y-%m-%d')
- except:
-   pass
+  try:
+    return datetime.strptime(str(string), '%Y-%m-%d')
+  except:
+    pass
  
- try:
-   return datetime.strptime(str(string), '%Y-%m-%d %H:%M:%S')
- except:
-   pass
+  try:
+    return datetime.strptime(str(string), '%Y-%m-%d %H:%M:%S')
+  except:
+    pass
 
- return PAST
+  return PAST
 
 def check_dates(row, tag):
 
- # Dates
- dates = {
-   'Date_from': row['Date_from'],
-   'Date_to'  : row['Date_to'],
-   'Check_in' : row['Check_in'],
-   'Check_out': row['Check_out']
- }
+  # Dates
+  dates = {
+    'Date_from': row['Date_from'],
+    'Date_to'  : row['Date_to'],
+    'Check_in' : row['Check_in'],
+    'Check_out': row['Check_out']
+  }
 
- # Validate from-to
- if dates['Date_from'] == PAST or dates['Date_to'] == PAST:
-   return PAST 
- if dates['Date_from'] >= dates['Date_to']:
-   return PAST
+  # Validate from-to
+  if dates['Date_from'] == PAST or dates['Date_to'] == PAST:
+    return PAST
+  if dates['Date_from'] >= dates['Date_to']:
+    return PAST
 
- # Validate checkin
- if dates['Check_in'] != PAST:
-   if dates['Check_in'] < dates['Date_from']:
-     dates['Check_in'] = dates['Date_from']
-   if dates['Check_in'] > dates['Date_to']:
-     dates['Check_in'] = PAST
+  # Validate checkin
+  if dates['Check_in'] != PAST:
+    if dates['Check_in'] < dates['Date_from']:
+      dates['Check_in'] = dates['Date_from']
+    if dates['Check_in'] > dates['Date_to']:
+      dates['Check_in'] = PAST
 
- # Validate checkout
- if dates['Check_out'] != PAST:
-   if dates['Check_out'] > dates['Date_to']:
-     dates['Check_out'] = dates['Date_to']
-   if dates['Check_out'] < dates['Date_from']:
-     dates['Check_out'] = PAST
+  # Validate checkout
+  if dates['Check_out'] != PAST:
+    if dates['Check_out'] > dates['Date_to']:
+      dates['Check_out'] = dates['Date_to']
+    if dates['Check_out'] < dates['Date_from']:
+      dates['Check_out'] = PAST
 
- # Validate checkin-checkout
- if dates['Check_in'] != PAST and dates['Check_out'] != PAST:
-   if dates['Check_out'] < dates['Check_in']:
-     dates['Check_in'] = PAST
-     dates['Check_out'] = PAST
+  # Validate checkin-checkout
+  if dates['Check_in'] != PAST and dates['Check_out'] != PAST:
+    if dates['Check_out'] < dates['Check_in']:
+      dates['Check_in'] = PAST
+      dates['Check_out'] = PAST
 
- # Return requested date
- return dates[tag]
+  # Return requested date
+  return dates[tag]
 
 def set_status(row):
 
- # Finished
- if row['Status'] == 'finished':
-   return 'finalizada'
+  # Finished
+  if row['Status'] == 'finished':
+    return 'finalizada'
 
- # Pending
- if row['Status'] == 'pending':
-   return 'solicitud'
+  # Pending
+  if row['Status'] == 'pending':
+    return 'solicitud'
 
- # Dates
- date_from = row['Date_from']
- date_to   = row['Date_to']
- check_in  = row['Check_in']
- check_out = row['Check_out']
+  # Dates
+  date_from = row['Date_from']
+  date_to   = row['Date_to']
+  check_in  = row['Check_in']
+  check_out = row['Check_out']
 
- # Finished
- if check_out != PAST:
-   if (now - check_out).days > 0:
-     return 'finalizada'
- else:
-   if (now - date_to).days > 0:
-     return 'finalizada'
+  # Finished
+  if check_out != PAST:
+    if (now - check_out).days > 0:
+      return 'finalizada'
+  else:
+    if (now - date_to).days > 0:
+      return 'finalizada'
 
- # Started
- if check_in != PAST:
-   if (now - check_in).days > 0:
-     return 'inhouse'
- else:
-   if (now - date_from).days > 0:
-     return 'inhouse'
+  # Started
+  if check_in != PAST:
+    if (now - check_in).days > 0:
+      return 'inhouse'
+  else:
+    if (now - date_from).days > 0:
+      return 'inhouse'
 
- # Confirmed
- return 'confirmada'
+  # Confirmed
+  return 'confirmada'
 
 def lookup_resource(code, index=0):
 
- # Fix resource names
- code = code.replace('..', '.').replace('SAT', 'SA')
+  # Fix resource names
+  code = code.replace('..', '.').replace('SAT', 'SA')
 
- # Lookup place
- try:
-   id = df_res.loc[df_res[1] == code, index].values[0]
-   return id
- except:
-   pass
+  # Lookup place
+  try:
+    id = df_res.loc[df_res[1] == code, index].values[0]
+    return id
+  except:
+    pass
 	
- # Lookup room
- code = code[:16]
- try:
-   id = df_res.loc[df_res[1] == code, index].values[0]
-   return id
- except:
-   pass
+  # Lookup room
+  code = code[:16]
+  try:
+    id = df_res.loc[df_res[1] == code, index].values[0]
+    return id
+  except:
+    pass
 
- return None
+  return None
 
 def lookup_booking(id):
 
- # Lookup booking
- try:
-   result = df_bookings.loc[df_bookings['id'] == id, 'id'].values[0]
-   return result
- except:
-   pass
+  # Lookup booking
+  try:
+    result = df_bookings.loc[df_bookings['id'] == id, 'id'].values[0]
+    return result
+  except:
+    pass
 	
- return -1
+  return -1
 
 def lookup_customer(email):
 
- #email = email.split('@')[0] + '@test.com'
- email = re.sub(r'[^a-zA-Z0-9-_.@]', '', email)
+  #email = email.split('@')[0] + '@test.com'
+  email = re.sub(r'[^a-zA-Z0-9-_.@]', '', email)
 
- # Search main email
- try:
-   id = df_cus.loc[df_cus[1] == email, 0].values[0]
-   return id
- except:
-   pass
+  # Search main email
+  try:
+    id = df_cus.loc[df_cus[1] == email, 0].values[0]
+    return id
+  except:
+    pass
 	
- # Search other emails
- try:
-   id = df_cus.loc[df_cus[2].str.contains(email, case=False, na=False), 0].values[0]
-   return id
- except:
-   pass
+  # Search other emails
+  try:
+    id = df_cus.loc[df_cus[2].str.contains(email, case=False, na=False), 0].values[0]
+    return id
+  except:
+    pass
 
- return -1
+  return -1
 
 
 # #####################################
@@ -248,13 +248,13 @@ def lookup_customer(email):
 
 # DB API
 dbClient = DBClient(
- host=settings.SERVER, 
- dbname=settings.DATABASE, 
- user=settings.DBUSER, 
- password=settings.DBPASS,
- sshuser=settings.SSHUSER, 
- sshpassword=settings.get('SSHPASS', None),
- sshprivatekey=settings.get('SSHPKEY', None)
+  host=settings.SERVER,
+  dbname=settings.DATABASE,
+  user=settings.DBUSER,
+  password=settings.DBPASS,
+  sshuser=settings.SSHUSER,
+  sshpassword=settings.get('SSHPASS', None),
+  sshprivatekey=settings.get('SSHPKEY', None)
 )
 dbClient.connect()
 print('ACCESO A BD')
@@ -349,8 +349,8 @@ wb.save(file)
 xls_workbook = xlwt.Workbook(encoding='utf-8')
 xls_sheet = xls_workbook.add_sheet('Sheet1')
 for row_num, row in enumerate(sheet.iter_rows()):
-   for col_num, cell in enumerate(row):
-       xls_sheet.write(row_num, col_num, cell.value)
+    for col_num, cell in enumerate(row):
+        xls_sheet.write(row_num, col_num, cell.value)
 xls_workbook.save(file[:-1])
 
 # #####################################
@@ -390,6 +390,6 @@ wb.save(file)
 xls_workbook = xlwt.Workbook(encoding='utf-8')
 xls_sheet = xls_workbook.add_sheet('Sheet1')
 for row_num, row in enumerate(sheet.iter_rows()):
-   for col_num, cell in enumerate(row):
-       xls_sheet.write(row_num, col_num, cell.value)
+    for col_num, cell in enumerate(row):
+        xls_sheet.write(row_num, col_num, cell.value)
 xls_workbook.save(file[:-1])

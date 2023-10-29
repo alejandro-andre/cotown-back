@@ -20,11 +20,11 @@ promtail:
 
 monitor:
 	docker run -d --name=nodexp --privileged --net="host" --pid="host" \
- 		-v "/:/host:ro,rslave" \
- 		quay.io/prometheus/node-exporter:latest \
- 		--path.rootfs=/host
+  		-v "/:/host:ro,rslave" \
+  		quay.io/prometheus/node-exporter:latest \
+  		--path.rootfs=/host
 	docker run -d -p 8080:8080 --name=cadvisor --privileged --net=cotownnet --device=/dev/kmsg \
-       -v /:/rootfs:ro \
+        -v /:/rootfs:ro \
 		-v /var/run:/var/run:ro \
 		-v /sys:/sys:ro \
 		-v /var/lib/docker/:/var/lib/docker:ro \

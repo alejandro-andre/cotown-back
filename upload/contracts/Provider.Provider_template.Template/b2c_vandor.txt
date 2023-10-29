@@ -32,7 +32,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 ## MANIFIESTAN
 
-I. Que, la Arrendadora es una entidad cuyo objeto es el arrendamiento de habitaciones para su uso por terceros en los edificios de su propiedad. 
+I. Que, la Arrendadora es una entidad cuyo objeto es el arrendamiento de habitaciones para su uso por terceros en los edificios de su propiedad.
 
 II. La Arrendataria está interesada en arrendar y usar de forma temporal una de las habitaciones propiedad de la Arrendadora, en uno de los edificios de la Arrendadora.
 
@@ -45,9 +45,9 @@ III. En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y
 
 ## 1. Objeto.
 
-1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso {{Resource_flat_address}} del edificio de la calle {{Resource_flat_street}} de la ciudad de {{Resource_building_city}}, para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
+1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso {{Resource_flat_address}} del edificio de la calle {{Resource_flat_street}} de la ciudad de {{Resource_building_city}}, para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá.
 
-## 1.2. Vinculación con las Condiciones Generales 
+## 1.2. Vinculación con las Condiciones Generales
 
 Las Condiciones Particulares están vinculadas necesaria y obligatoriamente con las condiciones generales que se contienen a continuación de las condiciones particulares (las "**Condiciones Generales**") y que completan a las presentes condiciones particulares en todo lo no previsto en las mismas, siendo éstas de obligado cumplimiento, las cuales se dan aquí por reproducidas y por tanto aceptadas mediante la firma del presente documento, formando desde ese momento las condiciones Particulares y la Generales de forma conjunta e indisoluble las condiciones del presente Contrato de Habitación.
 
@@ -57,7 +57,7 @@ Las Condiciones Particulares del presente Contrato de Habitación están vincula
 
 ## 1.4 Designación de la gestora
 
-La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"). 
+La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**").
 
 La Arrendadora tiene delegada en la web de la gestora {{Segment_url}} el área privada a la que se podrá dirigir la Arrendataria para algunas de las gestiones de su Contrato de Habitación durante todo el plazo de duración.
 
@@ -67,11 +67,11 @@ La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la
 
 ## 3. Plazo
 
-El Contrato de Habitación entra en vigor a la fecha de efectivo pago del importe de la garantía y tendrá un plazo de duración que va desde el día {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} al día {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}} (el "**Plazo**"). Una vez cumplido este Plazo, el Contrato de Habitación quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso. 
+El Contrato de Habitación entra en vigor a la fecha de efectivo pago del importe de la garantía y tendrá un plazo de duración que va desde el día {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} al día {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}} (el "**Plazo**"). Una vez cumplido este Plazo, el Contrato de Habitación quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso.
 
 Sin perjuicio del Plazo, la Arrendataria tendrá derecho a resolver el Contrato de Habitación en cualquier momento siempre que dé un preaviso mínimo a la Arrendadora de cuarenta y cinco (45) días naturales a la fecha en la que desee finalizar el Contrato de Habitación, sin incurrir en ningún coste adicional o penalización por dicho motivo, salvo con la obligación de devolución de todos los descuentos aplicados en su caso, por el Plazo de tiempo inicialmente contratado y no cumplido.
 
-La entrada y puesta a disposición de la Habitación tendrá lugar el primer día del Plazo y se llevará a cabo en la forma pactada por las Partes en el formulario de entrada y registro que se remitirá a la Arrendataria por mail o que estará a su disposición en el área privada de la web de la Gestora. 
+La entrada y puesta a disposición de la Habitación tendrá lugar el primer día del Plazo y se llevará a cabo en la forma pactada por las Partes en el formulario de entrada y registro que se remitirá a la Arrendataria por mail o que estará a su disposición en el área privada de la web de la Gestora.
 
 ## 4. Precio
 
@@ -91,15 +91,15 @@ mediante los cargos recurrentes que efectuará la Arrendadora en la cuenta corri
 
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de 60 euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calcula para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte. 
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de 60 euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calcula para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte.
 
 - El servicio de internet.
 
-## 5. Facturación y pago. 
+## 5. Facturación y pago.
 
 La facturación por el importe de la Renta y cualesquiera otros conceptos aparte de aquella se realizará con carácter mensual, expresando separadamente el periodo o periodos al que corresponda y detallando cada concepto facturado.
 
-El importe total a pagar se pasará al cobro entre los días 1 a 5 de cada mes. 
+El importe total a pagar se pasará al cobro entre los días 1 a 5 de cada mes.
 
 En cualquiera de los casos, la Arrendataria reconoce y confirma el mandato para el cobro de las facturas correspondientes a través de la cuenta corriente o tarjeta de crédito por ella designada según lo indicado en esta cláusula.
 
@@ -107,7 +107,7 @@ En este contexto, mediante la suscripción del presente Contrato de Habitación,
 
 ## 6. Prestación de Garantía
 
-Coincidiendo con la firma del Contrato de Habitación, la Arrendataria ha efectuado el pago a favor de la Arrendadora de una garantía en la suma de {{Booking_deposit|decimal}} euros (la "**Garantía**"), para garantizar el cumplimiento por la Arrendataria de todas las obligaciones que asume en el Contrato de Habitación, Condiciones Particulares, Condiciones Generales, Normas de Uso y responsabilidades económicas asumidas por la Arrendataria. 
+Coincidiendo con la firma del Contrato de Habitación, la Arrendataria ha efectuado el pago a favor de la Arrendadora de una garantía en la suma de {{Booking_deposit|decimal}} euros (la "**Garantía**"), para garantizar el cumplimiento por la Arrendataria de todas las obligaciones que asume en el Contrato de Habitación, Condiciones Particulares, Condiciones Generales, Normas de Uso y responsabilidades económicas asumidas por la Arrendataria.
 
 Las Partes acuerdan la devolución de la Garantía a la Arrendataria y sin intereses, en un plazo máximo de treinta (30) días contados desde la finalización del Contrato de Habitación, previa verificación del correcto estado de la Habitación y las zonas comunes del piso, así como de la no existencia de deudas o cantidades a reclamar a la Arrendataria.
 
@@ -144,7 +144,7 @@ Una vez entregadas las llaves, la Arrendataria dispondrá de un plazo de quince 
 
 En caso de pérdida o extravío de una o la totalidad del llavero con las llaves durante el Plazo del Contrato de Habitación, la Arrendataria podrá pedir otra llave o llavero a la Arrendadora, y por ello se le cobrará el importe de 100 euros por cada reposición.
 
-La Habitación se entrega en perfecto estado de cuidado y mantenimiento. La Arrendataria deberá devolverla en las mismas condiciones a la finalización del Contrato de Habitación, comprometiéndose a su limpieza y conservación. En caso contrario, el coste de restauración al estado original será asumido por la Arrendataria. 
+La Habitación se entrega en perfecto estado de cuidado y mantenimiento. La Arrendataria deberá devolverla en las mismas condiciones a la finalización del Contrato de Habitación, comprometiéndose a su limpieza y conservación. En caso contrario, el coste de restauración al estado original será asumido por la Arrendataria.
 
 La Arrendataria ha sido informada y acepta las Normas de Uso del que forma parte la Habitación que se contienen en la página web de la Gestora y es conocedora de que a partir de las 22:00 horas queda totalmente prohibido hacer cualquier tipo de ruido que pueda molestar a los vecinos o demás ocupantes del piso y edificio. Si se producen este tipo de incidentes, así como si se altera la buena convivencia en el uso de la habitación o piso, o se realizan desordenes, fiestas, desperfectos o se consume y se posee sustancias estupefacientes o ilegales, ello será considerado motivo de resolución del Contrato de Habitación pues la propiedad se reserva siempre el derecho de admisión.
 
@@ -152,13 +152,13 @@ La Arrendataria ha sido informada y acepta las Normas de Uso del que forma parte
 
 El arrendamiento se pacta por temporada y por tanto por tiempo determinado, empezando y finalizando los días indicados en las Condiciones Particulares del Contrato de Habitación.
 
-A las 10:00 horas de la mañana del último día del Plazo del Contrato de Habitación, la Arrendataria dejará libre y a disposición de la Arrendadora la Habitación, sin necesidad de preaviso alguno, haciendo entrega de la Habitación con el inventario, muebles y enseres en perfecto estado, así como de todos los juegos de llaves que le hubieran sido entregados a la Arrendataria. 
+A las 10:00 horas de la mañana del último día del Plazo del Contrato de Habitación, la Arrendataria dejará libre y a disposición de la Arrendadora la Habitación, sin necesidad de preaviso alguno, haciendo entrega de la Habitación con el inventario, muebles y enseres en perfecto estado, así como de todos los juegos de llaves que le hubieran sido entregados a la Arrendataria.
 
 En el caso de que exista algún desperfecto atribuible a la Arrendataria, esta lo pondrá en conocimiento de la Arrendadora a fin de abonar el coste de reparación o sustitución según sea el caso. En caso de que no hubiera sido puesto de manifiesto por la Arrendataria, pero tras la entrega la Arrendadora lo percibiera, se lo comunicará a la Arrendataria, así como el coste correspondiente a dicha reparación para que proceda con el abono correspondiente.
 
-La Arrendataria podrá manifestar a la salida y entrega de la Habitación cualquier comentario relativo al estado de esta y de su inventario, o de las zonas comunes del piso, mediante el formulario que se contiene en la página web de la Gestora. En caso de no manifestar nada al respecto, la reparación o sustitución de desperfectos o roturas será abonada por la Arrendataria con cargo a la Garantía y hasta donde alcance. 
+La Arrendataria podrá manifestar a la salida y entrega de la Habitación cualquier comentario relativo al estado de esta y de su inventario, o de las zonas comunes del piso, mediante el formulario que se contiene en la página web de la Gestora. En caso de no manifestar nada al respecto, la reparación o sustitución de desperfectos o roturas será abonada por la Arrendataria con cargo a la Garantía y hasta donde alcance.
 
-La Arrendataria acepta expresamente que la presentación por la Arrendadora de la cuenta de liquidación por la reparación o sustitución será suficiente para acreditar la obligación de pago de esta por la Arrendataria. 
+La Arrendataria acepta expresamente que la presentación por la Arrendadora de la cuenta de liquidación por la reparación o sustitución será suficiente para acreditar la obligación de pago de esta por la Arrendataria.
 
 Si la Arrendataria continúa ocupando la Habitación una vez cumplido el vencimiento del Contrato de Habitación, ésta tendrá que satisfacer en concepto de cláusula penal la cantidad de 200 euros por cada día que la parte Arrendataria se exceda en la estancia del Plazo pactado por las Partes. Además, y por ocupar la Habitación sin autorización de la Arrendadora, la Arrendataria deberá satisfacer en concepto de indemnización de daños y perjuicios la cantidad de 150 euros al día, hasta que desaloje efectivamente la Habitación. Tanto el importe en concepto de cláusula penal como por daños y perjuicios podrán ser descontados por la Arrendadora del importe de la garantía y hasta donde alcance y en caso de que se supere el importe de la Garantía, la Arrendataria deberá proceder con el abono de la diferencia hasta las penalizaciones efectivamente incurridas con carácter semanal.
 
@@ -168,7 +168,7 @@ La Renta acordada entre las Partes es la cantidad indicada en las Condiciones Pa
 
 Mediante la firma del presente y salvo que las Partes acuerden otra forma de pago, la Arrendataria autoriza a que la Arrendadora realice cargos recurrentes para el pago de la Renta acordada en la cuenta bancaria o tarjeta de crédito que se indicará, y durante el Plazo del Contrato de Habitación. En su caso se acompañará orden de domiciliación de adeudo directo SEPA.
 
-La Arrendataria se compromete y obliga a subir a su área interna el documento SEPA con el número de cuenta IBAN de la Arrendataria donde realizar los cargos en cuenta de los recibos mensuales de la Renta, debiendo informar a su entidad financiera y a la Arrendadora. 
+La Arrendataria se compromete y obliga a subir a su área interna el documento SEPA con el número de cuenta IBAN de la Arrendataria donde realizar los cargos en cuenta de los recibos mensuales de la Renta, debiendo informar a su entidad financiera y a la Arrendadora.
 
 Los consumos de suministros de agua, gas y electricidad se incluyen en la renta mensual con el límite mensual indicado en las Condiciones Particulares. Excedido dicho importe, la Arrendadora pasará al cobro un recibo con el exceso de consumo lo cual acepta expresamente la Arrendataria.
 
@@ -179,7 +179,7 @@ Las refacturaciones se realizarán según lo siguiente:
 3. Entre el día 1 y 5 de junio.
 4. A la entrega de la habitación.
 
-El servicio de internet está incluido en la Renta. 
+El servicio de internet está incluido en la Renta.
 
 Todo coste, gasto o interés bancario que se derive de un impago de la Renta y demás cantidades, en caso de que se produzca, deberá abonarlo la Arrendataria.
 
@@ -187,17 +187,17 @@ El pago de la Renta no podrá ser suspendido por ninguna causa o motivo salvo a 
 
 Cualquier situación de crisis, alarma, pandemia o similar no supondrá la reducción total o parcial de la renta que deberá ser igualmente abonada.
 
-## 5. La Arrendataria está obligada a: 
+## 5. La Arrendataria está obligada a:
 
-a) informar a la Arrendadora de cualquier incidente avería o daño que detecte dentro de la Habitación, piso, o edificio, así como en elementos del mobiliario e inventario; 
+a) informar a la Arrendadora de cualquier incidente avería o daño que detecte dentro de la Habitación, piso, o edificio, así como en elementos del mobiliario e inventario;
 
-b) no tener animales en la Habitación ni entrar animales al edificio; 
+b) no tener animales en la Habitación ni entrar animales al edificio;
 
-c) cumplir en todo momento las Normas de Uso y cumplir todas las leyes aplicables en todo momento; 
+c) cumplir en todo momento las Normas de Uso y cumplir todas las leyes aplicables en todo momento;
 
-d) permitir el acceso a la Habitación a la Arrendadora o persona enviada para inspeccionar y comprobar el estado general de la Habitación, inventario e instalaciones en general, para la realización de cualquier tipo de trabajo o reparación. Las entradas en la Habitación serán anunciadas con un (1) día natural de antelación, en cuyo caso se acordará una hora adecuada para ambas Partes. En caso de falta de acuerdo la visita será entre las 08:00 y las 11:00 horas, debiendo permitir el acceso a la Habitación la Arrendataria, salvo casos de urgencia o necesidad, en cuyo caso no será exigible preaviso alguno, pero si un previa aviso por cualquier medio. 
+d) permitir el acceso a la Habitación a la Arrendadora o persona enviada para inspeccionar y comprobar el estado general de la Habitación, inventario e instalaciones en general, para la realización de cualquier tipo de trabajo o reparación. Las entradas en la Habitación serán anunciadas con un (1) día natural de antelación, en cuyo caso se acordará una hora adecuada para ambas Partes. En caso de falta de acuerdo la visita será entre las 08:00 y las 11:00 horas, debiendo permitir el acceso a la Habitación la Arrendataria, salvo casos de urgencia o necesidad, en cuyo caso no será exigible preaviso alguno, pero si un previa aviso por cualquier medio.
 
-e) a hacerse cargo de la reparación que le sea atribuible por daños en las cosas. 
+e) a hacerse cargo de la reparación que le sea atribuible por daños en las cosas.
 
 f) no utilizar la Habitación con ningún fin comercial o ningún tipo de actividad que pueda resultar ilícita, molesta o dañina, tanto para la Habitación como para la seguridad de la población o los vecinos.
 
@@ -213,7 +213,7 @@ k) la Arrendataria se compromete a que la Habitación no sea ocupada por tercera
 
 l) la Arrendataria no debe mantener ni tener en la Habitación ningún material de carácter peligroso, inflamable o explosivo que pueda aumentar de manera injustificada el peligro de incendio dentro o alrededor del edificio o que pueda considerarse peligroso.
 
-m) Las personas invitadas al piso o Habitación no están autorizadas a pernoctar en la Habitación o piso, cuyo uso exclusivo se atribuye a la Arrendataria. 
+m) Las personas invitadas al piso o Habitación no están autorizadas a pernoctar en la Habitación o piso, cuyo uso exclusivo se atribuye a la Arrendataria.
 
 ## 6. La Arrendadora está obligada a:
 
@@ -221,7 +221,7 @@ a) Mantener a la Arrendataria en la Habitación acordada salvo el derecho de cam
 
 b) El mantenimiento del piso y espacios comunes del piso así como de los elementos comunes del edificio para un buen funcionamiento y uso.
 
-c) Facilitar los suministros de agua, gas, electricidad e Internet en la forma indicada. 
+c) Facilitar los suministros de agua, gas, electricidad e Internet en la forma indicada.
 
 d) Rembolsar la Garantía a la Arrendataria, tal y como se estipula en las Condiciones Generales.
 
@@ -251,18 +251,18 @@ Se prohíben los agujeros en cualquier pared, techo o suelo.
 
 La Arrendataria declara que conoce las características y el estado de las instalaciones de la Habitación, así como del mobiliario y el inventario, que acepta expresamente, comprometiéndose a mantenerlos en perfectas condiciones y a hacer un uso conforme al objeto, incluyendo las puertas, cerraduras, ventanas, zonas comunes, todo tipo de instalaciones, y deberá devolvérselos a la Arrendadora en las mismas condiciones cuando finalice el presente Contrato de Habitación.
 
-La Arrendataria deberá hacerse cargo de todo gasto que se derive de cualquier daño en la Habitación, su mobiliario, inventario, techos, suelo, cristales e instalaciones debido a su mal uso, bien por su valor de reparación o de reposición a nuevo. 
-Respecto a los desperfectos que se originen en las zonas comunes del piso, su coste de reparación o reposición a nuevo irá a cargo del causante. En caso de desconocer el responsable, este importe se repartirá entre todos los ocupantes del piso. Las facturas de reparaciones de dispositivos del piso arrendado (caldera, sistemas de calefacción, electrodomésticos en general) provocadas por un mal uso o por un deficiente mantenimiento por parte de los ocupantes, se repercutirán al causante directo del mismo o, en caso en que no se pueda individualizar, se repercutirá a todos los ocupantes del piso de forma proporcional. 
+La Arrendataria deberá hacerse cargo de todo gasto que se derive de cualquier daño en la Habitación, su mobiliario, inventario, techos, suelo, cristales e instalaciones debido a su mal uso, bien por su valor de reparación o de reposición a nuevo.
+Respecto a los desperfectos que se originen en las zonas comunes del piso, su coste de reparación o reposición a nuevo irá a cargo del causante. En caso de desconocer el responsable, este importe se repartirá entre todos los ocupantes del piso. Las facturas de reparaciones de dispositivos del piso arrendado (caldera, sistemas de calefacción, electrodomésticos en general) provocadas por un mal uso o por un deficiente mantenimiento por parte de los ocupantes, se repercutirán al causante directo del mismo o, en caso en que no se pueda individualizar, se repercutirá a todos los ocupantes del piso de forma proporcional.
 
-La Arrendataria es responsable, no sólo de sus propios actos, sino también de los de aquellos a los que invite al piso o Habitación. 
+La Arrendataria es responsable, no sólo de sus propios actos, sino también de los de aquellos a los que invite al piso o Habitación.
 
 ## 11. Garantía
 
-La Arrendataria abonará a la Arrendadora, en el momento y cuantía indicada en las Condiciones Particulares, la Garantía para atender y hasta donde alcance, las obligaciones económicas derivadas del Contrato de Habitación. 
+La Arrendataria abonará a la Arrendadora, en el momento y cuantía indicada en las Condiciones Particulares, la Garantía para atender y hasta donde alcance, las obligaciones económicas derivadas del Contrato de Habitación.
 
 Las Partes aceptan expresamente que, en caso de resolución anticipada del Contrato de Habitación por el Arrendatario antes del Plazo acordado y sin cumplir el preaviso, no dará derecho a la Arrendataria a la devolución del importe de la Garantía, que quedará en poder de la parte Arrendadora en concepto de daños y perjuicios.
 
-La Garantía le será rembolsada a la Arrendataria en el plazo de treinta (30) días a contar de la devolución de las llaves y por tanto entrega de la Habitación a la Arrendadora con su mobiliario e inventario, en la forma indicada en el presente Contrato de Habitación y siempre que no se adeude cantidad por concepto alguno. En caso contrario, le será descontado de la Garantía. 
+La Garantía le será rembolsada a la Arrendataria en el plazo de treinta (30) días a contar de la devolución de las llaves y por tanto entrega de la Habitación a la Arrendadora con su mobiliario e inventario, en la forma indicada en el presente Contrato de Habitación y siempre que no se adeude cantidad por concepto alguno. En caso contrario, le será descontado de la Garantía.
 La Garantía no sustituirá en ningún caso al pago de la última mensualidad, pudiendo ésta ser incautada en su totalidad en caso de impago de cualquier importe de Renta.
 
 Si una vez finalizado el Contrato de Habitación la Arrendataria no rellena y facilita a la gestora o la propiedad, en el plazo máximo de veinte (20) días naturales contados desde la fecha de finalización contractual, los datos requeridos para la devolución de su garantía, se entenderá que renuncia a ella y quedará en poder de la Arrendadora sin derecho a reclamación.
@@ -273,7 +273,7 @@ La liquidación de daños y deuda que tuviera pendiente la Arrendataria presenta
 
 Queda expresamente prohibida la cesión, traspaso o subarriendo total o parcial de la Habitación, así como destinarla a usos distintos del pactado.
 
-La Arrendataria sabe, le consta y acepta que por su propia seguridad el edificio está dotado de cámaras de vigilancia en circuito cerrado. 
+La Arrendataria sabe, le consta y acepta que por su propia seguridad el edificio está dotado de cámaras de vigilancia en circuito cerrado.
 
 La Arrendataria exonera a la Arrendadora de cualquier pérdida, demanda, reclamación, cargo, daño o lesión resultante de la falta de seguridad en el edificio.
 
@@ -281,7 +281,7 @@ La Arrendataria reconoce que la Arrendadora no proporcionará cobertura de segur
 
 La Arrendataria podrá contratar y mantener vigente durante todo el plazo contractual una póliza de seguro que cubra el contenido y la responsabilidad civil de terceros.
 
-La omisión o mora en el ejercicio total o parcial de cualquier derecho por la Arrendadora no constituirá una renuncia que le impida u obstaculice a ejercer los derechos que se derivan del presente Contrato de Habitación. 
+La omisión o mora en el ejercicio total o parcial de cualquier derecho por la Arrendadora no constituirá una renuncia que le impida u obstaculice a ejercer los derechos que se derivan del presente Contrato de Habitación.
 
 La Arrendataria reconoce y acepta expresamente que no le corresponde derecho alguno de tanteo, retracto y/o adquisición preferente en caso de venta del piso donde está la Habitación o del edificio en su totalidad o por partes, renunciando por tanto a cualquier derecho que se pudiera instituir en el futuro.
 
@@ -301,9 +301,9 @@ En caso de rescisión de este Contrato de Habitación por incumplimiento de la A
 
 ## 14. Devolución de la Habitación.
 
-Coincidiendo con la finalización del Plazo, por cualquier motivo, y en la misma fecha del día de salida, la Arrendataria deberá hacer entrega a la Arrendadora de la posesión de la Habitación, con las llaves, su mobiliario e inventario, todo en perfecto estado, salvo su desgaste natural. 
+Coincidiendo con la finalización del Plazo, por cualquier motivo, y en la misma fecha del día de salida, la Arrendataria deberá hacer entrega a la Arrendadora de la posesión de la Habitación, con las llaves, su mobiliario e inventario, todo en perfecto estado, salvo su desgaste natural.
 
-La Arrendataria deberá llevarse como máximo el día de salida sus propios muebles, enseres y objetos personales. Todo mobiliario, accesorio, enser y objetos personales que permanezcan en la Habitación cuando se devuelva la posesión de ésta se considerará abandonado y por lo tanto pasará a ser propiedad de la Arrendadora sin ningún tipo de compensación a la Arrendataria. 
+La Arrendataria deberá llevarse como máximo el día de salida sus propios muebles, enseres y objetos personales. Todo mobiliario, accesorio, enser y objetos personales que permanezcan en la Habitación cuando se devuelva la posesión de ésta se considerará abandonado y por lo tanto pasará a ser propiedad de la Arrendadora sin ningún tipo de compensación a la Arrendataria.
 
 La Arrendataria deberá devolver de forma inmediata la Habitación cuando así se lo requiera la Arrendadora por las causas previstas en este Contrato.
 
@@ -319,7 +319,7 @@ En caso de que alguna cláusula o parte de las Condiciones Generales se declare 
 
 A efectos de recepción de notificaciones, las Partes han designado los domicilios y las direcciones de correo electrónico indicados en las Condiciones Particulares.
 
-## 18. Derecho aplicable 
+## 18. Derecho aplicable
 
 El Contrato de Habitación se regirá en primer lugar por la voluntad de las Partes reflejadas en las Condiciones Particulares, Condiciones Generales y Normas de Uso y, en su defecto, por lo dispuesto en los artículos 1.542 a 1582 y artículos 523 a 529 del Código Civil Español.
 
@@ -337,7 +337,7 @@ Las Condiciones Generales están vinculadas necesariamente con las Condiciones P
 
 ## 22. Protección de datos
 
-Ambas Partes tratarán los datos personales de los representantes, así como del resto de personas que intervengan en la relación jurídica con la finalidad de cumplir con los derechos y obligaciones contenidas en este contrato y en las disposiciones que establece la normativa vigente en materia de protección de datos (LOPDGDD), para poder prestar el servicio contratado. El tratamiento de dichos datos queda legitimado por la ejecución del presente Contrato de Habitación. 
+Ambas Partes tratarán los datos personales de los representantes, así como del resto de personas que intervengan en la relación jurídica con la finalidad de cumplir con los derechos y obligaciones contenidas en este contrato y en las disposiciones que establece la normativa vigente en materia de protección de datos (LOPDGDD), para poder prestar el servicio contratado. El tratamiento de dichos datos queda legitimado por la ejecución del presente Contrato de Habitación.
 
 Los datos proporcionados se conservarán mientras se mantenga la relación comercial o durante el tiempo necesario para cumplir con las obligaciones legales y atender las posibles responsabilidades que pudieran derivar del cumplimiento de la finalidad para la que los datos fueron recabados. Los datos no se cederán a terceros salvo en los casos en que exista una obligación legal. Asimismo, no se realizan transferencias internacionales de datos.
 
@@ -345,7 +345,7 @@ Los interesados podrán ejercer sus derechos de acceso, rectificación, supresi�
 
 ## 23. Aceptación
 
-La aceptación sin reservas de las presentes Condiciones Particulares, Condiciones Generales y Normas de Uso deviene obligatoria para la suscripción del presente Contrato de Habitación por parte de la Arrendataria. 
+La aceptación sin reservas de las presentes Condiciones Particulares, Condiciones Generales y Normas de Uso deviene obligatoria para la suscripción del presente Contrato de Habitación por parte de la Arrendataria.
 
 La Arrendataria manifiesta haber leído y entendido las Condiciones Particulares, Condiciones Generales y Normas de Uso que han sido puestas a su disposición, en todo momento, con carácter previo a la contratación y aceptarlas todas ellas sin objeción alguna.
 
@@ -387,9 +387,9 @@ La Arrendataria manifiesta haber leído y entendido las Condiciones Particulares
 
 10. Los arrendatarios respetarán la decoración de la vivienda y, salvo autorización expresa de la Arrendadora o la Gestora, no introducirán otros muebles u objetos en la misma. No está permitido clavar ni pegar objetos en las paredes (clavos, alcayatas, tacos, adhesivos, blue tac, etc.).
 
-11. Se mantendrán despejadas y ordenadas las zonas comunes de la vivienda, especialmente para el mantenimiento adecuado. 
+11. Se mantendrán despejadas y ordenadas las zonas comunes de la vivienda, especialmente para el mantenimiento adecuado.
 
-12. Queda prohibido el depósito de vehículos de transporte personal en el piso y las zonas del edificio que no hayan sido expresamente designadas para ello. 
+12. Queda prohibido el depósito de vehículos de transporte personal en el piso y las zonas del edificio que no hayan sido expresamente designadas para ello.
 
 13. Se deben mantener las condiciones mínimas de orden y se deberá facilitar el acceso al personal de limpieza en el día y horario estipulado.
 
@@ -401,7 +401,7 @@ La Arrendataria manifiesta haber leído y entendido las Condiciones Particulares
 
 17. No se pueden introducir ni tener plantas ni animales en la Habitación, piso o zonas comunes del edificio.
 
-18. No está permitida la tenencia de armas, explosivos, ni el consumo de cualquier tipo de drogas, estupefacientes, ni el consumo abusivo de bebidas alcohólicas. Tampoco está permitida la ostentación de material ofensivo que atente contra la dignidad, igualdad y sensibilidad común de las personas a fin de combatir el racismo, la discriminación racial, la xenofobia y otras formas de intolerancia, así como los incidentes y delitos de odio. 
+18. No está permitida la tenencia de armas, explosivos, ni el consumo de cualquier tipo de drogas, estupefacientes, ni el consumo abusivo de bebidas alcohólicas. Tampoco está permitida la ostentación de material ofensivo que atente contra la dignidad, igualdad y sensibilidad común de las personas a fin de combatir el racismo, la discriminación racial, la xenofobia y otras formas de intolerancia, así como los incidentes y delitos de odio.
 
 19. La falta de respeto u comentarios ofensivos hacia el personal de mantenimiento y demás equipo de la Gestora tendrá la consideración de falta grave y por si sola puede suponer la expulsión de la persona que la haya cometido.
 
@@ -417,7 +417,7 @@ La Arrendataria manifiesta haber leído y entendido las Condiciones Particulares
 
 25. No se permite la utilización de estufas, hornillos u otros electrodomésticos dentro de las Habitaciones, recayendo sobre la Arrendataria cualquier responsabilidad que pudiera derivarse del uso de estos.
 
-26. No se permite la instalación de aparatos de climatización adicionales de los que ya está dotado el piso o habitación y salvo autorización previa de la Arrendadora o su Gestora. 
+26. No se permite la instalación de aparatos de climatización adicionales de los que ya está dotado el piso o habitación y salvo autorización previa de la Arrendadora o su Gestora.
 
 27. La pérdida de llaves y su restitución tiene un coste de 100 euros (IVA incluido) por llave. Dicho coste podrá incrementarse en casos de pérdidas reiteradas.
 

@@ -520,7 +520,7 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Icons
-   ========================================================================== */
+    ========================================================================== */
 
 	i,
 	em {
@@ -596,7 +596,7 @@ section>h2 {
 	font-weight: 400;
 	font-size: 22px;
 	line-height: 150%;
-	color: var(--grey-light);
+	color: var(--grey-dark);
 	margin-top: 1em;
 	margin-bottom: 0.5em;
 	-webkit-appearance: none;
@@ -637,8 +637,8 @@ section>h2 {
 }
 
 .content-booking section .option-selector .option-icons .option .content-selector.active {
-   border: 3px solid var(--primary-bg);
-   border-radius: 16px;
+    border: 3px solid var(--primary-bg);
+    border-radius: 16px;
 }
 
 .content-booking section .option-selector .option-icons .option .content-selector:hover,
@@ -684,7 +684,7 @@ section>h2 {
 	align-items: flex-start;
 	width: -webkit-fill-available;
 	background-color: #fcfcfc;
-	border: 1.5px solid var(--grey-light);
+	border: 1.5px solid var(--grey-dark);
 	box-sizing: border-box;
 	border-radius: 6px;
 	padding: 10px 0 10px 10px;
@@ -904,7 +904,7 @@ button.back p {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
-	color: var(--grey-light);
+	color: var(--grey-dark);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
 	padding: 14px 14px;
@@ -919,7 +919,7 @@ button.back p {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
-	color: var(--grey-light);
+	color: var(--grey-dark);
 }
 
 .main-booking .main-contain .panel-container .left form h3 {
@@ -1018,7 +1018,7 @@ button.back p {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
-	color: var(--grey-light);
+	color: var(--grey-dark);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
 	padding: 8px 24px;
@@ -1482,7 +1482,7 @@ button.back p {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
-	color: var(--grey-light);
+	color: var(--grey-dark);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
 	padding: 14px 14px;
@@ -1505,7 +1505,7 @@ button.back p {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
-	color: var(--grey-light);
+	color: var(--grey-dark);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
 	padding: 15px 14px;

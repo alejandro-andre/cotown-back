@@ -1,25 +1,25 @@
 {
-   data: Billing_Pricing_detailList (
-     orderBy: [
+    data: Billing_Pricing_detailList (
+      orderBy: [
 		{attribute: Year, direction:ASC, nullsGo: FIRST},
 		{attribute: Building_id, direction:ASC, nullsGo: FIRST},
 		{attribute: Flat_type_id, direction:ASC, nullsGo: FIRST}
 		{attribute: Place_type_id, direction:ASC, nullsGo: FIRST}
 	  ]
-   ) {
+    ) {
 		    Year
-       Building: BuildingViaBuilding_id { Code Name }
-       Flat_type: Resource_flat_typeViaFlat_type_id { Code Name }
-       Place_type: Resource_place_typeViaPlace_type_id { Code Name }
-       Rent_long
-       Rent_medium
-       Rent_short
-       Deposit
-       Services
-       Limit
-       Second_resident
-       Cleaning_price
-       Final_cleaning
-       Booking_fee
-   }
+        Building: BuildingViaBuilding_id { Code Name }
+        Flat_type: Resource_flat_typeViaFlat_type_id { Code Name }
+        Place_type: Resource_place_typeViaPlace_type_id { Code Name }
+        Rent_long
+        Rent_medium
+        Rent_short
+        Deposit
+        Services
+        Limit
+        Second_resident
+        Cleaning_price
+        Final_cleaning
+        Booking_fee
+    }
 }

@@ -26,14 +26,14 @@ logger = logging.getLogger('COTOWN')
 # Get flat types
 def req_flats(segment, year):
 
-   return q_flat_prices(g.dbClient, segment, year)
+    return q_flat_prices(g.dbClient, segment, year)
  
 # Get room types
 def req_rooms(segment, year):
 
-   return q_room_prices(g.dbClient, segment, year)
+    return q_room_prices(g.dbClient, segment, year)
  
 # Get amenities
 def req_amenities(segment):
 
-   return q_room_amenities(g.dbClient, segment)
+    return q_room_amenities(g.dbClient, segment)
