@@ -104,7 +104,6 @@ def q_typologies(dbClient, segment):
     logger.error(error)
     return None
 
-
 # ------------------------------------------------------
 # Get available typologies between dates
 # ------------------------------------------------------
@@ -206,7 +205,6 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom, room)
     dbClient.rollback()
     return None
   
-
 # ------------------------------------------------------
 # Get summary
 # ------------------------------------------------------
@@ -221,8 +219,9 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
   sql = f'''
     SELECT DISTINCT
       b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name", 
-      ROUND(pr."Multiplier" * pd."{field}", 0) AS "Rent",
-      pd."Services", pd."Deposit" AS "Deposit", pd."Limit", pd."Booking_fee"
+      ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
+      COALESCE(pd."Services", 0) AS "Services", COALESCE(pd."Limit", 0) as "Limit", 
+      COALESCE(pd."Deposit", 0) AS "Deposit", COALESCE(pd."Booking_fee", 0) AS "Booking_fee"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
@@ -250,3 +249,30 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     logger.error(error)
     dbClient.rollback()
     return None
+  
+# ------------------------------------------------------
+# Create customer
+# ------------------------------------------------------
+
+def q_insert_customer(dbClient, name, email):
+
+  # SQL
+  sql = f'''
+    INSERT INTO "Customer"."Customer"
+    ("Type", "Name", "Email", "Black_list")
+    VALUES ('persona', %s, %s, FALSE)
+    RETURNING id
+    '''
+
+  try:
+    dbClient.connect()
+    dbClient.execute(sql, (name, email, ))
+    id = dbClient.returning()[0]
+    dbClient.commit()
+    dbClient.disconnect()
+    return None
+  
+  except Exception as error:
+    logger.error(error)
+    dbClient.rollback()
+    return None  

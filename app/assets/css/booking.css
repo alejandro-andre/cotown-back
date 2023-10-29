@@ -121,29 +121,6 @@ button {
 	background-color: var(--primary-dark);
 }
 
-.btn-disabled {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	padding: 16px 26px;
-	width: 150px;
-	height: 32px;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-	border-radius: 63px;
-	font-weight: 700;
-	font-size: 16px;
-	line-height: 16px;
-	background-color: var(--primary);
-	color: var(--primary-text);
-	border: 0px 0 none;
-	opacity: 0.4;
-}
-
-.btn-disabled:hover {
-	background-color: var(--primary-dark);
-}
-
 .btn-loading {
 	display: flex;
 	flex-direction: row;
@@ -205,7 +182,7 @@ button {
 	font-weight: 700;
 	font-size: 14px;
 	line-height: 16px;
-	padding: 18px;
+	padding: 1.5em 2em;
 	border: 1px solid var(--primary);
 	background-color: var(--primary);
 	color: var(--primary-text);
@@ -216,6 +193,13 @@ button {
 	border-color: var(--primary-dark);
 	background-color: var(--white);
 	color: var(--primary-dark);
+}
+
+.btn-secondary:disabled,
+.btn-secondary:disabled:hover  {
+	border-color: var(--grey-dark);
+	background-color: var(--grey-light);
+	color: var(--grey-dark);
 }
 
 .btn-primary.search {
@@ -1947,7 +1931,7 @@ button.back p {
 		width: 100%;
 		text-align: center;
 		justify-content: center;
-		padding: 1.5em 0;
+		padding: 1.5em 2em;
 	}
 
 	.content-booking section .calendar .reservas_form {
@@ -2180,7 +2164,7 @@ button.back p {
 		top: -12px;
 	}
 
-	.main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.third button.btn-secondary {
+	.main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.third button {
 		height: 40px;
 	}
 

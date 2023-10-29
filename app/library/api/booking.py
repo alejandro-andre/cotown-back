@@ -21,12 +21,50 @@ from library.services.ac import add_contact
 
 # Cotown includes - business functions
 from library.business.send_email import smtp_mail
-from library.business.booking import q_typologies, q_book_search, q_book_summary
+from library.business.booking import q_typologies, q_book_search, q_book_summary, q_insert_customer
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
 
+
+# ###################################################
+# Auxiliary methods
+# ###################################################
+
+# ---------------------------------------------------
+# Get variable from form, request or session
+# ---------------------------------------------------
+
+def get_var(name, default=None):
+
+    # Get var from querystring
+    aux = request.args.get(name)
+
+    # Or get var from form
+    if aux is None:
+      aux = request.form.get(name)
+
+    # And store in session
+    if aux is not None:
+      session[name] = aux
+
+    # Or store default value in session
+    if name not in session:
+      session[name] = default
+
+    # Get value from session
+    return session[name]
+
+# ---------------------------------------------------
+# Insert a new customer
+# ---------------------------------------------------
+
+def insert_customer(name, email):
+   
+   customer_id = q_insert_customer(g.dbClient, name, email) 
+   return customer_id
+   
 
 # ###################################################
 # Static web
@@ -95,15 +133,23 @@ def req_form():
 # Security endpoints
 # ###################################################
 
+# ---------------------------------------------------
 # Web logout
+# ---------------------------------------------------
+
 def req_logout():
 
     response = make_response(send_file('static/login.html'))
     response.set_cookie('user', '', max_age=0)
     return response
 
+
+# ---------------------------------------------------
 # Web login
+# ---------------------------------------------------
+
 def req_login():
+
 
     # Response
     response = make_response(send_file('static/login.html'))
@@ -142,35 +188,17 @@ def req_login():
 # Booking process
 # ######################################################
 
+# ---------------------------------------------------
 # Get types
+# ---------------------------------------------------
+
 def req_typologies(segment):
 
     return q_typologies(g.dbClient, segment)
 
-
-# ###################################################
-# Auxiliary functions
-# ###################################################
-
-def get_var(name, default=None):
-
-    # Get var from querystring
-    aux = request.args.get(name)
-
-    # Or get var from form
-    if aux is None:
-      aux = request.form.get(name)
-
-    # And store in session
-    if aux is not None:
-      session[name] = aux
-
-    # Or store default value in session
-    if name not in session:
-      session[name] = default
-
-    # Get value from session
-    return session[name]
+# ---------------------------------------------------
+# Retrieve assets (CSS, JS) for testing purposes only
+# ---------------------------------------------------
 
 def req_asset(filename):
 
@@ -179,6 +207,10 @@ def req_asset(filename):
 
     # return
     return send_from_directory('assets', filename)
+
+# ---------------------------------------------------
+# Booking process
+# ---------------------------------------------------
 
 def req_booking(step):
 

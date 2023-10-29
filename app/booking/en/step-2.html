@@ -51,9 +51,8 @@
                   <p>[[item.Building_name]]</p>            
                 </div>
 
-                [% if item.Flat_types | length > 1 %]
-                <p>Compartiendo con:</p>
-                <div class="prices secc">               
+                <div class="prices secc"[% if item.Flat_types | length < 2%] style="display:none;"[% endif %]>
+                  <p>Compartiendo con:</p>
                   [% for share in item.Flat_types %]
                   <div class="share">
                     <div class="sharing">
@@ -93,7 +92,6 @@
                   </div>
                   -->
                 </div>
-                [% endif %]
 
                 <div class="third secc">                
                   <button class="btn-secondary" onclick="go_book('[[item.Building_code]]', '[[item.Place_type_code]]')">
