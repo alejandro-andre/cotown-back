@@ -1,41 +1,41 @@
 {
-  data: Resource_ResourceList (
-    orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
-  ) {
-    Owner: ProviderViaOwner_id { Name }
-    Service: ProviderViaService_id { Name }
-    Code
-    Address
-    Street
-    Resource_flat_type: Resource_flat_typeViaFlat_type_id { Code }
-    Resource_flat_subtype: Resource_flat_subtypeViaFlat_subtype_id { Code }
-    Resource_place_type: Resource_place_typeViaPlace_type_id { Code }
-    Billing_type
-    Sale_type	
-    Pricing_rate: Pricing_rateViaRate_id { Code	}
-    Description	
-    Description_en	
-    Area	
-    Baths	
-    Places	
-    Orientation	
-    Wifi_ssid	
-    Wifi_key	
-    Gate_mac	
-    Gate_phone	
-    Notes
-    Amenities: Resource_amenityListViaResource_id {
-      Amenity: Resource_amenity_typeViaAmenity_type_id {
-        Code
-        Increment
-      }
-    }
-    Unavailable: Resource_availabilityListViaResource_id {
-      Status: Resource_statusViaStatus_id {
-        Name
-      }
-      Date_from
-      Date_to
-    }
-  }
+ data: Resource_ResourceList (
+   orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
+ ) {
+   Owner: ProviderViaOwner_id { Name }
+   Service: ProviderViaService_id { Name }
+   Code
+   Address
+   Street
+   Resource_flat_type: Resource_flat_typeViaFlat_type_id { Code }
+   Resource_flat_subtype: Resource_flat_subtypeViaFlat_subtype_id { Code }
+   Resource_place_type: Resource_place_typeViaPlace_type_id { Code }
+   Billing_type
+   Sale_type	
+   Pricing_rate: Pricing_rateViaRate_id { Code	}
+   Description	
+   Description_en	
+   Area	
+   Baths	
+   Places	
+   Orientation	
+   Wifi_ssid	
+   Wifi_key	
+   Gate_mac	
+   Gate_phone	
+   Notes
+   Amenities: Resource_amenityListViaResource_id {
+     Amenity: Resource_amenity_typeViaAmenity_type_id {
+       Code
+       Increment
+     }
+   }
+   Unavailable: Resource_availabilityListViaResource_id {
+     Status: Resource_statusViaStatus_id {
+       Name
+     }
+     Date_from
+     Date_to
+   }
+ }
 }

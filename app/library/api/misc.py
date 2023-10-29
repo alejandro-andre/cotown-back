@@ -7,7 +7,7 @@
 # ###################################################
 # Imports
 # ###################################################
-  
+ 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
@@ -20,6 +20,6 @@ logger = logging.getLogger('COTOWN')
 # Hi - I'm live endpoint
 def req_hello():
 
-  logger.debug('Hi')
-  return 'Hi!'
+ logger.debug('Hi')
+ return 'Hi!'
 

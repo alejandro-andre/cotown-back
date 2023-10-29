@@ -29,16 +29,16 @@ from library.services.utils import flatten
 
 TEMPLATE = '''
 query EmailByCode ($code: String!) {
-    data: Admin_EmailList (
-        where: { Name: { EQ: $code } }
-    ) { 
-      Name
-      Subject
-      Subject_en
-      Body
-      Body_en
-      Query
-    }
+   data: Admin_EmailList (
+       where: { Name: { EQ: $code } }
+   ) { 
+     Name
+     Subject
+     Subject_en
+     Body
+     Body_en
+     Query
+   }
 }'''
 
 
@@ -64,36 +64,36 @@ BASE = '''
 
 def generate_email(apiClient, email):
 
-  # Template and entity id
-  id = email['Entity_id']
-  variables = { 'code': email['Template'].lower() }
-  result = apiClient.call(TEMPLATE, variables)
-  if len(result['data']) == 0:
-      return 'ERROR', 'ERROR'
-  template = flatten(result['data'][0])
+ # Template and entity id
+ id = email['Entity_id']
+ variables = { 'code': email['Template'].lower() }
+ result = apiClient.call(TEMPLATE, variables)
+ if len(result['data']) == 0:
+     return 'ERROR', 'ERROR'
+ template = flatten(result['data'][0])
 
-  # Context
-  context = email
+ # Context
+ context = email
 
-  # Call graphQL endpoint
-  if id is not None and template['Query'] != '':
-    result = apiClient.call(template['Query'], {'id': id})
-    context |= flatten(result['data'][0])
+ # Call graphQL endpoint
+ if id is not None and template['Query'] != '':
+   result = apiClient.call(template['Query'], {'id': id})
+   context |= flatten(result['data'][0])
 
-  # Jinja environment
-  env = Environment()
+ # Jinja environment
+ env = Environment()
 
-  # Generate subject
-  text = template['Subject'] if email['Customer']['Lang'] == 'es' else template['Subject_en']
-  subject = env.from_string(text).render(context)
+ # Generate subject
+ text = template['Subject'] if email['Customer']['Lang'] == 'es' else template['Subject_en']
+ subject = env.from_string(text).render(context)
 
-  # Generate body
-  text = template['Body'] if email['Customer']['Lang'] == 'es' else template['Body_en']
-  md = env.from_string(text).render(context)
-  body = BASE.format(subject, markdown.markdown(md, extensions=['tables', 'attr_list']))
+ # Generate body
+ text = template['Body'] if email['Customer']['Lang'] == 'es' else template['Body_en']
+ md = env.from_string(text).render(context)
+ body = BASE.format(subject, markdown.markdown(md, extensions=['tables', 'attr_list']))
 
-  # Return
-  return subject, body
+ # Return
+ return subject, body
 
 
 # ###################################################
@@ -102,34 +102,34 @@ def generate_email(apiClient, email):
 
 def smtp_mail(to, subject, body, file=None):
 
-    # Receivers
-    receivers = [to,]
+   # Receivers
+   receivers = [to,]
 
-    # Prepare mail
-    msg = MIMEMultipart()
-    msg['From']    = settings.SMTPFROM
-    msg['To']      = to
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html'))
+   # Prepare mail
+   msg = MIMEMultipart()
+   msg['From']    = settings.SMTPFROM
+   msg['To']      = to
+   msg['Subject'] = subject
+   msg.attach(MIMEText(body, 'html'))
 
-    # Attach file
-    if file:
-      payload = MIMEBase('application', 'octate-stream', Name=file.filename)
-      payload["Content-Disposition"] = f'attachment; filename="{file.filename}"'
-      payload.add_header('Content-Decomposition', 'attachment', filename=file.filename)
-      payload.set_payload(file.read())
-      encoders.encode_base64(payload)
-      msg.attach(payload)
+   # Attach file
+   if file:
+     payload = MIMEBase('application', 'octate-stream', Name=file.filename)
+     payload["Content-Disposition"] = f'attachment; filename="{file.filename}"'
+     payload.add_header('Content-Decomposition', 'attachment', filename=file.filename)
+     payload.set_payload(file.read())
+     encoders.encode_base64(payload)
+     msg.attach(payload)
 
-    # Send mail
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    session = smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT)
-    session.ehlo()
-    session.starttls(context=context)
-    session.login(settings.SMTPUSER, settings.SMTPPASS)
-    errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
-    session.quit()
-    return errors
+   # Send mail
+   context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+   session = smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT)
+   session.ehlo()
+   session.starttls(context=context)
+   session.login(settings.SMTPUSER, settings.SMTPPASS)
+   errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
+   session.quit()
+   return errors
 
 
 # ###################################################
@@ -138,51 +138,51 @@ def smtp_mail(to, subject, body, file=None):
 
 def do_email(apiClient, email):
 
-    # Debug
-    logger.debug(email)
+   # Debug
+   logger.debug(email)
 
-    # Already sent?
-    if email['Sent_at'] is not None:
-      return
-      
-    # Template? generate email body
-    if email['Template'] is not None:
-      subject, body = generate_email(apiClient, email)
-      
-    # Manual email?
-    else:
-      subject = email['Subject']
-      body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list'])  
+   # Already sent?
+   if email['Sent_at'] is not None:
+     return
+     
+   # Template? generate email body
+   if email['Template'] is not None:
+     subject, body = generate_email(apiClient, email)
+     
+   # Manual email?
+   else:
+     subject = email['Subject']
+     body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list'])  
 
-    # Update query
-    query = '''
-    mutation ($id: Int! $subject: String! $body: String! $sent: String!) {
-      Customer_Customer_emailUpdate (
-        where:  { id: {EQ: $id} }
-        entity: { 
-          Subject: $subject 
-          Body: $body
-          Sent_at: $sent
-        }
-      ) { id }
-    }
-    '''
+   # Update query
+   query = '''
+   mutation ($id: Int! $subject: String! $body: String! $sent: String!) {
+     Customer_Customer_emailUpdate (
+       where:  { id: {EQ: $id} }
+       entity: { 
+         Subject: $subject 
+         Body: $body
+         Sent_at: $sent
+       }
+     ) { id }
+   }
+   '''
 
-    # Update variables
-    variables = {
-      'id': email['id'], 
-      'subject': subject,
-      'body': body,
-      'sent': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-    }
+   # Update variables
+   variables = {
+     'id': email['id'], 
+     'subject': subject,
+     'body': body,
+     'sent': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+   }
 
-    # Call graphQL endpoint
-    apiClient.call(query, variables)
+   # Call graphQL endpoint
+   apiClient.call(query, variables)
 
-    # Send email
-    if subject != 'ERROR':
-      logger.debug(email['Customer']['Email'])
-      logger.debug(subject)
-      logger.debug(body)
-      #smtp_mail(email['Customer']['Email'], subject, body)
-      #smtp_mail('test@cotown.com', subject, body)
+   # Send email
+   if subject != 'ERROR':
+     logger.debug(email['Customer']['Email'])
+     logger.debug(subject)
+     logger.debug(body)
+     #smtp_mail(email['Customer']['Email'], subject, body)
+     #smtp_mail('test@cotown.com', subject, body)

@@ -17,13 +17,13 @@ from library.services.dbclient import DBClient
 
 # DB API
 dbClient = DBClient(
-  host=settings.SERVER, 
-  dbname=settings.DATABASE, 
-  user=settings.DBUSER, 
-  password=settings.DBPASS,
-  sshuser=settings.SSHUSER, 
-  sshpassword=settings.get('SSHPASS', None),
-  sshprivatekey=settings.get('SSHPKEY', None)
+ host=settings.SERVER, 
+ dbname=settings.DATABASE, 
+ user=settings.DBUSER, 
+ password=settings.DBPASS,
+ sshuser=settings.SSHUSER, 
+ sshpassword=settings.get('SSHPASS', None),
+ sshprivatekey=settings.get('SSHPKEY', None)
 )
 dbClient.connect()
 
@@ -33,10 +33,10 @@ db_oids = set([item[0] for item in dbClient.fetchall()])
 
 # Get fields of type DOCUMENT
 dbClient.select('''
-  select ea.name, e."schema", e."name" 
-  from "Models"."EntityAttribute" ea
-  inner join "Models"."Entity" e on ea.container = e.id
-  where ea.type = 'DOCUMENT'
+ select ea.name, e."schema", e."name" 
+ from "Models"."EntityAttribute" ea
+ inner join "Models"."Entity" e on ea.container = e.id
+ where ea.type = 'DOCUMENT'
 ''')
 fields = dbClient.fetchall()
 
@@ -51,23 +51,23 @@ model_oids = set()
 # Get oids from each field
 for item in fields:
 
-  field = item[0]
-  schema = item[1]
-  table = item[2]
-  print(schema, table, field, end=': ')
+ field = item[0]
+ schema = item[1]
+ table = item[2]
+ print(schema, table, field, end=': ')
 
-  # Get oids
-  dbClient.select(f'''
-    select ("{field}").oid
-    from "{schema}"."{table}" t
-    where ("{field}").oid is not null
-  ''')
-  oids = [item[0] for item in dbClient.fetchall()]
-  print(len(oids))
+ # Get oids
+ dbClient.select(f'''
+   select ("{field}").oid
+   from "{schema}"."{table}" t
+   where ("{field}").oid is not null
+ ''')
+ oids = [item[0] for item in dbClient.fetchall()]
+ print(len(oids))
 
-  # Add them to global set
-  if len(oids):
-    model_oids.update(oids)
+ # Add them to global set
+ if len(oids):
+   model_oids.update(oids)
 
 # Orphan oids
 orphan = list(db_oids - model_oids)

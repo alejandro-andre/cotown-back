@@ -1,6 +1,6 @@
 {
-    data: Geo_CountryList {
-        Code
-        Name
-    }
+   data: Geo_CountryList {
+       Code
+       Name
+   }
 }

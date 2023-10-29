@@ -1,26 +1,26 @@
 # prometheus.yaml
 global:
 
-  scrape_interval:     15s
-  evaluation_interval: 15s
+ scrape_interval:     15s
+ evaluation_interval: 15s
 
 rule_files:
 
-  # - "first.rules"
-  # - "second.rules"
-  - "/etc/prometheus/rules/*.rules"
+ # - "first.rules"
+ # - "second.rules"
+ - "/etc/prometheus/rules/*.rules"
 
 # Data pull configuration
 scrape_configs:
 
-  # Infrastructure monitoring
-  - job_name: 'nodexporter'
-    scrape_interval: 15s
-    static_configs:
-      - targets: ['back:9100']
+ # Infrastructure monitoring
+ - job_name: 'nodexporter'
+   scrape_interval: 15s
+   static_configs:
+     - targets: ['back:9100']
 
-  # Docker monitoring
-  - job_name: 'cadvisor'
-    scrape_interval: 15s
-    static_configs:
-      - targets: ['back:8080']
+ # Docker monitoring
+ - job_name: 'cadvisor'
+   scrape_interval: 15s
+   static_configs:
+     - targets: ['back:8080']

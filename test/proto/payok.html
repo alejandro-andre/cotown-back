@@ -17,27 +17,27 @@ button:active{background-color:#00EFE2;}
 </style>
 <body>
 <div class="container">
-  <h1>Datos de pago</h1>
-  <p>¡Pago realizado correctamente!</p>
-  <p>Gracias</p><br/>
-  <form id="return" name="return" method="GET" target="_top">
-    <button class="primary" type="submit">VOLVER</button>
-  </form>
+ <h1>Datos de pago</h1>
+ <p>¡Pago realizado correctamente!</p>
+ <p>Gracias</p><br/>
+ <form id="return" name="return" method="GET" target="_top">
+   <button class="primary" type="submit">VOLVER</button>
+ </form>
 </div>
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("access_token");
-  const id = params.get('id');
-  const goto = "/admin/Billing.Payment";
-  //parent.history.pushState("", "", goto);
-  //parent.history.go(-1);
-  //parent.history.go(1);
-  //parent.history.pushState("", "", goto);
-  //parent.history.go(-1);
-  //parent.history.go(1);
-  //el = parent.document.querySelector('[data-qa="' + goto + '"]');
-  //el.click();
-  document.getElementById("return").action = document.location.ancestorOrigins[0] + goto;
+ const params = new URLSearchParams(window.location.search);
+ const token = params.get("access_token");
+ const id = params.get('id');
+ const goto = "/admin/Billing.Payment";
+ //parent.history.pushState("", "", goto);
+ //parent.history.go(-1);
+ //parent.history.go(1);
+ //parent.history.pushState("", "", goto);
+ //parent.history.go(-1);
+ //parent.history.go(1);
+ //el = parent.document.querySelector('[data-qa="' + goto + '"]');
+ //el.click();
+ document.getElementById("return").action = document.location.ancestorOrigins[0] + goto;
 </script>
 </body>
 </html>

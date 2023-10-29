@@ -520,7 +520,7 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Icons
-    ========================================================================== */
+   ========================================================================== */
 
 	i,
 	em {
@@ -637,8 +637,8 @@ section>h2 {
 }
 
 .content-booking section .option-selector .option-icons .option .content-selector.active {
-    border: 3px solid var(--primary-bg);
-    border-radius: 16px;
+   border: 3px solid var(--primary-bg);
+   border-radius: 16px;
 }
 
 .content-booking section .option-selector .option-icons .option .content-selector:hover,
@@ -878,12 +878,7 @@ button.back p {
 	align-items: flex-start;
 }
 
-.main-booking .main-contain .panel-container .left {
-	width: 52%;
-}
-
 .main-booking .main-contain .panel-container .left .error-message p {
-
 	color: var(--red-error-light);
 	font-size: 22px;
 	font-style: normal;
@@ -903,15 +898,16 @@ button.back p {
 	width: 100%;
 }
 
-.main-booking .main-contain .panel-container .left form select.select1 {
-	width: 80%;
+.main-booking .main-contain .panel-container .left form select {
+	width: calc(100% - 20px);
+	box-sizing: border-box;
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
 	color: var(--grey-light);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
-	padding: 16px 24px;
+	padding: 14px 14px;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
@@ -1032,7 +1028,7 @@ button.back p {
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat 98.5% !important;
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat calc(100% - 10px) !important;
 }
-
+ 
 .main-booking .main-contain .panel-container .left form .next {
 	width: -webkit-fill-available;
 }
@@ -1043,11 +1039,10 @@ button.back p {
 	margin: 2em 0;
 	padding-top: 28px;
 	padding-bottom: 28px;
-	font-size: 28px;
+	font-size: 20px;
 }
 
 .main-booking .main-contain .panel-container .right {
-	width: 38%;
 	display: flex;
 	flex-flow: row;
 	justify-content: flex-start;
@@ -1356,10 +1351,6 @@ button.back p {
 }
 
 /* RIGHT */
-.main-booking .main-contain .panel-container .right.tab2 {
-	width: 38%;
-}
-
 .main-booking .main-contain .panel-container .right.tab2 .resume {
 	width: 80%;
 	display: flex;
@@ -1460,10 +1451,6 @@ button.back p {
 
 .main-booking .main-contain .panel-container .left.tab3 form {
 	width: 100%;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: flex-start;
-	align-items: flex-start;
 }
 
 .main-booking .main-contain .panel-container .left.tab3 form h3 {
@@ -1490,14 +1477,15 @@ button.back p {
 }
 
 .main-booking .main-contain .panel-container .left.tab3 form .campo input.input {
-	width: 90%;
+	width: calc(100% - 20px);
+	box-sizing: border-box;
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
 	color: var(--grey-light);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
-	padding: 14px 24px;
+	padding: 14px 14px;
 	margin-bottom: 30px;
 }
 
@@ -1511,60 +1499,18 @@ button.back p {
 	line-height: 150%;
 }
 
-.main-booking .main-contain .panel-container .left.tab3 form .data1 {
-	width: 100%;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	align-items: flex-start;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data1 .campo {
-	width: 46%;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data2 {
-	width: 100%;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	align-items: flex-start;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.code {
-	width: 22%;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.code label {
-	font-size: 14px;
-	font-weight: 800;
-	margin-left: 0;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.code select {
-	width: 100%;
-	line-height: 124%;
-	padding: 16.5px 24px;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.phone {
-	width: 72%;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.phone input.input {
-	width: 60%;
-}
-
 .main-booking .main-contain .panel-container .left.tab3 form .campo .dates input {
-	width: 44%;
+	width: calc(100% - 20px);
+	box-sizing: border-box;
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
 	color: var(--grey-light);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
-	padding: 14px 24px;
+	padding: 15px 14px;
 	margin-bottom: 30px;
+	margin-right: 20px;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
@@ -1572,16 +1518,9 @@ button.back p {
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat calc(100% - 10px) !important;
 }
 
-.main-booking .main-contain .panel-container .left.tab3 form .data3 .campo {
-	width: 50%;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .data3 .campo.motive {
-	width: 100%;
-}
-
 .main-booking .main-contain .panel-container .left.tab3 form .data3 .campo select {
-	width: 100%;
+	width: calc(100% - 20px);
+	box-sizing: border-box;
 	margin-bottom: 30px;
 }
 
@@ -1592,22 +1531,6 @@ button.back p {
 	padding-top: 28px;
 	padding-bottom: 28px;
 	font-size: 28px;
-}
-
-.main-booking .main-contain .panel-container .left.tab3 form .campo select {
-	font-size: 18px;
-	font-weight: 400;
-	line-height: 150%;
-	color: var(--grey-light);
-	border: 1px solid var(--grey-light);
-	border-radius: 6px;
-	padding: 14px 24px;
-	margin-bottom: 30px;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat 98.5% !important;
-	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat calc(100% - 10px) !important;
 }
 
 /* RIGHT */
@@ -2217,7 +2140,7 @@ button.back p {
 	.main-booking .main-contain .panel-container .left form .next button {
 		font-size: 14px;
 		padding-top: 22px;
-		padding-bottom: 22px;
+		padding-bottom: 18px;
 	}
 
 	.main-booking .main-contain .panel-container .left.tab2 {
@@ -2384,54 +2307,8 @@ button.back p {
 		padding: 1rem 0 0
 	}
 
-	.main-booking .main-contain .panel-container .left.tab3 form .data1 {
-		width: 100%;
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
-		align-items: flex-start;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data1 .campo {
-		width: 100%;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data2 {
-		width: 100%;
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-between;
-		align-items: flex-start;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.code {
-		width: 22%;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.code select {
-		width: 100%;
-		padding: 12px;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data2 .campo.phone input.input {
-		width: 90%;
-	}
-
 	.main-booking .main-contain .panel-container .left.tab3 form .campo .dates input {
 		width: 94%;
-		font-size: 16px;
-		padding: 12px;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data3 .campo {
-		width: 100%;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data3 .campo.motive {
-		width: 100%;
-	}
-
-	.main-booking .main-contain .panel-container .left.tab3 form .data3 .campo select {
 		font-size: 16px;
 		padding: 12px;
 	}

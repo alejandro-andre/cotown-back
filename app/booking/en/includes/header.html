@@ -1,92 +1,92 @@
 <div class="header-tabs"> 
 
-  <div class="left">
-    [% if data.vars.step > 2 %]
-    <button class="back" onclick="window.location.href='/booking/[[data.vars.step - 1]]';">
-      <em class="icon-corchete-left"></em>
-      <p>Volver</p>
-    </button>
-    [% elif data.vars.step > 1 %]
-    <button class="back" onclick="window.location.href='https://vanguard-student-housing.com/book.html';">
-      <em class="icon-corchete-left"></em>
-      <p>Volver</p>
-    </button>
-    [% else %]
-    <button class="back" onclick="window.location.href='https://vanguard-student-housing.com/';">
-      <em class="icon-corchete-left"></em>
-      <p>Volver</p>
-    </button>
-    [% endif %]
-  </div>
+ <div class="left">
+   [% if data.vars.step > 2 %]
+   <button class="back" onclick="window.location.href='/booking/[[data.vars.step - 1]]';">
+     <em class="icon-corchete-left"></em>
+     <p>Volver</p>
+   </button>
+   [% elif data.vars.step > 1 %]
+   <button class="back" onclick="window.location.href='https://vanguard-student-housing.com/book.html';">
+     <em class="icon-corchete-left"></em>
+     <p>Volver</p>
+   </button>
+   [% else %]
+   <button class="back" onclick="window.location.href='https://vanguard-student-housing.com/';">
+     <em class="icon-corchete-left"></em>
+     <p>Volver</p>
+   </button>
+   [% endif %]
+ </div>
 
-  <div class="center">
-    <img class="img-logo" alt="logo" 
-      src="https://vanguard-student-housing.com/assets/img/vanguard-coral.svg"
-      onclick="window.location.href='https://vanguard-student-housing.com/';">
-  </div>
+ <div class="center">
+   <img class="img-logo" alt="logo" 
+     src="https://vanguard-student-housing.com/assets/img/vanguard-coral.svg"
+     onclick="window.location.href='https://vanguard-student-housing.com/';">
+ </div>
 
-  <div class="right">
-    <button class="back" onclick="window.location.href='https://vanguard-student-housing.com/';">
-      <em class="icon-close"></em>
-    </button>
-  </div>
+ <div class="right">
+   <button class="back" onclick="window.location.href='https://vanguard-student-housing.com/';">
+     <em class="icon-close"></em>
+   </button>
+ </div>
 
 </div>
 
 <div class="nav-booking  pure-u-1"> 
-  <ul class="black-nav pure-menu-list">
+ <ul class="black-nav pure-menu-list">
 
-    <li class="pure-menu-item[% if data.vars.step == 1%] checked[% endif %]">
-      <label class="label">
-        <a href="#">
-          <span>1. Ubicación y fechas</span>
-          <div class="label-mobile">
-            <em class="icon-corchete-left"></em>
-            1 de 4 - Ubicación y fechas
-            <em class="icon-close"></em>
-          </div>
-        </a>
-      </label> 
-    </li>
+   <li class="pure-menu-item[% if data.vars.step == 1%] checked[% endif %]">
+     <label class="label">
+       <a href="#">
+         <span>1. Ubicación y fechas</span>
+         <div class="label-mobile">
+           <em class="icon-corchete-left"></em>
+           1 de 4 - Ubicación y fechas
+           <em class="icon-close"></em>
+         </div>
+       </a>
+     </label> 
+   </li>
 
-    <li class="pure-menu-item[% if data.vars.step == 2%] checked[% endif %]">
-      <label class="label">
-        <a href="#">
-          <span>2. Tipo de habitación</span>
-          <div class="label-mobile">
-            <em class="icon-corchete-left"></em>
-            2 de 4 - Tipo de habitación
-            <em class="icon-close"></em>
-          </div>
-        </a>    
-      </label>
-    </li>
-    
-    <li class="pure-menu-item[% if data.vars.step == 3%] checked[% endif %]">
-      <label class="label">
-        <a href="#">
-          <span>3. Detalles de la reserva</span>
-          <div class="label-mobile">
-            <em class="icon-corchete-left"></em>
-            3 de 4 - Detalles de la reserva
-            <em class="icon-close"></em>
-          </div>
-        </a>    
-      </label>
-    </li>
+   <li class="pure-menu-item[% if data.vars.step == 2%] checked[% endif %]">
+     <label class="label">
+       <a href="#">
+         <span>2. Tipo de habitación</span>
+         <div class="label-mobile">
+           <em class="icon-corchete-left"></em>
+           2 de 4 - Tipo de habitación
+           <em class="icon-close"></em>
+         </div>
+       </a>    
+     </label>
+   </li>
+   
+   <li class="pure-menu-item[% if data.vars.step == 3%] checked[% endif %]">
+     <label class="label">
+       <a href="#">
+         <span>3. Detalles de la reserva</span>
+         <div class="label-mobile">
+           <em class="icon-corchete-left"></em>
+           3 de 4 - Detalles de la reserva
+           <em class="icon-close"></em>
+         </div>
+       </a>    
+     </label>
+   </li>
 
-    <li class="pure-menu-item[% if data.vars.step == 4%] checked[% endif %]">
-      <label class="label">
-        <a href="#">
-          <span>4. Confirmación</span>
-          <div class="label-mobile">
-            <em class="icon-corchete-left"></em>
-            4 de 4 - Confirmación
-            <em class="icon-close"></em>
-          </div>
-        </a>    
-      </label>
-    </li>
+   <li class="pure-menu-item[% if data.vars.step == 4%] checked[% endif %]">
+     <label class="label">
+       <a href="#">
+         <span>4. Confirmación</span>
+         <div class="label-mobile">
+           <em class="icon-corchete-left"></em>
+           4 de 4 - Confirmación
+           <em class="icon-close"></em>
+         </div>
+       </a>    
+     </label>
+   </li>
 
-  </ul>
+ </ul>
 </div>

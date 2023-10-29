@@ -1,72 +1,72 @@
 query Bookings {
-    data: Booking_BookingList (
-        orderBy: [{attribute: id}]
-    ) {
-        Request_date
-        Confirmation_date
-        Date_from
-        Date_to
-        Check_in
-        Check_out
-        Rent
-        Services
-        Limit
-        Resource: ResourceViaResource_id {
-            Code
-            Flat_type: Resource_flat_typeViaFlat_type_id {
-                Name
-            }
-            Place_type: Resource_place_typeViaPlace_type_id {
-                Name
-            }
-            Building: BuildingViaBuilding_id {
-                Segment: SegmentViaSegment_id {
-                    Name
-                }
-                Name
-                District: DistrictViaDistrict_id {
-                    Location: LocationViaLocation_id {
-                        Code
-                        Name
-                    }
-                }
-            }
-            Owner: ProviderViaOwner_id {
-                Name
-            }
-        }
-        Customer: CustomerViaCustomer_id {
-            Name
-            Email
-            Phones
-            Birth_date
-            Created_at
-            Gender: GenderViaGender_id {
-                Code
-                Name
-            }
-            Nationality: CountryViaNationality_id {
-                Name
-                Continent
-            }
-            School: SchoolViaSchool_id {
-                Name
-            }
-            Language: LanguageViaLanguage_id {
-                Name
-            }
-        }
-        Booking_who: Booking_whoViaBooking_who_id {
-            Name
-        }
-        Booking_referral: Booking_referralViaBooking_referral_id {
-            Name
-        }
-        Booking_channel: Booking_channelViaBooking_channel_id {
-            Name
-        }
-        Prices: Booking_priceListViaBooking_id {
-            Rent: Rent_sum
-        }
-    }
+   data: Booking_BookingList (
+       orderBy: [{attribute: id}]
+   ) {
+       Request_date
+       Confirmation_date
+       Date_from
+       Date_to
+       Check_in
+       Check_out
+       Rent
+       Services
+       Limit
+       Resource: ResourceViaResource_id {
+           Code
+           Flat_type: Resource_flat_typeViaFlat_type_id {
+               Name
+           }
+           Place_type: Resource_place_typeViaPlace_type_id {
+               Name
+           }
+           Building: BuildingViaBuilding_id {
+               Segment: SegmentViaSegment_id {
+                   Name
+               }
+               Name
+               District: DistrictViaDistrict_id {
+                   Location: LocationViaLocation_id {
+                       Code
+                       Name
+                   }
+               }
+           }
+           Owner: ProviderViaOwner_id {
+               Name
+           }
+       }
+       Customer: CustomerViaCustomer_id {
+           Name
+           Email
+           Phones
+           Birth_date
+           Created_at
+           Gender: GenderViaGender_id {
+               Code
+               Name
+           }
+           Nationality: CountryViaNationality_id {
+               Name
+               Continent
+           }
+           School: SchoolViaSchool_id {
+               Name
+           }
+           Language: LanguageViaLanguage_id {
+               Name
+           }
+       }
+       Booking_who: Booking_whoViaBooking_who_id {
+           Name
+       }
+       Booking_referral: Booking_referralViaBooking_referral_id {
+           Name
+       }
+       Booking_channel: Booking_channelViaBooking_channel_id {
+           Name
+       }
+       Prices: Booking_priceListViaBooking_id {
+           Rent: Rent_sum
+       }
+   }
 }

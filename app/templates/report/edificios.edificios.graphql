@@ -1,43 +1,43 @@
 {
-    data: Building_BuildingList (
-        orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
-    ) {
-        Address
-        Booking_fee
-        Booking_fee_flat
-        Building_type: Building_typeViaBuilding_type_id {
-            Name
-        }
-        Code
-        Code_SAP
-        Description
-        Description_en
-        Details
-        Details_en
-        District: DistrictViaDistrict_id {
-            Name
-            Location: LocationViaLocation_id {
-                Name
-                Province: ProvinceViaProvince_id {
-                    Name
-                    Country: CountryViaCountry_id {
-                        Name
-                    }
-                }
-            }
-        }
-        Gate_mac
-        Gate_phone
-        Gate_url
-        Lat_lon
-        Management_fee
-        Name
-        Notes
-        Segment: SegmentViaSegment_id {
-            Name
-        }
-        Wifi_key
-        Wifi_ssid
-        Zip
-    }
+   data: Building_BuildingList (
+       orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
+   ) {
+       Address
+       Booking_fee
+       Booking_fee_flat
+       Building_type: Building_typeViaBuilding_type_id {
+           Name
+       }
+       Code
+       Code_SAP
+       Description
+       Description_en
+       Details
+       Details_en
+       District: DistrictViaDistrict_id {
+           Name
+           Location: LocationViaLocation_id {
+               Name
+               Province: ProvinceViaProvince_id {
+                   Name
+                   Country: CountryViaCountry_id {
+                       Name
+                   }
+               }
+           }
+       }
+       Gate_mac
+       Gate_phone
+       Gate_url
+       Lat_lon
+       Management_fee
+       Name
+       Notes
+       Segment: SegmentViaSegment_id {
+           Name
+       }
+       Wifi_key
+       Wifi_ssid
+       Zip
+   }
 }

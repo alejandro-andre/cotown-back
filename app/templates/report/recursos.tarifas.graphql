@@ -1,9 +1,9 @@
 {
-  Billing_Pricing_rateList (
-    orderBy: [{attribute:Code}]
-  ) {
-    Code
-    Name
-    Multiplier
-  }
+ Billing_Pricing_rateList (
+   orderBy: [{attribute:Code}]
+ ) {
+   Code
+   Name
+   Multiplier
+ }
 }

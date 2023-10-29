@@ -1,42 +1,42 @@
 query Invoices ($fdesde: String, $fhasta:String, $pdesde:Int, $phasta:Int) {
-    data: Billing_InvoiceList (
-        orderBy: [
-            { attribute: Provider_id, direction: ASC }
-            { attribute: Code, direction: ASC }
-        ]
-        where: { 
-            AND: [
-                { Issued: { EQ: true } }
-                { Provider_id: { GE: $pdesde } }
-                { Provider_id: { LE: $phasta } }
-                { Issued_date: { GE: $fdesde } }
-                { Issued_date: { LT: $fhasta } }
-            ]
-        }
-    ) {
-        Code
-        Issued_date
-        Total
-        SAP_code
-        Concept
-        Provider: ProviderViaProvider_id {
-            Name
-        }
-        Customer: CustomerViaCustomer_id {
-            Name
-            Document
-            Zip
-            Address
-            Country: CountryViaCountry_id {
-                Name
-            }
-        }
-        Lines: Invoice_lineListViaInvoice_id (limit: 1) {
-            id
-            Tax: TaxViaTax_id {
-                id
-                Value
-            }
-        }
-    }
+   data: Billing_InvoiceList (
+       orderBy: [
+           { attribute: Provider_id, direction: ASC }
+           { attribute: Code, direction: ASC }
+       ]
+       where: { 
+           AND: [
+               { Issued: { EQ: true } }
+               { Provider_id: { GE: $pdesde } }
+               { Provider_id: { LE: $phasta } }
+               { Issued_date: { GE: $fdesde } }
+               { Issued_date: { LT: $fhasta } }
+           ]
+       }
+   ) {
+       Code
+       Issued_date
+       Total
+       SAP_code
+       Concept
+       Provider: ProviderViaProvider_id {
+           Name
+       }
+       Customer: CustomerViaCustomer_id {
+           Name
+           Document
+           Zip
+           Address
+           Country: CountryViaCountry_id {
+               Name
+           }
+       }
+       Lines: Invoice_lineListViaInvoice_id (limit: 1) {
+           id
+           Tax: TaxViaTax_id {
+               id
+               Value
+           }
+       }
+   }
 }

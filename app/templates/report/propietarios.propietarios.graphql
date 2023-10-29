@@ -1,28 +1,28 @@
 {
-    data: Provider_ProviderList (
-        orderBy: [{attribute: Name, direction:ASC, nullsGo: FIRST}]
-    ) {
-        Address
-        Bill_pattern
-        City
-        Comments
-        Country: CountryViaCountry_id {
-            Name
-        }
-        Credit_pattern
-        Document
-        Email
-        Id_type: Id_typeViaId_type_id {
-            Name
-        }
-        Name
-        Phones
-        Provider_type: Provider_typeViaProvider_type_id {
-            Name
-        }
-        Prefix_SAP
-        Province
-        Receipt_pattern
-        Type
-    }
+   data: Provider_ProviderList (
+       orderBy: [{attribute: Name, direction:ASC, nullsGo: FIRST}]
+   ) {
+       Address
+       Bill_pattern
+       City
+       Comments
+       Country: CountryViaCountry_id {
+           Name
+       }
+       Credit_pattern
+       Document
+       Email
+       Id_type: Id_typeViaId_type_id {
+           Name
+       }
+       Name
+       Phones
+       Provider_type: Provider_typeViaProvider_type_id {
+           Name
+       }
+       Prefix_SAP
+       Province
+       Receipt_pattern
+       Type
+   }
 }

@@ -75,26 +75,26 @@ SELECT count(*) FROM "Billing"."Payment";
 
 -- Habitaciones
 SELECT DISTINCT b.id, b."Code" as "Building_code", 
-       rpt."Code" AS "Place_type_code", 
-       rft."Code" AS "Flat_type_code", 
-       b."Name" as "Building_name", 
-       rpt."Name" AS "Place_type_name", 
-       rft."Name" AS "Flat_type_name", 
-       pd."Rent_long" AS "Price",
-       mrt.id
+      rpt."Code" AS "Place_type_code", 
+      rft."Code" AS "Flat_type_code", 
+      b."Name" as "Building_name", 
+      rpt."Name" AS "Place_type_name", 
+      rft."Name" AS "Flat_type_name", 
+      pd."Rent_long" AS "Price",
+      mrt.id
 FROM "Resource"."Resource" r
-     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-     INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
-     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
-     INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-     INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Year" = 2024 AND pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
-     INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
-     LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= '2024-03-31' AND bd."Date_to" >= '2023-11-01')
+    INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+    INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
+    INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
+    INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
+    INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Year" = 2024 AND pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
+    INNER JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
+    LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= '2024-03-31' AND bd."Date_to" >= '2023-11-01')
 WHERE bd.id IS NULL 
-  AND b."Segment_id" = 1
-  AND b."Building_type_id" < 3
-  AND d."Location_id" = 1
-  AND rpt."Code" LIKE 'I\_%';
+ AND b."Segment_id" = 1
+ AND b."Building_type_id" < 3
+ AND d."Location_id" = 1
+ AND rpt."Code" LIKE 'I\_%';
 
 -- ---------------------------------------------
 -- SAP API 
@@ -102,21 +102,21 @@ WHERE bd.id IS NULL
 
 SELECT DISTINCT "Type", "case" AS "Third_party", "Document", "Name", "Address", "Zip", "City", "Province", "Code" AS "Country", "Email"
 FROM (
-  SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
-  FROM "Booking"."Booking_price" bp
-  INNER JOIN "Booking"."Booking" b on b.id = bp."Booking_id" 
-  INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
-  INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id" 
-  INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
-  WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
-  UNION
-  SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
-  FROM "Booking"."Booking_rooming" br
-  INNER JOIN "Booking"."Booking_group" bg on bg.id = br."Booking_id" 
-  INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id" 
-  INNER JOIN "Customer"."Customer" c on c.id = bg."Payer_id" 
-  INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
-  WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
+ SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
+ FROM "Booking"."Booking_price" bp
+ INNER JOIN "Booking"."Booking" b on b.id = bp."Booking_id" 
+ INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
+ INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id" 
+ INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
+ WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
+ UNION
+ SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
+ FROM "Booking"."Booking_rooming" br
+ INNER JOIN "Booking"."Booking_group" bg on bg.id = br."Booking_id" 
+ INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id" 
+ INNER JOIN "Customer"."Customer" c on c.id = bg."Payer_id" 
+ INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
+ WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
 ) AS customers
 ORDER BY 3;
 
@@ -127,67 +127,67 @@ ORDER BY 3;
 
 -- Habitaciones y pisos disponibles entre dos fechas
 SELECT 
-  b."Name", r."Flat_type_id", r."Place_type_id", 
-  ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0) AS "Rent_long",
-  ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0) AS "Rent_medium",
-  ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0) AS "Rent_short",
-  COUNT(*) AS "Qty"
+ b."Name", r."Flat_type_id", r."Place_type_id", 
+ ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0) AS "Rent_long",
+ ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0) AS "Rent_medium",
+ ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0) AS "Rent_short",
+ COUNT(*) AS "Qty"
 FROM 
-  "Resource"."Resource" r
-  INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-  INNER JOIN "Geo"."District" d on d.id = b."District_id"
-  INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
-  INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
-  INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
-  INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" 
-    AND pd."Flat_type_id" = r."Flat_type_id" 
-    AND (pd."Place_type_id" = r."Place_type_id" OR pd."Place_type_id" IS NULL) 
-  LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
-    AND bd."Date_from" <= '2023-12-31' 
-    AND bd."Date_to" >= '2023-10-01'
+ "Resource"."Resource" r
+ INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+ INNER JOIN "Geo"."District" d on d.id = b."District_id"
+ INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+ INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
+ INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+ INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" 
+   AND pd."Flat_type_id" = r."Flat_type_id" 
+   AND (pd."Place_type_id" = r."Place_type_id" OR pd."Place_type_id" IS NULL) 
+ LEFT JOIN "Booking"."Booking_detail" bd ON bd."Resource_id" = r.id 
+   AND bd."Date_from" <= '2023-12-31' 
+   AND bd."Date_to" >= '2023-10-01'
 WHERE b."Active"
-  AND pd."Year" = 2023
-  AND d."Location_id" = 1
-  AND bd.id IS NULL
+ AND pd."Year" = 2023
+ AND d."Location_id" = 1
+ AND bd.id IS NULL
 GROUP BY 1, 2, 3, 4, 5, 6
 ORDER BY 1, 2, 3;
 
 -- Tipologías de habitaciones en piso compartido
 SELECT 
-  r."Building_id", rpt."Code" AS "Place_type", rft."Code" AS "Flat_type",
-  MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
-  MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
-  MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
-  COUNT(*) AS "Qty"
+ r."Building_id", rpt."Code" AS "Place_type", rft."Code" AS "Flat_type",
+ MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
+ MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
+ MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
+ COUNT(*) AS "Qty"
 FROM 
-  "Resource"."Resource" r
-  INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-  INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
-  INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
-  INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
-  INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
+ "Resource"."Resource" r
+ INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+ INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+ INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
+ INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+ INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
 WHERE pd."Year" = 2023
-  AND rpt.id < 300
+ AND rpt.id < 300
 GROUP BY 1, 2, 3
 ORDER BY 1, 2, 3;
-    
+   
 -- Tipologías de apartamentos privados
 SELECT 
-  r."Building_id", rfst."Code" AS "Flat_subtype",
-  MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
-  MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
-  MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
-  COUNT(*) AS "Qty"
+ r."Building_id", rfst."Code" AS "Flat_subtype",
+ MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
+ MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
+ MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
+ COUNT(*) AS "Qty"
 FROM 
-  "Resource"."Resource" r
-  INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-  INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
-  INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
-  INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
+ "Resource"."Resource" r
+ INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+ INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
+ INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+ INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL 
 WHERE pd."Year" = 2023
 GROUP BY 1, 2
 ORDER BY 1, 2;
-   
+  
 -- Borrar imagenes
 DELETE FROM pg_largeobject CASCADE;
 VACUUM FULL;

@@ -17,18 +17,18 @@ button:active{background-color:#00EFE2;}
 </style>
 <body>
 <div class="container">
-  <h1>Datos de pago</h1>
-  <p>Información de detalle del pago a realizar</p><br/>
-  <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
-    <div class="label">Identificador</div><div class="data c10" id="id"></div>
-    <div class="label">Nº de orden</div><div class="data c20" id="order"></div>
-    <div class="label">Concepto</div><div class="data c20" id="concept"></div>
-    <div class="label">Importe</div><div class="data c20" id="amount"></div>
-    <button id="submit" disabled class="primary" type="submit">PAGAR</button>
-    <input type="hidden" id="Ds_SignatureVersion" name="Ds_SignatureVersion"/>
-    <input type="hidden" id="Ds_MerchantParameters" name="Ds_MerchantParameters"/>
-    <input type="hidden" id="Ds_Signature" name="Ds_Signature"/>
-  </form>
+ <h1>Datos de pago</h1>
+ <p>Información de detalle del pago a realizar</p><br/>
+ <form name="from" action="https://sis-t.redsys.es:25443/sis/realizarPago" method="POST" target="_top">
+   <div class="label">Identificador</div><div class="data c10" id="id"></div>
+   <div class="label">Nº de orden</div><div class="data c20" id="order"></div>
+   <div class="label">Concepto</div><div class="data c20" id="concept"></div>
+   <div class="label">Importe</div><div class="data c20" id="amount"></div>
+   <button id="submit" disabled class="primary" type="submit">PAGAR</button>
+   <input type="hidden" id="Ds_SignatureVersion" name="Ds_SignatureVersion"/>
+   <input type="hidden" id="Ds_MerchantParameters" name="Ds_MerchantParameters"/>
+   <input type="hidden" id="Ds_Signature" name="Ds_Signature"/>
+ </form>
 </div>
 <script>
 const urlParams = new URLSearchParams(window.location.search);
@@ -37,23 +37,23 @@ var params = new URLSearchParams(window.location.search);
 var id = params.get('id');
 var xhr = new XMLHttpRequest();
 window.addEventListener('pageshow', function(event) {
-  if (event.persisted) {
-    window.location.reload(); 
-  }
+ if (event.persisted) {
+   window.location.reload(); 
+ }
 });
 xhr.open('GET', window.location.origin + '/api/v1/pay/' + id, true);
 xhr.onload = function() {
-  if (xhr.status === 200) {
-    const datos = JSON.parse(xhr.responseText);
-    document.getElementById('id').innerHTML = datos['id'];
-    document.getElementById('concept').innerHTML = datos['Concept'];
-    document.getElementById('amount').innerHTML = datos['Amount'];
-    document.getElementById('order').innerHTML = datos['Payment_order'];
-    document.getElementById('Ds_Signature').value = datos['Ds_Signature'];
-    document.getElementById('Ds_MerchantParameters').value = datos['Ds_MerchantParameters'];
-    document.getElementById('Ds_SignatureVersion').value = datos['Ds_SignatureVersion'];
-    document.getElementById('submit').disabled = false;
-  }
+ if (xhr.status === 200) {
+   const datos = JSON.parse(xhr.responseText);
+   document.getElementById('id').innerHTML = datos['id'];
+   document.getElementById('concept').innerHTML = datos['Concept'];
+   document.getElementById('amount').innerHTML = datos['Amount'];
+   document.getElementById('order').innerHTML = datos['Payment_order'];
+   document.getElementById('Ds_Signature').value = datos['Ds_Signature'];
+   document.getElementById('Ds_MerchantParameters').value = datos['Ds_MerchantParameters'];
+   document.getElementById('Ds_SignatureVersion').value = datos['Ds_SignatureVersion'];
+   document.getElementById('submit').disabled = false;
+ }
 };
 xhr.send();
 </script>

@@ -1,7 +1,7 @@
 {
-    data: Auxiliar_Id_typeList ( orderBy: [{attribute: Name}] ) 
-    {
-        id
-        Name
-    }
+   data: Auxiliar_Id_typeList ( orderBy: [{attribute: Name}] ) 
+   {
+       id
+       Name
+   }
 }

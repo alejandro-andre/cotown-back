@@ -31,7 +31,7 @@ En adelante el "**Arrendatario**"
 ## MANIFIESTAN
 
 I.- Que, el Arrendatario tiene arrendados el piso o los pisos que se indican a continuación en la finca sita en {{Rooms[0].Resource_flat_street}}, {{Rooms[0].Resource_building_city}}:
- 
+
 - {{Flats}}
 
 II.- Que, El proveedor de servicios es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza. 

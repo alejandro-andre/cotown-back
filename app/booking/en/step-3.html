@@ -2,247 +2,264 @@
 <html lang="es">
 
 <head>
-  [% include 'en/includes/head.html' %]
+ [% include 'en/includes/head.html' %]
 </head>
 
 <body>
-  <div class="tabs-container">
+ <div class="tabs-container">
 
-    [% include 'en/includes/header.html' %]
+   [% include 'en/includes/header.html' %]
 
-    <div class="main-booking">
-      <div id="section3" class="main-contain">
-        <div class="panel-container">                
+   <div class="main-booking">
+     <div id="section3" class="main-contain">
+       <div class="panel-container pure-g">                
 
-          <div class="left tab3">          
-            <h2>Reserva tu habitación</h2>  
-            <form class="pure-form pure-u-1">
-              <fieldset>
+         <div class="left tab3 pure-u-3-5">
+           <h2>Reserva tu habitación</h2>  
+           <form>
+             <fieldset>
 
-                [% if status == 'login' %]
-                <div class="logged-booking">
+               [% if status == 'login' %]
+               <div class="logged-booking pure-g">
 
-                  <h3>Reservar</h3>
-                  <p>Comprueba tus datos si ya estás registrado.</p>
+                 <h3 class="pure-u-1">Reservar</h3>
+                 <p class="pure-u-1">Comprueba tus datos si ya estás registrado.</p>
 
-                  <section class="data1">
-                    <div class="campo">
-                      <label class="label">Nombre</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Ej. Nombre">
-                    </div>
-                    <div class="campo">
-                      <label class="label">Apellidos</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Ej. Apellidos">
-                    </div>
-                    <div class="campo">
-                      <label class="label">Email</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Tu email">
-                    </div>
-                  </section>
+                 <div class="pure-u-1">
+                   <div class="campo">
+                     <label class="label">Nombre y apellidos</label>                  
+                     <input class="input" type="name" id="Name" name="Name" required placeholder="Tú nombre y apellidos">
+                   </div>
+                 </div>
+                 <div class="pure-u-1">
+                   <div class="campo">
+                     <label class="label">Email</label>                  
+                     <input class="input" type="name" id="Email" name="Email" required placeholder="Tu email">
+                   </div>
+                 </div>
+                 <div class="pure-u-1-5">
+                   <div class="campo">
+                     <label class="label">Código</label>          
+                     <select id="Prefix" name="Prefix" required>
+                       <option>+34</option>                  
+                     </select>
+                   </div>                  
+                 </div>
+                 <div class="pure-u-4-5">
+                   <div class="campo">
+                     <label class="label">Número de teléfono</label>                  
+                     <input class="input" type="name" id="Phone" name="Phone" required placeholder="Tu nº de teléfono">
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <div class="dates">
+                       <label class="label">Fecha de nacimiento</label>  
+                       <input type="date" id="Birth_date" name="Birth_date" required placeholder="Fecha dd/mm/aaaa"/>
+                     </div>
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <label class="label">Nacionalidad</label>          
+                     <select id="Nationality_id" name="Nationality_id" required>
+                       <option>Seleccionar</option>
+                     </select>
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <label class="label">Género</label>          
+                     <select id="Gender_id" name="Gender_id" required>
+                       <option>Seleccionar</option>
+                     </select>
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <label class="label">Motivo de la estancia</label>          
+                     <select id="Reason_id" name="Reason_id" required>
+                       <option>Seleccionar</option>
+                     </select>
+                   </div>
+                 </div>
+                 <section class="next">
+                   <button class="btn-secondary">Confirmar y reservar</button>
+                 </section>
+               </div>  
 
-                  <section class="data2">
-                    <div class="campo code">
-                      <label>Código</label>          
-                      <select class="pure-u-1-1">
-                        <option>+34</option>                  
-                      </select>
-                    </div>                  
-                    <div class="campo phone">
-                      <label class="label">Número de teléfono</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Ej. 1234567891">
-                    </div>
-                  </section>
+               [% else %]
+               <!--
+               <div class="login pure-g">
 
-                  <div class="campo">
-                    <div class="dates">
-                      <label>Fecha de nacimiento</label>  
-                      <input type="text" id="in" onfocus="(this.type='date')" class="inputs" name="in" placeholder="02/06/2023"/>
-                    </div>
-                  </div>
-                  
-                  <section class="data3">
-                    <div class="campo">
-                      <label>Nacionalidad</label>          
-                      <select class="pure-u-1-1">
-                        <option>Seleccionar</option>
-                      </select>
-                    </div>
-                    <div class="campo">
-                      <label>Género</label>          
-                      <select class="pure-u-1-1">
-                        <option>Seleccionar</option>
-                      </select>
-                    </div>
-                    <div class="campo motive">
-                      <label>Motivo de la estancia</label>          
-                      <select class="pure-u-1-1">
-                        <option>Seleccionar</option>
-                      </select>
-                    </div>
-                  </section>
+                 <h3 class="pure-u-1">Iniciar sesión</h3>
+                 <p class="pure-u-1">Utiliza tus credenciales para acceder a tu área privada.</p>
 
-                  <section class="book">
-                    <button class="btn-secondary">Reservar</button>
-                  </section>
+                 <div class="pure-u-1">
+                     <div class="campo">
+                     <label class="label">Email</label>                  
+                     <input class="input" type="name" id="name" name="name" placeholder="Tu email">
+                   </div>
+                 </div>
+                 <div class="pure-u-1">
+                   <div class="campo psw">
+                     <label class="label">Contraseña</label>                  
+                     <input class="input" type="name" id="name" name="name" placeholder="Tu contraseña">
+                   </div>
+                 </div>
 
-                </div>
+                 <p class="advise">Si ha olvidado su contraseña o dirección de correo electrónico, puedes restablecerlas utilizando nuestro formulario de recuperación de contraseña.</p>
+ 
+                 <section class="next">
+                   <button class="btn-secondary">Iniciar sesión</button>
+                 </section>
 
-                [% else %]
-                <div class="login">
+               </div>
+               -->
+               <div class="registry pure-g">
 
-                  <h3>Iniciar sesión</h3>
-                  <p>Utiliza tus credenciales para acceder a tu área privada.</p>
+                 <h3 class="pure-u-1 record">Registro</h3>
+                 <p class="pure-u-1">En caso que no te hayas registrado todavía, necesitaremos los siguientes datos de contacto para formalizar tu reserva.</p>
 
-                  <div class="campo">
-                    <label class="label">Email</label>                  
-                    <input class="input" type="name" id="name" name="name" placeholder="Tu email">
-                  </div>
-                  <div class="campo psw">
-                    <label class="label">Contraseña</label>                  
-                    <input class="input" type="name" id="name" name="name" placeholder="Tu contraseña">
-                  </div>
+                 <div class="pure-u-1">
+                   <div class="campo">
+                     <label class="label">Nombre y apellidos</label>                  
+                     <input class="input" type="name" id="Name" name="Name" required placeholder="Tú nombre y apellidos">
+                   </div>
+                 </div>
+                 <div class="pure-u-1">
+                   <div class="campo">
+                     <label class="label">Email</label>                  
+                     <input class="input" type="name" id="Email" name="Email" required placeholder="Tu email">
+                   </div>
+                 </div>
+                 <div class="pure-u-2-5">
+                   <div class="campo">
+                     <label class="label">Código</label>          
+                     <select id="Prefix" name="Prefix" required>
+                       [% for c in data.countries %]
+                       [% if c.Prefix != null %]
+                       <option value="[[c.Prefix]]">[[c.Prefix]] ([[c.Name]])</option>
+                       [% endif %]
+                       [% endfor %]
+                     </select>
+                   </div>                  
+                 </div>
+                 <div class="pure-u-3-5">
+                   <div class="campo">
+                     <label class="label">Número de teléfono</label>                  
+                     <input class="input" type="name" id="Phone" name="Phone" required placeholder="Tu nº de teléfono">
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <div class="dates">
+                       <label class="label">Fecha de nacimiento</label>  
+                       <input type="date" id="Birth_date" name="Birth_date" required placeholder="Fecha dd/mm/aaaa"/>
+                     </div>
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <label class="label">Nacionalidad</label>          
+                     <select id="Nationality_id" name="Nationality_id" required>
+                      [% for c in data.countries %]
+                      <option value="[[c.id]]">[[c.Name]]</option>
+                      [% endfor %]
+                    </select>
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <label class="label">Género</label>          
+                     <select id="Gender_id" name="Gender_id" required>
+                      [% for c in data.genders %]
+                      <option value="[[c.id]]">[[c.Name]]</option>
+                      [% endfor %]
+                     </select>
+                   </div>
+                 </div>
+                 <div class="pure-u-1 pure-u-lg-1-2">
+                   <div class="campo">
+                     <label class="label">Motivo de la estancia</label>          
+                     <select id="Reason_id" name="Reason_id" required>
+                      [% for c in data.reasons %]
+                      <option value="[[c.id]]">[[c.Name]]</option>
+                      [% endfor %]
+                     </select>
+                   </div>
+                 </div>
+                 <section class="next">
+                   <button class="btn-secondary">Registrarse</button>
+                 </section>
+               </div>
+               [% endif %]
 
-                  <p class="advise">Si ha olvidado su contraseña o dirección de correo electrónico, puedes restablecerlas utilizando nuestro formulario de recuperación de contraseña.</p>
-  
-                  <section class="next">
-                    <button class="btn-secondary">Continuar</button>
-                  </section>
+             </fieldset>
+           </form>
+         </div>
 
-                </div>
+         <div class="right tab3 pure-u-2-5">
+           <div class="resume">
+             <h3>Resumen de reserva</h3>
+             <p>Ubicación</p>
+             <div class="resume-edit">
+               <h4>[[data.vars.city.Name]]</h4>
+               <!--
+               <button class="btn-text">
+                 <em class="icon-write"></em>
+                 <p>Editar</p>
+               </button>
+               -->
+             </div>
 
-                <div class="registry">
+             <div class="dates">
+               <div class="in">
+                 <p>ENTRADA</p>
+                 <h4>[[data.vars.date_from]]</h4>
+               </div>
+               <div class="out">
+                 <p>SALIDA</p>
+                 <h4>[[data.vars.date_to]]</h4>
+               </div>                
+             </div>
 
-                  <h3 class="record">Registro</h3>
-                  <p>En caso que no te hayas registrado todavía, necesitaremos los siguientes datos de contacto para formalizar tu reserva.</p>
+             <div class="type-resume">
+               <h4>[[data.results.Place_type_name]]</h4>
+               <p>[[data.results.Building_name]]</p>                                                          
+             </div>
 
-                  <section class="data1">
-                    <div class="campo">
-                      <label class="label">Nombre</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Ej. Nombre">
-                    </div>
-                    <div class="campo">
-                      <label class="label">Apellidos</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Ej. Apellidos">
-                    </div>
-                    <div class="campo">
-                      <label class="label">Email</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Tu email">
-                    </div>
-                  </section>
+             <div class="breakdown">
+               <h4>Desglose del precio</h4>
+               <div class="prices">
+                 <p>Booking fee</p>
+                 <p>[[data.results.Booking_fee]]€</p>
+               </div>              
+               <div class="prices">
+                 <p>Garantía</p>
+                 <p>[[data.results.Deposit]]€</p>
+               </div>
+               <div class="total">
+                 <p>Total pago único</p>
+                 <p>[[data.results.Booking_fee + data.results.Deposit]]€</p>
+               </div>            
+             </div>
 
-                  <section class="data2">
-                    <div class="campo code">
-                      <label>Código</label>          
-                      <select class="pure-u-1-1">
-                        <option>+34</option>                  
-                      </select>
-                    </div>                  
-                    <div class="campo phone">
-                      <label class="label">Número de teléfono</label>                  
-                      <input class="input" type="name" id="name" name="name" placeholder="Ej. 1234567891">
-                    </div>
-                  </section>
+             <div class="renta">
+               <h3>Renta media mensual</h3>
+               <h3>[[data.results.Rent + data.results.Services]]€ *</h3>
+             </div>
 
-                  <div class="campo">
-                    <div class="dates">
-                      <label>Fecha de nacimiento</label>  
-                      <input type="text" id="in" onfocus="(this.type='date')" class="inputs" name="in" placeholder="02/06/2023"/>
-                    </div>
-                  </div>
+             <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.results.Limit]]€/mes.</p>
 
-                  <section class="data3">
-                    <div class="campo">
-                      <label>Nacionalidad</label>          
-                      <select class="pure-u-1-1">
-                        <option>Seleccionar</option>
-                      </select>
-                    </div>
-                    <div class="campo">
-                      <label>Género</label>          
-                      <select class="pure-u-1-1">
-                        <option>Seleccionar</option>
-                      </select>
-                    </div>
-                    <div class="campo motive">
-                      <label>Motivo de la estancia</label>          
-                      <select class="pure-u-1-1">
-                        <option>Seleccionar</option>
-                      </select>
-                    </div>
-                  </section>
+           </div>
+         </div>
 
-                  <section class="book">
-                    <button class="btn-secondary">Reservar</button>
-                  </section>
+       </div>
+     </div>      
+   </div>
 
-                </div>
-                [% endif %]
-
-              </fieldset>
-            </form>
-          </div>
-
-          <div class="right tab3">
-            <div class="resume">
-              <h3>Resumen de reserva</h3>
-              <p>Ubicación</p>
-              <div class="resume-edit">
-                <h4>[[data.vars.city.Name]]</h4>
-                <!--
-                <button class="btn-text">
-                  <em class="icon-write"></em>
-                  <p>Editar</p>
-                </button>
-                -->
-              </div>
-
-              <div class="dates">
-                <div class="in">
-                  <p>ENTRADA</p>
-                  <h4>[[data.vars.date_from]]</h4>
-                </div>
-                <div class="out">
-                  <p>SALIDA</p>
-                  <h4>[[data.vars.date_to]]</h4>
-                </div>                
-              </div>
-
-              <div class="type-resume">
-                <h4>[[data.results.Place_type_name]]</h4>
-                <p>[[data.results.Building_name]]</p>                                                          
-              </div>
-
-              <div class="breakdown">
-                <h4>Desglose del precio</h4>
-                <div class="prices">
-                  <p>Booking fee</p>
-                  <p>[[data.results.Booking_fee]]€</p>
-                </div>              
-                <div class="prices">
-                  <p>Garantía</p>
-                  <p>[[data.results.Deposit]]€</p>
-                </div>
-                <div class="total">
-                  <p>Total pago único</p>
-                  <p>[[data.results.Booking_fee + data.results.Deposit]]€</p>
-                </div>            
-              </div>
-
-              <div class="renta">
-                <h3>Renta media mensual</h3>
-                <h3>[[data.results.Rent + data.results.Services]]€ *</h3>
-              </div>
-
-              <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.results.Limit]]€/mes.</p>
-
-            </div>
-          </div>
-
-        </div>
-      </div>      
-    </div>
-
-  </div>
+ </div>
 </body>
 
 </html>

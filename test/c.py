@@ -2,7 +2,7 @@ import pandas as pd
 import json
 
 with open('c.json', 'r', encoding='utf-8') as f:
-  text = f.read()
+ text = f.read()
 
 df = pd.json_normalize(json.loads(text))
 
