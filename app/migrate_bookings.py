@@ -192,6 +192,10 @@ def lookup_resource(code, index=0):
   # Fix resource names
   code = code.replace('..', '.').replace('SAT', 'SA')
 
+  # Fix PFC002 & GTF000
+  code = code.replace('PFC002.00', 'PFC002.00.00')
+  code = code.replace('GTF0', 'GTF000.')
+
   # Lookup place
   try:
     id = df_res.loc[df_res[1] == code, index].values[0]
@@ -297,6 +301,9 @@ df_bookings['Resource_id'] = df_bookings['Resource'].apply(lambda x: lookup_reso
 df_bookings['Building_id']   = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 3))
 df_bookings['Flat_type_id']  = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 4))
 df_bookings['Place_type_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 5))
+print('----')
+print(df_bookings.loc[df_bookings['Building_id'].isnull()]['Resource'])
+print('----')
 df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Building_id'].isnull()].index)
 print('Filas con edificio.........: ', df_bookings.shape[0])
 
@@ -321,6 +328,9 @@ df_bookings['Date_from'] = df_bookings.apply(lambda row: check_dates(row, 'Date_
 df_bookings['Date_to']   = df_bookings.apply(lambda row: check_dates(row, 'Date_to'),   axis=1)
 df_bookings['Check_in']  = df_bookings.apply(lambda row: check_dates(row, 'Check_in'),  axis=1)
 df_bookings['Check_out'] = df_bookings.apply(lambda row: check_dates(row, 'Check_out'), axis=1)
+print('----')
+print(df_bookings.loc[df_bookings['Date_from'] == PAST]['Resource'])
+print('----')
 df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Date_from'] == PAST].index)
 print('Filas con fechas correctas.: ', df_bookings.shape[0])
 
@@ -360,6 +370,7 @@ xls_workbook.save(file[:-1])
 # Load data, csv in Excel format
 print('\nPRECIOS')
 df_prices = pd.read_csv('./migration/prices.in.csv', delimiter=';', encoding='utf-8')
+print('Filas originales...........: ', df_prices.shape[0])
 df_prices = df_prices.drop_duplicates(subset=['Booking_id', 'Rent_date'])
 print('Filas no duplicadas........: ', df_prices.shape[0])
 
@@ -372,8 +383,8 @@ df_prices = df_prices.drop(df_prices.loc[df_prices['Booking_id'] == -1].index)
 print('Filas con reserva..........: ', df_prices.shape[0])
 
 # 3. Round
-df_prices['Rent'] = df_prices['Rent'].round(0);
-df_prices['Services'] = df_prices['Services'].round(0);
+df_prices['Rent'] = df_prices['Rent'].round(0)
+df_prices['Services'] = df_prices['Services'].round(0)
 
 # 4. Reindex
 df_prices.insert(0, 'id', range(1, 1 + len(df_prices)))

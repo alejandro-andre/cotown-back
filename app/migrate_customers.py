@@ -30,8 +30,6 @@ def clean_email(email):
 
     # Remove strange chars
     valid = re.sub(r'[^a-zA-Z0-9-_.@]', '', email)
-    if valid != email:
-        print(valid, email)
 
     # Validate structure
     if re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email) is None:
@@ -129,7 +127,7 @@ SELECT r.id as "Customer_id",
        br.id,
        r.email as "Email",
        r.locale_id as "Locale",
-       concat(r.name, ' ', r.surname) AS "Name",
+       concat(coalesce(r.name, ''), ' ', coalesce(r.surname, '')) AS "Name",
        d.card_type_id + 2 AS "Id_type_id",
        d.card AS "Document",
        r.phone as "Phones",
@@ -159,8 +157,8 @@ print('CLIENTES')
 df = pd.read_csv('./migration/customers.in.csv', delimiter=';', encoding='utf-8')
 print('Filas originales...........: ', df.shape[0])
 
-# 0. Debug. Change email addresses
-# df['Email'] = df['Email'].str.split('@').str[0] + '@test.com'
+# 0. Fixes. Name to Email if name is blank
+df['Name'] = df.apply(lambda row: row['Email'] if pd.isna(row['Name']) or row['Name'] == '' else row['Name'], axis=1)
 
 # 1. Remove columns
 df.drop('id', axis=1, inplace=True)
