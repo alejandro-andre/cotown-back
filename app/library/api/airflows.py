@@ -88,7 +88,7 @@ def req_export(name):
       vars[item] = request.args[item]
 
   # Export
-  result = do_export_to_excel(g.apiClient, g.dbClient. name, vars)
+  result = do_export_to_excel(g.apiClient, g.dbClient, name, vars)
   if result is None:
     abort(404)
 
