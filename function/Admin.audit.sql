@@ -15,7 +15,7 @@ BEGIN
   IF TG_OP = 'INSERT' THEN
     NEW."Created_by" := curr_user;
     NEW."Created_at" := NOW();
-    record:= to_jsonb(NEW)::TEXT;
+    --?record:= to_jsonb(NEW)::TEXT;
   END IF;
 
   -- Update data
