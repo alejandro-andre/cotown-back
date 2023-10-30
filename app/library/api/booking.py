@@ -154,15 +154,32 @@ def login(usr, pwd):
     print(usr, pwd)
     g.apiClient.auth(user=usr, password=pwd)
     if g.apiClient.token is None:
-      return None
+      return None, None
 
     # Get user name
-    result = g.apiClient.call('{ data: Customer_CustomerList (orderBy: [{ attribute: id }] limit:2) { Name } }')
+    result = g.apiClient.call(
+    '''{ 
+      data: Customer_CustomerList (
+        orderBy: [{ attribute: id }] 
+        limit:2
+      ) { 
+        id
+        Name 
+        Email
+        Phones
+        Birth_date
+        Nationality_id
+        Gender_id
+      } 
+    }''')
     if len(result['data']) != 1:
-      return None
+      return None, None
 
     # Ok!
-    return g.apiClient.token
+    customer = result['data'][0]
+    customer['Prefix'] = customer['Phones'].split(' ')[0]
+    customer['Phones'] = ''.join(customer['Phones'].split(' ')[1:])
+    return g.apiClient.token, customer
 
 
 # ---------------------------------------------------
@@ -208,10 +225,15 @@ def req_booking(step):
     logger.info('BOOKING STEP-' + str(step) + ':' + request.path)
 
     # Common data: step, language and segment
-    data    = {}
-    step    = int(step)
-    lang    = get_var('lang', 'es')
-    segment = get_var('segment', 1)
+    data     = {}
+    error    = None      
+    step     = int(step)
+    lang     = get_var('lang', 'es')
+    segment  = get_var('segment', 1)
+
+    # Current user, if logged
+    logged   = session.get('logged', None)
+    customer = session.get('customer', None)
 
     # Get info
     types = q_typologies(g.dbClient, segment)
@@ -261,10 +283,7 @@ def req_booking(step):
       genders    = q_genders(g.dbClient, lang)
       reasons    = q_reasons(g.dbClient, lang)
       countries  = q_countries(g.dbClient, lang)
-      results    = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id)
-
-      # Logged
-      logged = session.get('logged', None)
+      summary    = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
     # ---------------------------------------------------
     # STEP 4 - Login
@@ -272,20 +291,36 @@ def req_booking(step):
     elif step == 4 and action == 'login':
 
       # Try to log in 
-      logged = login(user, pswd)
+      logged, customer = login(user, pswd)
+      session['logged'] = logged
+      session['customer'] = customer
       if logged is None:
-        error = 'Usuario incorrecto'
-        step = 3
+        error = 'Email o clave incorrectos'
       else:
-        session['logged'] = logged
-        step = 3
+        error = None
+      step = 3
     
+      # Show summary again
+      genders    = q_genders(g.dbClient, lang)
+      reasons    = q_reasons(g.dbClient, lang)
+      countries  = q_countries(g.dbClient, lang)
+      summary    = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
+
     # ---------------------------------------------------
     # STEP 4 - Register
     # ---------------------------------------------------
     elif step == 4 and action == 'register':
        
-       return action
+      # Try to register
+      logged = 'new user'
+      session['logged'] = logged
+      step = 3
+    
+      # Show summary again
+      genders    = q_genders(g.dbClient, lang)
+      reasons    = q_reasons(g.dbClient, lang)
+      countries  = q_countries(g.dbClient, lang)
+      summary    = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
     # ---------------------------------------------------
     # STEP 4 - Book
@@ -293,9 +328,10 @@ def req_booking(step):
 
     elif step == 4 and action == 'book':
 
-       return action
+      # Try to mke the reservation book
+      pass
     
     # Render template
-    print(step)
+    print(customer)
     tpl = g.env.get_template(lang + '/step-' + str(step) + '.html')
     return tpl.render(data=locals())

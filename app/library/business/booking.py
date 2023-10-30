@@ -160,16 +160,17 @@ def q_typologies(dbClient, segment):
 # Get available typologies between dates
 # ------------------------------------------------------
 
-def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom, room):
+def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, room_type):
  
   # Query parameters
   l = '_en' if lang == 'en' else ''
   year, field = rent_info(date_from, date_to)
-  place_type = 'I_%' if room == 'ind' else 'D\_%'
-  building_type = (3,) if acom == 'rs' else (1, 2)
+  place_type = 'I_%' if room_type == 'ind' else 'D\_%'
+  building_type = (3,) if acom_type == 'rs' else (1, 2)
 
   # Rooms
-  if acom == 'ap':
+  if acom_type == 'ap':
+    print(l)
     sql = f'''
       SELECT
         b."Code" AS "Building_code", rfst."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code",
@@ -261,34 +262,61 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom, room)
 # Get summary
 # ------------------------------------------------------
 
-def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id):
+def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type):
 
   # Query parameters
   l = '_en' if lang == 'en' else ''
   year, field = rent_info(date_from, date_to)
 
-  # Rooms
-  sql = f'''
-    SELECT DISTINCT
-      b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
-      ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
-      COALESCE(pd."Services", 0) AS "Services", COALESCE(pd."Limit", 0) as "Limit",
-      COALESCE(pd."Deposit", 0) AS "Deposit", COALESCE(pd."Booking_fee", 0) AS "Booking_fee"
-    FROM "Resource"."Resource" r
-      INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-      INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
-      INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
-      INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
-      INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
-    WHERE pd."Year" = %s
-      AND b."Code" = %s
-      AND rpt."Code" = %s
-      AND rft."Code" = %s
-    LIMIT 1
-    '''
+  # Private aparment
+  if acom_type == 'ap':
+    sql = f'''
+      SELECT DISTINCT
+        b."Name" as "Building_name", rfst."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
+        ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
+        COALESCE(pd."Services", 0) AS "Services", 
+        COALESCE(pd."Limit", 0) as "Limit",
+        COALESCE(pd."Deposit", 0) AS "Deposit", 
+        COALESCE(pd."Booking_fee", 0) AS "Booking_fee",
+        COALESCE(pd."Second_resident", 0) AS "Second_resident",
+        COALESCE(pd."Final_cleaning", 0) AS "Final_cleaning"
+      FROM "Resource"."Resource" r
+        INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+        INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+        INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
+        INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id)
+      WHERE pd."Year" = %s
+        AND b."Code" = %s
+        AND rfst."Code" = %s
+        AND rft."Code" = %s
+      LIMIT 1
+      '''
+  else:
+    sql = f'''
+      SELECT DISTINCT
+        b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
+        ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
+        COALESCE(pd."Services", 0) AS "Services", 
+        COALESCE(pd."Limit", 0) as "Limit",
+        COALESCE(pd."Deposit", 0) AS "Deposit", 
+        COALESCE(pd."Booking_fee", 0) AS "Booking_fee"
+      FROM "Resource"."Resource" r
+        INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+        INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
+        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+        INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+        INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
+      WHERE pd."Year" = %s
+        AND b."Code" = %s
+        AND rpt."Code" = %s
+        AND rft."Code" = %s
+      LIMIT 1
+      '''
 
   try:
     dbClient.connect()
+    print(sql, (year, building_id, place_type_id, flat_type_id))
     dbClient.select(sql, (year, building_id, place_type_id, flat_type_id))
     results = dbClient.fetchall()
     dbClient.disconnect()
