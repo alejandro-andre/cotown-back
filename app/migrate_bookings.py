@@ -54,8 +54,7 @@ LEFT JOIN requests rq ON rq.id = b.request_id
 LEFT JOIN requesters r ON r.id = rq.requester_id
 LEFT JOIN resources re ON re.id = br.resource_id
 LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
-WHERE bl.id IS NULL
-AND b.to > '2023-10-01'
+WHERE b.to > '2023-10-01'
 AND re.id IS NOT NULL
 
 UNION
