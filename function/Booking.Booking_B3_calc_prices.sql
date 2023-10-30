@@ -46,7 +46,12 @@ BEGIN
   IF NEW."Resource_id" IS NULL THEN
     RETURN NEW;
   END IF;
- 
+
+  -- Only calc if not yet confirmed
+  IF NEW."Status" NOT IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'pendientepago') THEN
+    RETURN NEW;
+  END IF;
+
   -- Prices already billed? Ignore
   SELECT COUNT(*)
   INTO num
