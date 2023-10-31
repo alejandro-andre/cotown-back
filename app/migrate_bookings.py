@@ -11,6 +11,7 @@
 # System includes
 from datetime import datetime
 import pandas as pd
+import math
 import openpyxl
 import xlwt
 import re
@@ -197,14 +198,34 @@ def set_status(row):
   # Confirmed
   return 'confirmada'
 
-def lookup_resource(code, index=0):
+def clean_resource(row):
 
   # Fix resource names
-  code = code.replace('..', '.').replace('SAT', 'SA')
+  res = row['Resource']
+  res = res.replace('..', '.').replace('SAT', 'SA')
+  res = res.replace('PFC002.00', 'PFC002.00.00')
+  res = res.replace('GTF0', 'GTF000.')
 
-  # Fix PFC002 & GTF000
+  # No block
+  if type(row['block']).__name__ != 'str':
+    return res
+  
+  # Resource should be some parent
+  code, motive = row['block'].split('/')
+  code = code.replace('..', '.').replace('SAT', 'SA')
   code = code.replace('PFC002.00', 'PFC002.00.00')
   code = code.replace('GTF0', 'GTF000.')
+  if res[:6] != code [:6]:
+    return res
+  if motive == '5':
+    return code[:16]
+  elif motive == '6':
+    row['Resource_type'] = 'piso'
+    return code[:12]
+  return res
+  
+  # Fix resource names
+def lookup_resource(code, index=0):
 
   # Lookup place
   try:
@@ -233,6 +254,10 @@ def lookup_booking(id):
     pass
 	
   return -1
+
+def lookup_type(resource):
+  
+    return 'habitacion' if len(resource) > 12 else 'piso'
 
 def lookup_customer(email):
 
@@ -273,6 +298,7 @@ dbClient = DBClient(
 dbClient.connect()
 print('ACCESO A BD')
 
+
 # #####################################
 # Get DB info
 # #####################################
@@ -305,12 +331,14 @@ df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['Customer_id'] == -1]
 print('Filas con cliente..........: ', df_bookings.shape[0])
 
 # 2. Resource
+df_bookings['Resource'] = df_bookings.apply(lambda row: clean_resource(row), axis=1)
 df_bookings['Resource_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x))
 
 # 3. Request
 df_bookings['Building_id']   = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 3))
 df_bookings['Flat_type_id']  = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 4))
 df_bookings['Place_type_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 5))
+df_bookings['Resource_type'] = df_bookings['Resource'].apply(lambda x: lookup_type(x))
 print('----')
 print(df_bookings.loc[df_bookings['Building_id'].isnull()]['Resource'])
 print('----')
@@ -321,7 +349,6 @@ print('Filas con edificio.........: ', df_bookings.shape[0])
 df_bookings['Booking_referral_id'] = 1
 df_bookings['Second_resident'] = False
 df_bookings['Lock'] = False
-df_bookings['Resource_type'] = 'habitacion'
 df_bookings['Payer_id']  = df_bookings['Customer_id']
 
 # 5. Convert to dates
