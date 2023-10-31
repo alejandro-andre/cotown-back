@@ -59,12 +59,14 @@ def main():
     num = 0
 
     # Get pending individual booking contracts
+    date = settings.CONTRACTDATE
     bookings = apiClient.call('''
     {
       data: Booking_BookingList (
         where: {
           AND: [
             { Status: { IN: [firmacontrato, contrato, checkinconfirmado, checkin, inhouse] } },
+            { Date_from: { GE: "''' + date + '''"} }
             { Contract_rent: { IS_NULL: true } }
           ]
         }

@@ -40,12 +40,17 @@ vanguardstudenthousing
 myvanguardstudenthousing
 Qi80#GW1AA7N
 
--- 7a. Datos de reserva individuales
-SELECT br.id, b.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
-	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount,
-	   DATE_FORMAT(br.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(br.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in, DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out,
-       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS Confirmation_date,
-	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, b.payment_method_id AS Payment_method_id, rq.comments AS Comments
+SELECT br.id, b.id as core_id, b.state AS Status, 
+    rq.request_type_id AS Booking_channel_id, r.email AS Customer,
+	  rq.rental_deposit_amount as Deposit, rq.rental_deposit_amount as Deposit_actual, 
+    rq.hiring_expense_amount as Booking_fee, rq.hiring_expense_amount as Booking_fee_actual,
+    rq.cleaning_service_amount as Services,
+	  DATE_FORMAT(br.FROM, "%Y-%m-%d") AS Date_from, DATE_FORMAT(br.to, "%Y-%m-%d") AS Date_to, DATE_FORMAT(bi.checkin, "%Y-%m-%d") AS Check_in,
+    DATE_FORMAT(bi.checkout, "%Y-%m-%d") AS Check_out,
+    r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, DATE_FORMAT(b.created_at, "%Y-%m-%d") AS Confirmation_date,
+	  REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 
+    CONCAT(REPLACE(REPLACE(rex.KEY,'_P0','.P'),'_','.'), '/', bl.block_motive_id) as block,
+    b.payment_method_id AS Payment_method_id, rq.comments AS Comments
 FROM booking_resource br
 LEFT JOIN bookings b ON b.id = br.booking_id
 LEFT JOIN booking_information bi ON bi.booking_id = b.id
@@ -54,22 +59,28 @@ LEFT JOIN requests rq ON rq.id = b.request_id
 LEFT JOIN requesters r ON r.id = rq.requester_id
 LEFT JOIN resources re ON re.id = br.resource_id
 LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
+LEFT JOIN resources rex ON rex.id = bl.resource_id
 WHERE b.to > '2023-10-01'
+AND (bl.id IS NULL OR bl.id <> 3)
 AND re.id IS NOT NULL
 
 UNION
 
-SELECT rq.id, rq.state AS Status, rq.request_type_id AS Booking_channel_id, r.email AS Customer,
-	   rq.rental_deposit_amount, rq.rental_deposit_amount_contract, rq.hiring_expense_amount, rq.cleaning_service_amount,
-	   DATE_FORMAT(rq.from, "%Y-%m-%d") AS Date_from, DATE_FORMAT(rq.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out,
-       r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, NULL AS Confirmation_date,
-	   REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 1 AS Payment_method_id, rq.comments AS Comments
+SELECT rq.id, rq.id as core_id, rq.state AS Status, 
+    rq.request_type_id AS Booking_channel_id, r.email AS Customer,
+	  rq.rental_deposit_amount as Deposit, rq.rental_deposit_amount as Deposit_actual, 
+    rq.hiring_expense_amount as Booking_fee, rq.hiring_expense_amount as Booking_fee_actual,
+    rq.cleaning_service_amount as Services,
+	  DATE_FORMAT(rq.from, "%Y-%m-%d") AS Date_from, DATE_FORMAT(rq.to, "%Y-%m-%d") AS Date_to, NULL AS Check_in, NULL AS Check_out,
+    r.school_id AS School_id, DATE_FORMAT(rq.created_at, "%Y-%m-%d") AS Request_date, NULL AS Confirmation_date,
+	  REPLACE(REPLACE(re.KEY,'_P0','.P'),'_','.') AS Resource, 
+    '' AS block, 1 AS Payment_method_id, rq.comments AS Comments
 FROM requests rq
 LEFT JOIN requesters r ON r.id = rq.requester_id
 LEFT JOIN resources re ON re.id = rq.resource_id
 WHERE rq.state IN ('pending', 'accepted')
 AND re.id IS NOT NULL
-AND rq.to > '2023-10-01';
+AND rq.to > '2023-10-01'
 
 -- 4. Precios
 SELECT br.id AS "Booking_id", CONCAT (y.number, '-', LPAD(m.number, 2, '0'), '-01') AS "Rent_date", cp.amount AS "Rent", cp.amount_cleaning_service AS "Services"
@@ -337,14 +348,21 @@ print('Filas con fechas correctas.: ', df_bookings.shape[0])
 df_bookings['Status'] = df_bookings.apply(lambda row: set_status(row), axis=1)
 df_bookings.loc[df_bookings['Status'] == 'solicitud', 'Resource_id'] = None
 
-# 8. Drop columns
+# 8. Calculate other columns
+df_bookings['Blocks'] = df_bookings.groupby('id')['block'].transform(lambda x: ','.join(x.fillna('').astype(str)))
+df_bookings['Comments'] = '(' + df_bookings['core_id'].astype(str) + ') ' \
+                        + '[' + df_bookings['Blocks'].astype(str) + '] ' \
+                        + df_bookings['Comments'].fillna('')
+
+# 9. Drop columns
+df_bookings = df_bookings.drop_duplicates('id')
+print('Filas no duplicadas........: ', df_bookings.shape[0])
 df_bookings.drop('Customer', axis=1, inplace=True)
 df_bookings.drop('Resource', axis=1, inplace=True)
-df_bookings.drop('rental_deposit_amount', axis=1, inplace=True)
-df_bookings.drop('rental_deposit_amount_contract', axis=1, inplace=True)
-df_bookings.drop('hiring_expense_amount', axis=1, inplace=True)
-df_bookings.drop('cleaning_service_amount', axis=1, inplace=True)
 df_bookings.drop('Payment_method_id', axis=1, inplace=True)
+df_bookings.drop('Blocks', axis=1, inplace=True)
+df_bookings.drop('block', axis=1, inplace=True)
+df_bookings.drop('core_id', axis=1, inplace=True)
 
 # Save data to XLSX
 file = './migration/bookings.out.xlsx'
