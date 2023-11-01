@@ -62,7 +62,7 @@ LEFT JOIN resources re ON re.id = br.resource_id
 LEFT JOIN blocks bl ON bl.booking_id = br.booking_id
 LEFT JOIN resources rex ON rex.id = bl.resource_id
 WHERE b.to > '2023-10-01'
-AND (bl.id IS NULL OR bl.id <> 3)
+AND (bl.id IS NULL OR bl.block_motive_id <> 3)
 AND re.id IS NOT NULL
 
 UNION
@@ -427,8 +427,8 @@ df_prices = df_prices.drop(df_prices.loc[df_prices['Booking_id'] == -1].index)
 print('Filas con reserva..........: ', df_prices.shape[0])
 
 # 3. Round
-df_prices['Rent'] = df_prices['Rent'].round(0)
-df_prices['Services'] = df_prices['Services'].round(0)
+#df_prices['Rent'] = df_prices['Rent'].round(0)
+#df_prices['Services'] = df_prices['Services'].round(0)
 
 # 4. Reindex
 df_prices.insert(0, 'id', range(1, 1 + len(df_prices)))
