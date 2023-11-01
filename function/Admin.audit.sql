@@ -7,10 +7,6 @@ DECLARE
 
 BEGIN
 
-  -- Superuser ROLE
-  curr_user := CURRENT_USER;
-  RESET ROLE;
-
   -- Insert data
   IF TG_OP = 'INSERT' THEN
     NEW."Created_by" := curr_user;
@@ -47,7 +43,6 @@ BEGIN
   --?END IF;
 
   -- Return
-  EXECUTE 'SET ROLE "' || curr_user || '"';
   IF TG_OP = 'DELETE' THEN
     RETURN OLD;
   END IF;
