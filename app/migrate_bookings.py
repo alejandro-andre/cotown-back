@@ -229,8 +229,8 @@ def lookup_resource(code, index=0):
   # Lookup place
   try:
     id = df_res.loc[df_res[1] == code, index].values[0]
-    if id == 'plaza':
-      id == 'habitacion'
+    if index == 2 and id == 'plaza':
+      id = 'habitacion'
     return id
   except:
     pass
@@ -263,10 +263,6 @@ def lookup_booking(id):
     pass
 	
   return -1
-
-def lookup_type(resource):
-  
-    return 'habitacion' if len(resource) > 12 else 'piso'
 
 def lookup_customer(email):
 
@@ -400,6 +396,13 @@ df_bookings.drop('Blocks', axis=1, inplace=True)
 df_bookings.drop('block', axis=1, inplace=True)
 df_bookings.drop('core_id', axis=1, inplace=True)
 
+# 10. Remove some
+df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['id'] == 1942].index)
+df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['id'] == 1935].index)
+df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['id'] == 1823].index)
+df_bookings = df_bookings.drop(df_bookings.loc[df_bookings['id'] == 1776].index)
+print('Filas no eliminadas........: ', df_bookings.shape[0])
+
 # Save data to XLSX
 file = './migration/bookings.out.xlsx'
 df_bookings.to_excel(file, index=False, startrow=1)
@@ -435,11 +438,7 @@ df_prices['Booking_id'] = df_prices['Booking_id'].apply(lambda x: lookup_booking
 df_prices = df_prices.drop(df_prices.loc[df_prices['Booking_id'] == -1].index)
 print('Filas con reserva..........: ', df_prices.shape[0])
 
-# 3. Round
-#df_prices['Rent'] = df_prices['Rent'].round(0)
-#df_prices['Services'] = df_prices['Services'].round(0)
-
-# 4. Reindex
+# 3. Reindex
 df_prices.insert(0, 'id', range(1, 1 + len(df_prices)))
 
 # Save data to XLSX
