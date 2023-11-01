@@ -5,6 +5,7 @@ API_PREFIX='/api/v1'
 DBUSER='postgres'
 DATABASE='niledb'
 GQLUSER='modelsadmin'
+CUSTOMER='cotowngroup.com/customer'
 EMAIL_TO='book@cotown.com'
 AC_URL='https://vanguard-student-housing.api-us1.com/api/3/'
 

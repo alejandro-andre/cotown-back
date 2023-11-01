@@ -41,8 +41,8 @@ def req_pay(id):
       order     = payment['Payment_order'],
       amount    = int(100 * float(payment['Amount'])),
       id        = payment['id'],
-      urlok     = 'https://' + settings.BACK + '/customer/#/pago_ok?id=' + payment['Payment_order'],
-      urlko     = 'https://' + settings.BACK + '/customer/#/pago_ko?id=' + payment['Payment_order'],
+      urlok     = 'https://' + settings.CUSTOMER + '/#/pago_ok?id=' + payment['Payment_order'],
+      urlko     = 'https://' + settings.CUSTOMER + '/#/pago_ko?id=' + payment['Payment_order'],
     )
     params['url']= settings.REDSYS_URL
     logger.debug(params)
