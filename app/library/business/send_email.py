@@ -102,34 +102,34 @@ def generate_email(apiClient, email):
 
 def smtp_mail(to, subject, body, file=None):
 
-    # Receivers
-    receivers = [to,]
+  # Receivers
+  receivers = [to,]
 
-    # Prepare mail
-    msg = MIMEMultipart()
-    msg['From']    = settings.SMTPFROM
-    msg['To']      = to
-    msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html'))
+  # Prepare mail
+  msg = MIMEMultipart()
+  msg['From']    = settings.SMTPFROM
+  msg['To']      = to
+  msg['Subject'] = subject
+  msg.attach(MIMEText(body, 'html'))
 
-    # Attach file
-    if file:
-      payload = MIMEBase('application', 'octate-stream', Name=file.filename)
-      payload["Content-Disposition"] = f'attachment; filename="{file.filename}"'
-      payload.add_header('Content-Decomposition', 'attachment', filename=file.filename)
-      payload.set_payload(file.read())
-      encoders.encode_base64(payload)
-      msg.attach(payload)
+  # Attach file
+  if file:
+    payload = MIMEBase('application', 'octate-stream', Name=file.filename)
+    payload["Content-Disposition"] = f'attachment; filename="{file.filename}"'
+    payload.add_header('Content-Decomposition', 'attachment', filename=file.filename)
+    payload.set_payload(file.read())
+    encoders.encode_base64(payload)
+    msg.attach(payload)
 
-    # Send mail
-    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    session = smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT)
-    session.ehlo()
-    session.starttls(context=context)
-    session.login(settings.SMTPUSER, settings.SMTPPASS)
-    errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
-    session.quit()
-    return errors
+  # Send mail
+  context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+  session = smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT)
+  session.ehlo()
+  session.starttls(context=context)
+  session.login(settings.SMTPUSER, settings.SMTPPASS)
+  errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
+  session.quit()
+  return errors
 
 
 # ###################################################
@@ -138,21 +138,35 @@ def smtp_mail(to, subject, body, file=None):
 
 def do_email(apiClient, email):
 
-    # Debug
-    logger.debug(email)
+  # Stop
+  return
 
-    # Already sent?
-    if email['Sent_at'] is not None:
-      return
-     
-    # Template? generate email body
-    if email['Template'] is not None:
-      subject, body = generate_email(apiClient, email)
-     
-    # Manual email?
-    else:
-      subject = email['Subject']
-      body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list']) 
+  # Debug
+  logger.debug(email)
+
+  # Already sent?
+  if email['Sent_at'] is not None:
+    return
+    
+  # Template? generate email body
+  if email['Template'] is not None:
+    subject, body = generate_email(apiClient, email)
+    
+  # Manual email?
+  else:
+    subject = email['Subject']
+    body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list']) 
+
+  # Send email
+  if subject != 'ERROR':
+
+    # Log
+    logger.debug(email['Customer']['Email'])
+    logger.debug(subject)
+    logger.debug(body)
+
+    # ¡¡¡ Send email !!!
+    #smtp_mail(email['Customer']['Email'], subject, body)
 
     # Update query
     query = '''
@@ -178,11 +192,3 @@ def do_email(apiClient, email):
 
     # Call graphQL endpoint
     apiClient.call(query, variables)
-
-    # Send email
-    if subject != 'ERROR':
-      logger.debug(email['Customer']['Email'])
-      logger.debug(subject)
-      logger.debug(body)
-      #smtp_mail(email['Customer']['Email'], subject, body)
-      #smtp_mail('test@cotown.com', subject, body)
