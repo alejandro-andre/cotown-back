@@ -188,8 +188,8 @@ def bill_rent(dbClient):
     try:
 
       # Amounts
-      rent = int(item['Rent'] or 0) + int(item['Rent_discount'] or 0)
-      services = int(item['Services'] or 0) + int(item['Services_discount'] or 0)
+      rent = float(item['Rent'] or 0.0) + float(item['Rent_discount'] or 0.0)
+      services = float(item['Services'] or 0.0) + float(item['Services_discount'] or 0.0)
 
       # Same issuer
       product = PRODUCTS[PR_RENT]
@@ -339,7 +339,7 @@ def bill_group_rent(dbClient):
   INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
   INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
   INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
-  WHERE bg."Status" = 'grupoconfirmado'
+  WHERE bg."Status" IN ('grupoconfirmado','inhouse')
   AND bgp."Invoice_rent_id" IS NULL
   AND bgp."Rent_date" <= %s
   AND bgp."Rent_date" >= %s
@@ -363,8 +363,8 @@ def bill_group_rent(dbClient):
       comments = 'Recursos: ' + (', '.join(item['Room_ids']))
    
       # Amounts
-      rent = int(item['Rent'] or 0) * int(item['num'] or 0)
-      services = int(item['Services'] or 0) * int(item['num'] or 0)
+      rent = float(item['Rent'] or 0.0) * float(item['num'] or 0.0)
+      services = float(item['Services'] or 0.0) * float(item['num'] or 0.0)
 
       # Create payment
       if rent + services > 0:
