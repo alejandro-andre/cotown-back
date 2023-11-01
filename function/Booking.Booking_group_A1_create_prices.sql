@@ -6,6 +6,11 @@ DECLARE
 
 BEGIN
 
+  -- Only calc if not yet confirmed
+  IF NEW."Status" <> 'grupobloqueado' THEN
+    RETURN NEW;
+  END IF;
+
   -- Borra viejos precios
   DELETE FROM "Booking"."Booking_group_price"
   WHERE "Booking_id" = NEW.id

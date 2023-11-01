@@ -190,7 +190,7 @@ print('Filas sin id duplicado.....: ', df.shape[0])
 
 # 6. Reindex
 df.reset_index(drop=True, inplace=True)
-df.insert(0, 'id', range(1, 1 + len(df)))
+df.insert(0, 'id', range(2, 2 + len(df)))
 
 # 7. Calculated & cleaned up columns
 df['Name'] = df['Name'].str.title()
