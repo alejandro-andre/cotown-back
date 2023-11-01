@@ -180,22 +180,22 @@ def set_status(row):
 
   # Finished
   if check_out != PAST:
-    if (now - check_out).days > 0:
+    if (now - check_out).days >= 0:
       return 'finalizada'
   else:
-    if (now - date_to).days > 0:
+    if (now - date_to).days >= 0:
       return 'finalizada'
 
   # Started
   if check_in != PAST:
-    if (now - check_in).days > 0:
+    if (now - check_in).days >= 0:
       return 'inhouse'
   else:
-    if (now - date_from).days > 0:
+    if (now - date_from).days >= 0:
       return 'inhouse'
 
   # Confirmed
-  return 'confirmada'
+  return 'firmacontrato'
 
 def clean_resource(row):
 
