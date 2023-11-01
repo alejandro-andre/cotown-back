@@ -11,7 +11,6 @@
 # System includes
 from datetime import datetime
 import pandas as pd
-import math
 import openpyxl
 import xlwt
 import re
@@ -230,12 +229,22 @@ def lookup_resource(code, index=0):
   # Lookup place
   try:
     id = df_res.loc[df_res[1] == code, index].values[0]
+    if id == 'plaza':
+      id == 'habitacion'
     return id
   except:
     pass
 	
   # Lookup room
   code = code[:16]
+  try:
+    id = df_res.loc[df_res[1] == code, index].values[0]
+    return id
+  except:
+    pass
+
+  # Lookup flat
+  code = code[:12]
   try:
     id = df_res.loc[df_res[1] == code, index].values[0]
     return id
@@ -335,10 +344,10 @@ df_bookings['Resource'] = df_bookings.apply(lambda row: clean_resource(row), axi
 df_bookings['Resource_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x))
 
 # 3. Request
+df_bookings['Resource_type'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 2))
 df_bookings['Building_id']   = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 3))
 df_bookings['Flat_type_id']  = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 4))
 df_bookings['Place_type_id'] = df_bookings['Resource'].apply(lambda x: lookup_resource(x, 5))
-df_bookings['Resource_type'] = df_bookings['Resource'].apply(lambda x: lookup_type(x))
 print('----')
 print(df_bookings.loc[df_bookings['Building_id'].isnull()]['Resource'])
 print('----')
