@@ -46,14 +46,14 @@ BEGIN
   -- Update booking fee
   IF OLD."Booking_fee" <> NEW."Booking_fee" THEN
 
-    -- Already payed?
+    -- Already paid?
     SELECT COUNT(*) INTO num 
     FROM "Billing"."Payment" 
     WHERE "Customer_id" = NEW."Payer_id" 
       AND "Booking_id" = NEW.id
       AND "Payment_date" IS NOT NULL;
     IF num > 0 THEN
-      RAISE EXCEPTION '!!!Booking fee already payed!!!El booking fee ya ha sido pagado!!!';
+      RAISE EXCEPTION '!!!Booking fee already paid!!!El booking fee ya ha sido pagado!!!';
     END IF;
 
     -- Update fee (delete + update)
