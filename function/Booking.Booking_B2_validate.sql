@@ -106,7 +106,6 @@ BEGIN
   SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
 
   -- Documentos obligatorios
-  DELETE FROM "Customer"."Customer_doc" WHERE "Document" IS NULL;
   INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
     SELECT NEW."Customer_id", id
     FROM "Customer"."Customer_doc_type" cdt
