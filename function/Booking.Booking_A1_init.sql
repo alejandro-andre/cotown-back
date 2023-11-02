@@ -15,10 +15,6 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE;
 
-  --
-  -- Estado solicitud
-  UPDATE "Booking"."Booking" SET "Status" = 'solicitud' WHERE id = NEW.id;
-
   -- Crea un pago con el booking fee
   IF NEW."Booking_fee" > 0 THEN
     SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";

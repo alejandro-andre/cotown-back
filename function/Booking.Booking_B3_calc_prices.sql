@@ -14,6 +14,7 @@ DECLARE
   resource INTEGER;
   multiplier NUMERIC;
   incpct NUMERIC;
+  payment_method_id INTEGER;
 
   months INTEGER;
   days INTEGER;
@@ -41,6 +42,27 @@ DECLARE
   num INTEGER;
 
 BEGIN
+
+  -- Update booking fee
+  IF OLD."Booking_fee" <> NEW."Booking_fee" THEN
+
+    -- Already payed?
+    SELECT COUNT(*) INTO num 
+    FROM "Billing"."Payment" 
+    WHERE "Customer_id" = NEW."Payer_id" 
+      AND "Booking_id" = NEW.id
+      AND "Payment_date" IS NOT NULL;
+    IF num > 0 THEN
+      RAISE EXCEPTION '!!!Booking fee already payed!!!El booking fee ya ha sido pagado!!!';
+    END IF;
+
+    -- Update fee (delete + update)
+    SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
+    DELETE FROM "Billing"."Payment" WHERE "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
+    INSERT
+      INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+      VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
+  END IF;
 
   -- No resource
   IF NEW."Resource_id" IS NULL THEN
