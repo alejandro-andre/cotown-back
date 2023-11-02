@@ -253,8 +253,8 @@ def bill_rent(dbClient):
               rentid,
               rent,
               PR_RENT,
-              product[PR_RENT]['tax'] if item['Tax_id'] is None else item['Tax_id'],
-              product[PR_RENT]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+              product['tax'] if item['Tax_id'] is None else item['Tax_id'],
+              product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
 

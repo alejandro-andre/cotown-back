@@ -23,8 +23,10 @@ BEGIN
   END IF;
 
   -- Tax
-  SELECT "Tax_id" INTO tax_id FROM "Billing"."Product" WHERE id = NEW."Product_id";
-  NEW."Tax_id" := tax_id;
+  IF NEW."Tax_id" IS NULL THEN
+    SELECT "Tax_id" INTO tax_id FROM "Billing"."Product" WHERE id = NEW."Product_id";
+    NEW."Tax_id" := tax_id;
+  END IF;
 
   -- Concept
   IF NEW."Concept" IS NULL THEN
