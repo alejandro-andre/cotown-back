@@ -263,6 +263,7 @@ def bill_rent(dbClient):
 
           # Update price
           dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
+          q = 1
 
         # Create services invoice
         if services > 0:
@@ -308,10 +309,11 @@ def bill_rent(dbClient):
 
           # Update price
           dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
+          q = 2
 
         # Commit
         dbClient.commit()
-        num += 1
+        num += q
 
     # Process exception
     except Exception as error:
@@ -433,6 +435,7 @@ def bill_group_rent(dbClient):
 
           # Update price
           dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
+          q = 1
 
         # Create services invoice
         if services > 0:
@@ -480,10 +483,11 @@ def bill_group_rent(dbClient):
 
           # Update price
           dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
+          q = 2
 
         # Commit
         dbClient.commit()
-        num += 1
+        num += q
            
     # Process exception
     except Exception as error:
