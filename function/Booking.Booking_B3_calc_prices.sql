@@ -43,6 +43,11 @@ DECLARE
 
 BEGIN
 
+  -- Only calc if not yet confirmed
+  IF NEW."Status" NOT IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'pendientepago') THEN
+    RETURN NEW;
+  END IF;
+
   -- Update booking fee
   IF OLD."Booking_fee" <> NEW."Booking_fee" THEN
 
@@ -66,11 +71,6 @@ BEGIN
 
   -- No resource
   IF NEW."Resource_id" IS NULL THEN
-    RETURN NEW;
-  END IF;
-
-  -- Only calc if not yet confirmed
-  IF NEW."Status" NOT IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'pendientepago') THEN
     RETURN NEW;
   END IF;
 
