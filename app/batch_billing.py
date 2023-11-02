@@ -131,7 +131,7 @@ def bill_payments(dbClient):
           billid,
           item['Amount'],
           PR_BOOKING_FEE if item['Payment_type'] == 'booking' else PR_DEPOSIT,
-          PR_BOOKING_FEE if item['Payment_type'] == 'booking' else PR_DEPOSIT,
+          PRODUCTS[PR_BOOKING_FEE]['tax'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['tax'],
           PRODUCTS[PR_BOOKING_FEE]['concept'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['concept'] + ' ' + item['Code']
         )
       )
@@ -168,7 +168,7 @@ def bill_rent(dbClient):
   INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
   INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
   INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
-  WHERE b."Status" IN ('checkin', 'inhouse','checkout')
+  WHERE b."Status" IN ('checkin', 'inhouse', 'checkout')
   AND "Invoice_rent_id" IS NULL
   AND "Invoice_services_id" IS NULL
   AND "Rent_date" <= %s
@@ -253,8 +253,8 @@ def bill_rent(dbClient):
               rentid,
               rent,
               PR_RENT,
-              product['tax'] if item['Tax_id'] is None else item['Tax_id'],
-              product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+              product[PR_RENT]['tax'] if item['Tax_id'] is None else item['Tax_id'],
+              product[PR_RENT]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
 
@@ -299,7 +299,7 @@ def bill_rent(dbClient):
               servid,
               services,
               PR_SERVICES,
-              PRODUCTS[PR_SERVICES]['tax'],
+              PRODUCTS[PR_SERVICES]['tax'] if item['Tax_id'] is None else item['Tax_id'],
               PRODUCTS[PR_SERVICES]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
@@ -424,7 +424,7 @@ def bill_group_rent(dbClient):
               rentid,
               rent,
               PR_RENT,
-              PRODUCTS[PR_RENT]['tax'] if item['Tax'] else VAT_21,
+              VAT_0 if item['Tax'] else VAT_21,
               'Renta mensual (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
               comments
             )

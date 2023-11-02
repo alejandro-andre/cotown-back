@@ -160,7 +160,6 @@ def do_email(apiClient, email):
     # Log
     logger.debug(email['Customer']['Email'])
     logger.debug(subject)
-    logger.debug(body)
 
     # ¡¡¡ Send email !!!
     smtp_mail(email['Customer']['Email'], subject, body)
