@@ -32,7 +32,6 @@ def req_pay(id):
     # Get payment
     payment = q_get_payment(g.dbClient, id, generate_order=True)
     logger.debug(payment)
-    logger.debug(payment)
     if payment is None:
       abort(404)
  
@@ -55,6 +54,7 @@ def req_notification():
 
     # Validate response
     response = validate(request.values)
+    logger.debug(response)
     if response is None:
       return 'OK'
 
