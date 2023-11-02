@@ -166,9 +166,22 @@ BEGIN
   AND "Year" = 1 + EXTRACT(YEAR FROM dt_curr);
 
   -- Default prices to 0
-  SELECT coalesce(cy_rent, 0), coalesce(cy_services, 0), coalesce(cy_second, 0), coalesce(cy_deposit, 0), coalesce(cy_limit, 0) INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit;
-  SELECT coalesce(ny_rent, 0), coalesce(ny_services, 0), coalesce(ny_second, 0), coalesce(ny_deposit, 0), coalesce(ny_limit, 0) INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit;
-  SELECT coalesce(cy_final_cleaning, 0), coalesce(ny_final_cleaning, 0) INTO cy_final_cleaning, ny_final_cleaning;
+  SELECT coalesce(cy_rent, 0), 
+         coalesce(cy_services, 0), 
+         coalesce(cy_second, 0), 
+         coalesce(cy_deposit, 0), 
+         coalesce(cy_limit, 0),
+         coalesce(cy_final_cleaning, 0)
+    INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit, cy_final_cleaning;
+
+  -- Default prices to previous year
+  SELECT coalesce(ny_rent, cy_rent), 
+         coalesce(ny_services, cy_services), 
+         coalesce(ny_second, cy_second), 
+         coalesce(ny_deposit, cy_deposit), 
+         coalesce(ny_limit, cy_limit),
+         coalesce(ny_final_cleaning, cy_final_cleaning)
+    INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit, ny_final_cleaning;
 
   -- Second resident
   IF NEW."Second_resident" THEN
