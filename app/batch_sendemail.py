@@ -85,8 +85,7 @@ def main():
   num = 0
   for email in emails.get('data'):
     try:
-      do_email(apiClient, email)
-      num += 1
+      num += do_email(apiClient, email)
     except:
         pass
   logger.info('{} emails sent'.format(num))

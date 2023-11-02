@@ -116,7 +116,7 @@ def main():
           )
 
           # Send email
-          do_email(apiClient, email['data'][0])
+          #do_email(apiClient, email['data'][0])
 
         # Wait 10 seconds
         time.sleep(10)

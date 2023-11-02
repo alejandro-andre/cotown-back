@@ -138,15 +138,12 @@ def smtp_mail(to, subject, body, file=None):
 
 def do_email(apiClient, email):
 
-  # Stop
-  return
-
   # Debug
   logger.debug(email)
 
   # Already sent?
   if email['Sent_at'] is not None:
-    return
+    return 0
     
   # Template? generate email body
   if email['Template'] is not None:
@@ -166,7 +163,7 @@ def do_email(apiClient, email):
     logger.debug(body)
 
     # ¡¡¡ Send email !!!
-    #smtp_mail(email['Customer']['Email'], subject, body)
+    smtp_mail(email['Customer']['Email'], subject, body)
 
     # Update query
     query = '''
@@ -192,3 +189,6 @@ def do_email(apiClient, email):
 
     # Call graphQL endpoint
     apiClient.call(query, variables)
+    return 1
+  
+  return 0
