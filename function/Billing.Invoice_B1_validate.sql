@@ -101,7 +101,12 @@ BEGIN
   END IF;
 
   -- No se tiene que emitir aún?
-  IF NOT NEW."Issued" AND NEW."Code" IS NULL THEN  
+  IF NOT NEW."Issued" THEN  
+    RETURN NEW;
+  END IF;
+
+  -- Emitida anteriormente
+  IF OLD."Code" IS NOT NULL THEN  
     RETURN NEW;
   END IF;
 
