@@ -21,6 +21,7 @@ p{margin:0.3em;}
 .head{background-color:#bbb;}
 .row{background-color:#ddd;}
 .center{text-align:center;}
+.left{text-align:left;}
 .right{text-align:right;}
 .footer{width:97%;position:absolute;bottom:10px;}
 .company{font-size:10px;text-align:center;width:97%;position:absolute;bottom:0;}
@@ -118,7 +119,7 @@ p{margin:0.3em;}
     </tr>
     {% for line in Taxes %}
     <tr class="row">
-      <td class="cell">{{line.Tax_name}} {{'{0:0,.0f}'.format(line.Tax_value)}}%</td>
+      <td class="cell left">{{line.Tax_name}} {{'{0:0,.0f}'.format(line.Tax_value)}}%</td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Base)}} €</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Tax)}} €</p></td>
       <td class="cell right"><p>{{'{0:0,.2f}'.format(line.Amount)}} €</p></td>
