@@ -22,25 +22,32 @@ BEGIN
     END IF;
   END IF;
 
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
+
+  -- Documentos obligatorios
+  IF NEW.id IS NOT NULL THEN
+    INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
+      SELECT NEW.id, id
+      FROM "Customer"."Customer_doc_type" cdt
+      WHERE "Mandatory" = TRUE
+      AND cdt."Id_type_id" = NEW."Id_type_id"
+    ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
+  END IF;
+
   -- Cambio de email
   IF (OLD."Email" IS NOT NULL AND OLD."Email" <> NEW."Email") THEN
-
-    -- Superuser ROLE
-    curr_user := CURRENT_USER;
-    RESET ROLE; 
   	SELECT COUNT(*) INTO num FROM "Models"."User" WHERE email = NEW."Email";
-
     IF num > 0 THEN
       EXECUTE 'SET ROLE "' || curr_user || '"';
       RAISE EXCEPTION '!!!Email already exists!!!El email ya existe!!!';
     END IF;
     UPDATE "Models"."User" SET email = NEW."Email" WHERE username = NEW."User_name";
-
-    -- Fin
-    EXECUTE 'SET ROLE "' || curr_user || '"';
   END IF;
 
   -- Ok
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
  
 END;
