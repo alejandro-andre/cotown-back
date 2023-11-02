@@ -7,6 +7,9 @@ DECLARE
 
 BEGIN
 
+  -- User
+  curr_user := CURRENT_USER;
+  
   -- Insert data
   IF TG_OP = 'INSERT' THEN
     NEW."Created_by" := curr_user;
