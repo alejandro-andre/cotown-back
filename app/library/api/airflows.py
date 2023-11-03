@@ -38,8 +38,9 @@ def req_signature(id):
 
   # Return image
   image = g.apiClient.getFile(id, 'Provider/Provider_contact', 'Signature')
-  response = send_file(BytesIO(image.content), mimetype=image.headers['content-type'])
-  return response
+  if image.content:
+    return send_file(BytesIO(image.content), mimetype=image.headers['content-type'])
+  abort(404)
 
 
 # ---------------------------------------------------

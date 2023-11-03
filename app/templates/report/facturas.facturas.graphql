@@ -19,9 +19,10 @@ query Invoices ($fdesde: String, $fhasta:String, $pdesde:Int, $phasta:Int) {
         Total
         SAP_code
         Concept
-        Provider: ProviderViaProvider_id {
-            Name
-        }
+        Provider: ProviderViaProvider_id (
+          joinType: INNER
+          where: { Prefix_SAP: { IS_NULL: false } }
+        ) {
         Customer: CustomerViaCustomer_id {
             Name
             Document
