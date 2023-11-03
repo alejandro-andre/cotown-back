@@ -103,8 +103,8 @@ def main():
     dbClient.execute(sql, ('Procesando...', '', id))
     dbClient.commit()        
 
-    # Process each sheet
-    for sheet in workbook.sheetnames:
+    # Process first sheet
+    for sheet in workbook.sheetnames[0]:
 
       # Resources
       if sheet == 'Recursos':
