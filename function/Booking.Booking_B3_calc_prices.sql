@@ -1,6 +1,8 @@
 -- Calcula los precios de la reserva
 DECLARE
 
+  curr_user VARCHAR;
+
   dt_to DATE;
   dt_curr DATE;
   dt_next DATE;
@@ -54,7 +56,8 @@ BEGIN
     -- Already paid?
     SELECT COUNT(*) INTO num 
     FROM "Billing"."Payment" 
-    WHERE "Customer_id" = NEW."Payer_id" 
+    WHERE "Payment_type" = 'booking'
+      AND "Customer_id" = NEW."Payer_id" 
       AND "Booking_id" = NEW.id
       AND "Payment_date" IS NOT NULL;
     IF num > 0 THEN
@@ -62,6 +65,8 @@ BEGIN
     END IF;
 
     -- Update fee (delete + update)
+    curr_user := CURRENT_USER;
+    RESET ROLE;
     DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'booking' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
     IF NEW."Booking_fee" > 0 THEN
       SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
@@ -69,6 +74,36 @@ BEGIN
         INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
         VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
     END IF;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    
+  END IF;
+
+  -- Update deposit
+  IF OLD."Deposit" <> NEW."Deposit" THEN
+
+    -- Already paid?
+    SELECT COUNT(*) INTO num 
+    FROM "Billing"."Payment" 
+    WHERE "Payment_type" = 'deposit'
+      AND "Customer_id" = NEW."Payer_id" 
+      AND "Booking_id" = NEW.id
+      AND "Payment_date" IS NOT NULL;
+    IF num > 0 THEN
+      RAISE EXCEPTION '!!!Deposit already paid!!!La garantía ya ha sido pagada!!!';
+    END IF;
+
+    -- Update deposit (delete + update)
+    curr_user := CURRENT_USER;
+    RESET ROLE;
+    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposit' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
+    IF NEW."Deposit" > 0 THEN
+      SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
+      INSERT
+        INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposit');
+    END IF;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    
   END IF;
 
   -- No resource
@@ -96,9 +131,11 @@ BEGIN
   END IF;
 
   -- Delete old prices
+  IF NEW."Deposit" IS NULL THEN
+    NEW."Deposit" := 0;
+  END IF;
   NEW."Rent" := 0;
   NEW."Services" := 0;
-  NEW."Deposit" := 0;
   NEW."Limit" := 0;
   NEW."Final_cleaning" := 0;
   DELETE FROM "Booking"."Booking_price"
@@ -214,9 +251,11 @@ BEGIN
   IF m_deposit < m_rent + m_services THEN
     m_deposit := m_rent + m_services;
   END IF;
+  IF NEW."Deposit" IS NULL THEN
+    NEW."Deposit" := m_deposit;
+  END IF;
   NEW."Rent" := m_rent;
   NEW."Services" := m_services;
-  NEW."Deposit" := m_deposit;
   NEW."Limit" := m_limit;
   NEW."Final_cleaning" := m_final_cleaning;
 

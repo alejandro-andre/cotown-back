@@ -11,7 +11,7 @@ BEGIN
     NEW."Status" := 'solicitud';
   END IF;
 
-  -- Calcula el booking dee
+  -- Calcula el booking fee si está vacío
   IF NEW."Booking_fee" IS NOT NULL THEN
 
     -- Year
