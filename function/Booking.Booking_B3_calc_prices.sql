@@ -84,7 +84,7 @@ BEGIN
     -- Already paid?
     SELECT COUNT(*) INTO num 
     FROM "Billing"."Payment" 
-    WHERE "Payment_type" = 'deposit'
+    WHERE "Payment_type" = 'deposito'
       AND "Customer_id" = NEW."Payer_id" 
       AND "Booking_id" = NEW.id
       AND "Payment_date" IS NOT NULL;
@@ -95,12 +95,12 @@ BEGIN
     -- Update deposit (delete + update)
     curr_user := CURRENT_USER;
     RESET ROLE;
-    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposit' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
+    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposito' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
     IF NEW."Deposit" > 0 THEN
       SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
       INSERT
         INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposit');
+        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
     END IF;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     
