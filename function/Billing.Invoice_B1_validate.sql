@@ -145,7 +145,7 @@ BEGIN
   WHERE b.id = building_id;
 
   -- SAP Code
-  IF resource_code IS NOT NULL THEN
+  IF resource_code IS NOT NULL AND prefix_provider IS NOT NULL THEN
     NEW."SAP_code" := CONCAT(prefix_provider, prefix_building, '_', SUBSTRING (resource_code, 8, 5));
   END IF;
  
