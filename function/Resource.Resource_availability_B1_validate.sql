@@ -12,18 +12,17 @@ BEGIN
   END IF;
 
   -- Cuenta reservas en este recurso en las mismas fechas
-  SELECT COUNT(*)
-  INTO count
-  FROM "Booking"."Booking_detail" bd
-  INNER JOIN "Resource"."Resource" r ON r.id = bd."Resource_id"
-  WHERE "Date_from" <= NEW."Date_to"
-  AND "Availability_id" IS NULL
-  AND "Date_to" >= NEW."Date_from"
-  AND r."Flat_id" = NEW."Resource_id";
-
-  IF count > 0 THEN
-    RAISE EXCEPTION '!!!Locks overlap with active bookings in this flat!!!Bloqueos se solapan con reservas activas en este piso!!!';
-  END IF;
+  --?SELECT COUNT(*)
+  --?INTO count
+  --?FROM "Booking"."Booking_detail" bd
+  --?INNER JOIN "Resource"."Resource" r ON r.id = bd."Resource_id"
+  --?WHERE "Date_from" <= NEW."Date_to"
+  --?AND "Availability_id" IS NULL
+  --?AND "Date_to" >= NEW."Date_from"
+  --?AND r."Flat_id" = NEW."Resource_id";
+  --?IF count > 0 THEN
+  --?  RAISE EXCEPTION '!!!Locks overlap with active bookings in this flat!!!Bloqueos se solapan con reservas activas en este piso!!!';
+  --?END IF;
 
   RETURN NEW;
 
