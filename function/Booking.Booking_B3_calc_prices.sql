@@ -51,7 +51,7 @@ BEGIN
   END IF;
 
   -- Update booking fee
-  IF OLD."Booking_fee" <> NEW."Booking_fee" THEN
+  IF OLD."Booking_fee" <> NEW."Booking_fee" OR (OLD."Booking_fee" IS NULL AND NEW."Booking_fee" > 0) THEN
 
     -- Already paid?
     SELECT COUNT(*) INTO num 
@@ -79,7 +79,7 @@ BEGIN
   END IF;
 
   -- Update deposit
-  IF OLD."Deposit" <> NEW."Deposit" THEN
+  IF OLD."Deposit" <> NEW."Deposit"  OR (OLD."Deposit" IS NULL AND NEW."Deposit" > 0) THEN
 
     -- Already paid?
     SELECT COUNT(*) INTO num 

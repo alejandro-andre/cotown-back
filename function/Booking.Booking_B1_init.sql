@@ -12,7 +12,7 @@ BEGIN
   END IF;
 
   -- Calcula el booking fee si está vacío
-  IF NEW."Booking_fee" IS NOT NULL THEN
+  IF NEW."Booking_fee" IS NULL THEN
 
     -- Year
     year := EXTRACT(YEAR FROM NOW());
