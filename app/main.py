@@ -24,6 +24,7 @@ from library.api.booking import req_form, req_register, req_asset, req_typologie
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
 from library.api.payment import req_pay, req_notification
+from library.api.integration import req_int_clients
 
 # Logging
 import logging
@@ -156,6 +157,9 @@ def runapp():
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_notification, methods=['POST'])
+
+  # SAP integration
+  app.add_url_rule(settings.API_PREFIX + '/integration/clients', view_func=req_int_clients, methods=['GET'])
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=req_asset, methods=['GET'])
