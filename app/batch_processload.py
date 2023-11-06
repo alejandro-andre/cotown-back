@@ -104,38 +104,34 @@ def main():
     dbClient.commit()        
 
     # Process first sheet
-    for sheet in workbook.sheetnames[0]:
+    sheet = workbook.sheetnames[0]
 
-      # Resources
-      if sheet == 'Recursos':
-        log += sheet + '\n'
-        ok, l = load_resources(dbClient, workbook[sheet])
+    # Resources
+    if sheet == 'Recursos':
+      log += sheet + '\n'
+      ok, l = load_resources(dbClient, workbook[sheet])
 
-      # Prices
-      elif sheet == 'Precios':
-        log += sheet + '\n'
-        ok, l = load_prices(dbClient, workbook[sheet])
+    # Prices
+    elif sheet == 'Precios':
+      log += sheet + '\n'
+      ok, l = load_prices(dbClient, workbook[sheet])
 
-      # Rooming list
-      elif sheet == 'Rooming':
-        log += sheet + '\n'
-        ok, l = load_rooming(dbClient, workbook[sheet])
+    # Rooming list
+    elif sheet == 'Rooming':
+      log += sheet + '\n'
+      ok, l = load_rooming(dbClient, workbook[sheet])
 
-      # Ignore list
-      elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
-        ok, l = True, ''
+    # Ignore list
+    elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
+      ok, l = True, ''
 
-      # Other
-      else:
-        log += sheet + '\n'
-        ok, l = False, 'Error: Tipo de carga desconcida.'
+    # Other
+    else:
+      log += sheet + '\n'
+      ok, l = False, 'Error: Tipo de carga desconcida.'
 
-      # Append log
-      log += l + '\n'
-
-      # Ok?
-      if not ok:
-        break
+    # Append log
+    log += l + '\n'
 
     # Save result
     sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
