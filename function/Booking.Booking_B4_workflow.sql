@@ -57,6 +57,9 @@ BEGIN
     ELSE
       NEW."Status" := 'firmacontrato';
     END IF;
+    -- Confirmada
+    NEW."Confirmation_date" := CURRENT_DATE;
+    NEW."Expiry_date" := NULL;
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
@@ -187,10 +190,6 @@ BEGIN
 
   -- A CONFIRMADA
   IF (NEW."Status" = 'confirmada') THEN
-    -- Borra fecha expiración
-    NEW."Expiry_date" := NULL;
-    -- Actualiza la fecha de confirmación
-    NEW."Confirmation_date" := CURRENT_DATE;
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- EMail
