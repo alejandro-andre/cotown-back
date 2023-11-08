@@ -27,21 +27,21 @@ DECLARE
   
 BEGIN
 
-  -- Trick
-  IF current_setting('myapp.admin', true) = 'true' THEN
-    IF TG_OP = 'DELETE' THEN
+  -- Delete
+  IF TG_OP = 'DELETE' THEN
+    IF OLD."Issued" = FALSE OR current_setting('myapp.admin', true) = 'true' THEN
       RETURN OLD;
-    END IF;
+    END IF;    
+    RAISE EXCEPTION '!!!Cannot delete issued bill!!!No se puede borrar una factura emitida!!!';
+  END IF;
+
+  -- Trick to modify issued bills
+  IF current_setting('myapp.admin', true) = 'true' THEN
     OLD."Issued" = FALSE;
   END IF;
 
-  -- Facturas ya emitidas
+  -- Update, and already issued
   IF OLD."Issued" = TRUE THEN
-
-    -- No se puede borrar
-    IF TG_OP = 'DELETE' THEN
-      RAISE EXCEPTION '!!!Cannot delete issued bill!!!No se puede borrar una factura emitida!!!';
-    END IF;
 
     -- Rectificativa?
     IF NEW."Bill_type" = 'factura' AND OLD."Rectified" = FALSE AND NEW."Rectified" = TRUE THEN
@@ -110,13 +110,19 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Sin lineas de factura
+  -- Validate amount
   SELECT SUM("Amount")
   INTO total
   FROM "Billing"."Invoice_line"
   WHERE "Invoice_id" = NEW.id;
-  IF total IS NULL OR total <= 0 THEN
-    RAISE EXCEPTION '!!!Invoice with amount less or equal to 0!!!Factura con importe menor o igual a 0!!!';
+  IF NEW."Bill_type" <> 'rectificativa' THEN
+    IF total IS NULL OR total <= 0 THEN
+      RAISE EXCEPTION '!!!Invoice with amount less or equal to 0!!!Factura con importe menor o igual a 0!!!';
+    END IF;
+  ELSE
+    IF total IS NULL OR total >= 0 THEN
+      RAISE EXCEPTION '!!!Invoice with amount greater or equal to 0!!!Factura rectificativa con importe mayor o igual a 0!!!';
+    END IF;
   END IF;
 
   -- Lee la info del recurso
