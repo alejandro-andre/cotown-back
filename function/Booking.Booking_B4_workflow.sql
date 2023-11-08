@@ -6,6 +6,7 @@ DECLARE
   payment_method_id INTEGER = 1;
   curr_user VARCHAR;
   deposit BOOLEAN = FALSE;
+  num INTEGER;
 
 BEGIN
 
@@ -25,6 +26,62 @@ BEGIN
        (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
       NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativaspagada');
     END IF;
+  END IF;
+
+  -- Update booking fee
+  IF OLD."Booking_fee" <> NEW."Booking_fee" OR (OLD."Booking_fee" IS NULL AND NEW."Booking_fee" > 0) THEN
+
+    -- Already paid?
+    SELECT COUNT(*) INTO num 
+    FROM "Billing"."Payment" 
+    WHERE "Payment_type" = 'booking'
+      AND "Customer_id" = NEW."Payer_id" 
+      AND "Booking_id" = NEW.id
+      AND "Payment_date" IS NOT NULL;
+    IF num > 0 THEN
+      RAISE EXCEPTION '!!!Booking fee already paid!!!El booking fee ya ha sido pagado!!!';
+    END IF;
+
+    -- Update fee (delete + update)
+    curr_user := CURRENT_USER;
+    RESET ROLE;
+    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'booking' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
+    IF NEW."Booking_fee" > 0 THEN
+      SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
+      INSERT
+        INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
+    END IF;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    
+  END IF;
+
+  -- Update deposit
+  IF OLD."Deposit" <> NEW."Deposit"  OR (OLD."Deposit" IS NULL AND NEW."Deposit" > 0) THEN
+
+    -- Already paid?
+    SELECT COUNT(*) INTO num 
+    FROM "Billing"."Payment" 
+    WHERE "Payment_type" = 'deposito'
+      AND "Customer_id" = NEW."Payer_id" 
+      AND "Booking_id" = NEW.id
+      AND "Payment_date" IS NOT NULL;
+    IF num > 0 THEN
+      RAISE EXCEPTION '!!!Deposit already paid!!!La garantía ya ha sido pagada!!!';
+    END IF;
+
+    -- Update deposit (delete + update)
+    curr_user := CURRENT_USER;
+    RESET ROLE;
+    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposito' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
+    IF NEW."Deposit" > 0 THEN
+      SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
+      INSERT
+        INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+        VALUES (COALESCE(payment_method_id, 1), NEW."Payer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
+    END IF;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    
   END IF;
 
   -- SOLICITUD a PENDIENTE DE PAGO
