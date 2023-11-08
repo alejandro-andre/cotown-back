@@ -90,7 +90,10 @@ p{margin:0.3em;}
     {% for line in Lines %}
     <tr class="row">
       <td class="cell"><p>{{Bill_issued_date|ymd}}</p></td>
-      <td class="cell"><p>{{line.Line_concept}}</p><p>{{line.Line_comments}}</p></td>
+      <td class="cell">
+        <p>{{line.Line_concept}}</p>
+        <p style="font-size:11px;">{{line.Line_comments}}</p>
+      </td>
       <td class="cell nowrap"><p>{{line.Line_tax_name}} {{'{0:0,.0f}'.format(line.Line_tax_value)}}%</p></td>
       <td class="cell nowrap right"><p>{{'{0:0,.2f}'.format(line.Line_amount)}} €</p></td>
     </tr>
