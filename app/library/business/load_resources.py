@@ -206,8 +206,8 @@ def load_resources(dbClient, data):
           VALUES (%s, %s)''', (id, aux[0]))
 
       # Unavailability
-      if record['Resource_type'] == 'piso' and unavail != {}:
-        dbClient.execute('DELETE FROM "Resource"."Resource_availability" WHERE "Resource_id" = %s', (id,))
+      dbClient.execute('DELETE FROM "Resource"."Resource_availability" WHERE "Resource_id" = %s', (id,))
+      if unavail != {}:
         dbClient.select('SELECT id FROM "Resource"."Resource_status" WHERE "Name" = %s', (unavail['unavailable'],))
         aux = dbClient.fetch()
         if aux is None:
@@ -237,6 +237,10 @@ def load_resources(dbClient, data):
     else:
       n_ko += 1
 
+  # Update availabilities
+  if n_ko == 0:
+    dbClient.execute('UPDATE "Resource"."Resource_availability" SET id=id')
+
   # Rollback?
   if n_ko > 0:
     dbClient.rollback()
@@ -244,8 +248,8 @@ def load_resources(dbClient, data):
     log += 'Analizados ' + str(n_ko) + ' registro(s) con errores\n'
     log += 'No se han cargado datos\n'
   else:
+    dbClient.commit()
     log += 'Cargados ' + str(n_ok) + ' registro(s) correctamente\n'
-
    
   # Return
   return (n_ko == 0), log  
