@@ -31,16 +31,73 @@ logger = logging.getLogger('COTOWN')
 # Clients - Get recent clients
 # ---------------------------------------------------
 
-def req_int_clients():
+def req_pub_int_clients():
+  '''
+    Retrieve newly created or updated customers
+    ---
+    parameters:
+      - name: date
+        in: query
+        type: string
+        required: false
+        default: '2023-01-01'
+      - name: Api-Key
+        in: header
+        type: string
+        required: true
+    definitions:
+      Customer:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64        
+          Third_party:
+            type: boolean
+          Type:
+            type: string
+          Document:
+            type: string
+          Email:
+            type: string
+            format: email
+          Name:
+            type: string
+          Address:
+            type: string
+          City:
+            type: string
+          Province:
+            type: string
+          Zip:
+            type: string
+          Country:
+            type: string
+    responses:
+      200:
+        description: List of created or updated customers since the given date
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Customer'
+      400:
+        description: Invalid date or date format
+      403:
+        description: Invalid API_KEY
+  '''
 
   # Debug
   logger.debug('Integration - Clients')
 
   # Get API key
-  #key = request.headers.get('API_KEY', None)
-  #if key != settings.SAP_API_KEY:
-  #  logger.info('Invalid API KEY: ' + str(key))
-  #  abort(403, 'Invalid API KEY')
+  print(request.headers)
+  key = request.headers.get('Api-Key', None)
+  print(key)
+  if key != settings.SAP_API_KEY:
+    logger.info('Invalid Api-Key: ' + str(key))
+    abort(403, 'Invalid Api-Key')
 
   # Validate date
   date = '2023-01-01'

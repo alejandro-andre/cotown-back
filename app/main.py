@@ -10,6 +10,7 @@
 
 # System includes
 from flask import Flask, request, g, abort
+from flasgger import Swagger, swag_from
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 # Cotown includes - services
@@ -19,12 +20,12 @@ from library.services.config import settings
 
 # Cotown includes - api functions
 from library.api.token import validate_token
-from library.api.misc import req_hello
-from library.api.booking import req_form, req_register, req_asset, req_typologies, req_booking
+from library.api.misc import req_pub_hello
+from library.api.booking import req_form, req_register, req_pub_asset, req_typologies, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
-from library.api.payment import req_pay, req_notification
-from library.api.integration import req_int_clients
+from library.api.payment import req_pay, req_pub_notification
+from library.api.integration import req_pub_int_clients
 
 # Logging
 import logging
@@ -89,6 +90,48 @@ def runapp():
   app.secret_key = settings.COOKIE_KEY
 
   # -------------------------------------------------
+  # Swagger config
+  # -------------------------------------------------
+
+  swagger_config = {
+      "headers": [],
+      "specs": [
+          {
+              "endpoint": 'cotown_api_spec',
+              "route": '/cotown_api_spec.json',
+              "rule_filter": lambda rule: True,
+              "model_filter": lambda tag: True,
+          }
+      ],
+      "static_url_path": "/flasgger_static",
+      "swagger_ui": True,
+      "specs_route": "/apidocs/"
+  }
+
+  swagger_template = {
+      "swagger": "2.0",
+      "info": {
+          "title": "COTOWN Core 2.0 API",
+          "description": "API para acceder a los servicios de Core 2.0 de COTOWN",
+          "contact": {
+              "responsibleOrganization": "COTOWN SHARING LIFE, S.L.",
+              "responsibleDeveloper": "Experis - Manpower Group",
+              "email": "hola@cotown.com",
+              "url": "https://cotown.com",
+          },
+          "version": "0.0.1"
+      },
+      "basePath": "/api/v1",
+      "schemes": [
+          "http",
+          "https"
+      ],
+      "operationId": "getmyData"
+  }
+  
+  Swagger(app, config=swagger_config, template=swagger_template)
+
+  # -------------------------------------------------
   # Error handler
   # -------------------------------------------------
 
@@ -104,15 +147,15 @@ def runapp():
   def before_request():
 
     # Debug
-    logger.info('Recibido ' + request.path)
+    logger.info(f'Recibido {request.path} ({request.endpoint})')
 
     # Global variables
     g.dbClient = dbClient
     g.apiClient = apiClient
     g.env = env
-   
+
     # Skip token validaton on public endpoints
-    if request.endpoint in ('get_hello', 'post_notification', 'get_asset', 'get_booking'):
+    if 'flasgger.' in request.endpoint or 'pub_' in request.endpoint:
       return
 
     # Token invalid?
@@ -126,7 +169,7 @@ def runapp():
   # -------------------------------------------------
 
   # Misc functions
-  app.add_url_rule(settings.API_PREFIX + '/hi', view_func=req_hello, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/hi', view_func=req_pub_hello, methods=['GET'])
 
   # Airflows plugins - Contracts, get signature image
   app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=req_signature, methods=['GET'])
@@ -156,14 +199,14 @@ def runapp():
 
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_notification, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_pub_notification, methods=['POST'])
 
   # SAP integration
-  app.add_url_rule(settings.API_PREFIX + '/integration/clients', view_func=req_int_clients, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/integration/clients', view_func=req_pub_int_clients, methods=['GET'])
 
   # Dynamic web - Booking process - Pages
-  app.add_url_rule('/assets/<path:filename>', view_func=req_asset, methods=['GET'])
-  app.add_url_rule('/booking/<int:step>', view_func=req_booking, methods=['GET', 'POST'])
+  app.add_url_rule('/assets/<path:filename>', view_func=req_pub_asset, methods=['GET'])
+  app.add_url_rule('/booking/<int:step>', view_func=req_pub_booking, methods=['GET', 'POST'])
 
   # Return app
   return app

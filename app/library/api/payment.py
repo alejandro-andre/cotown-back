@@ -50,7 +50,7 @@ def req_pay(id):
     return payment | params
  
 # Notification
-def req_notification():
+def req_pub_notification():
 
     # Validate response
     response = validate(request.values)

@@ -207,7 +207,7 @@ def req_typologies(segment):
 # Retrieve assets (CSS, JS) for testing purposes only
 # ---------------------------------------------------
 
-def req_asset(filename):
+def req_pub_asset(filename):
 
     # Debug
     logger.info('ASSET ' + filename)
@@ -219,7 +219,7 @@ def req_asset(filename):
 # Booking process
 # ---------------------------------------------------
 
-def req_booking(step):
+def req_pub_booking(step):
 
     # Debug
     logger.info('BOOKING STEP-' + str(step) + ':' + request.path)

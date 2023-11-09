@@ -18,7 +18,7 @@ logger = logging.getLogger('COTOWN')
 # ###################################################
 
 # Hi - I'm live endpoint
-def req_hello():
+def req_pub_hello():
 
   logger.debug('Hi')
   return 'Hi!'
