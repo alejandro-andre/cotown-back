@@ -1,6 +1,10 @@
-0 * * * * cd /home/cotown/app; sh ./dobatch.sh sendemail
-0 * * * * cd /home/cotown/app; sh ./dobatch.sh processload
-0 * * * * cd /home/cotown/app; sh ./dobatch.sh printbill
-0 * * * * cd /home/cotown/app; sh ./dobatch.sh printcontract
-0 * * * * cd /home/cotown/app; sh ./dobatch.sh billing
-0 8-18/2 * * * sh /home/cotown/www/webs/gen.sh publish vanguard
+# Procesos Core
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh processload
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh printcontract
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh billing
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh printbill
+*/15 * * * * cd /home/cotown/app; sh ./dobatch.sh sendemail
+
+# Procesos Web
+0 10-20/2 * * * sh /home/cotown/www/webs/gen.sh publish vanguard
+*/15 10-20 * * * sh /home/cotown/www/webs/gen.sh draft vanguard hotfix

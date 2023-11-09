@@ -98,14 +98,14 @@ def runapp():
       "specs": [
           {
               "endpoint": 'cotown_api_spec',
-              "route": '/cotown_api_spec.json',
+              "route": '/api/cotown_api_spec.json',
               "rule_filter": lambda rule: True,
               "model_filter": lambda tag: True,
           }
       ],
-      "static_url_path": "/flasgger_static",
+      "static_url_path": "/api/flasgger_static",
       "swagger_ui": True,
-      "specs_route": "/apidocs/"
+      "specs_route": "/api/apidocs/"
   }
 
   swagger_template = {
@@ -125,8 +125,7 @@ def runapp():
       "schemes": [
           "http",
           "https"
-      ],
-      "operationId": "getmyData"
+      ]
   }
   
   Swagger(app, config=swagger_config, template=swagger_template)
@@ -148,6 +147,8 @@ def runapp():
 
     # Debug
     logger.info(f'Recibido {request.path} ({request.endpoint})')
+    if not request.endpoint:
+      return
 
     # Global variables
     g.dbClient = dbClient
