@@ -41,6 +41,9 @@ DECLARE
   m_deposit NUMERIC;
   m_final_cleaning NUMERIC;
 
+  p_rent NUMERIC;
+  p_services NUMERIC;
+
   num INTEGER;
 
 BEGIN
@@ -213,33 +216,37 @@ BEGIN
       m_services := ROUND(ny_services, 0);
     END IF; 
  
+    -- Prices
+    p_rent := m_rent;
+    p_services := m_services;
+
     -- Incomplete months
     IF dt_intr < INTERVAL '1 month' THEN
      
       IF billing_type = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
-          m_rent := ROUND(m_rent / 2, 1);
-          m_services := ROUND(m_services / 2, 1);
+          p_rent := ROUND(m_rent / 2, 1);
+          p_services := ROUND(m_services / 2, 1);
         END IF;
       END IF;
    
       IF billing_type = 'proporcional' THEN
         days := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
-        m_rent := ROUND(m_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
-        m_services := ROUND(m_services * EXTRACT(DAY FROM dt_intr) / days, 1);
+        p_rent := ROUND(m_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
+        p_services := ROUND(m_services * EXTRACT(DAY FROM dt_intr) / days, 1);
       END IF;
    
     END IF;
    
     -- Final cleaning
     IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to AND place_type IS NULL THEN
-      m_services := ROUND(m_services + coalesce(m_final_cleaning, 0), 0);
+      p_services := ROUND(p_services + coalesce(m_final_cleaning, 0), 0);
     END IF;
  
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
     ("Booking_id", "Rent_date", "Rent", "Services")
-    VALUES (NEW.id, dt_curr, m_rent, m_services);
+    VALUES (NEW.id, dt_curr, p_rent, p_services);
  
     -- Next month
     dt_curr := date_trunc('month', dt_curr) + interval '1 month';
