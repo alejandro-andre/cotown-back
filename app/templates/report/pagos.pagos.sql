@@ -15,7 +15,7 @@ FROM "Booking"."Booking_price" bp
   LEFT JOIN "Billing"."Invoice" i on i.id = bp."Invoice_rent_id"
   LEFT JOIN "Billing"."Payment" p on p.id = i."Payment_id"
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE bp."Rent_date" BETWEEN %(fdesde)s AND %(fhasta)s
+WHERE bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s
   AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
 )
 UNION 
