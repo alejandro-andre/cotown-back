@@ -4,8 +4,13 @@ DECLARE
 
   reg RECORD;
   code VARCHAR;
-
+  curr_user VARCHAR;
+  
 BEGIN
+
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;
 
   -- Piso?
   IF NEW."Resource_type" = 'piso' THEN
@@ -13,6 +18,7 @@ BEGIN
       RAISE EXCEPTION '!!!Wrong flat code %, must have XXXnnn.nn.nn format!!!Código de piso % incorrecto, debe formato XXXnnn.nn.nn!!!', NEW."Code", NEW."Code";
     END IF;
     UPDATE "Resource"."Resource" SET id=id WHERE "Flat_id" = NEW.id;
+    EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
 
@@ -22,6 +28,7 @@ BEGIN
   -- Habitacion
   IF NEW."Resource_type" = 'habitacion' THEN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}\.H\d{2}$' THEN
+      EXECUTE 'SET ROLE "' || curr_user || '"';
       RAISE EXCEPTION '!!!Wrong room code %, must have XXXnnn.nn.nn.Hnn format!!!Código de habitacion %, incorrecto, debe formato XXXnnn.nn.nn.Hnn!!!', NEW."Code", NEW."Code";
     END IF;
   END IF;
@@ -29,6 +36,7 @@ BEGIN
 -- Plaza
   IF NEW."Resource_type" = 'plaza' THEN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}\.H\d{2}\.P\d$' THEN
+      EXECUTE 'SET ROLE "' || curr_user || '"';
       RAISE EXCEPTION '!!!Wrong place code %, must have XXXnnn.nn.nn.Hnn.Pn format!!!Código de plaza % incorrecto, debe formato XXXnnn.nn.nn.Hnn.Pn!!!', NEW."Code", NEW."Code";
     END IF;
   	SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Room_id";
@@ -36,6 +44,7 @@ BEGIN
 
   -- Valida el codigo del recurso
   IF code <> SUBSTRING(NEW."Code", 1, LENGTH(code)) THEN
+    EXECUTE 'SET ROLE "' || curr_user || '"';
     RAISE EXCEPTION '%', CONCAT('!!!Wrong resource code, must start with ', code, '!!!Código de recurso incorrecto, debe comenzar por ', code, '!!!');
   END IF;
 
@@ -47,6 +56,7 @@ BEGIN
   NEW."Sale_type" := reg."Sale_type";
 
   -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

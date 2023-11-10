@@ -27,7 +27,7 @@ BEGIN
   INSERT INTO "Booking"."Booking_log"("Booking_id", "Log") VALUES (NEW.id, 'Solicitud de recurso');
 
   -- Create user if not existing yet (WARNING!)
-  --UPDATE "Customer"."Customer" SET "User_name" := NULL WHERE id = NEW."Customer_id" AND "User_name" LIKE 'N%';
+  UPDATE "Customer"."Customer" SET "User_name" = NULL WHERE id = NEW."Customer_id" AND "User_name" LIKE 'N%';
 
   -- Email
   INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
