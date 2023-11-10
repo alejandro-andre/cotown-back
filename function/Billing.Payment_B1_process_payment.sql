@@ -79,7 +79,7 @@ BEGIN
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
 
     -- CONFIRMADA a FIRMA CONTRATO
-    IF (status_record = 'confirmada') OR (NEW."Booking_fee_actual" <> NULL) THEN
+    IF (status_record = 'confirmada') OR (NEW."Booking_fee_actual" IS NOT NULL) THEN
       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
     ELSE
       UPDATE "Booking"."Booking" SET "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
