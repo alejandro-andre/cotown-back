@@ -5,6 +5,7 @@ DECLARE
   customer_id INTEGER;
   status_record VARCHAR;
   deposit NUMERIC;
+  booking_fee_actual NUMERIC;
   y VARCHAR;
   curr_user VARCHAR;
 
@@ -32,7 +33,7 @@ BEGIN
   NEW."Pay" := NULL;
 
   -- Seleccionamos el estado actual de la reserva
-  SELECT "Status", "Deposit" INTO status_record, deposit FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+  SELECT "Status", "Deposit", "Booking_fee_actual" INTO status_record, deposit, booking_fee_actual FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
  
   -- Superuser ROLE
   curr_user := CURRENT_USER;
@@ -73,13 +74,13 @@ BEGIN
   END IF;
 
   -- Comprobamos si el tipo de pago es 'deposito'
-  IF (NEW."Payment_type" = 'deposito') THEN
+  IF NEW."Payment_type" = 'deposito' THEN
 
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
 
     -- CONFIRMADA a FIRMA CONTRATO
-    IF (status_record = 'confirmada') OR (NEW."Booking_fee_actual" IS NOT NULL) THEN
+    IF status_record = 'confirmada' OR booking_fee_actual <> NULL THEN
       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
     ELSE
       UPDATE "Booking"."Booking" SET "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";

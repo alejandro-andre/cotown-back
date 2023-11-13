@@ -18,13 +18,13 @@ BEGIN
   IF NEW."Status" = 'solicitud' THEN
     IF (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = TRUE) = 0 AND
        (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
-      NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativas');
+      NEW."Button_options" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/alternativas');
     END IF;
   END IF;
   IF NEW."Status" = 'solicitudpagada' THEN
     IF (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = TRUE) = 0 AND
        (SELECT COUNT(*) FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW.id AND "Accepted" = FALSE) > 0 THEN
-      NEW."Button_options" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/alternativaspagada');
+      NEW."Button_options" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/alternativaspagada');
     END IF;
   END IF;
 
@@ -114,9 +114,6 @@ BEGIN
     ELSE
       NEW."Status" := 'firmacontrato';
     END IF;
-    -- Confirmada
-    NEW."Confirmation_date" := CURRENT_DATE;
-    NEW."Expiry_date" := NULL;
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
@@ -247,6 +244,11 @@ BEGIN
 
   -- A CONFIRMADA
   IF (NEW."Status" = 'confirmada') THEN
+    -- Confirmada
+    IF NEW."Confirmation_date" IS NULL THEN
+      NEW."Confirmation_date" := CURRENT_DATE;
+    END IF;
+    NEW."Expiry_date" := NULL;
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- EMail
@@ -288,6 +290,11 @@ BEGIN
 
   -- A FIRMA CONTRATO
   IF (NEW."Status" = 'firmacontrato') THEN
+    -- Confirmada
+    IF NEW."Confirmation_date" IS NULL THEN
+      NEW."Confirmation_date" := CURRENT_DATE;
+    END IF;
+    NEW."Expiry_date" := NULL;
     -- Log
     change := 'Pendiente de firmar el contrato de la reserva';
   END IF;
