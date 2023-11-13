@@ -324,6 +324,7 @@ def q_get_payment(dbClient, id, generate_order=False):
     return aux
 
   except Exception as error:
+    dbClient.rollback()
     logger.error(error)
     return None
 
@@ -342,6 +343,7 @@ def q_put_payment(dbClient, id, auth, date):
     return True
 
   except Exception as error:
+    dbClient.rollback()
     logger.error(error)
     return False
 
@@ -361,6 +363,7 @@ def get_provider(dbClient, id):
     return aux
 
   except Exception as error:
+    dbClient.rollback()
     logger.error(error)
     return None
 
@@ -379,6 +382,7 @@ def get_customer(dbClient, id):
     return aux
 
   except Exception as error:
+    dbClient.rollback()
     logger.error(error)
     return None
 
@@ -506,6 +510,6 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
     return list
 
   except Exception as error:
-    logger.error(error)
     dbClient.rollback()
+    logger.error(error)
     return None
