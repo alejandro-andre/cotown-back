@@ -25,7 +25,7 @@ from library.api.booking import req_form, req_register, req_pub_asset, req_typol
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
 from library.api.payment import req_pay, req_pub_notification
-from library.api.integration import req_pub_int_clients
+from library.api.integration import req_pub_int_customers
 
 # Logging
 import logging
@@ -122,10 +122,7 @@ def runapp():
           "version": "0.0.1"
       },
       "basePath": "/api/v1",
-      "schemes": [
-          "http",
-          "https"
-      ]
+      "schemes": [ "https" ]
   }
   
   Swagger(app, config=swagger_config, template=swagger_template)
@@ -203,7 +200,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_pub_notification, methods=['POST'])
 
   # SAP integration
-  app.add_url_rule(settings.API_PREFIX + '/integration/clients', view_func=req_pub_int_clients, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/integration/customers', view_func=req_pub_int_customers, methods=['GET'])
 
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=req_pub_asset, methods=['GET'])
