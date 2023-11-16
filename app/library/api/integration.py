@@ -76,8 +76,8 @@ def req_pub_int_customers():
             - DNI/NIF
             - NIE
             - CIF
-            - National ID
-            - Passport
+            - Id Nacional
+            - Pasaporte
           description: "Type of tax identification document"
         name:
           type: string
