@@ -1,0 +1,16 @@
+[
+"Owner",
+"Month",
+"Year",
+"Booking_id",
+"Code",
+"Name",
+"Date_from",
+"Date_to",
+"Rent",
+"Rent_due",
+"Deposit",
+"Rent_status",
+"Payment_method", 
+"Payment_date" 
+]
