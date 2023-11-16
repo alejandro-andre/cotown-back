@@ -473,8 +473,8 @@ def bill_group_rent(dbClient):
               servid,
               services,
               PR_SERVICES,
-              VAT_0 if item['Tax'] else VAT_21,
-              'Servicios mensuales (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7], comments
+              PRODUCTS[PR_SERVICES]['tax'] if item['Tax_id'] is None else item['Tax_id'],
+              PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7], comments
             )
           )
 
