@@ -118,7 +118,12 @@ def download_contracts(apiClient, variables=None):
       ResourceViaResource_id {
         ProviderViaOwner_id (
           joinType: INNER
-          where: { id: { GE: $pdesde } id: { LE: $phasta } }
+          where: { 
+            AND: [
+              { id: { GE: $pdesde } }
+              { id: { LE: $phasta } }
+            ]
+          }
         ) {
           id
         }
