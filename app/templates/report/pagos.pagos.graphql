@@ -31,9 +31,9 @@ query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
             Payment_date
             Payment_auth
             Payment_order
-        }
-        Payment_method: Payment_methodViaPayment_method_id {
-            Name
+            Payment_method: Payment_methodViaPayment_method_id {
+                Name
+            }
         }
 
         #INFORMACIÓN DEL RECURSO
