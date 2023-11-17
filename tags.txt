@@ -1,0 +1,93 @@
+Booking_building_address    Dirección del edificio solicitado
+Booking_building_city       Ciudad del edificio solicitado
+Booking_building_code       Código del edificio solicitado
+Booking_building_name       Nombre del edificio solicitado
+Booking_building_type       Tipo del edificio solicitado
+Booking_confirmation_date   Fecha de confirmación de la reserva
+Booking_date_from           Fecha de inicio de contrato
+Booking_date_from_day       Fecha de inicio de contrato, nº de día
+Booking_date_from_month     Fecha de inicio de contrato, nº de mes
+Booking_date_from_year      Fecha de inicio de contrato, nº de año
+Booking_date_to             Fecha de fin de contrato
+Booking_date_to_day         Fecha de fin de contrato, nº de día
+Booking_date_to_month       Fecha de fin de contrato, nº de mes
+Booking_date_to_year        Fecha de fin de contrato, nº de año
+Booking_deposit             Deposito teórico
+Booking_final_cleaning      Limpieza final
+Booking_flat_type_code      Código del tipo de piso solicitado
+Booking_flat_type_name      Nombre del tipo de piso solicitado (español)
+Booking_id                  Id de la reserva
+Booking_limit               Límite de consumo
+Booking_place_type_code     Código del tipo de plaza solicitada
+Booking_place_type_name     Nombre del tipo de plaza solicitada (español)
+Booking_reason              Motivo
+Booking_rent                Renta
+Booking_school              Nombre de la escuela/empresa
+Booking_second_resident     Marcador de 2º residente en el piso
+Booking_services            Servicios
+Booking_status              Estado de la reserva (código interno)
+Cancel_date                 Fecha de cancelación
+Cancelation_fee             Fee de cancelacion
+Customer_address            Dirección del cliente
+Customer_birth_date         Fecha de nacimiento del cliente
+Customer_city               Ciudad de la dirección postal del cliente
+Customer_country            País de la dirección postal del cliente
+Customer_email              Email del cliente
+Customer_gender             Género (español)
+Customer_id                 Documento de identidad del cliente
+Customer_id_type            Tipo de documento de indentitad
+Customer_name               Nombre y apellidos, o razón social
+Customer_province           Provincia de la dirección postal
+Customer_signer_id          Documento de indentidad del firmante
+Customer_signer_id_type     Tipo de documento de identidad del cliente
+Customer_signer_name        Nombre del firmante
+Customer_type               Tipo de cliente (persona/empresa)
+Customer_zip                Código postal de la dirección postal
+Owner_address               Dirección postal del propietario
+Owner_city                  Ciudad de la dirección postal del propietaro
+Owner_country               País de la dirección postal del propietario
+Owner_email                 Email del propietario
+Owner_id                    Documento de identidad del propietario
+Owner_id_type               Tipo de documento de identidad del propietario
+Owner_name                  Nombre o razón social del propietario
+Owner_province              Provincia de la dirección postal del propietario
+Owner_signers[]             Lista de firmantes
+    Owner_signer_id         Documento de identidad del firmante del propietario
+    Owner_signer_id_type    Tipo de documento de identidad del propietario
+    Owner_signer_name       Nombre del propietario
+Owner_zip                   Código postal de la dirección del propietario
+Prices[]
+    Rent_date_day           Día de la mensualidad
+    Rent_date_month         Mes de la mensualidad
+    Rent_date_year          Año de la mensualidad
+    Rent                    Renta
+    Rent_discount           Descuento de la renta
+    Services                Servicios
+    Services_discount       Descuento de los servicios
+Resource_address            Dirección postal del recurso (habitacion, plaza)
+Resource_building_address   Dirección postal del edificio del recurso
+Resource_building_city      Ciudad del edificio del recurso
+Resource_building_code      Código del edificio del recurso
+Resource_code               Código del recurso
+Resource_flat_address       Dirección del piso (piso, puerta)
+Resource_flat_code          Código del piso
+Resource_flat_street        Dirección postal del piso
+Resource_part               Parte del recurso 1/n
+Resource_street             Dirección del recurso
+Resource_type               Tipo de recurso (piso, habitacion, plaza)
+Segment_name                Nombre de la marca (Cotown, Vanguard)
+Segment_url                 Web de la marca
+Services[]                  Servicios del edificio solicitado
+Services_address            Dirección postal del propietario
+Services_city               Ciudad de la dirección postal del propietaro
+Services_country            País de la dirección postal del propietario
+Services_email              Email del propietario
+Services_id                 Documento de identidad del propietario
+Services_id_type            Tipo de documento de identidad del propietario
+Services_name               Nombre o razón social del propietario
+Services_province           Provincia de la dirección postal del propietario
+Services_signers[]          Lista de firmantes
+    Services_signer_id      Documento de identidad del firmante del propietario
+    Services_signer_id_type Tipo de documento de identidad del propietario
+    Services_signer_name    Nombre del propietario
+Services_zip                Código postal de la dirección del propietario

@@ -126,7 +126,7 @@ def req_form():
     smtp_mail(settings.EMAIL_TO, 'Formulario ' + forms[str(listid)], message, file=file)
 
     # Return contact ID
-    return
+    return id
 
 
 # ###################################################
