@@ -58,12 +58,12 @@ def q_dashboard(dbClient, status = None):
     result['ok'] = row[0]
 
     # Count nearest checkins
-    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
+    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') AND GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
     row = dbClient.fetch()
     result['next'] = row[0]
 
     # Count nearest checkouts
-    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKOUTDAYS) + ' days\'')
+    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'inhouse\') AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKOUTDAYS) + ' days\'')
     row = dbClient.fetch()
     result['nextout'] = row[0]
 
