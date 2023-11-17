@@ -39,7 +39,7 @@ BEGIN
   -- Actualiza el estado a 'check_out' de todas las reservas que tienen que salir en el dia en curso
   UPDATE "Booking"."Booking"
   SET "Status"='checkout'
-  WHERE CURRENT_DATE >= GREATEST("Booking"."Check_out", "Booking"."Date_to")
+  WHERE CURRENT_DATE >= LEAST("Booking"."Check_out", "Booking"."Date_to")
   AND "Booking"."Status"='inhouse';
 
 END;
