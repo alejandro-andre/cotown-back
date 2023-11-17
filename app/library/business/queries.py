@@ -87,7 +87,8 @@ def q_dashboard(dbClient, status = None):
         INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-        WHERE GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKINDAYS) + ' days\''
+        WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
+        AND GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKINDAYS) + ' days\''
       dbClient.select(sql)
     elif status == 'nextout':
       sql = '''
@@ -97,7 +98,8 @@ def q_dashboard(dbClient, status = None):
         INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-        WHERE LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKOUTDAYS) + ' days\''
+        WHERE "Status" IN (\'inhouse\')
+        AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKOUTDAYS) + ' days\''
       dbClient.select(sql)
     else:
       sql = '''

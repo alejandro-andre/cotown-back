@@ -4,4 +4,5 @@ INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
 INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
 LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
 LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-WHERE LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL '1 days' AND CURRENT_DATE + INTERVAL '14 days'
+WHERE LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL '1 days' AND CURRENT_DATE + INTERVAL '30 days'
+AND b."Status" IN ('inhouse')
