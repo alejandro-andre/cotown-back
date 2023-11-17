@@ -2,6 +2,8 @@ query Bookings {
     data: Booking_BookingList (
         orderBy: [{attribute: id}]
     ) {
+        Booking_id: id
+        Booking_status: Status
         Request_date
         Confirmation_date
         Date_from

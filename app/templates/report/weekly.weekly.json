@@ -1,4 +1,6 @@
 [
+"Booking_id",
+"Booking_status",
 "Customer.Name",
 "Booking_who.Name",
 "Booking_referral.Name",
