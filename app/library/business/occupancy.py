@@ -83,7 +83,7 @@ def do_occupancy(dbClient, vars):
 
   # 0.1 Get all months from the selected range
   # http://localhost:5000/api/v1/occupancy?fdesde=2023-01-01&fhasta=2024-12-31
-  start_date = '2023-01-01'
+  start_date = '2023-07-01'
   if vars.get('fdesde'):
     start_date = vars.get('fdesde')
   end_date = (datetime.now() + timedelta(days=366)).strftime('%Y-%m-%d')
@@ -93,15 +93,12 @@ def do_occupancy(dbClient, vars):
 
   # 0.2 Get all resources: individual rooms and places
   dbClient.select('''
-    SELECT b."Name" as "Building", p."Name" as "Owner", l."Name" as "Location", r."Code" as "Resource", r."Flat_id"
+    SELECT b."Name" as "Building", r."Code" as "Resource", r."Flat_id"
     FROM "Resource"."Resource" r
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-    INNER JOIN "Geo"."District" d ON d.id = b."District_id"
-    INNER JOIN "Geo"."Location" l on l.id = d."Location_id"
-    INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
     WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
-    ORDER BY r."Code" ASC;
-  ''')
+    ORDER BY r."Code" ASC
+    ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_res = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
   logger.info('Resources retrieved')
@@ -113,11 +110,12 @@ def do_occupancy(dbClient, vars):
 
   # 1.1 Get all unavailabilities that affect stock
   dbClient.select('''
-  SELECT "Resource_id", "Date_from", "Date_to"
-  FROM "Resource"."Resource_availability" ra
-  INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
-  WHERE NOT rs."Available"
-  ''')
+    SELECT "Resource_id", "Date_from", "Date_to"
+    FROM "Resource"."Resource_availability" ra
+    INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
+    WHERE NOT rs."Available"
+    ORDER BY "Resource_id"
+    ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_avail = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
   logger.info('Unavailabilities retrieved')
@@ -138,22 +136,29 @@ def do_occupancy(dbClient, vars):
 
   # 2.1. Get all rents
   dbClient.select('''
-    SELECT x."Code" AS "Resource", DATE_TRUNC('month', x."Rent_date") as "Date",
-	         SUM(x."Rent") AS "Rent", SUM(x."Rent_discount") AS "Rent_discount",
-           SUM(x."Services") AS "Services", SUM(x."Services_discount") AS "Services_discount"
+    SELECT 
+      r."Code" AS "Resource", DATE_TRUNC('month', r."Rent_date") AS "Date", 
+      SUM(r."Rent") AS "Rent", SUM(r."Rent_discount") AS "Rent_discount", 
+      SUM(r."Services") AS "Services", SUM(r."Services_discount") AS "Services_discount"
     FROM (
-      SELECT r."Code", bp."Rent_date", bg."Rent", 0 AS "Rent_discount", bg."Services", 0 AS "Services_discount"
+      SELECT 
+        r."Code", bp."Rent_date", 
+        bg."Rooms" * bg."Rent" AS "Rent", 0 AS "Rent_discount",
+        bg."Rooms" * bg."Services" as "Services", 0 AS "Services_discount"
       FROM "Booking"."Booking_group" bg
       INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = bg.id
       INNER JOIN "Booking"."Booking_rooming" br ON br."Booking_id" = bg.id
       INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
       UNION
-      SELECT r."Code", bp."Rent_date", bp."Rent", bp."Rent_discount", bp."Services", bp."Services_discount"
+      SELECT 
+        r."Code", bp."Rent_date", 
+        bp."Rent", bp."Rent_discount",
+        bp."Services", bp."Services_discount"
       FROM "Booking"."Booking_price" bp
       INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-    ) AS x
-    GROUP BY 1, 2;
+    ) AS r
+    GROUP BY 1, 2
   ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_bills = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
@@ -161,14 +166,14 @@ def do_occupancy(dbClient, vars):
     df_bills['Date'] = df_bills['Date'].dt.date
   logger.info('Prices retrieved')
 
-  # # 2.2. Pivot rent income by month
+  # # 2.2. Pivot rent income by month (SLOW)
   df_rent = df_res.copy()
   for date in df_dates:
     dt = date.date()
     df_rent[dt] = df_rent.apply(lambda row: rent(row['Resource'], dt, "Rent"), axis=1)
   logger.info('Rent calculated')
 
-  # # 2.3. Pivot services income by month
+  # # 2.3. Pivot services income by month (SLOW)
   df_service = df_res.copy()
   for date in df_dates:
     dt = date.date()
@@ -183,14 +188,16 @@ def do_occupancy(dbClient, vars):
   # 3.1. Get all bookings
   dbClient.select('''
     SELECT r."Code" AS "Resource", b."Date_from", b."Date_to"
-    FROM "Booking"."Booking" b
-    INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-    UNION
-    SELECT "Code" AS "Resource", "Date_from", "Date_to"
-    FROM "Booking"."Booking_group" bg
-    INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
-    INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id";
-  ''')
+    FROM "Booking"."Booking_detail" b
+    INNER JOIN (
+      SELECT r."Code", r.id
+      FROM "Resource"."Resource" r
+      INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+      WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
+      ) AS r ON r.id = b."Resource_id"
+    WHERE b."Availability_id" IS NULL
+    ORDER BY 1, 2, 3
+    ''')
   columns = [desc[0] for desc in dbClient.sel.description]
   df_books = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
   logger.info('Bookings retrieved')
