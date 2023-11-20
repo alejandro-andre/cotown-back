@@ -105,13 +105,13 @@ def fill_sheet(df, columns, sheet):
         # Format
         if format[c] == 'date':
           try:
-            cell.value = datetime.strptime(row[c][:10], '%Y-%m-%d').strftime('%d/%m/%Y')
-          except:
+            cell.value = datetime.strptime(row[c][:10], '%Y-%m-%d')
+          except Exception as e:
             cell.value = row[c]
         elif format[c] == 'datetime':
           try:
-            cell.value = datetime.strptime(row[c], '%Y-%m-%dT%H:%M:%S').strftime('%d/%m/%Y %H:%M:%S')
-          except:
+            cell.value = datetime.strptime(row[c], '%Y-%m-%dT%H:%M:%S')
+          except Exception as e:
             cell.value = row[c]
         elif format[c] is not None:
           t = Translator(format[c], 'A1')
