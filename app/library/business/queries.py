@@ -101,6 +101,15 @@ def q_dashboard(dbClient, status = None):
         WHERE "Status" IN (\'inhouse\')
         AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKOUTDAYS) + ' days\''
       dbClient.select(sql)
+    elif status == 'checkout':
+      sql = '''
+        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_out", bu."Name" as "Building", r."Code" as "Resource"
+        FROM "Booking"."Booking" b
+        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
+        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+        WHERE "Status" = 'checkout' '''
+      dbClient.select(sql)
     else:
       sql = '''
         SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"

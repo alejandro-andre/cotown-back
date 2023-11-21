@@ -60,19 +60,6 @@ def do_occupancy(dbClient, vars):
     return 1  # Available
  
  
-  def rent(resource, date, tag):
-
-    # All resource bills
-    rows = df_bills[df_bills['Resource'] == resource]
-
-    # Check the month
-    for _, row in rows.iterrows():
-      if row['Date'] == date:
-        total = row[tag] + (row[tag + '_discount'] if row[tag + '_discount'] else 0)
-        return int(round(total,0))
-    return 0
- 
- 
   # ###################################################
   # 0. Preparation
   # ###################################################
@@ -89,11 +76,11 @@ def do_occupancy(dbClient, vars):
   end_date = (datetime.now() + timedelta(days=366)).strftime('%Y-%m-%d')
   if vars.get('fhasta'):
     end_date = vars.get('fhasta')
-  df_dates = pd.date_range(start=start_date, end=end_date, freq='MS')
+  dates = [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')]
 
   # 0.2 Get all resources: individual rooms and places
   dbClient.select('''
-    SELECT b."Name" as "Building", r."Code" as "Resource", r."Flat_id"
+    SELECT b."Name" AS "Building", r."Code" AS "Resource", r."Flat_id"
     FROM "Resource"."Resource" r
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
@@ -122,8 +109,7 @@ def do_occupancy(dbClient, vars):
 
   # 1.2. Check available resources (beds) by month
   df_beds = df_res.copy()
-  for date in df_dates:
-    dt = date.date()
+  for dt in dates:
     df_beds[dt] = df_beds.apply(lambda row: available(row['Flat_id'], dt), axis=1)
   df_beds.drop('Flat_id', axis=1, inplace=True)
   df_res.drop('Flat_id', axis=1, inplace=True)
@@ -137,47 +123,52 @@ def do_occupancy(dbClient, vars):
   # 2.1. Get all rents
   dbClient.select('''
     SELECT 
-      r."Code" AS "Resource", DATE_TRUNC('month', r."Rent_date") AS "Date", 
-      SUM(r."Rent") AS "Rent", SUM(r."Rent_discount") AS "Rent_discount", 
-      SUM(r."Services") AS "Services", SUM(r."Services_discount") AS "Services_discount"
+      r."Name" as "Building", r."Code" AS "Resource", DATE_TRUNC('month', r."Rent_date") AS "Date", 
+      SUM(r."Rent") AS "Rent", SUM(r."Services") AS "Services"
     FROM (
       SELECT 
-        r."Code", bp."Rent_date", 
-        bg."Rooms" * bg."Rent" AS "Rent", 0 AS "Rent_discount",
-        bg."Rooms" * bg."Services" as "Services", 0 AS "Services_discount"
+        bu."Name", bu."Code", bp."Rent_date", 
+        bg."Rooms" * bg."Rent" AS "Rent",
+        bg."Rooms" * bg."Services" AS "Services"
       FROM "Booking"."Booking_group" bg
       INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = bg.id
-      INNER JOIN "Booking"."Booking_rooming" br ON br."Booking_id" = bg.id
-      INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
+      INNER JOIN "Building"."Building" bu on bu.id = bg."Building_id"
+      WHERE "Rent_date" > %s
       UNION
       SELECT 
-        r."Code", bp."Rent_date", 
-        bp."Rent", bp."Rent_discount",
-        bp."Services", bp."Services_discount"
+        bu."Name", r."Code", bp."Rent_date", 
+        bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
+        bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
       FROM "Booking"."Booking_price" bp
       INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
+      WHERE "Rent_date" > %s
     ) AS r
-    GROUP BY 1, 2
-  ''')
+    GROUP BY 1, 2, 3
+  ''', (start_date, start_date))
   columns = [desc[0] for desc in dbClient.sel.description]
   df_bills = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
   if len(df_bills.index) > 0:
     df_bills['Date'] = df_bills['Date'].dt.date
+    df_bills['Rent'] = pd.to_numeric(df_bills['Rent'], errors='coerce')
+    df_bills['Services'] = pd.to_numeric(df_bills['Services'], errors='coerce')
   logger.info('Prices retrieved')
 
-  # # 2.2. Pivot rent income by month (SLOW)
-  df_rent = df_res.copy()
-  for date in df_dates:
-    dt = date.date()
-    df_rent[dt] = df_rent.apply(lambda row: rent(row['Resource'], dt, "Rent"), axis=1)
+  # 2.2. Pivot rent income by month
+  df_rent = df_bills.pivot_table(index=['Building', 'Resource'], columns='Date', values='Rent', aggfunc='sum', fill_value=0.0).reset_index()
+  for date in dates:
+    if date not in df_rent.columns:
+      df_rent[date] = 0.0
+  df_rent = df_rent[['Building', 'Resource'] + dates]
   logger.info('Rent calculated')
 
-  # # 2.3. Pivot services income by month (SLOW)
-  df_service = df_res.copy()
-  for date in df_dates:
-    dt = date.date()
-    df_service[dt] = df_service.apply(lambda row: rent(row['Resource'], dt, "Services"), axis=1)
+  # 2.3. Pivot services income by month
+  df_services = df_bills.pivot_table(index=['Building', 'Resource'], columns='Date', values='Services', aggfunc='sum', fill_value=0.0).reset_index()
+  for date in dates:
+    if date  not in df_services.columns:
+      df_services[date] = 0.0
+  df_services = df_services[['Building', 'Resource'] + dates]
   logger.info('Services calculated')
 
 
@@ -204,8 +195,7 @@ def do_occupancy(dbClient, vars):
 
   # 3.2. Pivot booked room nights by month
   df_night = df_res.copy()
-  for date in df_dates:
-    dt = date.date()
+  for dt in dates:
     df_night[dt] = df_night.apply(lambda row: nights(row['Resource'], dt), axis=1)
   logger.info('Nights calculated')
 
@@ -226,7 +216,7 @@ def do_occupancy(dbClient, vars):
       sheet = book[sheet_name]
 
       # One column per date
-      for i, _ in enumerate(df_dates):
+      for i, _ in enumerate(dates):
         if i > 0:
 
           # Copy column formulas and styles
@@ -252,16 +242,16 @@ def do_occupancy(dbClient, vars):
   with pd.ExcelWriter(temp, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
 
     # Write sheets
-    df_beds.to_excel(writer, sheet_name='data-beds', index=False)
-    df_night.to_excel(writer, sheet_name='data-nights', index=False)
-    df_rent.to_excel(writer, sheet_name='data-rent', index=False)
-    df_service.to_excel(writer, sheet_name='data-services', index=False)
+    df_beds.to_excel(writer, sheet_name='data-beds', float_format = "%0.3f", index=False)
+    df_night.to_excel(writer, sheet_name='data-nights', float_format = "%0.3f", index=False)
+    df_rent.to_excel(writer, sheet_name='data-rent', float_format = "%0.3f", index=False)
+    df_services.to_excel(writer, sheet_name='data-services', float_format = "%0.3f", index=False)
 
     # Hide data sheets
-    writer.sheets['data-beds'].sheet_state = 'hidden'
-    writer.sheets['data-nights'].sheet_state = 'hidden'
-    writer.sheets['data-rent'].sheet_state = 'hidden'
-    writer.sheets['data-services'].sheet_state = 'hidden'
+    #?writer.sheets['data-beds'].sheet_state = 'hidden'
+    #?writer.sheets['data-nights'].sheet_state = 'hidden'
+    #?writer.sheets['data-rent'].sheet_state = 'hidden'
+    #?writer.sheets['data-services'].sheet_state = 'hidden'
 
     # Disconnect
     logger.info('Report finished')
