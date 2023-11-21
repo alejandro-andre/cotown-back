@@ -6,6 +6,11 @@ DECLARE
 
 BEGIN
 
+  -- Update status
+  IF OLD."Status" <> NEW."Status" THEN
+    UPDATE "Booking"."Booking_rooming" SET id = id WHERE "Booking_id" = NEW.id;
+  END IF;
+  
   -- No changes
   IF OLD."Room_ids" = NEW."Room_ids" THEN
     RETURN NEW;
