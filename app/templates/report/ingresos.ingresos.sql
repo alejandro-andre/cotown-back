@@ -20,7 +20,7 @@ WHERE bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s
 )
 UNION 
 (
-SELECT DISTINCT ON (b.id)
+SELECT DISTINCT ON (bp.id)
   pr."Name" as "Owner", bp."Booking_id",
   EXTRACT(MONTH from bp."Rent_date") AS "Month", EXTRACT(YEAR from bp."Rent_date") AS "Year",
   CONCAT(bu."Code", ' (', b."Rooms", ') plazas'), c."Name", b."Date_from", b."Date_to",
