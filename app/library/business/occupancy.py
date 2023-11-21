@@ -123,29 +123,24 @@ def do_occupancy(dbClient, vars):
   # 2.1. Get all rents
   dbClient.select('''
     SELECT 
-      r."Name" as "Building", r."Code" AS "Resource", DATE_TRUNC('month', r."Rent_date") AS "Date", 
-      SUM(r."Rent") AS "Rent", SUM(r."Services") AS "Services"
-    FROM (
-      SELECT 
-        bu."Name", bu."Code", bp."Rent_date", 
-        bg."Rooms" * bg."Rent" AS "Rent",
-        bg."Rooms" * bg."Services" AS "Services"
-      FROM "Booking"."Booking_group" bg
-      INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = bg.id
-      INNER JOIN "Building"."Building" bu on bu.id = bg."Building_id"
-      WHERE "Rent_date" > %s
-      UNION
-      SELECT 
-        bu."Name", r."Code", bp."Rent_date", 
-        bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
-        bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
-      FROM "Booking"."Booking_price" bp
-      INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
-      INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-      INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
-      WHERE "Rent_date" > %s
-    ) AS r
-    GROUP BY 1, 2, 3
+      bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date", 
+      b."Rooms" * b."Rent" AS "Rent",
+      b."Rooms" * b."Services" AS "Services"
+    FROM "Booking"."Booking_group" b
+    INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
+    INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
+    WHERE "Rent_date" >= %s
+    UNION
+    SELECT 
+      bu."Name" AS "Building", r."Code" AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date",
+      bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
+      bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
+    FROM "Booking"."Booking_price" bp
+    INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
+    INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+    INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
+    WHERE "Rent_date" >= %s
+    ORDER BY 1, 2
   ''', (start_date, start_date))
   columns = [desc[0] for desc in dbClient.sel.description]
   df_bills = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
@@ -154,6 +149,8 @@ def do_occupancy(dbClient, vars):
     df_bills['Rent'] = pd.to_numeric(df_bills['Rent'], errors='coerce')
     df_bills['Services'] = pd.to_numeric(df_bills['Services'], errors='coerce')
   logger.info('Prices retrieved')
+
+  # http://localhost:5000/api/v1/occupancy?fdesde=2023-10-01&fhasta=2024-12-31
 
   # 2.2. Pivot rent income by month
   df_rent = df_bills.pivot_table(index=['Building', 'Resource'], columns='Date', values='Rent', aggfunc='sum', fill_value=0.0).reset_index()

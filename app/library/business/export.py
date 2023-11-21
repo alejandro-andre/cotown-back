@@ -138,8 +138,6 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None):
   fi = open('templates/report/' + name + '.xlsx', 'rb')
   template = BytesIO(fi.read())
 
-  #http://localhost:5000/api/v1/export/rooming?id=1
-
   # Open template
   warnings.simplefilter(action='ignore', category=UserWarning)
   wb = load_workbook(filename=BytesIO(template.read()))
