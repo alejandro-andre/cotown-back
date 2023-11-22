@@ -716,7 +716,6 @@ section>h2 {
 
 .tabs-container {
 	width: 100%;
-	margin: 0.5em 0;
 	padding: 0;
 	display: flex;
 	flex-flow: row wrap;
@@ -731,7 +730,7 @@ section>h2 {
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
-	align-items: flex-start;
+	align-items: center;
 }
 
 .tabs-container .header-tabs .left,
@@ -779,6 +778,7 @@ button.back p {
 
 .tabs-container .header-tabs .center img.img-logo {
 	height: 50px;
+	padding: 5px;
 }
 
 .tabs-container .header-tabs .right {

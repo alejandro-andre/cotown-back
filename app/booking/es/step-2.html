@@ -2,13 +2,13 @@
 <html lang="es">
 
 <head>
-  [% include 'en/includes/head.html' %]
+  [% include 'es/includes/head.html' %]
 </head>
 
 <body>
   <div class="tabs-container">
 
-    [% include 'en/includes/header.html' %]
+    [% include 'es/includes/header.html' %]
 
     <div class="main-booking">
       <div class="main-contain">
@@ -18,7 +18,7 @@
 
             [% if data.results | length == 0 %]
             <div class="error-message">
-              <p>Wow, it looks like we don't have any accommodation available with the selected criteria... Would you like to try again?</p>
+              <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
             </div>
             [% endif %]
 
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="prices secc"[% if item.Flat_types | length < 2%] style="display:none;"[% endif %]>
-                  <p>Sharing with:</p>
+                  <p>Compartiendo con:</p>
                   [% for share in item.Flat_types %]
                   <div class="share">
                     <div class="sharing">
@@ -95,7 +95,7 @@
 
                 <div class="third secc">               
                   <button class="btn-secondary" onclick="go_book([[item.Building_id]], [[item.Place_type_id]])">
-                    Book
+                    Reservar
                     <em class="icon-arrow-right"></em>
                   </button>
                 </div>
@@ -105,10 +105,10 @@
                     <input type="checkbox" class="expan-2" id="tab1" tabindex="0"/>
                     <label name="tab" for="tab1" tabindex="-1" class="tab_lab-2" role="tab">
                     <span class="open-close-icon"><em class="icon-add"></em></span>
-                    <p>More info</p>
+                    <p>Ver más información</p>
                     </label>
                     <div class="content">
-                    <p>A single payment of a deposit of €900, or the equivalent of one month's rent if the rent exceeds €900, must be made. This deposit will be returned within a maximum period of 30 days after the departure date, provided there has been no damage to the apartment. A single payment of €375 must be made for contract management fees. If you need more information about the booking conditions, you can do so through this link.</p>
+                    <p>Se deberá abonar en único pago, una fianza de 900€ o el equivalente a una mensualidad si la renta supera los 900€. Este depósito será devuelto en un plazo máximo de 30 días posterior a la fecha de salida siempre y cuando no haya habido ningún desperfecto en el apartamento. ​Se deberán abonar en un único pago, 375€ en calidad de gastos de gestión de contrato. ​Si necesitas más información acerca de las condiciones de reserva, puedes hacerlo mediante este enlace</p>
                     </div>      
                   </div>
                 </div>
@@ -121,8 +121,8 @@
 
           <div class="right tab2 pure-u-1 pure-u-lg-2-5">
             <div class="resume">
-              <h3>Booking summary</h3>
-              <p>Location</p>
+              <h3>Resumen de reserva</h3>
+              <p>Ubicación</p>
               <div class="resume-edit">
                 <h4>[[data.city.Name]]</h4>
                 <!--
@@ -134,11 +134,11 @@
                 </div>
               <div class="dates">
                 <div class="in">
-                  <p>CHECK IN</p>
+                  <p>ENTRADA</p>
                   <h4>[[data.date_from]]</h4>
                 </div>
                 <div class="out">
-                  <p>CHECK OUT</p>
+                  <p>SALIDA</p>
                   <h4>[[data.date_to]]</h4>
                 </div>               
               </div>

@@ -2,13 +2,13 @@
 <html lang="es">
 
 <head>
-  [% include 'en/includes/head.html' %]
+  [% include 'es/includes/head.html' %]
 </head>
 
 <body>
   <div class="tabs-container">
 
-    [% include 'en/includes/header.html' %]
+    [% include 'es/includes/header.html' %]
 
     <div class="main-booking">
       <div class="main-contain">
@@ -16,7 +16,7 @@
 
           <div class="left tab3 pure-u-1 pure-u-lg-3-5">
 
-            <h2>Book your place</h2>
+            <h2>Reserva tu habitación</h2>
 
             [% if data.logged %]
 
@@ -55,7 +55,7 @@
                 <div class="pure-g">
                   <section class="next">
                     <input type="hidden" name="book_action" value="logout">
-                    <button type="submit" class="btn-primary">I'm not [[data.customer.Name]]</button>
+                    <button type="submit" class="btn-primary">No soy [[data.customer.Name]]</button>
                   </section>
                 </div>
               </fieldset>
@@ -67,8 +67,8 @@
               <fieldset>
                 <div class="login pure-g">
 
-                  <h3 class="pure-u-1">Log in</h3>
-                  <p class="pure-u-1">Use your credentials to access.</p>
+                  <h3 class="pure-u-1">Inicia sesión</h3>
+                  <p class="pure-u-1">Utiliza tus credenciales para acceder.</p>
 
                   <div class="pure-u-1">
                       <div class="campo">
@@ -79,7 +79,7 @@
                   </div>
                   <div class="pure-u-1">
                     <div class="campo psw">
-                      <label class="label">Password</label>
+                      <label class="label">Contraseña</label>
                       <input class="input" type="password" name="book_password"
                              required placeholder="Tu contraseña">
                     </div>
@@ -90,14 +90,14 @@
                   [% endif %]
 
                   <p class="advise">
-                    If you have forgotten your password, you can reset it using our
-                    <a href="https://core.cotown.com/auth/realms/airflows/login-actions/reset-credentials?client_id=airflows-private">password recovery form.</a>.
+                    Si ha olvidado su contraseña puedes restablecerla utilizando nuestro
+                    <a href="https://core.cotown.com/auth/realms/airflows/login-actions/reset-credentials?client_id=airflows-private">formulario de recuperación de contraseña</a>.
                   </p>
 
                   <input type="hidden" name="book_action" value="login">
 
                   <section class="next">
-                    <button type="submit" class="btn-secondary">Log in</button>
+                    <button type="submit" class="btn-secondary">Iniciar sesión</button>
                   </section>
 
                 </div>
@@ -109,11 +109,11 @@
                 <div class="registry pure-g">
 
                   <h3 class="pure-u-1 record">O regístrate</h3>
-                  <p class="pure-u-1">We will need your details to finalize the booking.</p>
+                  <p class="pure-u-1">Necesitaremos tus datos para formalizar la reserva.</p>
 
                   <div class="pure-u-1">
                     <div class="campo">
-                      <label class="label">Full name</label>
+                      <label class="label">Nombre y apellidos</label>
                       <input class="input" type="name" name="Name" value="[[data.customer.Name]]"
                              required placeholder="Tú nombre y apellidos">
                     </div>
@@ -129,9 +129,9 @@
 
                   <div class="pure-u-1-3">
                     <div class="campo">
-                      <label class="label">Phone prefix</label>
+                      <label class="label">Prefijo telefónico</label>
                       <select name="Prefix" required>
-                        <option value="">Select phone prefix</option>
+                        <option value="">Selecciona prefijo</option>
                         [% for c in data.countries %]
                         [% if c.Prefix != null %]
                         <option value="[[c.Prefix]]"[% if c.Prefix==data.customer.Prefix %] selected[% endif %]>[[c.Name]] ([[c.Prefix]])</option>
@@ -143,27 +143,27 @@
 
                   <div class="pure-u-2-3">
                     <div class="campo">
-                      <label class="label">Phone number</label>
+                      <label class="label">Número de teléfono</label>
                       <input class="input" type="name" name="Phone"
-                             required value="[[data.customer.Phone]]" placeholder="Your phone number">
+                             required value="[[data.customer.Phone]]" placeholder="Tu nº de teléfono">
                     </div>
                   </div>
 
                   <div class="pure-u-1 pure-u-lg-1-3">
                     <div class="campo">
                       <div class="dates">
-                        <label class="label">Birth date</label>
+                        <label class="label">Fecha de nacimiento</label>
                         <input type="date" name="Birth_date"
-                               required value="[[data.customer.Birth_date]]" placeholder="Date dd/mm/aaaa"/>
+                               required value="[[data.customer.Birth_date]]" placeholder="Fecha dd/mm/aaaa"/>
                       </div>
                     </div>
                   </div>
 
                   <div class="pure-u-1 pure-u-lg-1-3">
                     <div class="campo">
-                      <label class="label">Nationality</label>
+                      <label class="label">Nacionalidad</label>
                       <select name="Nationality_id" required>
-                        <option value="">Select country</option>
+                        <option value="">Selecciona país</option>
                         [% for c in data.countries %]
                         <option value="[[c.id]]"[% if c.id==data.customer.Nationality_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]
@@ -173,9 +173,9 @@
 
                   <div class="pure-u-1 pure-u-lg-1-3">
                     <div class="campo">
-                      <label class="label">Gender</label>
+                      <label class="label">Género</label>
                       <select name="Gender_id" required>
-                        <option value="">Select gender</option>
+                        <option value="">Selecciona género</option>
                         [% for c in data.genders %]
                         <!-- [[c.id]] - [[data.customer.Gender_id]] - [[c.id==data.customer.Gender_id]]-->
                         <option item="[[data.customer.Gender_id]]" value="[[c.id]]"[% if c.id==data.customer.Gender_id %] selected[% endif %]>[[c.Name]]</option>
@@ -191,7 +191,7 @@
                   <input type="hidden" name="book_action" value="register">
 
                   <section class="next">
-                    <button type="submit" class="btn-secondary">Sign up</button>
+                    <button type="submit" class="btn-secondary">Registrarse</button>
                   </section>
 
                 </div>
@@ -204,8 +204,8 @@
 
           <div class="right tab3 pure-u-1 pure-u-lg-2-5">
             <div class="resume">
-              <h3>Booking summary</h3>
-              <p>Location</p>
+              <h3>Resumen de reserva</h3>
+              <p>Ubicación</p>
               <div class="resume-edit">
                 <h4>[[data.city.Name]]</h4>
                 <!--
@@ -218,11 +218,11 @@
 
               <div class="dates">
                 <div class="in">
-                  <p>CHECK IN</p>
+                  <p>ENTRADA</p>
                   <h4>[[data.date_from]]</h4>
                 </div>
                 <div class="out">
-                  <p>CHECK OUT</p>
+                  <p>SALIDA</p>
                   <h4>[[data.date_to]]</h4>
                 </div>
               </div>
@@ -233,13 +233,13 @@
               </div>
 
               <div class="breakdown">
-                <h4>Prices</h4>
+                <h4>Desglose del precio</h4>
                 <div class="prices">
                   <p>Booking fee</p>
                   <p>[[data.summary.Booking_fee]]€</p>
                 </div>
                 <div class="prices">
-                  <p>Deposit</p>
+                  <p>Garantía</p>
                   <p>
                     [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
                     [[data.summary.Rent + data.summary.Services]]
@@ -250,12 +250,12 @@
                 </div>
                 [% if data.summary.Final_cleaning %]
                 <div class="prices">
-                  <p>Final cleaning</p>
+                  <p>Limpieza final</p>
                   <p>[[data.summary.Final_cleaning]]€</p>
                 </div>
                 [% endif %]
                 <div class="total">
-                  <p>Total single payment</p>
+                  <p>Total pago único</p>
                   <p>
                     [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
                     [[data.summary.Booking_fee + data.summary.Rent + data.summary.Services]]
@@ -267,11 +267,11 @@
               </div>
 
               <div class="renta">
-                <h3>Average monthly rent</h3>
+                <h3>Renta media mensual</h3>
                 <h3>[[data.summary.Rent + data.summary.Services]]€ *</h3>
               </div>
 
-              <p class="advise">* Water, gas, and electricity supplies included in the monthly amount up to [[data.summary.Limit]]€/mo.</p>
+              <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.summary.Limit]]€/mes.</p>
 
             </div>
           </div>
