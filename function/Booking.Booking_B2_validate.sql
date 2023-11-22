@@ -102,6 +102,19 @@ BEGIN
     NEW."Request_date" := NOW();
   END IF;
 
+  -- Check for overlaps
+  SELECT b."Booking_id"
+  INTO num
+  FROM "Booking"."Booking_detail" b 
+  WHERE b."Resource_id" = NEW."Resource_id"
+  AND b."Booking_id" <> NEW.id
+  AND b."Date_from" <= NEW."Date_to" 
+  AND b."Date_to" >= NEW."Date_from"
+  LIMIT 1;
+  IF num IS NOT NULL THEN
+    RAISE exception '!!!Overlaping with booking %!!!Solapamiento con la la reserva %!!!', num, num;
+  END IF;
+
   -- Get customer id type
   SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
 
