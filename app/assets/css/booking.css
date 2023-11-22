@@ -12,7 +12,7 @@ h4,
 h5,
 h6 {
 	margin-top: 0;
-	margin-bottom: 2rem;
+	margin-bottom: 1rem;
 	font-weight: 300;
 }
 
@@ -145,7 +145,6 @@ button {
 }
 
 .btn-primary {
-	text-transform: uppercase;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -157,7 +156,7 @@ button {
 	font-weight: 700;
 	font-size: 16px;
 	line-height: 14px;
-	padding: 0 12px;
+	padding: 1.5em 2em;
 	border: 1px solid var(--primary);
 	background-color: var(--white);
 	color: var(--primary);
@@ -843,7 +842,7 @@ button.back p {
 	padding: 16px 0 16px 1em;
 }
 
-.tabs-container .nav-booking ul.pure-menu-list li label.label a {
+.tabs-container .nav-booking ul.pure-menu-list li label.label .a {
 	color: var(--white);
 	font-size: 16px;
 	font-weight: 700;
@@ -852,11 +851,11 @@ button.back p {
 	text-decoration: none;
 }
 
-.tabs-container .nav-booking ul.pure-menu-list li.checked label.label a {
+.tabs-container .nav-booking ul.pure-menu-list li.checked label.label .a {
 	color: var(--grey-dark);
 }
 
-.tabs-container .nav-booking ul.pure-menu-list li label.label a .label-mobile {
+.tabs-container .nav-booking ul.pure-menu-list li label.label .a .label-mobile {
 	display: none;
 }
 
@@ -870,8 +869,8 @@ button.back p {
 }
 
 .main-booking .main-contain .panel-container {
-	width: 92%;
-	padding: 30px 4%;
+	width: 95%;
+	padding: 0px 30px;
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
@@ -1036,7 +1035,7 @@ button.back p {
 .main-booking .main-contain .panel-container .left form .next button {
 	width: 100%;
 	justify-content: center;
-	margin: 2em 0;
+	margin: 1em 0;
 	padding-top: 28px;
 	padding-bottom: 28px;
 	font-size: 20px;
@@ -1463,7 +1462,7 @@ button.back p {
 .main-booking .main-contain .panel-container .left.tab3 form p {
 	font-size: 20px;
 	font-weight: 400;
-	line-height: 150%;
+	padding-bottom: 0.5em;
 }
 
 .main-booking .main-contain .panel-container .left.tab3 form .campo {
@@ -1924,7 +1923,7 @@ button.back p {
 		border: 0;
 	}
 
-	.tabs-container .nav-booking ul.pure-menu-list li label.label a {
+	.tabs-container .nav-booking ul.pure-menu-list li label.label .breakdown {
 		color: var(--white);
 		font-size: 16px;
 		font-weight: 700;
@@ -1933,15 +1932,15 @@ button.back p {
 		text-decoration: none;
 	}
 
-	.tabs-container .nav-booking ul.pure-menu-list li.checked label.label a {
+	.tabs-container .nav-booking ul.pure-menu-list li.checked label.label .a {
 		color: var(--white);
 	}
 
-	.tabs-container .nav-booking ul.pure-menu-list li label.label a span {
+	.tabs-container .nav-booking ul.pure-menu-list li label.label .a span {
 		display: none;
 	}
 
-	.tabs-container .nav-booking ul.pure-menu-list li label.label a .label-mobile {
+	.tabs-container .nav-booking ul.pure-menu-list li label.label .a .label-mobile {
 		display: flex;
 		width: 100%;
 	}

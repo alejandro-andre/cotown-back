@@ -510,7 +510,6 @@ def get_template(apiClient, templates, resource_type, provider):
     }
     '''
     result = apiClient.call(q, variables)
-    print(result['data'][0]['Name'])
     template = result['data'][0]['Template']
     if template is None:
       logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + resource_type)

@@ -11,86 +11,26 @@
     [% include 'en/includes/header.html' %]
 
     <div class="main-booking">
-      <div id="section3" class="main-contain">
-        <div class="panel-container pure-g">               
+      <div xid="section3" class="main-contain">
+        <div class="panel-container pure-g">
 
           <div class="left tab3 pure-u-1 pure-u-lg-3-5">
 
-            <h2>Reserva tu habitación</h2> 
+            <h2>Reserva tu habitación</h2>
 
             [% if data.logged %]
+
             <form id="book-form" action="/booking/4" method="post">
               <fieldset>
                 <div class="logged-booking pure-g">
 
-                  <h3 class="pure-u-1">Reservar</h3>
-                  <p class="pure-u-1">Comprueba tus datos si ya estás registrado.</p>
+                  <h3 class="pure-u-1">Hola [[data.customer.Name]]</h3>
+                  <p class="pure-u-1">Completa los siguientes datos para formalizar tu reserva.</p>
 
                   <div class="pure-u-1">
                     <div class="campo">
-                      <label class="label">Nombre y apellidos</label>                 
-                      <input class="input" type="name" id="Name" name="Name" required value="[[data.customer.Name]]" placeholder="Tú nombre y apellidos">
-                    </div>
-                  </div>
-                  <div class="pure-u-1">
-                    <div class="campo">
-                      <label class="label">Email</label>                 
-                      <input class="input" type="email" id="Email" name="Email" required  value="[[data.customer.Email]]"placeholder="Tu email">
-                    </div>
-                  </div>
-                  <div class="pure-u-1-5">
-                    <div class="campo">
-                      <label class="label">Código</label>         
-                      <select id="Prefix" name="Prefix" required>
-                        <option value="">Selecciona prefijo</option>
-                        [% for c in data.countries %]
-                        [% if c.Prefix != null %]
-                        <option value="[[c.Prefix]]">[[c.Name]] ([[c.Prefix]])</option>
-                        [% endif %]
-                        [% endfor %]
-                      </select>
-                    </div>                 
-                  </div>
-                  <div class="pure-u-4-5">
-                    <div class="campo">
-                      <label class="label">Número de teléfono</label>                 
-                      <input class="input" type="name" id="Phones" name="Phones" required value="[[data.customer.Phones]]" placeholder="Tu nº de teléfono">
-                    </div>
-                  </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
-                    <div class="campo">
-                      <div class="dates">
-                        <label class="label">Fecha de nacimiento</label> 
-                        <input type="date" id="Birth_date" name="Birth_date" required value="[[data.customer.Birth_date]]" placeholder="Fecha dd/mm/aaaa"/>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
-                    <div class="campo">
-                      <label class="label">Nacionalidad</label>         
-                      <select id="Nationality_id" name="Nationality_id" required value="[[data.customer.Nationality_id]]">
-                        <option value="">Selecciona país</option>
-                        [% for c in data.countries %]
-                        <option value="[[c.id]]">[[c.Name]]</option>
-                        [% endfor %]
-                      </select>
-                    </div>
-                  </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
-                    <div class="campo">
-                      <label class="label">Género</label>         
-                      <select id="Gender_id" name="Gender_id" required value="[[data.customer.Gender_id]]">
-                        <option value="">Selecciona género</option>
-                        [% for c in data.genders %]
-                        <option value="[[c.id]]">[[c.Name]]</option>
-                        [% endfor %]
-                       </select>
-                    </div>
-                  </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
-                    <div class="campo">
-                      <label class="label">Motivo de la estancia</label>         
-                      <select id="Reason_id" name="Reason_id" required>
+                      <label class="label">Motivo de la estancia</label>
+                      <select name="Reason_id" required>
                         <option value="">Selecciona motivo</option>
                         [% for c in data.reasons %]
                         <option value="[[c.id]]">[[c.Name]]</option>
@@ -98,11 +38,26 @@
                        </select>
                     </div>
                   </div>
+
+                  <input type="hidden" name="book_action" value="book">
+
                   <section class="next">
-                    <input type="hidden" name="book_action" value="book">
-                    <button class="btn-secondary" onclick="go_book();">Confirmar y reservar</button>
+                    <button type="submit" class="btn-secondary">Confirmar y reservar</button>
                   </section>
-                </div> 
+
+                </div>
+
+              </fieldset>
+            </form>
+
+            <form id="logout-form" action="/booking/4" method="post" style="margin-top: -40px;">
+              <fieldset>
+                <div class="pure-g">
+                  <section class="next">
+                    <input type="hidden" name="book_action" value="logout">
+                    <button type="submit" class="btn-primary">No soy [[data.customer.Name]]</button>
+                  </section>
+                </div>
               </fieldset>
             </form>
 
@@ -112,31 +67,37 @@
               <fieldset>
                 <div class="login pure-g">
 
-                  <h3 class="pure-u-1">Iniciar sesión</h3>
-                  <p class="pure-u-1">Utiliza tus credenciales para acceder a tu área privada.</p>
+                  <h3 class="pure-u-1">Inicia sesión</h3>
+                  <p class="pure-u-1">Utiliza tus credenciales para acceder.</p>
 
                   <div class="pure-u-1">
                       <div class="campo">
-                      <label class="label">Email</label>                 
-                      <input class="input" type="email" id="book_user" name="book_user" required placeholder="Tu email">
+                      <label class="label">Email</label>
+                      <input class="input" type="email" name="book_user"
+                             required placeholder="Tu email">
                     </div>
                   </div>
                   <div class="pure-u-1">
                     <div class="campo psw">
-                      <label class="label">Contraseña</label>                 
-                      <input class="input" type="password" id="book_password" name="book_password" required placeholder="Tu contraseña">
+                      <label class="label">Contraseña</label>
+                      <input class="input" type="password" name="book_password"
+                             required placeholder="Tu contraseña">
                     </div>
                   </div>
 
-                  [% if data.error %]
-                  <div class="error-message"><p>[[data.error]]</p></div>
+                  [% if data.error_login %]
+                  <div class="pure-u-1 error-message"><p>[[data.error_login[data.lang]]]</p></div>
                   [% endif %]
-                  
-                  <p class="advise">Si ha olvidado su contraseña o dirección de correo electrónico, puedes restablecerlas utilizando nuestro formulario de recuperación de contraseña.</p>
- 
+
+                  <p class="advise">
+                    Si ha olvidado su contraseña puedes restablecerla utilizando nuestro
+                    <a href="https://core.cotown.com/auth/realms/airflows/login-actions/reset-credentials?client_id=airflows-private">formulario de recuperación de contraseña</a>.
+                  </p>
+
+                  <input type="hidden" name="book_action" value="login">
+
                   <section class="next">
-                    <input type="hidden" name="book_action" value="login">
-                    <button class="btn-secondary" onclick="go_login();">Iniciar sesión</button>
+                    <button type="submit" class="btn-secondary">Iniciar sesión</button>
                   </section>
 
                 </div>
@@ -147,89 +108,98 @@
               <fieldset>
                 <div class="registry pure-g">
 
-                  <h3 class="pure-u-1 record">Registro</h3>
-                  <p class="pure-u-1">En caso que no te hayas registrado todavía, necesitaremos los siguientes datos de contacto para formalizar tu reserva.</p>
+                  <h3 class="pure-u-1 record">O regístrate</h3>
+                  <p class="pure-u-1">Necesitaremos tus datos para formalizar la reserva.</p>
 
                   <div class="pure-u-1">
                     <div class="campo">
-                      <label class="label">Nombre y apellidos</label>                 
-                      <input class="input" type="name" id="Name" name="Name" required placeholder="Tú nombre y apellidos">
+                      <label class="label">Nombre y apellidos</label>
+                      <input class="input" type="name" name="Name" value="[[data.customer.Name]]"
+                             required placeholder="Tú nombre y apellidos">
                     </div>
                   </div>
+
                   <div class="pure-u-1">
                     <div class="campo">
-                      <label class="label">Email</label>                 
-                      <input class="input" type="email" id="Email" name="Email" required placeholder="Tu email">
+                      <label class="label">Email</label>
+                      <input class="input" type="email" name="Email" value="[[data.customer.Email]]"
+                             required placeholder="Tu email">
                     </div>
                   </div>
-                  <div class="pure-u-2-5">
+
+                  <div class="pure-u-1-3">
                     <div class="campo">
-                      <label class="label">Código</label>         
-                      <select id="Prefix" name="Prefix" required>
+                      <label class="label">Prefijo telefónico</label>
+                      <select name="Prefix" required>
                         <option value="">Selecciona prefijo</option>
                         [% for c in data.countries %]
                         [% if c.Prefix != null %]
-                        <option value="[[c.Prefix]]">[[c.Name]] ([[c.Prefix]])</option>
+                        <option value="[[c.Prefix]]"[% if c.Prefix==data.customer.Prefix %] selected[% endif %]>[[c.Name]] ([[c.Prefix]])</option>
                         [% endif %]
                         [% endfor %]
                       </select>
-                    </div>                 
-                  </div>
-                  <div class="pure-u-3-5">
-                    <div class="campo">
-                      <label class="label">Número de teléfono</label>                 
-                      <input class="input" type="name" id="Phone" name="Phone" required placeholder="Tu nº de teléfono">
                     </div>
                   </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
+
+                  <div class="pure-u-2-3">
+                    <div class="campo">
+                      <label class="label">Número de teléfono</label>
+                      <input class="input" type="name" name="Phone"
+                             required value="[[data.customer.Phone]]" placeholder="Tu nº de teléfono">
+                    </div>
+                  </div>
+
+                  <div class="pure-u-1 pure-u-lg-1-3">
                     <div class="campo">
                       <div class="dates">
-                        <label class="label">Fecha de nacimiento</label> 
-                        <input type="date" id="Birth_date" name="Birth_date" required placeholder="Fecha dd/mm/aaaa"/>
+                        <label class="label">Fecha de nacimiento</label>
+                        <input type="date" name="Birth_date"
+                               required value="[[data.customer.Birth_date]]" placeholder="Fecha dd/mm/aaaa"/>
                       </div>
                     </div>
                   </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
+
+                  <div class="pure-u-1 pure-u-lg-1-3">
                     <div class="campo">
-                      <label class="label">Nacionalidad</label>         
-                      <select id="Nationality_id" name="Nationality_id" required>
+                      <label class="label">Nacionalidad</label>
+                      <select name="Nationality_id" required>
                         <option value="">Selecciona país</option>
                         [% for c in data.countries %]
-                        <option value="[[c.id]]">[[c.Name]]</option>
+                        <option value="[[c.id]]"[% if c.id==data.customer.Nationality_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]
-                     </select>
+                      </select>
                     </div>
                   </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
+
+                  <div class="pure-u-1 pure-u-lg-1-3">
                     <div class="campo">
-                      <label class="label">Género</label>         
-                      <select id="Gender_id" name="Gender_id" required>
+                      <label class="label">Género</label>
+                      <select name="Gender_id" required>
                         <option value="">Selecciona género</option>
                         [% for c in data.genders %]
-                        <option value="[[c.id]]">[[c.Name]]</option>
+                        <!-- [[c.id]] - [[data.customer.Gender_id]] - [[c.id==data.customer.Gender_id]]-->
+                        <option item="[[data.customer.Gender_id]]" value="[[c.id]]"[% if c.id==data.customer.Gender_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]
                       </select>
                     </div>
                   </div>
-                  <div class="pure-u-1 pure-u-lg-1-2">
-                    <div class="campo">
-                      <label class="label">Motivo de la estancia</label>         
-                      <select id="Reason_id" name="Reason_id" required>
-                        <option value="">Selecciona motivo</option>
-                        [% for c in data.reasons %]
-                        <option value="[[c.id]]">[[c.Name]]</option>
-                        [% endfor %]
-                      </select>
-                    </div>
-                  </div>
+
+                  [% if data.error_register %]
+                  <div class="pure-u-1 error-message"><p>[[data.error_register[data.lang]]]</p></div>
+                  [% endif %]
+
+                  <input type="hidden" name="book_action" value="register">
+
                   <section class="next">
-                    <input type="hidden" name="book_action" value="register">
-                    <button class="btn-secondary" onclick="go_register();">Registrarse</button>
+                    <button type="submit" class="btn-secondary">Registrarse</button>
                   </section>
+
                 </div>
                 [% endif %]
+
               </fieldset>
             </form>
+
           </div>
 
           <div class="right tab3 pure-u-1 pure-u-lg-2-5">
@@ -254,12 +224,12 @@
                 <div class="out">
                   <p>SALIDA</p>
                   <h4>[[data.date_to]]</h4>
-                </div>               
+                </div>
               </div>
 
               <div class="type-resume">
                 <h4>[[data.summary.Place_type_name]]</h4>
-                <p>[[data.summary.Building_name]]</p>                                                         
+                <p>[[data.summary.Building_name]]</p>                                     
               </div>
 
               <div class="breakdown">
@@ -267,7 +237,7 @@
                 <div class="prices">
                   <p>Booking fee</p>
                   <p>[[data.summary.Booking_fee]]€</p>
-                </div>             
+                </div>
                 <div class="prices">
                   <p>Garantía</p>
                   <p>
@@ -282,7 +252,7 @@
                 <div class="prices">
                   <p>Limpieza final</p>
                   <p>[[data.summary.Final_cleaning]]€</p>
-                </div>             
+                </div>
                 [% endif %]
                 <div class="total">
                   <p>Total pago único</p>
@@ -293,7 +263,7 @@
                     [[data.summary.Booking_fee + data.summary.Deposit]]
                     [% endif %]
                   </p>
-                </div>           
+                </div>
               </div>
 
               <div class="renta">
@@ -307,21 +277,11 @@
           </div>
 
         </div>
-      </div>     
+      </div>
     </div>
 
   </div>
+
 </body>
 
-<script>
-function go_login() {
-   document.getElementById("login_form").submit();
-}
-function go_register() {
-   document.getElementById("register_form").submit();
-}
-function go_book() {
-   document.getElementById("book_form").submit();
-}
-</script>
 </html>

@@ -21,7 +21,7 @@ from library.services.config import settings
 # Cotown includes - api functions
 from library.api.token import validate_token
 from library.api.misc import req_pub_hello
-from library.api.booking import req_form, req_register, req_pub_asset, req_typologies, req_pub_booking
+from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
 from library.api.payment import req_pay, req_pub_notification

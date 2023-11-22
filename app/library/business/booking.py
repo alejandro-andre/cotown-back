@@ -3,7 +3,7 @@
 # ######################################################
 
 # System includes
-from flask import g, request, session, send_from_directory
+from psycopg2 import Error
 from datetime import datetime
 from dateutil import relativedelta
 
@@ -170,7 +170,6 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
 
   # Rooms
   if acom_type == 'ap':
-    print(l)
     sql = f'''
       SELECT
         b."Code" AS "Building_code", rfst."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code",
@@ -316,7 +315,6 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
 
   try:
     dbClient.connect()
-    print(sql, (year, building_id, place_type_id, flat_type_id))
     dbClient.select(sql, (year, building_id, place_type_id, flat_type_id))
     results = dbClient.fetchall()
     dbClient.disconnect()
@@ -333,25 +331,31 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
 # Create customer
 # ------------------------------------------------------
 
-def q_insert_customer(dbClient, name, email):
+def q_insert_customer(dbClient, customer):
 
   # SQL
   sql = f'''
     INSERT INTO "Customer"."Customer"
-    ("Type", "Name", "Email", "Black_list")
-    VALUES ('persona', %s, %s, FALSE)
+    ("Type", "Name", "Email", "Phones", "Birth_date", "Nationality_id", "Gender_id", "Black_list")
+    VALUES ('persona', %s, %s, %s, %s, %s, %s, FALSE)
     RETURNING id
     '''
-
   try:
     dbClient.connect()
-    dbClient.execute(sql, (name, email, ))
+    dbClient.execute(sql, (
+      customer['Name'], 
+      customer['Email'], 
+      customer['Phones'], 
+      customer['Birth_date'], 
+      customer['Nationality_id'], 
+      customer['Gender_id'], 
+    ))
     id = dbClient.returning()[0]
     dbClient.commit()
     dbClient.disconnect()
-    return None
+    return id, None
  
   except Exception as error:
     logger.error(error)
     dbClient.rollback()
-    return None  
+    return None, error
