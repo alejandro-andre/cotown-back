@@ -116,6 +116,7 @@ def q_typologies(dbClient, segment):
       INNER JOIN "Geo"."Location" l on l.id = d."Location_id"
       LEFT JOIN "Resource"."Resource_place_type" rpt on rpt.id = r."Place_type_id"
     WHERE b."Building_type_id" < 4
+      AND b."Active" 
       AND b."Segment_id" = {}
       AND "Sale_type" IS NOT NULL
       AND (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI_%')
