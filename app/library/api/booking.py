@@ -149,16 +149,6 @@ def req_form():
 # ###################################################
 
 # ---------------------------------------------------
-# Web logout
-# ---------------------------------------------------
-
-def logout():
-
-    response = make_response(send_file('static/login.html'))
-    response.set_cookie('user', '', max_age=0)
-    return response
-
-# ---------------------------------------------------
 # Web login
 # ---------------------------------------------------
 
@@ -202,14 +192,14 @@ def register():
 
   # Insert customer
   customer = {   
-   'Name': get_var('Name'),
-   'Email': get_var('Email'),
-   'Prefix': get_var('Prefix'),
-   'Phone': get_var('Phone'),
-   'Phones': get_var('Prefix') + ' ' + get_var('Phone'),
-   'Birth_date': get_var('Birth_date') ,
-   'Nationality_id': to_int(get_var('Nationality_id')),
-   'Gender_id': to_int(get_var('Gender_id')) 
+   'Name': get_var('Name', save=False, save=False),
+   'Email': get_var('Email', save=False),
+   'Prefix': get_var('Prefix', save=False),
+   'Phone': get_var('Phone', save=False),
+   'Phones': get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
+   'Birth_date': get_var('Birth_date', save=False) ,
+   'Nationality_id': to_int(get_var('Nationality_id'), save=False),
+   'Gender_id': to_int(get_var('Gender_id', save=False)) 
   }
   id, error = q_insert_customer(g.dbClient, customer)
 
