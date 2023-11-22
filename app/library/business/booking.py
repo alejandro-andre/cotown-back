@@ -3,7 +3,6 @@
 # ######################################################
 
 # System includes
-from psycopg2 import Error
 from datetime import datetime
 from dateutil import relativedelta
 
@@ -172,6 +171,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
   if acom_type == 'ap':
     sql = f'''
       SELECT
+        b.id AS "Building_id", rfst.id AS "Place_type_id", rft.id AS "Flat_type_id",
         b."Code" AS "Building_code", rfst."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code",
         b."Name" AS "Building_name", rfst."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
         ROUND(pd."Services" + pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
@@ -190,13 +190,14 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         AND b."Segment_id" = %s
         AND b."Building_type_id" < 3
         AND d."Location_id" = %s
-      GROUP BY 1, 2, 3, 4, 5, 6, 7
+      GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
       '''
     params = (date_to, date_from, year, segment, city, )
   else:
     sql = f'''
       SELECT
-        b."Code" as "Building_code", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code",
+        b.id as "Building_id", rpt.id AS "Place_type_id", rft.id AS "Flat_type_id",
+        b."Code" AS "Building_code", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code",
         b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
         pd."Services" + ROUND(pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
       FROM "Resource"."Resource" r
@@ -214,7 +215,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         AND b."Building_type_id" IN %s
         AND d."Location_id" = %s
         AND rpt."Code" LIKE %s
-      GROUP BY 1, 2, 3, 4, 5, 6, 7
+      GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
       '''
     params = (date_to, date_from, year, segment, building_type, city, place_type, )
 
@@ -226,11 +227,13 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
     for row in results:
        
       # Building/Place
-      building_index = next((index for (index, d) in enumerate(grouped_data) if d['Building_code'] == row['Building_code'] and d['Place_type_code'] == row['Place_type_code']), None)
+      building_index = next((index for (index, d) in enumerate(grouped_data) if d['Building_id'] == row['Building_id'] and d['Place_type_code'] == row['Place_type_code']), None)
       if building_index is None:
         grouped_data.append({
+          'Building_id': row['Building_id'],
           'Building_code': row['Building_code'],
           'Building_name': row['Building_name'],
+          'Place_type_id': row['Place_type_id'],
           'Place_type_code': row['Place_type_code'],
           'Place_type_name': row['Place_type_name'],
           'Photo': row['Photo'],
@@ -244,6 +247,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
       if grouped_data[building_index]['Price'] > price:
         grouped_data[building_index]['Price'] = price
       grouped_data[building_index]['Flat_types'].append({
+        'Flat_type_id': row['Flat_type_id'],
         'Flat_type_code': row['Flat_type_code'],
         'Flat_type_name': row['Flat_type_name'],
         'Price': price
@@ -286,9 +290,9 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id)
       WHERE pd."Year" = %s
-        AND b."Code" = %s
-        AND rfst."Code" = %s
-        AND rft."Code" = %s
+        AND b.id = %s
+        AND rfst.id = %s
+        AND rft.id = %s
       LIMIT 1
       '''
   else:
@@ -307,9 +311,9 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
       WHERE pd."Year" = %s
-        AND b."Code" = %s
-        AND rpt."Code" = %s
-        AND rft."Code" = %s
+        AND b.id = %s
+        AND rpt.id = %s
+        AND rft.id = %s
       LIMIT 1
       '''
 
@@ -359,3 +363,41 @@ def q_insert_customer(dbClient, customer):
     logger.error(error)
     dbClient.rollback()
     return None, error
+
+# ------------------------------------------------------
+# Create booking
+# ------------------------------------------------------
+
+def q_insert_booking(dbClient, booking):
+
+  # SQL
+  sql = f'''
+    INSERT INTO "Booking"."Booking" (
+      "Date_from", "Date_to", "Customer_id", "Building_id", 
+      "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", 
+      "Booking_channel_id", "Second_resident", "Lock"
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
+    RETURNING id
+    '''
+  #try:
+  dbClient.connect()
+  dbClient.execute(sql, (
+    booking["Date_from"],
+    booking["Date_to"],
+    booking["Customer_id"],
+    booking["Building_id"],
+    booking["Resource_type"],
+    booking["Flat_type_id"],
+    booking["Place_type_id"],
+    booking["Reason_id"]
+  ))
+  id = dbClient.returning()[0]
+  dbClient.commit()
+  dbClient.disconnect()
+  return id, None
+ 
+  #except Exception as error:
+  #  logger.error(error)
+  #  dbClient.rollback()
+  #  return None, error

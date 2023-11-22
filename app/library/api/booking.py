@@ -17,7 +17,7 @@ from library.services.ac import add_contact
 
 # Cotown includes - business functions
 from library.business.send_email import smtp_mail
-from library.business.booking import q_typologies, q_book_search, q_book_summary, q_insert_customer, q_genders, q_reasons, q_countries
+from library.business.booking import q_typologies, q_book_search, q_book_summary, q_insert_customer, q_insert_booking, q_genders, q_reasons, q_countries
 
 # Logging
 import logging
@@ -300,7 +300,7 @@ def req_pub_booking(step):
     elif step == 2:
 
       # Search results
-      results   = q_book_search(g.dbClient, segment, lang, date_from, date_to, city_id, acom_type, room_type)
+      results = q_book_search(g.dbClient, segment, lang, date_from, date_to, city_id, acom_type, room_type)
     
     # ---------------------------------------------------
     # STEP 3
@@ -377,8 +377,23 @@ def req_pub_booking(step):
     elif step == 4 and action == 'book':
 
       # Try to mke the reservation book
-      summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
-   
+      summary = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
+      booking = {
+        'Date_from': date_from,
+        'Date_to': date_to,
+        'Customer_id': customer['id'],
+        'Building_id': building_id,
+        'Resource_type': 'piso' if acom_type == 'ap' else 'habitacion',
+        'Flat_type_id': flat_type_id,
+        'Place_type_id': place_type_id,
+        'Reason_id': get_var('Reason_id', None)
+      }
+      id, error = q_insert_booking(g.dbClient, booking)
+
+      # Error?
+      if error:
+        return None, customer, error # process_error(error.pgerror) 
+
     # Render template
     tpl = g.env.get_template(lang + '/step-' + str(step) + '.html')
     return tpl.render(data=locals())

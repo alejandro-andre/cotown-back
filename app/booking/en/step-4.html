@@ -12,11 +12,80 @@
     [% include 'en/includes/header.html' %]
    
     <div class="main-booking">
-      <div id="section3" class="main-contain">
+      <div class="main-contain">
         <div class="panel-container">       
-          <h2>cuarto panel</h2>
-          <p><strong>Overall Impression:</strong> A dark, strong, malty German lager beer that emphasizes the malty-rich and somewhat toasty qualities of continental malts without being sweet in the finish.</p>
-          <p><strong>History:</strong> Originated in the Northern German city of Einbeck, which was a brewing center and popular exporter in the days of the Hanseatic League (14th to 17th century). Recreated in Munich starting in the 17th century. The name “bock” is based on a corruption of the name “Einbeck” in the Bavarian dialect, and was thus only used after the beer came to Munich. “Bock” also means “Ram” in German, and is often used in logos and advertisements.</p>
+
+          <div class="right tab3 pure-u-1">
+            <div class="resume">
+
+              <h2>Reserva confirmada</h2>
+
+              <p>Ubicación</p>
+
+              <div class="resume-edit">
+                <h4>[[data.city.Name]]</h4>
+              </div>
+
+              <div class="dates">
+                <div class="in">
+                  <p>ENTRADA</p>
+                  <h4>[[data.date_from]]</h4>
+                </div>
+                <div class="out">
+                  <p>SALIDA</p>
+                  <h4>[[data.date_to]]</h4>
+                </div>
+              </div>
+
+              <div class="type-resume">
+                <h4>[[data.summary.Place_type_name]]</h4>
+                <p>[[data.summary.Building_name]]</p>                                     
+              </div>
+
+              <div class="breakdown">
+                <h4>Desglose del precio</h4>
+                <div class="prices">
+                  <p>Booking fee</p>
+                  <p>[[data.summary.Booking_fee]]€</p>
+                </div>
+                <div class="prices">
+                  <p>Garantía</p>
+                  <p>
+                    [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
+                    [[data.summary.Rent + data.summary.Services]]
+                    [% else %]
+                    [[data.summary.Deposit]]
+                    [% endif %]
+                  €</p>
+                </div>
+                [% if data.summary.Final_cleaning %]
+                <div class="prices">
+                  <p>Limpieza final</p>
+                  <p>[[data.summary.Final_cleaning]]€</p>
+                </div>
+                [% endif %]
+                <div class="total">
+                  <p>Total pago único</p>
+                  <p>
+                    [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
+                    [[data.summary.Booking_fee + data.summary.Rent + data.summary.Services]]
+                    [% else %]
+                    [[data.summary.Booking_fee + data.summary.Deposit]]
+                    [% endif %]
+                  </p>
+                </div>
+              </div>
+
+              <div class="renta">
+                <h3>Renta media mensual</h3>
+                <h3>[[data.summary.Rent + data.summary.Services]]€ *</h3>
+              </div>
+
+              <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.summary.Limit]]€/mes.</p>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
