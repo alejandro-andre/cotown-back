@@ -192,7 +192,7 @@ def register():
 
   # Insert customer
   customer = {   
-   'Name': get_var('Name', save=False, save=False),
+   'Name': get_var('Name', save=False),
    'Email': get_var('Email', save=False),
    'Prefix': get_var('Prefix', save=False),
    'Phone': get_var('Phone', save=False),
