@@ -124,8 +124,8 @@ def do_occupancy(dbClient, vars):
   dbClient.select('''
     SELECT 
       bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date", 
-      b."Rooms" * b."Rent" AS "Rent",
-      b."Rooms" * b."Services" AS "Services"
+      b."Rooms" * bp."Rent" AS "Rent",
+      b."Rooms" * bp."Services" AS "Services"
     FROM "Booking"."Booking_group" b
     INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
     INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
