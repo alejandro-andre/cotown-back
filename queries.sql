@@ -1,10 +1,52 @@
 -- ---------------------------------------------
+-- Availability by building and types
+-- ---------------------------------------------
+
+SELECT 
+  r."Building_id", SUBSTRING(COALESCE(rpt."Code", 'F'), 1, 1), COUNT(*)
+FROM
+  "Resource"."Resource" r
+  INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+  LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+  LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= '2024-01-31' AND bd."Date_to" >= '2023-12-01')
+WHERE (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI%')
+  AND bd.id IS NULL
+GROUP BY 1, 2
+ORDER BY 1, 2
+;
+
+SELECT 
+  r."Building_id", rpt."Code", rft."Code", COUNT(*)
+FROM
+  "Resource"."Resource" r
+  INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+  LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+  LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= '2024-01-31' AND bd."Date_to" >= '2023-12-01')
+WHERE rpt."Code" NOT LIKE 'DUI%'
+  AND bd.id IS NULL
+GROUP BY 1, 2, 3
+ORDER BY 1, 2, 3
+;
+
+SELECT 
+  r."Building_id", rfst."Code", rft."Code", COUNT(*)
+FROM
+  "Resource"."Resource" r
+  INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
+  INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+  LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= '2025-01-31' AND bd."Date_to" >= '2024-12-01')
+WHERE bd.id IS NULL
+GROUP BY 1, 2, 3
+ORDER BY 1, 2, 3
+;
+
+-- ---------------------------------------------
 -- Bills and future income
 -- ---------------------------------------------
 
 SELECT "Name", "Date", SUM("Rent"), SUM("Services")
 FROM (
-SELECT bu."Name", bu."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
+SELECT bu."Name", bu."Code", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
   CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
   CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
 FROM "Billing"."Invoice_line" il 
@@ -14,7 +56,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"  
 WHERE i."Issued" AND p."Product_type_id" IN (3, 4)
 UNION
-SELECT bu."Name", r."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
+SELECT bu."Name", r."Code", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
   CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
   CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
 FROM "Billing"."Invoice_line" il 
@@ -26,7 +68,7 @@ FROM "Billing"."Invoice_line" il
 WHERE i."Issued" AND i."Issued" AND p."Product_type_id" IN (3, 4)
 UNION
 SELECT 
-  bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date", 
+  bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 
   b."Rooms" * b."Rent" AS "Rent",
   b."Rooms" * b."Services" AS "Services"
 FROM "Booking"."Booking_group" b
@@ -35,7 +77,7 @@ INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
 WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > '2023-11-01'
 UNION
 SELECT 
-  bu."Name" AS "Building", r."Code" AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date",
+  bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
   bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
   bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
 FROM "Booking"."Booking_price" bp

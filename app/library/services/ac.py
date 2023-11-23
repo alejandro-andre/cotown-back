@@ -127,7 +127,7 @@ def post_ac_add_to_list(id, list):
 # Test
 # #####################################
 
-def add_contact(data, listid):
+def add_contact(data, listid=None):
 
     # Check if contact exists
     id = get_ac_contact_id(data['email'])
@@ -142,6 +142,6 @@ def add_contact(data, listid):
         put_ac_contact(id, data)
 
     # Add existing contact to list
-    if id:
+    if id and listid:
         post_ac_add_to_list(id, listid)
     return id

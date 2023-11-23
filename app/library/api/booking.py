@@ -104,9 +104,8 @@ def req_form():
         file = None
 
     # Add contact
-    listid = contact['listid']
-    if listid:
-      id = str(add_contact(contact, listid))
+    listid = contact.get('listid', None)
+    id = str(add_contact(contact, listid))
 
     # Prepare and send email
     forms = {
