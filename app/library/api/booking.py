@@ -17,7 +17,7 @@ from library.services.ac import add_contact
 
 # Cotown includes - business functions
 from library.business.send_email import smtp_mail
-from library.business.booking import q_typologies, q_book_search, q_book_summary, q_insert_customer, q_insert_booking, q_genders, q_reasons, q_countries
+from library.business.booking import *
 
 # Logging
 import logging
@@ -45,9 +45,7 @@ def to_int(value):
 
 def process_error(msg):
 
-  print(msg)
   parts = msg.split('!!!')
-  print(parts)
   if len(parts) > 2:
     return { 'en': parts[1], 'es': parts[2] }
   return msg
@@ -237,6 +235,17 @@ def req_pub_asset(filename):
 
     # return
     return send_from_directory('assets', filename)
+
+# ---------------------------------------------------
+# Booking process
+# ---------------------------------------------------
+
+def req_pub_availability(type, segment):
+
+  date_from = get_var('date_from')
+  date_to   = get_var('date_to')
+  result = q_availability(g.dbClient, type, segment, date_from, date_to)
+  return result
 
 # ---------------------------------------------------
 # Booking process

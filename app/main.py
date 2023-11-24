@@ -21,7 +21,7 @@ from library.services.config import settings
 # Cotown includes - api functions
 from library.api.token import validate_token
 from library.api.misc import req_pub_hello
-from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_booking
+from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
 from library.api.payment import req_pay, req_pub_notification
@@ -180,20 +180,13 @@ def runapp():
   # Airflows plugins - Planning
   app.add_url_rule(settings.API_PREFIX + '/availability', view_func=req_availability, methods=['POST'])
 
-  # Airflows plugins - Buttons
+  # Airflows plugins - Change booking status
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=req_booking_status, methods=['GET'])
 
   # Airflows plugins - Dashboard
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=req_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=req_dashboard, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=req_labels, methods=['GET'])
-
-  # Static web (11ty data retrieving)
-  app.add_url_rule(settings.API_PREFIX + '/flats/<int:segment>/<int:year>', view_func=req_flats, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:segment>/<int:year>', view_func=req_rooms, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/amenities/<int:segment>', view_func=req_amenities, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/typologies/<int:segment>', view_func=req_typologies, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/form', view_func=req_form, methods=['POST'])
 
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
@@ -202,6 +195,16 @@ def runapp():
   # SAP integration
   app.add_url_rule(settings.API_PREFIX + '/integration/customers', view_func=req_pub_int_customers, methods=['GET'])
 
+  # Static web (11ty data retrieving)
+  app.add_url_rule(settings.API_PREFIX + '/flats/<int:segment>/<int:year>', view_func=req_flats, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/rooms/<int:segment>/<int:year>', view_func=req_rooms, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/amenities/<int:segment>', view_func=req_amenities, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/typologies/<int:segment>', view_func=req_typologies, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/form', view_func=req_form, methods=['POST'])
+
+  # Static web (dynamic availability)
+  app.add_url_rule(settings.API_PREFIX + '/availability/<int:type>/<int:segment>', view_func=req_pub_availability, methods=['GET'])
+  
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=req_pub_asset, methods=['GET'])
   app.add_url_rule('/booking/<int:step>', view_func=req_pub_booking, methods=['GET', 'POST'])

@@ -157,7 +157,7 @@ def q_typologies(dbClient, segment):
     return None
 
 # ------------------------------------------------------
-# Get available typologies between dates
+# Search results
 # ------------------------------------------------------
 
 def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, room_type):
@@ -381,24 +381,81 @@ def q_insert_booking(dbClient, booking):
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
     RETURNING id
     '''
-  #try:
-  dbClient.connect()
-  dbClient.execute(sql, (
-    booking["Date_from"],
-    booking["Date_to"],
-    booking["Customer_id"],
-    booking["Building_id"],
-    booking["Resource_type"],
-    booking["Flat_type_id"],
-    booking["Place_type_id"],
-    booking["Reason_id"]
-  ))
-  id = dbClient.returning()[0]
-  dbClient.commit()
-  dbClient.disconnect()
-  return id, None
+  try:
+    dbClient.connect()
+    dbClient.execute(sql, (
+      booking["Date_from"],
+      booking["Date_to"],
+      booking["Customer_id"],
+      booking["Building_id"],
+      booking["Resource_type"],
+      booking["Flat_type_id"],
+      booking["Place_type_id"],
+      booking["Reason_id"]
+    ))
+    id = dbClient.returning()[0]
+    dbClient.commit()
+    dbClient.disconnect()
+    return id, None
  
-  #except Exception as error:
-  #  logger.error(error)
-  #  dbClient.rollback()
-  #  return None, error
+  except Exception as error:
+    logger.error(error)
+    dbClient.rollback()
+    return None, error
+
+# ------------------------------------------------------
+# Availability for static web
+# ------------------------------------------------------
+
+def q_availability(dbClient, type, segment, date_from, date_to):
+
+    # SQL
+  if type == 0:
+    sql = '''
+      SELECT 
+        r."Building_id", SUBSTRING(COALESCE(rpt."Code", 'F'), 1, 1) as "Type", COUNT(*) as "Qty"
+      FROM
+        "Resource"."Resource" r
+        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+        LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+      WHERE (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI%%')
+        AND bd.id IS NULL
+      GROUP BY 1, 2
+    '''
+  elif type == 1:
+    sql = '''
+      SELECT 
+        r."Building_id", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code", COUNT(*) AS "Qty"
+      FROM
+        "Resource"."Resource" r
+        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+        LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+      WHERE bd.id IS NULL
+      GROUP BY 1, 2, 3
+      '''
+  else:
+    sql = '''
+      SELECT 
+        r."Building_id", rfst."Code" AS "Flat_subtype_code", COUNT(*) AS "Qty"
+      FROM
+        "Resource"."Resource" r
+        INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
+        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+      WHERE bd.id IS NULL
+      GROUP BY 1, 2
+      '''
+
+  try:
+    # Read data
+    dbClient.connect()
+    dbClient.select(sql, (date_to, date_from))
+    column_names = [desc[0] for desc in dbClient.sel.description]
+    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in dbClient.fetchall()]
+    dbClient.disconnect()
+    return result
+
+  except Exception as error:
+    logger.error(error)
+    return []
