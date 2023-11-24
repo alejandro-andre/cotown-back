@@ -142,6 +142,6 @@ def add_contact(data, listid=None):
         put_ac_contact(id, data)
 
     # Add existing contact to list
-    if id and listid:
-        post_ac_add_to_list(id, listid)
+    #if id and listid:
+    #    post_ac_add_to_list(id, listid)
     return id
