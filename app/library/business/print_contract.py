@@ -618,7 +618,7 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if context['Owner_id'] != context['Service_id']:
+    if room['Owner_id'] != room['Service_id']:
       template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
       if template is not None:
         file = generate_doc_file(context, template)
