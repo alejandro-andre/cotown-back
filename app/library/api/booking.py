@@ -240,11 +240,11 @@ def req_pub_asset(filename):
 # Booking process
 # ---------------------------------------------------
 
-def req_pub_availability(type, segment):
+def req_pub_availability(type, filter):
 
   date_from = get_var('date_from')
   date_to   = get_var('date_to')
-  result = q_availability(g.dbClient, type, segment, date_from, date_to)
+  result = q_availability(g.dbClient, type, filter, date_from, date_to)
   return result
 
 # ---------------------------------------------------

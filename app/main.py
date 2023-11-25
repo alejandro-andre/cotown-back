@@ -203,7 +203,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/form', view_func=req_form, methods=['POST'])
 
   # Static web (dynamic availability)
-  app.add_url_rule(settings.API_PREFIX + '/availability/<int:type>/<int:segment>', view_func=req_pub_availability, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/availability/<int:type>/<int:filter>', view_func=req_pub_availability, methods=['GET'])
   
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=req_pub_asset, methods=['GET'])

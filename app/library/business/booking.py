@@ -407,50 +407,58 @@ def q_insert_booking(dbClient, booking):
 # Availability for static web
 # ------------------------------------------------------
 
-def q_availability(dbClient, type, segment, date_from, date_to):
+def q_availability(dbClient, type, filter, date_from, date_to):
 
-    # SQL
-  if type == 0:
-    sql = '''
-      SELECT 
-        CONCAT(r."Building_id", '_', SUBSTRING(COALESCE(rpt."Code", 'F'), 1, 1)) as "id", COUNT(*) as "Qty"
-      FROM
-        "Resource"."Resource" r
-        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
-        LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
-        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-      WHERE (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI%%')
-        AND bd.id IS NULL
-      GROUP BY 1
-    '''
-  elif type == 1:
-    sql = '''
-      SELECT 
-        CONCAT(r."Building_id", '_', rpt."Code", '_', rft."Code") AS "id", COUNT(*) AS "Qty"
-      FROM
-        "Resource"."Resource" r
-        INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
-        LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
-        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-      WHERE bd.id IS NULL
-      GROUP BY 1
-      '''
-  else:
-    sql = '''
-      SELECT 
-        CONCAT(r."Building_id", '_', rfst."Code") AS "id, COUNT(*) AS "Qty"
-      FROM
-        "Resource"."Resource" r
-        INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
-        LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-      WHERE bd.id IS NULL
-      GROUP BY 1
-      '''
-
+  # Connect
   try:
-    # Read data
     dbClient.connect()
-    dbClient.select(sql, (date_to, date_from))
+
+    # Single, Shared and Flat availabilities for all buildings
+    if type == 0:
+      sql = '''
+        SELECT 
+          CONCAT(r."Building_id", '_', SUBSTRING(COALESCE(rpt."Code", 'F'), 1, 1)) as "id", COUNT(*) as "Qty"
+        FROM
+          "Resource"."Resource" r
+          INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+          LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+          LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+        WHERE (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI%%')
+          AND bd.id IS NULL 
+        GROUP BY 1
+      '''
+      dbClient.select(sql, (date_to, date_from))
+
+    # Room availabilities for one building
+    elif type == 1:
+      sql = '''
+        SELECT 
+          CONCAT(rpt."Code", '_', rft."Code") AS "id", COUNT(*) AS "Qty"
+        FROM
+          "Resource"."Resource" r
+          INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+          LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+          LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+        WHERE bd.id IS NULL AND r."Building_id" = %s AND rpt."Code" NOT LIKE 'DUI%%'
+        GROUP BY 1
+        '''
+      dbClient.select(sql, (date_to, date_from, filter))
+
+    # Flat availabilities for one building
+    else:
+      sql = '''
+        SELECT 
+          CONCAT(r."Building_id", '_', rfst."Code") AS "id", COUNT(*) AS "Qty"
+        FROM
+          "Resource"."Resource" r
+          INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
+          LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+        WHERE bd.id IS NULL AND r."Building_id" = %s
+        GROUP BY 1
+        '''
+      dbClient.select(sql, (date_to, date_from, filter))
+
+    # Read data
     column_names = [desc[0] for desc in dbClient.sel.description]
     result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in dbClient.fetchall()]
     dbClient.disconnect()
