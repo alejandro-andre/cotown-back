@@ -255,6 +255,7 @@ def req_pub_booking(step):
 
     # Example
     # http://localhost:5000/booking/2?lang=en&segment=1&book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
+    # http://localhost:5000/booking/3?lang=en&segment=1&book_building_id=1&book_flat_type_id=1&book_place_type_id=100&book_checkin=2023-11-01&book_checkout=2024-03-31
 
     # Debug
     logger.info('BOOKING STEP-' + str(step) + ':' + request.path)
