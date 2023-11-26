@@ -154,6 +154,7 @@ def q_typologies(dbClient, segment):
 
   except Exception as error:
     logger.error(error)
+    dbClient.rollback()
     return None
 
 # ------------------------------------------------------
@@ -466,4 +467,5 @@ def q_availability(dbClient, type, filter, date_from, date_to):
 
   except Exception as error:
     logger.error(error)
+    dbClient.rollback()
     return []

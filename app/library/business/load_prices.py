@@ -96,7 +96,6 @@ def load_prices(dbClient, data):
 
     # Error
     except Exception as error:
-
       logger.error(error)
       dbClient.rollback()
       log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'

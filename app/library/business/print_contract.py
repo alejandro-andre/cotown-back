@@ -518,9 +518,9 @@ def get_template(apiClient, templates, resource_type, provider):
 
 def do_contracts(apiClient, id):
 
-    logger.info('Contrato para la reserva ' + str(id))
+  logger.info('Contrato para la reserva ' + str(id))
 
-  #try:
+  try:
    
     # Empty files
     json_rent = None
@@ -580,9 +580,9 @@ def do_contracts(apiClient, id):
       return True
     return False
  
-  #except Exception as error:
-  #  logger.error(error)
-  #  return False
+  except Exception as error:
+    logger.error(error)
+    return False
 
 
 def do_group_contracts(apiClient, id):

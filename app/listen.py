@@ -122,8 +122,9 @@ def main():
         time.sleep(10)
 
     # Error
-    except Exception as error:
+    except Exception as error:     
       logger.error(error)
+      dbClient.rollback()
 
     # Close connection and tunnel
     dbClient.disconnect()
