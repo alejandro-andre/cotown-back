@@ -418,17 +418,30 @@ def q_availability(dbClient, type, filter, date_from, date_to):
     if type == 0:
       sql = '''
         SELECT 
-          CONCAT(r."Building_id", '_', SUBSTRING(COALESCE(rpt."Code", 'F'), 1, 1)) as "id", COUNT(*) as "Qty"
+          CONCAT(r."Building_id", '_', SUBSTRING(rpt."Code", 1, 1)) as "id", COUNT(*) as "Qty"
         FROM
           "Resource"."Resource" r
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-        WHERE (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI%%')
-          AND bd.id IS NULL 
+        WHERE rpt."Code" NOT LIKE 'DUI%%'
+          AND r."Sale_type" IN ('plazas', 'ambos')
+          AND bd.id IS NULL
+        GROUP BY 1  
+        UNION
+        SELECT 
+          CONCAT(r."Building_id", '_F') as "id", COUNT(*) as "Qty"
+        FROM
+          "Resource"."Resource" r
+          INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+          LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+          LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
+        WHERE rpt."Code" IS NULL
+          AND r."Sale_type" IN ('completo', 'ambos')
+          AND bd.id IS NULL
         GROUP BY 1
       '''
-      dbClient.select(sql, (date_to, date_from))
+      dbClient.select(sql, (date_to, date_from, date_to, date_from))
 
     # Room availabilities for one building
     elif type == 1:
@@ -440,7 +453,10 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-        WHERE bd.id IS NULL AND r."Building_id" = %s AND rpt."Code" NOT LIKE 'DUI%%'
+        WHERE bd.id IS NULL 
+          AND r."Building_id" = %s 
+          AND rpt."Code" NOT LIKE 'DUI%%'
+          AND r."Sale_type" IN ('plazas', 'ambos')
         GROUP BY 1
         '''
       dbClient.select(sql, (date_to, date_from, filter))
@@ -454,7 +470,9 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           "Resource"."Resource" r
           INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-        WHERE bd.id IS NULL AND r."Building_id" = %s
+        WHERE bd.id IS NULL 
+          AND r."Building_id" = %s
+          AND r."Sale_type" IN ('completo', 'ambos')
         GROUP BY 1
         '''
       dbClient.select(sql, (date_to, date_from, filter))
