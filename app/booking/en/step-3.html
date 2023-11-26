@@ -24,14 +24,14 @@
               <fieldset>
                 <div class="logged-booking pure-g">
 
-                  <h3 class="pure-u-1">Hola [[data.customer.Name]]</h3>
-                  <p class="pure-u-1">Completa los siguientes datos para formalizar tu reserva.</p>
+                  <h3 class="pure-u-1">Hello [[data.customer.Name]]!</h3>
+                  <p class="pure-u-1">Fill in the following information to formalize your reservation.</p>
 
                   <div class="pure-u-1">
                     <div class="campo">
-                      <label class="label">Motivo de la estancia</label>
+                      <label class="label">Reason for stay</label>
                       <select name="Reason_id" required>
-                        <option value="">Selecciona motivo</option>
+                        <option value="">Select a reason</option>
                         [% for c in data.reasons %]
                         <option value="[[c.id]]">[[c.Name]]</option>
                         [% endfor %]
@@ -42,7 +42,7 @@
                   <input type="hidden" name="book_action" value="book">
 
                   <section class="next">
-                    <button type="submit" class="btn-secondary">Confirmar y reservar</button>
+                    <button type="submit" class="btn-secondary">Confirm and book</button>
                   </section>
 
                 </div>
