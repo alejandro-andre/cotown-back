@@ -448,7 +448,7 @@ def q_availability(dbClient, type, filter, date_from, date_to):
     else:
       sql = '''
         SELECT 
-          CONCAT(r."Building_id", '_', rfst."Code") AS "id", COUNT(*) AS "Qty"
+          rfst."Code" AS "id", COUNT(*) AS "Qty"
         FROM
           "Resource"."Resource" r
           INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"

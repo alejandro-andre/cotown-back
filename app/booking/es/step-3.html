@@ -257,9 +257,9 @@
                   <p>Total pago único</p>
                   <p>
                     [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
-                    [[data.summary.Booking_fee + data.summary.Rent + data.summary.Services]]
+                    [[data.summary.Booking_fee + data.summary.Rent + data.summary.Services]] €
                     [% else %]
-                    [[data.summary.Booking_fee + data.summary.Deposit]]
+                    [[data.summary.Booking_fee + data.summary.Deposit]] €
                     [% endif %]
                   </p>
                 </div>
