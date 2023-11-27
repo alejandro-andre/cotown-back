@@ -195,7 +195,7 @@ def register():
    'Phone': get_var('Phone', save=False),
    'Phones': get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
    'Birth_date': get_var('Birth_date', save=False) ,
-   'Nationality_id': to_int(get_var('Nationality_id'), save=False),
+   'Nationality_id': to_int(get_var('Nationality_id', save=False)),
    'Gender_id': to_int(get_var('Gender_id', save=False)) 
   }
   id, error = q_insert_customer(g.dbClient, customer)

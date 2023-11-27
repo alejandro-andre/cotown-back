@@ -1089,7 +1089,7 @@ button.back p {
 .main-booking .main-contain .panel-container .left.tab2 .description .img img.mini {
 	align-self: center;
 	vertical-align: middle;
-	max-width: 280px;
+	max-width: 260px;
 	height: 200px;
 	padding: 20px 0;
 }
@@ -1097,7 +1097,7 @@ button.back p {
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container {
 	width: 60%;
 	background-color: var(--primary-light);
-	padding: 2em 1em 1em 196px;
+	padding: 2em 1em 1em 180px;
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: flex-start;
@@ -1350,7 +1350,7 @@ button.back p {
 }
 
 /* RIGHT */
-.main-booking .main-contain .panel-container .right.tab2 .resume {
+.main-booking .main-contain .panel-container .right.tab2 .summary {
 	width: 80%;
 	display: flex;
 	padding: 24px 36px 40px 36px;
@@ -1362,7 +1362,7 @@ button.back p {
 	box-shadow: 0px 20px 30px 0px rgba(22, 22, 22, 0.06);
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume h3 {
+.main-booking .main-contain .panel-container .right.tab2 .summary h3 {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
 	font-size: 26px;
 	font-weight: 700;
@@ -1372,7 +1372,7 @@ button.back p {
 	margin: 0;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume p {
+.main-booking .main-contain .panel-container .right.tab2 .summary p {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 500;
@@ -1380,7 +1380,7 @@ button.back p {
 	text-transform: uppercase;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit {
+.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1390,7 +1390,7 @@ button.back p {
 	border-bottom: var(--border-bottom);
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .dates {
+.main-booking .main-contain .panel-container .right.tab2 .summary .dates {
 	width: 100%;
 	display: flex;
 	flex-flow: column;
@@ -1399,8 +1399,8 @@ button.back p {
 	gap: 1rem;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit p,
-.main-booking .main-contain .panel-container .right.tab2 .resume .dates p {
+.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit p,
+.main-booking .main-contain .panel-container .right.tab2 .summary .dates p {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 500;
@@ -1409,15 +1409,15 @@ button.back p {
 	text-transform: uppercase;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit h4,
-.main-booking .main-contain .panel-container .right.tab2 .resume .dates h4 {
+.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit h4,
+.main-booking .main-contain .panel-container .right.tab2 .summary .dates h4 {
 	margin: 0;
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 124%;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit button.btn-text {
+.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text {
 	background-color: transparent;
 	display: flex;
 	flex-flow: row wrap;
@@ -1425,7 +1425,7 @@ button.back p {
 	align-items: center;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit button.btn-text p {
+.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text p {
 	font-size: 16px;
 	font-weight: 700;
 	line-height: 150%;
@@ -1434,7 +1434,7 @@ button.back p {
 	text-decoration: underline;
 }
 
-.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit button.btn-text em {
+.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text em {
 	font-size: 14px;
 	margin-right: 4px;
 }
@@ -1536,8 +1536,11 @@ button.back p {
 .main-booking .main-contain .panel-container .right.tab3 {
 	width: 38%;
 }
+.main-booking .main-contain .panel-container .right.tab4 {
+	justify-content: center;
+}
 
-.main-booking .main-contain .panel-container .right.tab3 .resume h3 {
+.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
 	font-size: 26px;
 	font-weight: 700;
@@ -1547,7 +1550,7 @@ button.back p {
 	margin: 0;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume {
+.main-booking .main-contain .panel-container .right.tab3 .summary {
 	display: flex;
 	padding: 24px 36px 40px 36px;
 	flex-direction: column;
@@ -1558,7 +1561,7 @@ button.back p {
 	box-shadow: 0px 20px 30px 0px rgba(22, 22, 22, 0.06);
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume p {
+.main-booking .main-contain .panel-container .right.tab3 .summary p {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 500;
@@ -1566,7 +1569,7 @@ button.back p {
 	text-transform: uppercase;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit {
+.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1576,7 +1579,7 @@ button.back p {
 	border-bottom: var(--border-bottom);
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .dates {
+.main-booking .main-contain .panel-container .right.tab3 .summary .dates {
 	width: 100%;
 	display: flex;
 	flex-flow: column;
@@ -1585,9 +1588,9 @@ button.back p {
 	gap: 1rem;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit p,
-.main-booking .main-contain .panel-container .right.tab3 .resume .dates p,
-.main-booking .main-contain .panel-container .right.tab3 .resume .type-resume p {
+.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
+.main-booking .main-contain .panel-container .right.tab3 .summary .dates p,
+.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume p {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 500;
@@ -1596,20 +1599,20 @@ button.back p {
 	text-transform: uppercase;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit h4,
-.main-booking .main-contain .panel-container .right.tab3 .resume .dates h4 {
+.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
+.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4 {
 	margin: 0;
 	font-size: 20px;
 	font-weight: 700;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .dates .in h4,
-.main-booking .main-contain .panel-container .right.tab3 .resume .dates .out h4 {
+.main-booking .main-contain .panel-container .right.tab3 .summary .dates .in h4,
+.main-booking .main-contain .panel-container .right.tab3 .summary .dates .out h4 {
 	margin: 0.5rem 0 0;
 
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text {
+.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text {
 	background-color: transparent;
 	display: flex;
 	flex-flow: row wrap;
@@ -1617,7 +1620,7 @@ button.back p {
 	align-items: center;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text p {
+.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text p {
 	font-size: 16px;
 	font-weight: 700;
 	line-height: 150%;
@@ -1626,12 +1629,12 @@ button.back p {
 	text-decoration: underline;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text em {
+.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text em {
 	font-size: 14px;
 	margin-right: 4px;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .type-resume {
+.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1642,7 +1645,7 @@ button.back p {
 	border-bottom: var(--border-bottom);
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .type-resume h4 {
+.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume h4 {
 	width: 60%;
 	margin: 0;
 	font-size: 20px;
@@ -1650,7 +1653,7 @@ button.back p {
 	line-height: 124%;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown {
+.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1661,19 +1664,19 @@ button.back p {
 	padding: 0 0 1rem;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown p {
+.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown p {
 	text-transform: none !important;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown h4 {
+.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown h4 {
 	margin: 0 0 0.5rem;
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 124%;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown .prices,
-.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown .total {
+.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .prices,
+.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1681,13 +1684,13 @@ button.back p {
 	align-items: flex-start;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown .total p {
+.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total p {
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 124%;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume .renta {
+.main-booking .main-contain .panel-container .right.tab3 .summary .renta {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1695,7 +1698,7 @@ button.back p {
 	align-items: flex-start;
 }
 
-.main-booking .main-contain .panel-container .right.tab3 .resume p.advise {
+.main-booking .main-contain .panel-container .right.tab3 .summary p.advise {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 28px;
@@ -1716,7 +1719,7 @@ button.back p {
 	}
 
 	.main-booking .main-contain .panel-container .left.tab2 .description .desc-container {
-		padding: 1.5em 1em 1em 134px;
+		padding: 1.5em 1em 1em 180px;
 	}
 
 	.main-booking .main-contain .panel-container .left.tab2 .description .img img.mini {
@@ -1742,26 +1745,26 @@ button.back p {
 		font-size: 22px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume {
+	.main-booking .main-contain .panel-container .right.tab3 .summary {
 		padding: 24px 24px 30px 24px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume h3 {
+	.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
 		font-size: 22px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown .total p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total p {
 		font-size: 18px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .type-resume p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume p {
 		letter-spacing: -0.2px;
 	}
 }
@@ -2045,7 +2048,7 @@ button.back p {
 	.main-booking .main-contain .panel-container .left.tab2 .description .img img.mini {
 		max-height: 300px;
 		height: auto;
-		min-height: 280px;
+		min-height: 260px;
 		width: 100%;
 		max-width: 100%;
 		padding: 0;
@@ -2198,20 +2201,20 @@ button.back p {
 		padding-top: 20px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume {
+	.main-booking .main-contain .panel-container .right.tab2 .summary {
 		width: 100%;
 		padding: 1rem;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume h3 {
+	.main-booking .main-contain .panel-container .right.tab2 .summary h3 {
 		font-size: 17px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume p {
+	.main-booking .main-contain .panel-container .right.tab2 .summary p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit {
+	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit {
 		width: 100%;
 		display: flex;
 		flex-flow: row wrap;
@@ -2221,7 +2224,7 @@ button.back p {
 		border-bottom: var(--border-bottom);
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume .dates {
+	.main-booking .main-contain .panel-container .right.tab2 .summary .dates {
 		width: 100%;
 		display: flex;
 		flex-flow: column;
@@ -2229,21 +2232,21 @@ button.back p {
 		align-items: flex-start;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit p,
-	.main-booking .main-contain .panel-container .right.tab2 .resume .dates p {
+	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right.tab2 .summary .dates p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit h4,
-	.main-booking .main-contain .panel-container .right.tab2 .resume .dates h4 {
+	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right.tab2 .summary .dates h4 {
 		font-size: 14px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit button.btn-text p {
+	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text p {
 		font-size: 12px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .resume .resume-edit button.btn-text em {
+	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text em {
 		font-size: 10px;
 		margin-right: 4px;
 	}
@@ -2327,20 +2330,20 @@ button.back p {
 		padding-top: 20px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume {
+	.main-booking .main-contain .panel-container .right.tab3 .summary {
 		width: 100%;
 		padding: 1rem;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume h3 {
+	.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
 		font-size: 17px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates {
 		width: 100%;
 		display: flex;
 		flex-flow: column;
@@ -2348,8 +2351,8 @@ button.back p {
 		align-items: flex-start;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates p {
 		margin: 0;
 		font-size: 16px;
 		font-weight: 500;
@@ -2358,15 +2361,15 @@ button.back p {
 		text-transform: uppercase;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates h4 {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4 {
 		margin: 0;
 		font-size: 22px;
 		font-weight: 700;
 		line-height: 124%;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text {
 		background-color: transparent;
 		display: flex;
 		flex-flow: row wrap;
@@ -2374,7 +2377,7 @@ button.back p {
 		align-items: center;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text p {
 		font-size: 16px;
 		font-weight: 700;
 		line-height: 150%;
@@ -2383,42 +2386,42 @@ button.back p {
 		text-decoration: underline;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text em {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text em {
 		font-size: 14px;
 		margin-right: 4px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume h3 {
+	.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
 		font-size: 17px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .type-resume h4,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown .total p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .breakdown h4 {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume h4,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown h4 {
 		font-size: 14px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .dates p,
-	.main-booking .main-contain .panel-container .right.tab3 .resume .type-resume p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .dates p,
+	.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text p {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text p {
 		font-size: 12px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume .resume-edit button.btn-text em {
+	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text em {
 		font-size: 10px;
 		margin-right: 4px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .resume p.advise {
+	.main-booking .main-contain .panel-container .right.tab3 .summary p.advise {
 		font-size: 10px;
 		line-height: 14px;
 	}

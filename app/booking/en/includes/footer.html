@@ -1,0 +1,9 @@
+<div id="overlay"><div id="spinner"></div></div>
+<script>
+const forms = document.querySelectorAll('form');
+forms.forEach((form) => {
+  form.addEventListener('submit', (event) => {
+    document.getElementById('overlay').style.display = 'flex';
+  });
+});
+</script>
