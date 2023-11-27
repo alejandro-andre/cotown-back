@@ -18,7 +18,14 @@
 
             [% if data.results | length == 0 %]
             <div class="error-message">
-              <p>Wow, it looks like we don't have any accommodation available with the selected criteria... Would you like to try again?</p>
+              <p>Wow, it looks like we don't have any accommodation available with the selected criteria... </p>
+              <p>Would you like to try again?</p>
+              <p><br/></p>
+            </div>
+            <div class="third secc">               
+              <button class="btn-secondary" onclick="window.location.href='/book.html';">
+                Back
+              </button>
             </div>
             [% endif %]
 

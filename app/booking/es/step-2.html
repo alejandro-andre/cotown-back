@@ -18,7 +18,14 @@
 
             [% if data.results | length == 0 %]
             <div class="error-message">
-              <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados... ¿Quieres probar de nuevo?</p>
+              <p>Vaya, parece que no tenemos alojamiento disponible con los criterios seleccionados...</p>
+              <p>¿Quieres probar de nuevo?</p>
+              <p><br/></p>
+            </div>
+            <div class="third secc">               
+              <button class="btn-secondary" onclick="window.location.href='/book.html';">
+                Back
+              </button>
             </div>
             [% endif %]
 
