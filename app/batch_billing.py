@@ -512,7 +512,7 @@ def pay_bills(dbClient):
   dbClient.select('''
   SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
   FROM "Billing"."Invoice"
-  WHERE "Issued" AND "Payment_id" IS NULL''')
+  WHERE "Issued" AND "Billing_type" = 'factura' AND "Payment_id" IS NULL''')
   data = dbClient.fetchall()
 
   # Loop thru bills
