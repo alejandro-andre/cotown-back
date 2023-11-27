@@ -2,8 +2,18 @@
 SELECT pr."Name" as "Owner", bp."Booking_id",
   EXTRACT(MONTH from bp."Rent_date") AS "Month", EXTRACT(YEAR from bp."Rent_date") AS "Year",
   r."Code", c."Name", b."Date_from", b."Date_to",
-  bp."Rent" + COALESCE(bp."Rent_discount", 0) as "Rent",
-  CASE WHEN p."Payment_date" IS NULL THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) ELSE 0.0 END AS "Rent_due",
+  CASE 
+    WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
+    ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
+  END AS "Rent",
+  CASE 
+    WHEN p."Payment_date" IS NULL THEN 
+      CASE 
+        WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
+        ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
+      END
+    ELSE 0.0
+  END AS "Rent_due",
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Rent_status",
   b."Deposit_actual" AS "Deposit",
   pm."Name" AS "Payment_method", p."Payment_date" 
@@ -24,8 +34,18 @@ SELECT DISTINCT ON (bp.id)
   pr."Name" as "Owner", bp."Booking_id",
   EXTRACT(MONTH from bp."Rent_date") AS "Month", EXTRACT(YEAR from bp."Rent_date") AS "Year",
   CONCAT(bu."Code", ' (', b."Rooms", ') plazas'), c."Name", b."Date_from", b."Date_to",
-  b."Rooms" * bp."Rent" as "Rent",
-  CASE WHEN p."Payment_date" IS NULL THEN b."Rooms" * bp."Rent" ELSE 0.0 END AS "Rent_due",
+  CASE 
+    WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
+    ELSE  b."Rooms" * bp."Rent"
+  END AS "Rent",
+  CASE 
+    WHEN p."Payment_date" IS NULL THEN 
+      CASE 
+        WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
+        ELSE  b."Rooms" * bp."Rent"
+      END
+    ELSE 0.0
+  END AS "Rent_due",
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Rent_status",
   b."Rooms" * b."Deposit",
   pm."Name" AS "Payment_method", p."Payment_date" 
