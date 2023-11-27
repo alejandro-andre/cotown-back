@@ -9,7 +9,7 @@
 "Date_to",
 "Rent",
 "Rent_due",
-"Deposit",
+"Invoice",
 "Rent_status",
 "Payment_method", 
 "Payment_date" 
