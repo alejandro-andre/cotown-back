@@ -122,25 +122,50 @@ def do_occupancy(dbClient, vars):
 
   # 2.1. Get all rents
   dbClient.select('''
-    SELECT 
-      bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date", 
-      b."Rooms" * bp."Rent" AS "Rent",
-      b."Rooms" * bp."Services" AS "Services"
-    FROM "Booking"."Booking_group" b
-    INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
-    INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
-    WHERE "Rent_date" >= %s
+    SELECT "Building", "Resource", "Date", SUM("Rent") AS "Rent", SUM("Services") AS "Services" 
+    FROM (
+      SELECT bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
+        CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
+        CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
+      FROM "Billing"."Invoice_line" il 
+        INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
+        INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
+        INNER JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
+        INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"  
+      WHERE i."Issued" AND p."Product_type_id" IN (3, 4)
     UNION
-    SELECT 
-      bu."Name" AS "Building", r."Code" AS "Resource", DATE_TRUNC('month', bp."Rent_date") AS "Date",
-      bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
-      bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
-    FROM "Booking"."Booking_price" bp
-    INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
-    INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-    INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
-    WHERE "Rent_date" >= %s
-    ORDER BY 1, 2
+      SELECT bu."Name" AS "Building", r."Code" AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
+        CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
+        CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
+      FROM "Billing"."Invoice_line" il 
+        INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
+        INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
+        INNER JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
+        INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
+        INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"  
+      WHERE i."Issued" AND i."Issued" AND p."Product_type_id" IN (3, 4)
+    UNION
+      SELECT 
+        bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 
+        b."Rooms" * b."Rent" AS "Rent",
+        b."Rooms" * b."Services" AS "Services"
+      FROM "Booking"."Booking_group" b
+      INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
+      INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
+      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+    UNION
+      SELECT 
+        bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
+        bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
+        bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
+      FROM "Booking"."Booking_price" bp
+      INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
+      INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
+      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+    ) AS income
+    GROUP BY 1, 2, 3
+    ORDER BY 1, 2, 3
   ''', (start_date, start_date))
   columns = [desc[0] for desc in dbClient.sel.description]
   df_bills = pd.DataFrame.from_records(dbClient.fetchall(), columns=columns)
