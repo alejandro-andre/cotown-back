@@ -82,8 +82,9 @@ def do_occupancy(dbClient, vars):
   dbClient.select('''
     SELECT b."Name" AS "Building", r."Code" AS "Resource", r."Flat_id"
     FROM "Resource"."Resource" r
-    INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-    WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
+      INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+    WHERE "Resource_type" <> 'piso' 
+      AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
     ORDER BY r."Code" ASC
     ''')
   columns = [desc[0] for desc in dbClient.sel.description]
