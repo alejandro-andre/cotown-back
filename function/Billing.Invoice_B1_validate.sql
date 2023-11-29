@@ -72,20 +72,26 @@ BEGIN
     END IF;
 
     -- No se puede cambiar
-    IF OLD."Issued"      <> NEW."Issued"      OR
-       OLD."Bill_type"   <> NEW."Bill_type"   OR
-       OLD."Booking_id"  <> NEW."Booking_id"  OR
-       OLD."Customer_id" <> NEW."Customer_id" OR
-       OLD."Provider_id" <> NEW."Provider_id" OR
-       OLD."Concept"     <> NEW."Concept"     OR
-       OLD."Issued_date" <> NEW."Issued_date" OR
+    IF OLD."Issued"           <> NEW."Issued"          OR
+       OLD."Bill_type"        <> NEW."Bill_type"       OR
+       OLD."Booking_id"       <> NEW."Booking_id"      OR
+       OLD."Booking_groupid"  <> NEW."Booking_groupid" OR
+       OLD."Customer_id"      <> NEW."Customer_id"     OR
+       OLD."Provider_id"      <> NEW."Provider_id"     OR
+       OLD."Concept"          <> NEW."Concept"         OR
+       OLD."Issued_date"      <> NEW."Issued_date"     OR
       (OLD."Rectified" = TRUE AND NEW."Rectified" = FALSE) THEN
       RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
     END IF;
 
   END IF;
 
-  -- Cliente de la reserva
+  -- Reserva
+  IF NEW."Booking_id" IS NULL AND NEW."Booking_group_id" IS NULL THEN
+    RAISE EXCEPTION '!!!Booking or Group booking is missing!!!Falta indicar la reserva o la reserva de grupo!!!';
+  END IF;
+
+  -- Cliente
   IF NEW."Customer_id" IS NULL THEN
     IF NEW."Booking_id" IS NOT NULL THEN
       SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
