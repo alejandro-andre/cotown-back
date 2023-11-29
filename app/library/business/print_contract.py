@@ -457,7 +457,7 @@ def generate_doc_file(context, template):
   env.filters['age'] = age
 
   # Render contract
-  text = template.replace('\r\n\r\n\r\n\r\n', '\r\n\r\n&nbsp;\r\n\r\n')
+  text = template.replace('\n\n\n\n', '\n\n&nbsp;\n\n')
   md = env.from_string(text).render(context)
 
   # Convert markdown to HTML
