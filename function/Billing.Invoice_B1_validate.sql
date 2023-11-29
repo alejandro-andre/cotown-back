@@ -48,9 +48,9 @@ BEGIN
 
       -- Inserta factura rectificativa
 	    INSERT INTO "Billing"."Invoice"
-        ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
+        ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
       VALUES
-        ('rectificativa', False, False, CURRENT_DATE, OLD."Provider_id", OLD."Customer_id", OLD."Booking_id", OLD."Payment_method_id", OLD."Payment_id", CONCAT('Factura rectificativa de la ', OLD."Code"))
+        ('rectificativa', False, False, CURRENT_DATE, OLD."Provider_id", OLD."Customer_id", OLD."Booking_id", OLD."Booking_group_id", OLD."Payment_method_id", OLD."Payment_id", CONCAT('Factura rectificativa de la ', OLD."Code"))
       RETURNING id INTO i_id;
     
       -- Inserta lineas
