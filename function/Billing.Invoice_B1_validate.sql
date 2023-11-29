@@ -158,7 +158,7 @@ BEGIN
 
   -- SAP Code
   IF resource_code IS NOT NULL AND prefix_provider IS NOT NULL THEN
-    NEW."SAP_code" := CONCAT(prefix_provider, prefix_building, '_', SUBSTRING (resource_code, 8, 5));
+    NEW."SAP_code" := CONCAT(SUBSTRING (prefix_provider, 1, 2), prefix_building, '_', SUBSTRING (resource_code, 8, 5));
   END IF;
  
   -- Año de emisión
