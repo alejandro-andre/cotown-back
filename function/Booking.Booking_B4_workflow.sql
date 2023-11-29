@@ -57,7 +57,7 @@ BEGIN
   END IF;
 
   -- Update deposit
-  IF OLD."Deposit" <> NEW."Deposit"  OR (OLD."Deposit" IS NULL AND NEW."Deposit" > 0) THEN
+  IF COALESCE(OLD."Deposit", 0) <> COALESCE(NEW."Deposit", 0) THEN
 
     -- Already paid?
     SELECT COUNT(*) INTO num 
@@ -74,7 +74,12 @@ BEGIN
     curr_user := CURRENT_USER;
     RESET ROLE;
     DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposito' AND "Customer_id" = NEW."Payer_id" AND "Booking_id" = NEW.id;
-    IF NEW."Deposit" > 0 THEN
+    -- Deposit is 0
+    IF NEW."Deposit" = 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
+      NEW."Deposit_actual" = 0;
+    END IF;
+    -- Add payment if actual deposit is 0
+    IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
       SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Payer_id";
       INSERT
         INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )

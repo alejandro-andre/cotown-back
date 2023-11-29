@@ -102,6 +102,11 @@ BEGIN
     NEW."Request_date" := NOW();
   END IF;
 
+  -- Deposit
+  IF COALESCE(NEW."Deposit_returned", 0) > COALESCE(NEW."Deposit_actual", 0) THEN
+    RAISE EXCEPTION '!!!Returned deposit greater than actual.!!!Garantía devuelta superior a la depositada!!!';
+  END IF;
+
   -- Check for overlaps
   SELECT b."Booking_id"
   INTO num
