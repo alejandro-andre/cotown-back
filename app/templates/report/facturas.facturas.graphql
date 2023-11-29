@@ -21,7 +21,7 @@ query Invoices ($fdesde: String, $fhasta:String, $pdesde:Int, $phasta:Int) {
         Concept
         Provider: ProviderViaProvider_id (
           joinType: INNER
-          where: { Prefix_SAP: { IS_NULL: false } }
+          where: { SAP_code: { IS_NULL: false } }
         ) {
             Name
         }

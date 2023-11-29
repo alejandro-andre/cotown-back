@@ -140,7 +140,7 @@ BEGIN
 
   -- Lee el formato de numeración y prefijo SAP del proveedor
   SELECT
-    "Prefix_SAP",
+    "SAP_code",
     CASE NEW."Bill_type"
       WHEN 'factura' THEN "Bill_pattern"
       WHEN 'rectificativa' THEN "Credit_pattern"

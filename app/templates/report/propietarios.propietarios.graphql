@@ -20,7 +20,7 @@
         Provider_type: Provider_typeViaProvider_type_id {
             Name
         }
-        Prefix_SAP
+        SAP_code
         Province
         Receipt_pattern
         Type

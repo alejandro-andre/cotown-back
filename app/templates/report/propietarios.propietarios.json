@@ -10,7 +10,7 @@
 "Country.Name",
 "Email",
 "Phones",
-"Prefix_SAP",
+"SAP_code",
 "Bill_pattern",
 "Credit_pattern",
 "Receipt_pattern",
