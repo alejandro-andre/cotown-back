@@ -293,8 +293,8 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id)
       WHERE pd."Year" = %s
         AND b.id = %s
-        AND rfst.id = %s
         AND rft.id = %s
+        AND rfst.id = %s
       LIMIT 1
       '''
   else:
@@ -314,14 +314,14 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
       WHERE pd."Year" = %s
         AND b.id = %s
-        AND rpt.id = %s
         AND rft.id = %s
+        AND rpt.id = %s
       LIMIT 1
       '''
 
   try:
     dbClient.connect()
-    dbClient.select(sql, (year, building_id, place_type_id, flat_type_id))
+    dbClient.select(sql, (year, building_id, flat_type_id, place_type_id))
     results = dbClient.fetchall()
     dbClient.disconnect()
     if len(results) > 0:

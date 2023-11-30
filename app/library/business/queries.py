@@ -142,7 +142,7 @@ def q_flat_prices(dbClient, segment, year):
   # Get prices
   sql = '''
     SELECT
-      r."Building_id", rft.id AS "Flat_type_id", rfst."Code" AS "Flat_subtype",
+      r."Building_id", rft.id AS "Flat_type_id", rfst.id AS "Flat_subtype_id", rfst."Code" AS "Flat_subtype",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
@@ -156,8 +156,8 @@ def q_flat_prices(dbClient, segment, year):
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
     WHERE pd."Year" = %s
       AND b."Segment_id" = %s
-    GROUP BY 1, 2, 3
-    ORDER BY 1, 2;
+    GROUP BY 1, 2, 3, 4
+    ORDER BY 1, 2, 3;
   '''
   dbClient.select(sql, (year, segment))
 
@@ -183,7 +183,8 @@ def q_flat_prices(dbClient, segment, year):
     flat_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Flat_subtypes']) if d['Code'] == row['Flat_subtype']), None)
     if flat_type_index is None:
       grouped_data[building_index]['Flat_subtypes'].append({
-        'id': row['Flat_type_id'],
+        'id': row['Flat_subtype_id'],
+        'Flat_type_id': row['Flat_type_id'],
         'Code': row['Flat_subtype'],
         'Rent_long': int(row['Rent_long']),
         'Rent_medium': int(row['Rent_medium']),

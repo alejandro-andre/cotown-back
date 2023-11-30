@@ -10,7 +10,7 @@
 
 # System includes
 import locale
-from flask import g, request, session, make_response, send_file, send_from_directory
+from flask import g, request, session, send_from_directory
 
 # Cotown includes - services
 from library.services.config import settings
