@@ -183,7 +183,7 @@ def q_flat_prices(dbClient, segment, year):
     flat_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Flat_subtypes']) if d['Code'] == row['Flat_subtype']), None)
     if flat_type_index is None:
       grouped_data[building_index]['Flat_subtypes'].append({
-        'id': row['Flat_subtype_id'],
+        'id': row['Flat_type_id'],
         'Code': row['Flat_subtype'],
         'Rent_long': int(row['Rent_long']),
         'Rent_medium': int(row['Rent_medium']),
