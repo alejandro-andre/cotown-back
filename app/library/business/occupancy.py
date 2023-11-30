@@ -80,7 +80,7 @@ def do_occupancy(dbClient, vars):
 
   # 0.2 Get all resources: individual rooms and places
   dbClient.select('''
-    SELECT b."Name" AS "Building", r."Code" AS "Resource", r."Flat_id"
+    SELECT b."Name" AS "Building", r."Code" AS "Resource", CASE WHEN r."Resource_type" = 'piso' THEN r.id ELSE r."Flat_id" END AS "Flat_id"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
