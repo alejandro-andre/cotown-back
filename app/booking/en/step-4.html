@@ -15,79 +15,21 @@
       <div class="main-contain">
         <div class="panel-container">       
 
-          <div class="right tab4 pure-u-1">
-            <div class="summary">
-              <h3>Booking summary</h3>
-              <p>Location</p>
-              <div class="summary-edit">
-                <h4>[[data.city.Name]]</h4>
-                <!--
-                <button class="btn-text">
-                  <em class="icon-write"></em>
-                  <p>Editar</p>
-                </button>
-                -->
-              </div>
+          <div class="left tab3 pure-u-1 pure-u-lg-14-24">
 
-              <div class="dates">
-                <div class="in">
-                  <p>CHECK IN</p>
-                  <h4>[[data.date_from]]</h4>
-                </div>
-                <div class="out">
-                  <p>CHECK OUT</p>
-                  <h4>[[data.date_to]]</h4>
-                </div>
-              </div>
+            <h2>Thank you!</h2>
+            <h4>Your booking request has been placed!</h4>
 
-              <div class="type-summary">
-                <h4>[[data.summary.Place_type_name]]</h4>
-                <p>[[data.summary.Building_name]]</p>                                     
-              </div>
-
-              <div class="breakdown">
-                <h4>Prices</h4>
-                <div class="prices">
-                  <p>Booking fee</p>
-                  <p>[[data.summary.Booking_fee]]€</p>
-                </div>
-                <div class="prices">
-                  <p>Deposit</p>
-                  <p>
-                    [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
-                    [[data.summary.Rent + data.summary.Services]]
-                    [% else %]
-                    [[data.summary.Deposit]]
-                    [% endif %]
-                  €</p>
-                </div>
-                [% if data.summary.Final_cleaning %]
-                <div class="prices">
-                  <p>Final cleaning</p>
-                  <p>[[data.summary.Final_cleaning]]€</p>
-                </div>
-                [% endif %]
-                <div class="total">
-                  <p>Total single payment</p>
-                  <p>
-                    [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
-                    [[data.summary.Booking_fee + data.summary.Rent + data.summary.Services]] €
-                    [% else %]
-                    [[data.summary.Booking_fee + data.summary.Deposit]] €
-                    [% endif %]
-                  </p>
-                </div>
-              </div>
-
-              <div class="renta">
-                <h3>Average monthly rent</h3>
-                <h3>[[data.summary.Rent + data.summary.Services]]€ *</h3>
-              </div>
-
-              <p class="advise">* Water, gas, and electricity supplies included in the monthly amount up to [[data.summary.Limit]]€/mo.</p>
-
-            </div>
+            <form>
+              <fieldset>
+                <section class="next">
+                  <button type="submit" class="btn-secondary" onclick="window.location.href='/';">Back</button>
+                </section>
+              </fieldset>
+            </form>
           </div>
+
+          [% include 'en/includes/summary.html' %]
 
         </div>
       </div>

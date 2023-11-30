@@ -1,0 +1,79 @@
+<div class="right pure-u-1 pure-u-lg-1-3">
+  <div class="summary">
+
+    <h3>Booking summary</h3>
+
+    <p>Location</p>
+    <div class="summary-edit">
+      <h4>[[data.city.Name]]</h4>
+    </div>
+
+    <div class="dates">
+      <div class="in">
+        <p>CHECK IN</p>
+        <h4>[[data.date_from | date]]</h4>
+      </div>
+      <div class="out">
+        <p>CHECK OUT</p>
+        <h4>[[data.date_to | date]]</h4>
+      </div>
+    </div>
+
+    [% if data.summary %]
+
+    <div class="type-summary">
+      <h4>[[data.summary.Place_type_name]]</h4>
+      <!--[[data.summary.Flat_type_name]]--> 
+      <p>[[data.summary.Building_name]]</p>                                     
+    </div>
+
+    <div class="breakdown">
+
+      <h4>Price breakdown</h4>
+
+      <div class="prices">
+        <p>Booking fee</p>
+        <p>[[data.summary.Booking_fee | number]] €</p>
+      </div>
+
+      <div class="prices">
+        <p>Deposit</p>
+        <p>
+          [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
+          [[(data.summary.Rent + data.summary.Services) | number]] €
+          [% else %]
+          [[data.summary.Deposit | number]] €
+          [% endif %]
+        </p>
+      </div>
+
+      [% if data.summary.Final_cleaning %]
+      <div class="prices">
+        <p>Final cleaning</p>
+        <p>[[data.summary.Final_cleaning | number]] €</p>
+      </div>
+      [% endif %]
+
+      <div class="total">
+        <p>Total single payment</p>
+        <p>
+          [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
+          [[(data.summary.Booking_fee + data.summary.Rent + data.summary.Services) | number]] €
+          [% else %]
+          [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
+          [% endif %]
+        </p>
+      </div>
+    </div>
+
+    <div class="renta">
+      <h3>Monthly rent</h3>
+      <h3>[[(data.summary.Rent + data.summary.Services) | number]] € *</h3>
+    </div>
+
+    <p class="advise">* Water, gas, and electricity supplies included in the monthly amount up to [[data.summary.Limit | number]] €/month</p>
+
+    [% endif %]
+
+  </div>
+</div>

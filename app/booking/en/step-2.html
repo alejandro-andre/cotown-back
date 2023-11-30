@@ -48,7 +48,7 @@
                   <p class="desc">[[item.Place_type_name]]</p>
                   <div class="price">
                     <p>
-                      [[item.Flat_types[0].Price]]€
+                      [[item.Flat_types[0].Price | number]] €
                       <br><span>[% if item.Flat_types | length > 1 %]desde [% endif %]al mes</span>
                     </p>
                   </div>
@@ -74,7 +74,7 @@
                         </label>
                       </div>
                       <div class="price">
-                        <p>[[share.Price]]€<span style="font-size:14px;font-weight:400;"> al mes</span>
+                        <p>[[share.Price | number]] €<span style="font-size:14px;font-weight:400;"> al mes</span>
                         </p>
                       </div>
                     </div>
@@ -107,6 +107,7 @@
                   </button>
                 </div>
 
+                <!--
                 <div class="panel-expan secc">
                   <div class="expansion">
                     <input type="checkbox" class="expan-2" id="tab1" tabindex="0"/>
@@ -119,38 +120,15 @@
                     </div>      
                   </div>
                 </div>
-
+                -->
+                
               </div>
             </div>
             [% endfor %]
 
           </div> 
 
-          <div class="right tab2 pure-u-1 pure-u-lg-1-3">
-            <div class="summary">
-              <h3>Booking summary</h3>
-              <p>Location</p>
-              <div class="summary-edit">
-                <h4>[[data.city.Name]]</h4>
-                <!--
-                <button class="btn-text">
-                  <em class="icon-write"></em>
-                  <p>Editar</p>
-                </button>
-                -->
-                </div>
-              <div class="dates">
-                <div class="in">
-                  <p>CHECK IN</p>
-                  <h4>[[data.date_from]]</h4>
-                </div>
-                <div class="out">
-                  <p>CHECK OUT</p>
-                  <h4>[[data.date_to]]</h4>
-                </div>               
-              </div>
-            </div>
-          </div>       
+          [% include 'en/includes/summary.html' %]
 
         </div>
       </div>

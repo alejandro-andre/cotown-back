@@ -9,6 +9,7 @@
 # ###################################################
 
 # System includes
+import locale
 from flask import g, request, session, make_response, send_file, send_from_directory
 
 # Cotown includes - services
@@ -27,6 +28,19 @@ logger = logging.getLogger('COTOWN')
 # ###################################################
 # Auxiliary methods
 # ###################################################
+
+# ---------------------------------------------------
+# Jinja2 filters
+# ---------------------------------------------------
+
+def format_number(value):
+  return locale.format_string("%d", value, grouping=True)
+
+def format_date_es(value):
+  return value[8:10] + '/' + value[5:7] + '/' + value[0:4]
+
+def format_date_en(value):
+  return value[5:7] + '/' + value[8:10] + '/' + value[0:4]
 
 # ---------------------------------------------------
 # Get int or 0
@@ -253,9 +267,13 @@ def req_pub_availability(type, filter):
 
 def req_pub_booking(step):
 
-    # Example
-    # http://localhost:5000/booking/2?lang=en&segment=1&book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2023-11-01&book_checkout=2024-03-31
-    # http://localhost:5000/booking/3?lang=en&segment=1&book_building_id=1&book_flat_type_id=1&book_place_type_id=100&book_checkin=2023-11-01&book_checkout=2024-03-31
+    # Examples
+    #
+    # http://localhost:5000/booking/2?lang=en&segment=1&book_city_id=1&book_acom=pc&book_room=ind&book_checkin=2024-05-01&book_checkout=2024-07-31
+    # http://localhost:5000/booking/3?lang=en&segment=1&book_building_id=1&book_flat_type_id=1&book_place_type_id=100&book_checkin=2024-05-01&book_checkout=2024-07-31
+    #
+    # http://localhost:5000/booking/2?lang=en&segment=1&book_city_id=1&book_acom=ap&book_checkin=2024-05-01&book_checkout=2024-07-31
+    # http://localhost:5000/booking/3?lang=en&segment=1&book_building_id=1&book_flat_type_id=5&book_place_type_id=1&book_acom=ap&book_checkin=2024-05-01&book_checkout=2024-07-31
 
     # Debug
     logger.info('BOOKING STEP-' + str(step) + ':' + request.path)
@@ -269,6 +287,9 @@ def req_pub_booking(step):
     lang    = get_var('lang', 'es')
     segment = get_var('segment', 1)
 
+    # Locale
+    locale.setlocale(locale.LC_ALL, 'es_ES' if lang == 'es' else 'en_US')
+
     # Booking data from each step
     typologies    = q_typologies(g.dbClient, segment)
     city_id       = int(get_var('book_city_id', 1)) 
@@ -280,6 +301,7 @@ def req_pub_booking(step):
     building_id   = get_var('book_building_id')
     place_type_id = get_var('book_place_type_id')
     flat_type_id  = get_var('book_flat_type_id')
+    extras        = get_var('book_extras')
 
     # Current user, if logged
     logged   = session.get('logged', None)
@@ -383,9 +405,10 @@ def req_pub_booking(step):
         'Customer_id': customer['id'],
         'Building_id': building_id,
         'Resource_type': 'piso' if acom_type == 'ap' else 'habitacion',
-        'Flat_type_id': flat_type_id,
-        'Place_type_id': place_type_id,
-        'Reason_id': get_var('Reason_id', None)
+        'Flat_type_id': place_type_id if acom_type == 'ap' else flat_type_id,
+        'Place_type_id': None if acom_type == 'ap' else place_type_id,
+        'Reason_id': get_var('Reason_id', None),
+        'Comments': summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + ' / ' + extras
       }
       id, error = q_insert_booking(g.dbClient, booking)
 
@@ -393,6 +416,8 @@ def req_pub_booking(step):
       if error:
         return None, customer, error # process_error(error.pgerror) 
 
-    # Render template
+    # Add your custom filter to Jinja2 environment
+    g.env.filters['number'] = format_number
+    g.env.filters['date']   = format_date_es if lang == 'es' else format_date_en
     tpl = g.env.get_template(lang + '/step-' + str(step) + '.html')
     return tpl.render(data=locals())

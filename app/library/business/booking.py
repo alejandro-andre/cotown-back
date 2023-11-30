@@ -376,10 +376,10 @@ def q_insert_booking(dbClient, booking):
   sql = f'''
     INSERT INTO "Booking"."Booking" (
       "Date_from", "Date_to", "Customer_id", "Building_id", 
-      "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", 
+      "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", "Comments", 
       "Booking_channel_id", "Second_resident", "Lock"
     )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
     RETURNING id
     '''
   try:
@@ -392,7 +392,8 @@ def q_insert_booking(dbClient, booking):
       booking["Resource_type"],
       booking["Flat_type_id"],
       booking["Place_type_id"],
-      booking["Reason_id"]
+      booking["Reason_id"],
+      booking["Comments"]
     ))
     id = dbClient.returning()[0]
     dbClient.commit()

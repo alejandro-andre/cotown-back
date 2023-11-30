@@ -15,50 +15,42 @@ h6 {
 	margin-bottom: 1rem;
 	font-weight: 300;
 }
-
 h1 {
 	font-family: var(--title-font);
 	font-size: 3rem;
 	line-height: 1.2;
 }
-
 h2 {
 	font-family: var(--title-font);
 	font-size: 2.5rem;
 	line-height: 1.25;
 }
-
 h3 {
 	font-family: var(--title-font);
 	font-size: 1.9rem;
 	line-height: 1.3;
 }
-
 h4 {
 	font-family: var(--text-font);
 	font-size: 1.5rem;
 	line-height: 1.35;
 }
-
 h5 {
 	font-family: var(--text-font);
 	font-size: 1.2rem;
 	line-height: 1.5;
 }
-
 h6 {
 	font-family: var(--text-font);
 	font-size: 1rem;
 	line-height: 1.2;
 }
-
 p {
 	font-family: var(--text-font);
 	margin-top: 0;
 	line-height: 1;
 	letter-spacing: 0;
 }
-
 p,
 a,
 label,
@@ -72,6 +64,10 @@ li,
 ol {
 	font-family: var(--text-font);
 }
+fieldset {
+	border: none;
+}
+
 
 /* Grid
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -83,7 +79,6 @@ ol {
 	padding: 0 20px;
 	box-sizing: border-box;
 }
-
 .column,
 .columns {
 	width: 100%;
@@ -97,7 +92,6 @@ button {
 	font-family: var(--text-font);
 	border: 1px solid transparent;
 }
-
 .btn-regular {
 	display: flex;
 	flex-direction: row;
@@ -116,11 +110,9 @@ button {
 	border: 1px solid transparent;
 	cursor: pointer;
 }
-
 .btn-regular:hover {
 	background-color: var(--primary-dark);
 }
-
 .btn-loading {
 	display: flex;
 	flex-direction: row;
@@ -139,11 +131,9 @@ button {
 	border: 1px solid var(--primary);
 	cursor: pointer;
 }
-
 .btn-loading:hover {
 	background-color: var(--primary-dark);
 }
-
 .btn-primary {
 	display: flex;
 	flex-direction: row;
@@ -162,13 +152,11 @@ button {
 	color: var(--primary);
 	cursor: pointer;
 }
-
 .btn-primary:hover {
 	border-color: var(--primary-dark);
 	background-color: var(--white);
 	color: var(--primary-dark);
 }
-
 .btn-secondary {
 	display: flex;
 	flex-direction: row;
@@ -187,20 +175,17 @@ button {
 	color: var(--primary-text);
 	cursor: pointer;
 }
-
 .btn-secondary:hover {
 	border-color: var(--primary-dark);
 	background-color: var(--white);
 	color: var(--primary-dark);
 }
-
 .btn-secondary:disabled,
 .btn-secondary:disabled:hover  {
 	border-color: var(--grey-dark);
 	background-color: var(--grey-light);
 	color: var(--grey-dark);
 }
-
 .btn-primary.search {
 	height: auto;
 	text-transform: capitalize;
@@ -208,12 +193,10 @@ button {
 	font-size: 18px;
 	padding: 14px 26px 14px 20px;
 }
-
 .btn-secondary.search.mobile {
 	font-size: 16px;
 	padding: 12px 26px;
 }
-
 .btn-text {
 	color: var(--black);
 	font-size: 22px;
@@ -222,7 +205,6 @@ button {
 	background-color: transparent;
 	cursor: pointer;
 }
-
 .btn-text:hover {
 	color: var(--primary);
 }
@@ -240,75 +222,58 @@ button {
 	.container {
 		width: 100%;
 	}
-
 	.column,
 	.columns {
 		margin-left: 0;
 	}
-
 	.column:first-child,
 	.columns:first-child {
 		margin-left: 0;
 	}
-
 	.one.column,
 	.one.columns {
 		width: 4.66666666667%;
 	}
-
 	.two.columns {
 		width: 13.3333333333%;
 	}
-
 	.three.columns {
 		width: 22.2%;
 	}
-
 	.four.columns {
 		width: 30.6666666667%;
 	}
-
 	.five.columns {
 		width: 39.3333333333%;
 	}
-
 	.six.columns {
 		width: 48%;
 	}
-
 	.seven.columns {
 		width: 56.6666666667%;
 	}
-
 	.eight.columns {
 		width: 65.3333333333%;
 	}
-
 	.nine.columns {
 		width: 74.0%;
 	}
-
 	.ten.columns {
 		width: 82.6666666667%;
 	}
-
 	.eleven.columns {
 		width: 91.3333333333%;
 	}
-
 	.twelve.columns {
 		width: 100%;
 		margin-left: 0;
 	}
-
 	.one-third.column {
 		width: 30.6666666667%;
 	}
-
 	.two-thirds.column {
 		width: 65.3333333333%;
 	}
-
 	.one-half.column {
 		width: 48%;
 	}
@@ -333,8 +298,6 @@ border: 1px solid #D1D1D1; */
 		/* box-shadow: none; */
 		/* box-sizing: border-box; */
 	}
-
-	/* Removes awkward default styles on some inputs for iOS */
 	input[type="email"],
 	input[type="number"],
 	input[type="search"],
@@ -347,13 +310,11 @@ border: 1px solid #D1D1D1; */
 		-moz-appearance: none;
 		appearance: none;
 	}
-
 	textarea {
 		min-height: 65px;
 		padding-top: 6px;
 		padding-bottom: 6px;
 	}
-
 	input[type="email"]:focus,
 	input[type="number"]:focus,
 	input[type="search"]:focus,
@@ -363,28 +324,22 @@ border: 1px solid #D1D1D1; */
 	input[type="password"]:focus,
 	textarea:focus,
 	select:focus {
-		/* border: 1px solid #33C3F0; */
 		outline: 0;
 	}
-
 	label,
 	legend {
 		display: block;
 		margin-bottom: .5rem;
 		font-weight: 600;
 	}
-
 	fieldset {
 		width: 100%;
 		padding: 0;
-		border-width: 0;
 	}
-
 	input[type="checkbox"],
 	input[type="radio"] {
 		display: inline;
 	}
-
 	label>.label-body {
 		display: inline-block;
 		margin-left: .5rem;
@@ -392,21 +347,18 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Lists
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 	ul {
 		list-style: circle inside;
 	}
-
 	ol {
 		list-style: decimal inside;
 	}
-
 	ol,
 	ul {
 		padding-left: 0;
 		margin-top: 0;
 	}
-
 	ul ul,
 	ul ol,
 	ol ol,
@@ -414,13 +366,12 @@ border: 1px solid #D1D1D1; */
 		margin: 1.5rem 0 1.5rem 3rem;
 		font-size: 90%;
 	}
-
 	li {
 		margin-bottom: 1rem;
 	}
 
 	/* Code
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 	code {
 		padding: .2rem .5rem;
 		margin: 0 .2rem;
@@ -430,7 +381,6 @@ border: 1px solid #D1D1D1; */
 		border: 1px solid #E1E1E1;
 		border-radius: 4px;
 	}
-
 	pre>code {
 		display: block;
 		padding: 1rem 1.5rem;
@@ -438,33 +388,24 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Tables
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 	th,
 	td {
 		padding: 12px 15px;
 		text-align: left;
 		border-bottom: 1px solid #E1E1E1;
 	}
-
 	th:first-child,
 	td:first-child {
 		padding-left: 0;
 	}
-
 	th:last-child,
 	td:last-child {
 		padding-right: 0;
 	}
 
 	/* Spacing
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-	input,
-	textarea,
-	select,
-	fieldset {
-		/* margin-bottom: 1.5rem; */
-	}
-
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 	pre,
 	blockquote,
 	dl,
@@ -478,27 +419,24 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Utilities
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 	.u-full-width {
 		width: 100%;
 		box-sizing: border-box;
 	}
-
 	.u-max-full-width {
 		max-width: 100%;
 		box-sizing: border-box;
 	}
-
 	.u-pull-right {
 		float: right;
 	}
-
 	.u-pull-left {
 		float: left;
 	}
 
 	/* Misc
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 	hr {
 		margin-top: 3rem;
 		margin-bottom: 3.5rem;
@@ -507,9 +445,8 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Clearing
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 
-	/* Self Clearing Goodness */
 	.container:after,
 	.row:after,
 	.u-cf {
@@ -519,7 +456,7 @@ border: 1px solid #D1D1D1; */
 	}
 
 	/* Icons
-    ========================================================================== */
+	–––––––––––––––––––––––––––––––––––––––––––––––––– */
 
 	i,
 	em {
@@ -544,11 +481,9 @@ section>h2 {
 	justify-content: space-between;
 	align-items: center;
 }
-
 .content-booking::-webkit-scrollbar {
 	display: none;
 }
-
 .content-booking section {
 	width: 100%;
 	text-align: center;
@@ -557,7 +492,6 @@ section>h2 {
 	justify-content: space-between;
 	align-items: center;
 }
-
 .content-booking section.results {
 	text-align: center;
 	display: flex;
@@ -566,7 +500,6 @@ section>h2 {
 	align-items: center;
 	margin: 2em 0 4em;
 }
-
 .content-booking section h2 {
 	width: 100%;
 	font-size: 64px;
@@ -574,7 +507,6 @@ section>h2 {
 	text-align: center;
 	margin-top: 1em;
 }
-
 .content-booking section .option-selector {
 	width: 98%;
 	text-align: center;
@@ -583,7 +515,6 @@ section>h2 {
 	justify-content: center;
 	align-items: center;
 }
-
 .content-booking section .option-selector select {
 	width: 50%;
 	border: 1.5px solid #d1d1d1;
@@ -607,7 +538,6 @@ section>h2 {
 	background: url("..//img/br_down.png") white no-repeat calc(100% - 30px) !important;
 	/* Better placement regardless of input width */
 }
-
 .content-booking section .option-selector .option-icons {
 	width: 100%;
 	text-align: center;
@@ -617,11 +547,9 @@ section>h2 {
 	align-items: center;
 	gap: 1em;
 }
-
 .content-booking section .option-selector .option-icons .option {
 	width: 24%;
 }
-
 .content-booking section .option-selector .option-icons .option .content-selector {
 	width: 60%;
 	margin: 0 auto;
@@ -634,12 +562,10 @@ section>h2 {
 	cursor: pointer;
 	transition: all .4s ease-in-out;
 }
-
 .content-booking section .option-selector .option-icons .option .content-selector.active {
     border: 3px solid var(--primary-bg);
     border-radius: 16px;
 }
-
 .content-booking section .option-selector .option-icons .option .content-selector:hover,
 .content-booking section .option-selector .option-icons .option .content-selector:active,
 .content-booking section .option-selector .option-icons .option .content-selector:focus-visible,
@@ -648,11 +574,9 @@ section>h2 {
 	background-color: var(--primary-bg);
 	border-radius: 16px;
 }
-
 .content-booking section .option-selector .option-icons .option img {
 	order: 1;
 }
-
 .content-booking section .option-selector .option-icons .option p {
 	order: 2;
 	margin: 0;
@@ -666,7 +590,6 @@ section>h2 {
 	justify-content: center;
 	align-items: flex-start;
 }
-
 .content-booking section .calendar .reservas_form {
 	width: 300px;
 	display: flex;
@@ -675,7 +598,6 @@ section>h2 {
 	align-items: flex-start;
 	margin: 0.2em auto 1em;
 }
-
 .content-booking section .calendar .reservas_form button.date-button {
 	display: flex;
 	flex-flow: row wrap;
@@ -688,7 +610,6 @@ section>h2 {
 	border-radius: 6px;
 	padding: 10px 0 10px 10px;
 }
-
 .content-booking section .calendar .reservas_form button.date-button label.labels {
 	width: 100%;
 	font-weight: 700;
@@ -696,7 +617,6 @@ section>h2 {
 	line-height: 16px;
 	text-align: left;
 }
-
 .content-booking section .calendar .reservas_form button.date-button input.inputs {
 	height: 16px;
 	text-align: center;
@@ -706,7 +626,6 @@ section>h2 {
 	background-color: transparent;
 	border: none;
 }
-
 .content-booking .close {
 	width: 100%;
 	display: flex;
@@ -722,7 +641,6 @@ section>h2 {
 	justify-content: center;
 	align-items: flex-start;
 }
-
 .tabs-container .header-tabs {
 	width: 100%;
 	margin: 0;
@@ -732,7 +650,6 @@ section>h2 {
 	justify-content: center;
 	align-items: center;
 }
-
 .tabs-container .header-tabs .left,
 .tabs-container .header-tabs .center,
 .tabs-container .header-tabs .right {
@@ -751,12 +668,10 @@ button.back {
 	background-color: transparent;
 	cursor: pointer;
 }
-
 button.back em {
 	font-size: 20px;
 	margin: 0 6px;
 }
-
 button.back p {
 	margin-bottom: 0;
 }
@@ -765,32 +680,26 @@ button.back p {
 	justify-content: flex-start;
 	align-items: flex-start;
 }
-
 .tabs-container .header-tabs .left button.back {
 	justify-content: flex-start;
 	align-items: center;
 }
-
 .tabs-container .header-tabs .center {
 	justify-content: center;
 	align-items: center;
 }
-
 .tabs-container .header-tabs .center img.img-logo {
 	height: 50px;
 	padding: 5px;
 }
-
 .tabs-container .header-tabs .right {
 	justify-content: flex-end;
 	align-items: flex-start;
 }
-
 .tabs-container .header-tabs .right button.back {
 	justify-content: flex-end;
 	align-items: center;
 }
-
 .tabs-container .nav-booking {
 	display: flex;
 	flex-flow: row nowrap;
@@ -800,7 +709,6 @@ button.back p {
 	background-color: var(--grey-dark);
 	margin: 0 auto;
 }
-
 .tabs-container .nav-booking ul.pure-menu-list {
 	width: 92%;
 	display: flex;
@@ -810,7 +718,6 @@ button.back p {
 	margin: 0 auto 0;
 	list-style: none;
 }
-
 .tabs-container .nav-booking ul.pure-menu-list li {
 	width: 25%;
 	display: inline;
@@ -822,12 +729,10 @@ button.back p {
 	margin: 0;
 	cursor: pointer;
 }
-
 .tabs-container .nav-booking ul.pure-menu-list li.checked {
 	background-color: var(--white);
 	color: var(--grey-dark);
 }
-
 .tabs-container .nav-booking ul.pure-menu-list li label.label {
 	width: 100%;
 	position: relative;
@@ -841,7 +746,6 @@ button.back p {
 	color: var(--white);
 	padding: 16px 0 16px 1em;
 }
-
 .tabs-container .nav-booking ul.pure-menu-list li label.label .a {
 	color: var(--white);
 	font-size: 16px;
@@ -850,24 +754,20 @@ button.back p {
 	letter-spacing: -0.15px;
 	text-decoration: none;
 }
-
 .tabs-container .nav-booking ul.pure-menu-list li.checked label.label .a {
 	color: var(--grey-dark);
 }
-
 .tabs-container .nav-booking ul.pure-menu-list li label.label .a .label-mobile {
 	display: none;
 }
 
 /** MAIN **/
-
 .tab-panels,
 .main-booking {
 	background-color: var(--white);
 	width: 100%;
 	padding: 30px 0;
 }
-
 .main-booking .main-contain .panel-container {
 	width: 95%;
 	padding: 0px 30px;
@@ -876,7 +776,6 @@ button.back p {
 	justify-content: space-between;
 	align-items: flex-start;
 }
-
 .main-booking .main-contain .panel-container .left .error-message p {
 	color: var(--red-error-light);
 	font-size: 22px;
@@ -884,7 +783,6 @@ button.back p {
 	font-weight: 800;
 	line-height: 150%;
 }
-
 .main-booking .main-contain .panel-container .left h2 {
 	width: 100%;
 	font-size: 64px;
@@ -892,13 +790,12 @@ button.back p {
 	line-height: 100%;
 	letter-spacing: -1.92px;
 }
-
 .main-booking .main-contain .panel-container .left form {
 	width: 100%;
 }
-
 .main-booking .main-contain .panel-container .left form select {
 	width: calc(100% - 20px);
+	min-height: 43px;
 	box-sizing: border-box;
 	font-size: 18px;
 	font-weight: 400;
@@ -913,14 +810,12 @@ button.back p {
 	background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png") white no-repeat 98.5% !important;
 	background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png") white no-repeat calc(100% - 10px) !important;
 }
-
 .main-booking .main-contain .panel-container .left form select option {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 150%;
 	color: var(--grey-dark);
 }
-
 .main-booking .main-contain .panel-container .left form h3 {
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
 	font-size: 26px;
@@ -929,7 +824,6 @@ button.back p {
 	text-transform: none;
 	margin: 1em 0;
 }
-
 .main-booking .main-contain .panel-container .left form .background {
 	width: 80%;
 	display: flex;
@@ -940,12 +834,10 @@ button.back p {
 	border-radius: 8px;
 	margin: 0 0 10px;
 }
-
 .main-booking .main-contain .panel-container .left form .background em {
 	margin: 24px 12px 24px 24px;
 	width: 32px;
 }
-
 .main-booking .main-contain .panel-container .left form .background input[type=radio] {
 	position: absolute;
 	opacity: 0;
@@ -954,36 +846,30 @@ button.back p {
 	width: 30%;
 	height: 32px;
 }
-
 .main-booking .main-contain .panel-container .left form .background label {
 	font-size: 22px;
 	font-weight: 400;
 	line-height: 150%;
 }
-
 .main-booking .main-contain .panel-container .left form .background em.checkmark {
 	height: 18px;
 	width: 18px;
 	border-radius: 50%;
 	border: 2px solid var(--grey-dark);
 }
-
 .main-booking .main-contain .panel-container .left form .background:hover input~em.checkmark {
 	height: 10px;
 	width: 10px;
 	border: 6px solid var(--primary);
 }
-
 .main-booking .main-contain .panel-container .left form .background input:checked~em.checkmark {
 	height: 10px;
 	width: 10px;
 	border: 6px solid var(--primary);
 }
-
 .main-booking .main-contain .panel-container .left form .background em:after {
 	top: 9px;
 }
-
 .main-booking .main-contain .panel-container .left form .inputs-container {
 	width: 100%;
 	display: flex;
@@ -993,17 +879,14 @@ button.back p {
 	border-radius: 8px;
 	margin: 0 0 10px;
 }
-
 .main-booking .main-contain .panel-container .left form .inputs-container .dates {
 	width: 100%;
 }
-
 .main-booking .main-contain .panel-container .left form .inputs-container .dates .date-button {
 	width: 100%;
 	background-color: transparent;
 	padding: 0;
 }
-
 .main-booking .main-contain .panel-container .left form .inputs-container .dates .date-button label {
 	width: 100%;
 	font-size: 16px;
@@ -1011,7 +894,6 @@ button.back p {
 	line-height: 150%;
 	text-align: start;
 }
-
 .main-booking .main-contain .panel-container .left form .inputs-container .dates .date-button input {
 	width: -webkit-fill-available;
 	font-size: 18px;
@@ -1027,11 +909,9 @@ button.back p {
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat 98.5% !important;
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat calc(100% - 10px) !important;
 }
- 
 .main-booking .main-contain .panel-container .left form .next {
 	width: -webkit-fill-available;
 }
-
 .main-booking .main-contain .panel-container .left form .next button {
 	width: 100%;
 	justify-content: center;
@@ -1040,14 +920,14 @@ button.back p {
 	padding-bottom: 28px;
 	font-size: 20px;
 }
-
 .main-booking .main-contain .panel-container .right {
 	display: flex;
 	flex-flow: row;
 	justify-content: flex-start;
 	align-items: flex-start;
+	width: 38%;
+	justify-content: center;
 }
-
 .main-booking .main-contain .panel-container .right .img-big {
 	width: 100%;
 	display: flex;
@@ -1056,17 +936,14 @@ button.back p {
 	align-items: flex-start;
 	object-fit: contain;
 }
-
 .main-booking .main-contain .panel-container .right .img-big img {
 	width: 100%;
 }
 
 /* SEGUNDA TAB */
-/* LEFT */
 .main-booking .main-contain .panel-container .left.tab2 {
 	width: 60%;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description {
 	width: 100%;
 	position: relative;
@@ -1078,14 +955,12 @@ button.back p {
 	padding: 0 0 0 100px;
 	margin-bottom: 20px;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .img {
 	max-width: 280px;
 	position: absolute;
 	left: 0;
 	flex-shrink: 0;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .img img.mini {
 	align-self: center;
 	vertical-align: middle;
@@ -1093,7 +968,6 @@ button.back p {
 	height: 200px;
 	padding: 20px 0;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container {
 	width: 60%;
 	background-color: var(--primary-light);
@@ -1103,7 +977,6 @@ button.back p {
 	justify-content: flex-start;
 	align-items: flex-start;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc {
 	width: 100%;
 	display: flex;
@@ -1111,37 +984,31 @@ button.back p {
 	justify-content: space-between;
 	align-items: stretch;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.first .desc {
 	width: 60%;
 	font-size: 22px;
 	font-weight: 700;
 	letter-spacing: -0.44px;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.first .price {
 	font-size: 30px;
 	font-weight: 700;
 	line-height: 70%;
 	text-align: right;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.first .price span {
 	font-size: 16px;
 	font-weight: 400;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.second p {
 	width: 60%;
 	font-size: 22px;
 	font-weight: 400;
 	margin-bottom: 20px;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices {
 	width: 100%;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .share,
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .extra {
 	width: 100%;
@@ -1149,7 +1016,6 @@ button.back p {
 	flex-flow: row wrap;
 	margin: 0;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .share .sharing,
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .extra .extras {
 	width: 100%;
@@ -1158,7 +1024,6 @@ button.back p {
 	justify-content: space-between;
 	margin: 0 0 0.5rem;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .share .sharing .partners label,
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .extra .extras .data label {
 	font-weight: 500;
@@ -1206,12 +1071,10 @@ button.back p {
 	content: none;
 	cursor: pointer;
 }
-
 .prices input[type=checkbox]:before {
 	font-family: 'icons';
 	content: "\e906";
 }
-
 .prices input[type=checkbox]:checked:before {
 	content: "\e907";
 }
@@ -1220,11 +1083,9 @@ button.back p {
 	font-family: 'icons';
 	content: "\e928";
 }
-
 .prices input[type=radio]:checked:before {
 	content: "\e929";
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.third {
 	display: flex;
 	flex-flow: row;
@@ -1240,7 +1101,6 @@ button.back p {
 	font-size: 16px;
 	letter-spacing: -0.15px;
 }
-
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc button em {
 	font-size: 18px;
 	margin-left: 16px;
@@ -1253,7 +1113,6 @@ button.back p {
 	height: fit-content;
 	width: 100%;
 }
-
 .content {
 	height: auto;
 	max-height: 0;
@@ -1264,19 +1123,16 @@ button.back p {
 	transform: translateY(20px);
 	transition: all 180ms ease-in-out 0ms;
 }
-
 .content p {
 	font-size: 16px;
 	line-height: 150%;
 	margin: 0;
 }
-
 .expansion input[class^="expan"]:checked~.content {
 	max-height: 360px;
 	height: fit-content;
 	transition: all 200ms ease-in-out 0ms;
 }
-
 .expansion input {
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -1285,7 +1141,6 @@ button.back p {
 	margin: 0;
 	padding: 0;
 }
-
 .expansion input[class^="expan"] {
 	width: 220px;
 	height: 24px;
@@ -1294,24 +1149,19 @@ button.back p {
 	left: 0;
 	top: 3px;
 }
-
 .expansion input[class^="expan"]:hover {
 	cursor: pointer;
 }
-
 .expansion .open-close-icon {
 	margin-right: 6px;
 }
-
 .expansion .open-close-icon em::before {
 	transition: transform 150ms ease-in-out 0ms;
 }
-
 .expansion input[class^="expan"]:checked~label .open-close-icon em::before {
 	content: "\e90d";
 	transition: transform 150ms ease-in-out 0ms;
 }
-
 .expansion label.tab_lab {
 	display: flex;
 	flex-flow: row;
@@ -1322,159 +1172,56 @@ button.back p {
 	line-height: 20px;
 	font-weight: 500;
 }
-
 .expansion label.tab_lab p {
 	text-decoration: underline;
 	margin: 0;
 	line-height: 24.376px;
 }
-
 .expansion label[class^="expan"]:hover {
 	cursor: pointer;
 }
-
 .expansion label p.more {
 	display: block;
 }
-
 .expansion input[class^="expan"]:checked~label p.more {
 	display: none;
 }
-
 .expansion label p.less {
 	display: none;
 }
-
 .expansion input[class^="expan"]:checked~label p.less {
 	display: block;
 }
 
-/* RIGHT */
-.main-booking .main-contain .panel-container .right.tab2 .summary {
-	width: 80%;
-	display: flex;
-	padding: 24px 36px 40px 36px;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 24px;
-	border: 1.5px solid var(--secondary-01-grisclaro, #D1D1D1);
-	background: var(--background-pure-white, #FFF);
-	box-shadow: 0px 20px 30px 0px rgba(22, 22, 22, 0.06);
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary h3 {
-	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
-	font-size: 26px;
-	font-weight: 700;
-	line-height: 124%;
-	letter-spacing: -0.6px;
-	text-transform: none;
-	margin: 0;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary p {
-	margin: 0;
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 150%;
-	text-transform: uppercase;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit {
-	width: 100%;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 0 0.5rem;
-	border-bottom: var(--border-bottom);
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .dates {
-	width: 100%;
-	display: flex;
-	flex-flow: column;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 1rem;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit p,
-.main-booking .main-contain .panel-container .right.tab2 .summary .dates p {
-	margin: 0;
-	font-size: 16px;
-	font-weight: 500;
-	line-height: 150%;
-	letter-spacing: 1.28px;
-	text-transform: uppercase;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit h4,
-.main-booking .main-contain .panel-container .right.tab2 .summary .dates h4 {
-	margin: 0;
-	font-size: 20px;
-	font-weight: 700;
-	line-height: 124%;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text {
-	background-color: transparent;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: flex-end;
-	align-items: center;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text p {
-	font-size: 16px;
-	font-weight: 700;
-	line-height: 150%;
-	/* 33px */
-	letter-spacing: -0.44px;
-	text-decoration: underline;
-}
-
-.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text em {
-	font-size: 14px;
-	margin-right: 4px;
-}
-
 /* TERCERA TAB */
-
 /* LEFT */
 .main-booking .main-contain .panel-container .left.tab3 h2 {
 	font-size: 64px;
 	font-weight: 400;
 	text-transform: uppercase;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form {
 	width: 100%;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form h3 {
 	font-size: 26px;
 	font-weight: 700;
 	text-transform: none;
 	margin: 0 0 16px;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form p {
 	font-size: 20px;
 	font-weight: 400;
 	padding-bottom: 0.5em;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form .campo {
 	width: 100%;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form .campo label.label {
 	font-size: 14px;
 	font-weight: 800;
 	margin-left: 0
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form .campo input.input {
 	width: calc(100% - 20px);
 	box-sizing: border-box;
@@ -1487,23 +1234,19 @@ button.back p {
 	padding: 14px 14px;
 	margin-bottom: 30px;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form .campo.psw input.input {
 	margin-bottom: 10px;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form p.advise {
 	font-size: 16px;
 	font-weight: 400;
 	line-height: 150%;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form .campo .dates input {
 	width: calc(100% - 20px);
 	box-sizing: border-box;
 	font-size: 18px;
 	font-weight: 400;
-	line-height: 150%;
 	color: var(--grey-dark);
 	border: 1px solid var(--grey-light);
 	border-radius: 6px;
@@ -1516,13 +1259,11 @@ button.back p {
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat 98.5% !important;
 	background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) white no-repeat calc(100% - 10px) !important;
 }
-
 .main-booking .main-contain .panel-container .left.tab3 form .data3 .campo select {
 	width: calc(100% - 20px);
 	box-sizing: border-box;
 	margin-bottom: 30px;
 }
-
 .main-booking .main-contain .panel-container .left form .book button {
 	width: 100%;
 	justify-content: center;
@@ -1533,24 +1274,8 @@ button.back p {
 }
 
 /* RIGHT */
-.main-booking .main-contain .panel-container .right.tab3 {
-	width: 38%;
-}
-.main-booking .main-contain .panel-container .right.tab4 {
-	justify-content: center;
-}
-
-.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
-	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
-	font-size: 26px;
-	font-weight: 700;
-	line-height: 124%;
-	letter-spacing: -0.6px;
-	text-transform: none;
-	margin: 0;
-}
-
-.main-booking .main-contain .panel-container .right.tab3 .summary {
+.main-booking .main-contain .panel-container .right .summary {
+	width: 80%;
 	display: flex;
 	padding: 24px 36px 40px 36px;
 	flex-direction: column;
@@ -1560,16 +1285,23 @@ button.back p {
 	background: var(--background-pure-white, #FFF);
 	box-shadow: 0px 20px 30px 0px rgba(22, 22, 22, 0.06);
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary p {
+.main-booking .main-contain .panel-container .right .summary h3 {
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 124%;
+	letter-spacing: -0.6px;
+	text-transform: none;
+	margin: 0;
+}
+.main-booking .main-contain .panel-container .right .summary p {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 500;
 	line-height: 150%;
 	text-transform: uppercase;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit {
+.main-booking .main-contain .panel-container .right .summary .summary-edit {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1578,8 +1310,7 @@ button.back p {
 	padding: 0 0 0.5rem;
 	border-bottom: var(--border-bottom);
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .dates {
+.main-booking .main-contain .panel-container .right .summary .dates {
 	width: 100%;
 	display: flex;
 	flex-flow: column;
@@ -1587,10 +1318,8 @@ button.back p {
 	align-items: flex-start;
 	gap: 1rem;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
-.main-booking .main-contain .panel-container .right.tab3 .summary .dates p,
-.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume p {
+.main-booking .main-contain .panel-container .right .summary .summary-edit p,
+.main-booking .main-contain .panel-container .right .summary .dates p {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 500;
@@ -1598,29 +1327,21 @@ button.back p {
 	letter-spacing: 1.28px;
 	text-transform: uppercase;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
-.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4 {
+.main-booking .main-contain .panel-container .right .summary .summary-edit h4,
+.main-booking .main-contain .panel-container .right .summary .dates h4 {
 	margin: 0;
 	font-size: 20px;
 	font-weight: 700;
+	line-height: 124%;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .dates .in h4,
-.main-booking .main-contain .panel-container .right.tab3 .summary .dates .out h4 {
-	margin: 0.5rem 0 0;
-
-}
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text {
+.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text {
 	background-color: transparent;
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: flex-end;
 	align-items: center;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text p {
+.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text p {
 	font-size: 16px;
 	font-weight: 700;
 	line-height: 150%;
@@ -1628,13 +1349,15 @@ button.back p {
 	letter-spacing: -0.44px;
 	text-decoration: underline;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text em {
+.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text em {
 	font-size: 14px;
 	margin-right: 4px;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume {
+.main-booking .main-contain .panel-container .right .summary .dates .in h4,
+.main-booking .main-contain .panel-container .right .summary .dates .out h4 {
+	margin: 0.5rem 0 0;
+}
+.main-booking .main-contain .panel-container .right .summary .type-summary {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1644,16 +1367,14 @@ button.back p {
 	border-top: var(--border-bottom);
 	border-bottom: var(--border-bottom);
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume h4 {
+.main-booking .main-contain .panel-container .right .summary .type-summary h4 {
 	width: 60%;
 	margin: 0;
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 124%;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown {
+.main-booking .main-contain .panel-container .right .summary .breakdown {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
@@ -1663,42 +1384,36 @@ button.back p {
 	border-bottom: var(--border-bottom);
 	padding: 0 0 1rem;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown p {
+.main-booking .main-contain .panel-container .right .summary .breakdown p {
 	text-transform: none !important;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown h4 {
+.main-booking .main-contain .panel-container .right .summary .breakdown h4 {
 	margin: 0 0 0.5rem;
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 124%;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .prices,
-.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total {
+.main-booking .main-contain .panel-container .right .summary .breakdown .prices,
+.main-booking .main-contain .panel-container .right .summary .breakdown .total {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
 	align-items: flex-start;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total p {
+.main-booking .main-contain .panel-container .right .summary .breakdown .total p {
 	font-size: 20px;
 	font-weight: 700;
 	line-height: 124%;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary .renta {
+.main-booking .main-contain .panel-container .right .summary .renta {
 	width: 100%;
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
 	align-items: flex-start;
 }
-
-.main-booking .main-contain .panel-container .right.tab3 .summary p.advise {
+.main-booking .main-contain .panel-container .right .summary p.advise {
 	font-size: 18px;
 	font-weight: 400;
 	line-height: 28px;
@@ -1723,7 +1438,7 @@ button.back p {
 	}
 
 	.main-booking .main-contain .panel-container .left.tab2 .description .img img.mini {
-		height: 160px;
+		min-height: 160px;
 	}
 
 	.main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.first .desc {
@@ -1745,32 +1460,40 @@ button.back p {
 		font-size: 22px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary {
+	.main-booking .main-contain .panel-container .right .summary {
 		padding: 24px 24px 30px 24px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
+	.main-booking .main-contain .panel-container .right .summary h3 {
 		font-size: 22px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total p {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right .summary .dates h4,
+	.main-booking .main-contain .panel-container .right .summary h4,
+	.main-booking .main-contain .panel-container .right .summary .dates h4,
+	.main-booking .main-contain .panel-container .right .summary .breakdown .total p {
 		font-size: 18px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume p {
+	.main-booking .main-contain .panel-container .right .summary p,
+	.main-booking .main-contain .panel-container .right .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right .summary .dates p,
+	.main-booking .main-contain .panel-container .right .summary .type-summary p {
 		letter-spacing: -0.2px;
 	}
 }
 
 /* MOBILE */
 @media only screen and (max-width: 1023.9px) {
+
+	.form {
+		border: 1.5px solid var(--secondary-01-grisclaro, #D1D1D1);
+	}
+	
+	fieldset {
+		margin-bottom: 1em;
+	}
 
 	.content-booking {
 		width: 100%;
@@ -1960,12 +1683,14 @@ button.back p {
 	.tabs-container .nav-booking ul.pure-menu-list li label.label .label-mobile em.icon-corchete-left {
 		display: block;
 		font-size: 28px;
-		margin-top: -4px
+		margin-top: -4px;
+		padding-left: 10px;
 	}
 
 	.tabs-container .nav-booking ul.pure-menu-list li label.label .label-mobile em.icon-close {
 		display: block;
 		font-size: 16px;
+		padding-right: 15px;
 	}
 
 	.main-booking .main-contain {
@@ -1998,7 +1723,6 @@ button.back p {
 	}
 
 	.main-booking .main-contain .panel-container .left form select {
-		width: -webkit-fill-available;
 		font-size: 14px;
 		padding: 8px 12px;
 	}
@@ -2038,8 +1762,6 @@ button.back p {
 
 	.main-booking .main-contain .panel-container .left.tab2 .description .img {
 		max-height: 300px;
-		height: auto;
-		min-height: 280px;
 		width: 100%;
 		max-width: 100%;
 		position: static;
@@ -2047,8 +1769,6 @@ button.back p {
 
 	.main-booking .main-contain .panel-container .left.tab2 .description .img img.mini {
 		max-height: 300px;
-		height: auto;
-		min-height: 260px;
 		width: 100%;
 		max-width: 100%;
 		padding: 0;
@@ -2149,7 +1869,7 @@ button.back p {
 		width: 100%;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 {
+	.main-booking .main-contain .panel-container .right {
 		width: 100%;
 	}
 
@@ -2194,27 +1914,27 @@ button.back p {
 	}
 
 	/* RIGHT */
-	.main-booking .main-contain .panel-container .right.tab2 {
+	.main-booking .main-contain .panel-container .right {
 		width: 100%;
 		margin-top: 10px;
 		border-top: var(--border-header);
 		padding-top: 20px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary {
+	.main-booking .main-contain .panel-container .right .summary {
 		width: 100%;
 		padding: 1rem;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary h3 {
+	.main-booking .main-contain .panel-container .right .summary h3 {
 		font-size: 17px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary p {
+	.main-booking .main-contain .panel-container .right .summary p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit {
 		width: 100%;
 		display: flex;
 		flex-flow: row wrap;
@@ -2224,7 +1944,7 @@ button.back p {
 		border-bottom: var(--border-bottom);
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary .dates {
+	.main-booking .main-contain .panel-container .right .summary .dates {
 		width: 100%;
 		display: flex;
 		flex-flow: column;
@@ -2232,21 +1952,21 @@ button.back p {
 		align-items: flex-start;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit p,
-	.main-booking .main-contain .panel-container .right.tab2 .summary .dates p {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right .summary .dates p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit h4,
-	.main-booking .main-contain .panel-container .right.tab2 .summary .dates h4 {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right .summary .dates h4 {
 		font-size: 14px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text p {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text p {
 		font-size: 12px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab2 .summary .summary-edit button.btn-text em {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text em {
 		font-size: 10px;
 		margin-right: 4px;
 	}
@@ -2323,27 +2043,27 @@ button.back p {
 
 	/* RIGHT */
 
-	.main-booking .main-contain .panel-container .right.tab3 {
+	.main-booking .main-contain .panel-container .right {
 		width: 100%;
 		margin-top: 10px;
 		border-top: var(--border-header);
 		padding-top: 20px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary {
+	.main-booking .main-contain .panel-container .right .summary {
 		width: 100%;
 		padding: 1rem;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
+	.main-booking .main-contain .panel-container .right .summary h3 {
 		font-size: 17px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary p {
+	.main-booking .main-contain .panel-container .right .summary p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates {
+	.main-booking .main-contain .panel-container .right .summary .dates {
 		width: 100%;
 		display: flex;
 		flex-flow: column;
@@ -2351,8 +2071,8 @@ button.back p {
 		align-items: flex-start;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates p {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right .summary .dates p {
 		margin: 0;
 		font-size: 16px;
 		font-weight: 500;
@@ -2361,15 +2081,15 @@ button.back p {
 		text-transform: uppercase;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4 {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right .summary .dates h4 {
 		margin: 0;
 		font-size: 22px;
 		font-weight: 700;
 		line-height: 124%;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text {
 		background-color: transparent;
 		display: flex;
 		flex-flow: row wrap;
@@ -2377,7 +2097,7 @@ button.back p {
 		align-items: center;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text p {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text p {
 		font-size: 16px;
 		font-weight: 700;
 		line-height: 150%;
@@ -2386,42 +2106,42 @@ button.back p {
 		text-decoration: underline;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text em {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text em {
 		font-size: 14px;
 		margin-right: 4px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary h3 {
+	.main-booking .main-contain .panel-container .right .summary h3 {
 		font-size: 17px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume h4,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown .total p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .breakdown h4 {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit h4,
+	.main-booking .main-contain .panel-container .right .summary .dates h4,
+	.main-booking .main-contain .panel-container .right .summary h4,
+	.main-booking .main-contain .panel-container .right .summary .dates h4,
+	.main-booking .main-contain .panel-container .right .summary .type-summary h4,
+	.main-booking .main-contain .panel-container .right .summary .breakdown .total p,
+	.main-booking .main-contain .panel-container .right .summary .breakdown h4 {
 		font-size: 14px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .dates p,
-	.main-booking .main-contain .panel-container .right.tab3 .summary .type-resume p {
+	.main-booking .main-contain .panel-container .right .summary p,
+	.main-booking .main-contain .panel-container .right .summary .summary-edit p,
+	.main-booking .main-contain .panel-container .right .summary .dates p,
+	.main-booking .main-contain .panel-container .right .summary .type-summary p {
 		font-size: 11px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text p {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text p {
 		font-size: 12px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary .summary-edit button.btn-text em {
+	.main-booking .main-contain .panel-container .right .summary .summary-edit button.btn-text em {
 		font-size: 10px;
 		margin-right: 4px;
 	}
 
-	.main-booking .main-contain .panel-container .right.tab3 .summary p.advise {
+	.main-booking .main-contain .panel-container .right .summary p.advise {
 		font-size: 10px;
 		line-height: 14px;
 	}
