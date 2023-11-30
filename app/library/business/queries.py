@@ -142,7 +142,7 @@ def q_flat_prices(dbClient, segment, year):
   # Get prices
   sql = '''
     SELECT
-      r."Building_id", rfst.id AS "Flat_subtype_id", rfst."Code" AS "Flat_subtype",
+      r."Building_id", rft.id AS "Flat_type_id", rfst."Code" AS "Flat_subtype",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
@@ -150,6 +150,7 @@ def q_flat_prices(dbClient, segment, year):
     FROM
       "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+      INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
       INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
