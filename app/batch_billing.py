@@ -473,7 +473,7 @@ def bill_group_rent(dbClient):
               servid,
               services, 
               PR_SERVICES,
-              PRODUCTS[PR_SERVICES]['tax'],
+              PRODUCTS[PR_SERVICES]['tax'], 
               PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7], comments
             )
           )
