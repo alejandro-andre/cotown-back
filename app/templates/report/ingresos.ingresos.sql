@@ -61,7 +61,8 @@ FROM "Booking"."Booking_price" bp
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id"  
   INNER JOIN "Provider"."Provider" pr on pr.id = r."Owner_id"  
   INNER JOIN "Customer"."Customer" c on c.id = b."Customer_id"
-WHERE bp."Invoice_rent_id" IS NULL 
+WHERE bp."Invoice_rent_id" IS NULL
+  AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
   AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
 UNION
 -- Rentas B2B no facturadas
@@ -85,6 +86,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Provider"."Provider" pr on pr.id = r."Owner_id"  
   INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id"
 WHERE bp."Invoice_rent_id" IS NULL 
+  AND b."Status" IN ('grupoconfirmado', 'inhouse') 
   AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
 )
 ORDER BY "Owner", "Month", "Year", "Code"

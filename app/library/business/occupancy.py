@@ -153,6 +153,7 @@ def do_occupancy(dbClient, vars):
       INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
       INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+        AND b."Status" IN ('grupoconfirmado', 'inhouse') 
     UNION
       SELECT 
         bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
@@ -163,6 +164,7 @@ def do_occupancy(dbClient, vars):
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+        AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
     ) AS income
     GROUP BY 1, 2, 3
     ORDER BY 1, 2, 3
