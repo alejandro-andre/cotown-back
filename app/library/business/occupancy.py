@@ -151,26 +151,40 @@ def do_occupancy(dbClient, vars):
     UNION
       -- Rentas B2C no facturadas
       SELECT 
-        bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 
-        b."Rooms" * b."Rent" AS "Rent",
-        b."Rooms" * b."Services" AS "Services"
-      FROM "Booking"."Booking_group" b
-      INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
-      INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
-      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
-        AND b."Status" IN ('grupoconfirmado', 'inhouse') 
-    UNION
-      -- Rentas B2B no facturadas
-      SELECT 
         bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
-        bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
-        bp."Services" + COALESCE(bp."Services_discount", 0) AS "Services"
+        CASE 
+          WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
+          ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
+        END AS "Rent",
+        CASE 
+          WHEN r."Owner_id" = r."Service_id" THEN 0
+          ELSE bp."Services" + COALESCE(bp."Services_discount", 0)
+        END AS "Services"
       FROM "Booking"."Booking_price" bp
       INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
         AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
+    UNION
+      -- Rentas B2B no facturadas
+      SELECT DISTINCT ON (bp.id)
+        bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 
+        CASE 
+          WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
+          ELSE b."Rooms" * bp."Rent"
+        END AS "Rent",
+        CASE 
+          WHEN r."Owner_id" = r."Service_id" THEN 0
+          ELSE b."Rooms" * bp."Services"
+        END AS "Services"
+      FROM "Booking"."Booking_group" b
+        INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
+        INNER JOIN "Booking"."Booking_rooming" br on b.id = br."Booking_id" 
+        INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
+        INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
+      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+        AND b."Status" IN ('grupoconfirmado', 'inhouse') 
     ) AS income
     GROUP BY 1, 2, 3
     ORDER BY 1, 2, 3
