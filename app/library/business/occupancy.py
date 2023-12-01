@@ -124,27 +124,32 @@ def do_occupancy(dbClient, vars):
   dbClient.select('''
     SELECT "Building", "Resource", "Date", SUM("Rent") AS "Rent", SUM("Services") AS "Services" 
     FROM (
-      SELECT bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
-        CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
-        CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
-      FROM "Billing"."Invoice_line" il 
-        INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
-        INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
-        INNER JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
-        INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"  
-      WHERE i."Issued" AND p."Product_type_id" IN (3, 4)
-    UNION
+      -- Rentas B2C (y otras) facturadas
       SELECT bu."Name" AS "Building", r."Code" AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
         CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
-        CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
+        CASE WHEN p."Product_type_id" <> 3 THEN il."Amount" ELSE 0 END AS "Services"
       FROM "Billing"."Invoice_line" il 
         INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
-        INNER JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
-        INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
-        INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"  
-      WHERE i."Issued" AND i."Issued" AND p."Product_type_id" IN (3, 4)
+        LEFT JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
+        LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
+        LEFT JOIN "Building"."Building" bu on bu.id = r."Building_id"  
+      WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NULL
+        AND p."Product_type_id" > 2
     UNION
+      -- Rentas B2B facturadas
+      SELECT bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
+        CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
+        CASE WHEN p."Product_type_id" <> 3 THEN il."Amount" ELSE 0 END AS "Services"
+      FROM "Billing"."Invoice_line" il 
+        INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
+        INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
+        LEFT JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
+        LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id"  
+      WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NOT NULL
+        AND p."Product_type_id" > 2
+    UNION
+      -- Rentas B2C no facturadas
       SELECT 
         bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 
         b."Rooms" * b."Rent" AS "Rent",
@@ -155,6 +160,7 @@ def do_occupancy(dbClient, vars):
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
         AND b."Status" IN ('grupoconfirmado', 'inhouse') 
     UNION
+      -- Rentas B2B no facturadas
       SELECT 
         bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
         bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
