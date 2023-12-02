@@ -22,15 +22,18 @@ from library.services.config import settings
 def q_labels(dbClient, id, locale):
 
   # Get labels
-  dbClient.connect()
-  dbClient.select('''
-  SELECT "values", "labels"
-  FROM "Models"."EnumType" et
-  INNER JOIN "Models"."EnumTypeLabel" ON container = et.id
-  WHERE et.id = %s AND locale = %s;
-  ''', (id, locale,))
-  result = dbClient.fetch()
-  dbClient.disconnect()
+  con = dbClient.getconn()
+  cur = dbClient.execute(con,
+    '''
+    SELECT "values", "labels"
+    FROM "Models"."EnumType" et
+    INNER JOIN "Models"."EnumTypeLabel" ON container = et.id
+    WHERE et.id = %s AND locale = %s;
+    ''',
+    (id, locale,))
+  result = cur.fetchone()
+  cur.close()
+  dbClient.putconn(con)
   return json.dumps(result, default=str)
 
 
@@ -41,30 +44,34 @@ def q_labels(dbClient, id, locale):
 def q_dashboard(dbClient, status = None):
 
   # Connect
-  dbClient.connect()
+  con = dbClient.getconn()
 
   # Counters
   if status is None:
     result = {}  
 
     # Count by status
-    dbClient.select('SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
-    for row in dbClient.fetchall():
+    cur = dbClient.execute(con, 'SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
+    for row in cur.fetchall():
       result[row[0]] = row[1]
+    cur.close()
 
     # Count all confirmed
-    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
-    row = dbClient.fetch()
+    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
+    row = cur.fetchone()
+    cur.close()
     result['ok'] = row[0]
 
     # Count nearest checkins
-    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') AND GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
-    row = dbClient.fetch()
+    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') AND GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
+    row = cur.fetchone()
+    cur.close()
     result['next'] = row[0]
 
     # Count nearest checkouts
-    dbClient.select('SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'inhouse\') AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKOUTDAYS) + ' days\'')
-    row = dbClient.fetch()
+    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'inhouse\') AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKOUTDAYS) + ' days\'')
+    row = cur.fetchone()
+    cur.close()
     result['nextout'] = row[0]
 
   # Rows
@@ -78,7 +85,7 @@ def q_dashboard(dbClient, status = None):
         INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')'''
-      dbClient.select(sql)
+      cur = dbClient.execute(con, sql)
     elif status == 'next':
       sql = '''
         SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", r."Code" as "Resource", b."Flight", b."Arrival", ct."Name" AS "Option"
@@ -89,7 +96,7 @@ def q_dashboard(dbClient, status = None):
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
         WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
         AND GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKINDAYS) + ' days\''
-      dbClient.select(sql)
+      cur = dbClient.execute(con, sql)
     elif status == 'nextout':
       sql = '''
         SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_out", bu."Name" as "Building", r."Code" as "Resource"
@@ -100,7 +107,7 @@ def q_dashboard(dbClient, status = None):
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
         WHERE "Status" IN (\'inhouse\')
         AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKOUTDAYS) + ' days\''
-      dbClient.select(sql)
+      cur = dbClient.execute(con, sql)
     elif status == 'checkout':
       sql = '''
         SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_out", bu."Name" as "Building", r."Code" as "Resource"
@@ -109,7 +116,7 @@ def q_dashboard(dbClient, status = None):
         INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         WHERE "Status" = 'checkout' '''
-      dbClient.select(sql)
+      cur = dbClient.execute(con, sql)
     else:
       sql = '''
         SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
@@ -118,13 +125,14 @@ def q_dashboard(dbClient, status = None):
         INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         WHERE "Status" = %s'''
-      dbClient.select(sql, (status,))
+      cur = dbClient.execute(con, sql, (status,))
 
     # Result
-    result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
 
   # Disconnect
-  dbClient.disconnect()
+  dbClient.putconn(con)
 
   # Return
   return result
@@ -137,7 +145,7 @@ def q_dashboard(dbClient, status = None):
 def q_flat_prices(dbClient, segment, year):
 
   # Connect
-  dbClient.connect()
+  con = dbClient.getconn()
 
   # Get prices
   sql = '''
@@ -159,10 +167,10 @@ def q_flat_prices(dbClient, segment, year):
     GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3;
   '''
-  dbClient.select(sql, (year, segment))
+  cur = dbClient.execute(con, sql, (year, segment))
 
   # Obtener los resultados de la consulta
-  results = dbClient.fetchall()
+  results = cur.fetchall()
 
   # Crear una estructura de datos para almacenar los resultados agrupados
   grouped_data = []
@@ -196,7 +204,8 @@ def q_flat_prices(dbClient, segment, year):
   result = json.dumps(grouped_data, default=str)
  
   # Disconnect
-  dbClient.disconnect()
+  cur.close()
+  dbClient.putconn(con)
 
   # Return
   return result
@@ -209,7 +218,7 @@ def q_flat_prices(dbClient, segment, year):
 def q_room_prices(dbClient, segment, year):
 
   # Connect
-  dbClient.connect()
+  con = dbClient.getconn()
 
   # Get prices
   sql = '''
@@ -233,10 +242,11 @@ def q_room_prices(dbClient, segment, year):
     GROUP BY 1, 2, 3, 4, 5
     ORDER BY 1, 2, 3
   '''
-  dbClient.select(sql, (year, segment))
+  cur = dbClient.execute(con, sql, (year, segment))
 
-# Obtener los resultados de la consulta
-  results = dbClient.fetchall()
+  # Obtener los resultados de la consulta
+  results = cur.fetchall()
+  cur.close()
 
   # Crear una estructura de datos para almacenar los resultados agrupados
   grouped_data = []
@@ -277,7 +287,7 @@ def q_room_prices(dbClient, segment, year):
   result = json.dumps(grouped_data, default=str)
  
   # Disconnect
-  dbClient.disconnect()
+  dbClient.putconn(con)
 
   # Return
   return result
@@ -290,7 +300,7 @@ def q_room_prices(dbClient, segment, year):
 def q_room_amenities(dbClient, segment):
 
   # Connect
-  dbClient.connect()
+  con = dbClient.getconn()
 
   # Get amenities
   sql = '''
@@ -307,13 +317,14 @@ def q_room_amenities(dbClient, segment):
   GROUP BY 1, 2, 3, 4, 5, 6
   ORDER BY 1, 2, 3, 4
   '''
-  dbClient.select(sql, (segment, ))
+  cur = dbClient.execute(con, sql, (segment, ))
 
   # To JSON
-  result = json.dumps([dict(row) for row in dbClient.fetchall()], default=str)
+  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
  
   # Disconnect
-  dbClient.disconnect()
+  cur.close()
+  dbClient.putconn(con)
 
   # Return
   return result
@@ -327,11 +338,12 @@ def q_get_payment(dbClient, id, generate_order=False):
 
   try:
     # Get payment
-    dbClient.connect()
-    dbClient.select('SELECT id, "Issued_date", "Concept", "Amount", "Payment_order" FROM "Billing"."Payment" WHERE id=%s', (id,))
-    result = dbClient.fetch()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, 'SELECT id, "Issued_date", "Concept", "Amount", "Payment_order" FROM "Billing"."Payment" WHERE id=%s', (id,))
+    result = cur.fetchone()
+    cur.close()
     if result is None:
-      dbClient.disconnect()
+      dbClient.putconn(con)
       return None
    
     # Get data
@@ -341,23 +353,24 @@ def q_get_payment(dbClient, id, generate_order=False):
     if generate_order:
 
       # Get next order num
-      dbClient.select('SELECT nextval(\'"Auxiliar"."Sequence_Payment_order_seq"\')')
-      val = dbClient.fetch()
+      cur = dbClient.execute(con, 'SELECT nextval(\'"Auxiliar"."Sequence_Payment_order_seq"\')')
+      val = cur.fetchone()
+      cur.close()
       order = "{:02d}{:05d}{:05d}".format(datetime.datetime.now().year - 2000, id, val[0])
       aux['Payment_order'] = order
 
       # Update payment
-      dbClient.execute('UPDATE "Billing"."Payment" SET "Payment_order"=%s WHERE id=%s', (order, id))
-      dbClient.commit()
+      dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_order"=%s WHERE id=%s', (order, id))
+      con.commit()
 
     # Prepare response
-    dbClient.disconnect()
+    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return None
 
 
@@ -368,15 +381,15 @@ def q_get_payment(dbClient, id, generate_order=False):
 def q_put_payment(dbClient, id, auth, date):
 
   try:
-    dbClient.connect()
-    dbClient.execute('UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
-    dbClient.commit()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
+    con.commit()
+    dbClient.putconn(con)
     return True
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return False
 
 
@@ -387,16 +400,16 @@ def q_put_payment(dbClient, id, auth, date):
 def get_provider(dbClient, id):
 
   try:
-    dbClient.connect()
-    dbClient.select('SELECT id, "Name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
-    aux = dbClient.fetch()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, 'SELECT id, "Name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
+    aux = cur.fetchone()
+    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return None
 
 # ######################################################
@@ -406,16 +419,16 @@ def get_provider(dbClient, id):
 def get_customer(dbClient, id):
 
   try:
-    dbClient.connect()
-    dbClient.select('SELECT id, "Name",  "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
-    aux = dbClient.fetch()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, 'SELECT id, "Name",  "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
+    aux = cur.fetchone()
+    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return None
 
 
@@ -433,34 +446,35 @@ def create_airflows_user(dbClient, user, role):
 
   try:
     # Connect
-    dbClient.connect()
+    con = dbClient.getconn()
 
     # Create user
-    dbClient.execute('CREATE ROLE ' + username + ' PASSWORD %s NOSUPERUSER''', (password,))
-    dbClient.execute('INSERT INTO "Models"."User" ("username", "email", "password") VALUES (%s, %s, %s) RETURNING id', (username, email, password) )
-    userid = dbClient.returning()[0]
+    dbClient.execute(con, 'CREATE ROLE ' + username + ' PASSWORD %s NOSUPERUSER''', (password,))
+    cur = dbClient.execute(con, 'INSERT INTO "Models"."User" ("username", "email", "password") VALUES (%s, %s, %s) RETURNING id', (username, email, password) )
+    userid = cur.fetchone()[0]
+    cur.close()
 
     # Create role provider
     if role == 200:
-      dbClient.execute('GRANT "provider" TO ' + username)
-      dbClient.execute('INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
-      dbClient.execute('UPDATE "Provider"."Provider" SET "User_name" = %s WHERE id = %s', (username, id))
+      dbClient.execute(con, 'GRANT "provider" TO ' + username)
+      dbClient.execute(con, 'INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
+      dbClient.execute(con, 'UPDATE "Provider"."Provider" SET "User_name" = %s WHERE id = %s', (username, id))
 
     # Create role customer
     if role == 300:
-      dbClient.execute('GRANT "customer" TO ' + username)
-      dbClient.execute('INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
-      dbClient.execute('UPDATE "Customer"."Customer" SET "User_name" = %s WHERE id = %s', (username, id))
-      dbClient.execute('INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (%s, %s, %s)', (id, 'bienvenida', id))
+      dbClient.execute(con, 'GRANT "customer" TO ' + username)
+      dbClient.execute(con, 'INSERT INTO "Models"."UserRole" ("user", "role") VALUES (%s, %s)', (userid, role))
+      dbClient.execute(con, 'UPDATE "Customer"."Customer" SET "User_name" = %s WHERE id = %s', (username, id))
+      dbClient.execute(con, 'INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (%s, %s, %s)', (id, 'bienvenida', id))
    
     # Commit
-    dbClient.commit()
-    dbClient.disconnect()
+    con.commit()
+    dbClient.putconn(con)
     return userid
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return None
 
 
@@ -472,15 +486,15 @@ def delete_airflows_user(dbClient, id):
 
   try:
     # Connect
-    dbClient.connect()
-    dbClient.execute('DELETE FROM "Models"."User" WHERE id = %s', (id,) )
-    dbClient.commit()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    dbClient.execute(con, 'DELETE FROM "Models"."User" WHERE id = %s', (id,) )
+    con.commit()
+    dbClient.putconn(con)
     return id
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return None
  
 
@@ -491,15 +505,15 @@ def delete_airflows_user(dbClient, id):
 def q_booking_status(dbClient, id, status):
 
   try:
-    dbClient.connect()
-    dbClient.execute('UPDATE "Booking"."Booking" SET "Status" = %s WHERE id = %s', (status, id))
-    dbClient.commit()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    dbClient.execute(con, 'UPDATE "Booking"."Booking" SET "Status" = %s WHERE id = %s', (status, id))
+    con.commit()
+    dbClient.putconn(con)
     return True
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return False
 
 
@@ -520,8 +534,8 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
     flat_type = 0
 
   try:
-    dbClient.connect()
-    dbClient.select('''
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, '''
     SELECT r."Code"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
@@ -536,12 +550,13 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
       AND (rpt.id = %s OR %s = 0)
     ORDER BY 1;
     ''', (date_to, date_from, building, building, flat_type, flat_type,place_type, place_type))
-    aux = dbClient.fetchall()
-    dbClient.disconnect()
+    aux = cur.fetchall()
+    cur.close()
+    dbClient.putconn(con)
     list = [item for sub_list in aux for item in sub_list]
     return list
 
   except Exception as error:
-    dbClient.rollback()
     logger.error(error)
+    con.rollback()
     return None

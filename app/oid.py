@@ -26,19 +26,23 @@ dbClient = DBClient(
   sshprivatekey=settings.get('SSHPKEY', None)
 )
 dbClient.connect()
+con = dbClient.getconn()
 
 # Load existing oids
-dbClient.select('SELECT oid FROM pg_largeobject_metadata;')
-db_oids = set([item[0] for item in dbClient.fetchall()])
+cur = dbClient.execute(con, 'SELECT oid FROM pg_largeobject_metadata;')
+db_oids = set([item[0] for item in cur.fetchall()])
+cur.close()
 
 # Get fields of type DOCUMENT
-dbClient.select('''
+cur = dbClient.execute(con,
+  '''
   select ea.name, e."schema", e."name"
   from "Models"."EntityAttribute" ea
   inner join "Models"."Entity" e on ea.container = e.id
   where ea.type = 'DOCUMENT'
-''')
-fields = dbClient.fetchall()
+  ''')
+fields = cur.fetchall()
+cur.close()
 
 # Add metamodel fields
 fields.append(['customerLogo', 'Models', 'Personalization'])
@@ -57,12 +61,14 @@ for item in fields:
   print(schema, table, field, end=': ')
 
   # Get oids
-  dbClient.select(f'''
+  cur = dbClient.execute(con,
+  f'''
     select ("{field}").oid
     from "{schema}"."{table}" t
     where ("{field}").oid is not null
   ''')
-  oids = [item[0] for item in dbClient.fetchall()]
+  oids = [item[0] for item in cur.fetchall()]
+  cur.close()
   print(len(oids))
 
   # Add them to global set
@@ -84,10 +90,11 @@ print(errors)
 # Unlink (test)
 #for index, oid in enumerate(sorted(orphan)):
 #  print(oid)
-#  dbClient.execute(f'select lo_unlink({oid})''')
+#  dbClient.execute(con, f'select lo_unlink({oid})''')
 #  if index % 100 == 0:
-#    dbClient.commit()
+#    con.commit()
 
 # End
-dbClient.commit()
+con.commit()
+dbClient.putconn(con)
 dbClient.disconnect()

@@ -93,14 +93,15 @@ def q_int_clients(dbClient, date):
     ORDER BY 1
   '''
   try:
-    dbClient.connect()
-    dbClient.select(sql)
-    column_names = [desc[0] for desc in dbClient.sel.description]
-    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in dbClient.fetchall()]
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql)
+    column_names = [desc[0] for desc in cur.description]
+    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
+    cur.close()
+    dbClient.putconn(con)
     return result
  
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
     return None

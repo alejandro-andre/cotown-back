@@ -11,7 +11,7 @@ logger = logging.getLogger('COTOWN')
 # Load resources
 # ###################################################
 
-def load_rooming(dbClient, data):
+def load_rooming(dbClient, con, data):
 
   # Return values
   n_ok = n_ko = 0
@@ -44,8 +44,9 @@ def load_rooming(dbClient, data):
         elif column == 'Resource.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Code" FROM "Resource"."Resource" WHERE "Code"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Code" FROM "Resource"."Resource" WHERE "Code"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Recurso "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -57,8 +58,9 @@ def load_rooming(dbClient, data):
         elif column == 'Id_type.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Auxiliar"."Id_type" WHERE "Name"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Auxiliar"."Id_type" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de Id "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -70,8 +72,9 @@ def load_rooming(dbClient, data):
         elif column == 'Gender.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Auxiliar"."Gender" WHERE "Name"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Auxiliar"."Gender" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Género "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -83,8 +86,9 @@ def load_rooming(dbClient, data):
         elif column == 'Language.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Auxiliar"."Language" WHERE "Name"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Auxiliar"."Language" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Idioma "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -96,8 +100,9 @@ def load_rooming(dbClient, data):
         elif column == 'Country.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Geo"."Country" WHERE "Name"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Geo"."Country" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. País "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -109,8 +114,9 @@ def load_rooming(dbClient, data):
         elif column == 'Nationality.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Geo"."Country" WHERE "Name"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Geo"."Country" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Nacionalidad "' + str(cell.value) + '" no encontrada\n'
               ok = False
@@ -122,8 +128,9 @@ def load_rooming(dbClient, data):
         elif column == 'Country_origin.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Geo"."Country" WHERE "Name"=%s', [cell.value])
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Geo"."Country" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. País de origen "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -141,12 +148,12 @@ def load_rooming(dbClient, data):
       values = [record[field] for field in record.keys()][1:]
       values.append(record['id'])
       sql = 'UPDATE "Booking"."Booking_rooming" SET {} WHERE id=%s'.format(','.join(update))
-      dbClient.execute(sql, values)
+      dbClient.execute(con, sql, values)
 
     # Error
     except Exception as error:
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
       log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
       e = str(error)
       if (e.startswith('!!!')):
@@ -163,7 +170,7 @@ def load_rooming(dbClient, data):
 
   # Rollback?
   if n_ko > 0:
-    dbClient.rollback()
+    con.rollback()
     log += 'Analizados ' + str(n_ok) + ' registro(s) correctamente\n'
     log += 'Analizados ' + str(n_ko) + ' registro(s) con errores\n'
     log += 'No se han cargado datos\n'

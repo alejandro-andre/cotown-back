@@ -11,7 +11,7 @@ logger = logging.getLogger('COTOWN')
 # Load prices
 # ###################################################
 
-def load_prices(dbClient, data):
+def load_prices(dbClient, con, data):
 
   # Return values
   n_ok = n_ko = 0
@@ -42,8 +42,9 @@ def load_prices(dbClient, data):
 
         # Building.Code
         elif column == 'Building.Code':
-          dbClient.select('SELECT id FROM "Building"."Building" WHERE "Code"=%s', (cell.value,))
-          aux = dbClient.fetch()
+          cur = dbClient.execute(con, 'SELECT id FROM "Building"."Building" WHERE "Code"=%s', (cell.value,))
+          aux = cur.fetchone()
+          cur.close()
           if aux is None:
             log += 'Fila: ' + str(irow+3).zfill(4) + '. Edificio "' + str(cell.value) + '" no encontrado\n'
             ok = False
@@ -54,8 +55,9 @@ def load_prices(dbClient, data):
         elif column == 'Flat_type.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', (cell.value,))
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', (cell.value,))
+            aux = cur.fetchone()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -67,8 +69,9 @@ def load_prices(dbClient, data):
         elif column == 'Place_type.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            dbClient.select('SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', (cell.value,))
-            aux = dbClient.fetch()
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', (cell.value,))
+            aux = cur.fetch()
+            cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
               ok = False
@@ -92,12 +95,12 @@ def load_prices(dbClient, data):
       values = [record[field] for field in record.keys()]
       markers = ['%s'] * len(record.keys())
       sql = 'INSERT INTO "Billing"."Pricing_detail" ({}) VALUES ({}) ON CONFLICT ("Year","Building_id","Flat_type_id","Place_type_id") DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
-      dbClient.execute(sql, values)
+      dbClient.execute(con, sql, values)
 
     # Error
     except Exception as error:
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
       log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
       log += str(error) + '\n'
       ok = False
@@ -110,7 +113,7 @@ def load_prices(dbClient, data):
 
   # Rollback?
   if n_ko > 0:
-    dbClient.rollback()
+    con.rollback()
     log += 'Analizados ' + str(n_ok) + ' registro(s) correctamente\n'
     log += 'Analizados ' + str(n_ko) + ' registro(s) con errores\n'
     log += 'No se han cargado datos\n'

@@ -45,15 +45,17 @@ def rent_info(date_from, date_to):
 def q(dbClient, sql, params):
 
   try:
-    dbClient.connect()
-    dbClient.select(sql, params)
-    result = [dict(row) for row in dbClient.fetchall()]
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    cur = con.execute(con, sql, params)
+    result = [dict(row) for row in cur.fetchall()]
+    cur.close()
+    dbClient.putconn(con)
     return result
  
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return None
 
 
@@ -127,10 +129,11 @@ def q_typologies(dbClient, segment):
   try:
 
     # Read data
-    dbClient.connect()
-    dbClient.select(sql)
-    data = dbClient.fetchall()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql)
+    data = cur.fetchall()
+    cur.close()
+    dbClient.putconn(con)
 
     # Prepare JSON
     output = []
@@ -154,7 +157,8 @@ def q_typologies(dbClient, segment):
 
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return None
 
 # ------------------------------------------------------
@@ -222,9 +226,10 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
     params = (date_to, date_from, year, segment, building_type, city, place_type, )
 
   try:
-    dbClient.connect()
-    dbClient.select(sql, params)
-    results = dbClient.fetchall()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql, params)
+    results = cur.fetchall()
+    cur.close()
     grouped_data = []
     for row in results:
        
@@ -254,13 +259,13 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         'Flat_type_name': row['Flat_type_name'],
         'Price': price
       })
-
-    dbClient.disconnect()
+    dbClient.putconn(con)
     return sorted(grouped_data, key=lambda x: x['Price'])
  
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return None
  
 # ------------------------------------------------------
@@ -320,17 +325,19 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       '''
 
   try:
-    dbClient.connect()
-    dbClient.select(sql, (year, building_id, flat_type_id, place_type_id))
-    results = dbClient.fetchall()
-    dbClient.disconnect()
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql, (year, building_id, flat_type_id, place_type_id))
+    results = cur.fetchall()
+    cur.close()
+    dbClient.putconn(con)
     if len(results) > 0:
       return results[0]
     return None
  
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return None
  
 # ------------------------------------------------------
@@ -347,8 +354,8 @@ def q_insert_customer(dbClient, customer):
     RETURNING id
     '''
   try:
-    dbClient.connect()
-    dbClient.execute(sql, (
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql, (
       customer['Name'], 
       customer['Email'], 
       customer['Phones'], 
@@ -356,14 +363,15 @@ def q_insert_customer(dbClient, customer):
       customer['Nationality_id'], 
       customer['Gender_id'], 
     ))
-    id = dbClient.returning()[0]
-    dbClient.commit()
-    dbClient.disconnect()
+    id = cur.fetchone()[0]
+    con.commit()
+    dbClient.putconn(con)
     return id, None
  
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return None, error
 
 # ------------------------------------------------------
@@ -383,8 +391,8 @@ def q_insert_booking(dbClient, booking):
     RETURNING id
     '''
   try:
-    dbClient.connect()
-    dbClient.execute(sql, (
+    con = dbClient.getconn()
+    cur = dbClient.execute(sql, (
       booking["Date_from"],
       booking["Date_to"],
       booking["Customer_id"],
@@ -395,14 +403,15 @@ def q_insert_booking(dbClient, booking):
       booking["Reason_id"],
       booking["Comments"]
     ))
-    id = dbClient.returning()[0]
-    dbClient.commit()
-    dbClient.disconnect()
+    id = cur.fetchone()[0]
+    con.commit()
+    dbClient.putconn(con)
     return id, None
  
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return None, error
 
 # ------------------------------------------------------
@@ -413,7 +422,7 @@ def q_availability(dbClient, type, filter, date_from, date_to):
 
   # Connect
   try:
-    dbClient.connect()
+    con = dbClient.getconn()
 
     # Single, Shared and Flat availabilities for all buildings
     if type == 0:
@@ -442,9 +451,9 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           AND bd.id IS NULL
         GROUP BY 1
       '''
-      dbClient.select(sql, (date_to, date_from, date_to, date_from))
+      cur = dbClient.execute(con, sql, (date_to, date_from, date_to, date_from))
 
-    # Room availabilities for one building
+    # Room cur for one building
     elif type == 1:
       sql = '''
         SELECT 
@@ -460,9 +469,9 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           AND r."Sale_type" IN ('plazas', 'ambos')
         GROUP BY 1
         '''
-      dbClient.select(sql, (date_to, date_from, filter))
+      cur = dbClient.execute(con, sql, (date_to, date_from, filter))
 
-    # Flat availabilities for one building
+    # Flat cur for one building
     else:
       sql = '''
         SELECT 
@@ -476,15 +485,17 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           AND r."Sale_type" IN ('completo', 'ambos')
         GROUP BY 1
         '''
-      dbClient.select(sql, (date_to, date_from, filter))
+      cur = dbClient.execute(con, sql, (date_to, date_from, filter))
 
-    # Read data
-    column_names = [desc[0] for desc in dbClient.sel.description]
+    # Read cur
+    column_names = [desc[0] for desc in cur.description]
+    cur.close()
     result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in dbClient.fetchall()]
-    dbClient.disconnect()
+    dbClient.putconn(con)
     return result
 
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
+    dbClient.putconn(con)
     return []

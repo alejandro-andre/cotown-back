@@ -178,16 +178,17 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None):
     # Get SQL data
     if sql:
       try:
-        dbClient.connect()
-        dbClient.select(sql, variables)
-        desc = [desc[0] for desc in dbClient.sel.description]
-        data = dbClient.fetchall()
+        con = dbClient.getconn()
+        cur = dbClient.execute(con, sql, variables)
+        desc = [desc[0] for desc in cur.description]
+        data = cur.fetchall()
+        cur.close()
       except Exception as e:
         logging.error(e)
-        dbClient.rollback()
-        dbClient.disconnect()
+        con.rollback()
+        dbClient.putconn(con)
         return
-      dbClient.disconnect()
+      dbClient.putconn(con)
       df = pd.DataFrame(data, columns=desc)
       fill_sheet(df, columns, wb[sheet])
 

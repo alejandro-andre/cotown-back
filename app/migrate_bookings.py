@@ -301,6 +301,7 @@ dbClient = DBClient(
   sshprivatekey=settings.get('SSHPKEY', None)
 )
 dbClient.connect()
+con = dbClient.getconn()
 print('ACCESO A BD')
 
 
@@ -309,16 +310,19 @@ print('ACCESO A BD')
 # #####################################
 
 # Load customers
-dbClient.select('''SELECT id, "Email", "Comments" FROM "Customer"."Customer"''')
-df_cus = pd.DataFrame.from_records(dbClient.fetchall())
+cur = dbClient.execute(con, '''SELECT id, "Email", "Comments" FROM "Customer"."Customer"''')
+df_cus = pd.DataFrame.from_records(cur.fetchone())
+cur.close()
 print('Clientes...................: ', df_cus.shape[0])
 
 # Load resources
-dbClient.select('''SELECT id, "Code", "Resource_type", "Building_id", "Flat_type_id", "Place_type_id" FROM "Resource"."Resource"''')
-df_res = pd.DataFrame.from_records(dbClient.fetchall())
+cur = dbClient.execute(con, '''SELECT id, "Code", "Resource_type", "Building_id", "Flat_type_id", "Place_type_id" FROM "Resource"."Resource"''')
+df_res = pd.DataFrame.from_records(cur.fetchone())
+cur.close()
 print('Recursos...................: ', df_res.shape[0])
 
 # Disconnect
+dbClient.putconn(con)
 dbClient.disconnect()
 
 # #####################################

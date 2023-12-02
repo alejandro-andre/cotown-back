@@ -4,8 +4,12 @@
 
 from sshtunnel import SSHTunnelForwarder
 import psycopg2
-import psycopg2.pool
 import psycopg2.extras
+
+# Logging
+import logging
+logger = logging.getLogger('COTOWN')
+
 
 # #####################################
 # Database class
@@ -25,15 +29,18 @@ class DBClient:
     self.sshprivatekey = sshprivatekey
     self.schema = schema
 
+    self.con = None
+    self.cur = None
+    self.sel = None
     self.tunnel = None
-    self.pool = None
-    self.autocommit = True
    
 
   # Is closed?
   def closed(self):
 
-    return self.pool == None
+    if self.con != None:
+      return self.con.closed
+    return True
 
 
   # Connect DB
@@ -60,78 +67,104 @@ class DBClient:
           remote_bind_address=('127.0.0.1', 5432)
         )
       self.tunnel.start()
-  
-    # Connect to DB using pool
-    self.pool = psycopg2.pool.SimpleConnectionPool(
-      1, 
-      20, 
+ 
+    # Connect to DB
+    self.con = psycopg2.connect(
       host="localhost",
       port=self.tunnel.local_bind_port,
-      dbname=self.dbname, 
-      user=self.user, 
+      dbname=self.dbname,
+      user=self.user,
       password=self.password
     )
-    
+    self.con.set_session(True)
+    cur = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.close()
+
+
+  # Autocommit
+  def autocommit(self, value=True):
+
+    self.con.commit()
+    self.con.set_session(autocommit=value)
+
 
   # Disconnet DB
   def disconnect(self):
 
     if not self.closed():
 
+      # Commit
+      self.con.commit()
+
+      # Close cursors
+      if self.cur != None: self.cur.close()
+      if self.sel != None: self.sel.close()
+
       # Close connection
-      self.pool.closeall()
+      self.con.close()
 
       # Close tunnel
       self.tunnel.stop()
       self.tunnel.close()
 
-    self.pool = None
+    self.con = None
     self.tunnel = None
 
 
-  # Get a connection from the pool
-  def getconn(self):
+  # Execute SQL command
+  def execute(self, sql, args=None):
 
-    con = self.pool.getconn()
-    con.set_session(self.autocommit)
-    return con
-
-
-  # Free pool connection
-  def putconn(self, con):
-
-    con.commit()
-    self.pool.putconn(con)
+    self.cur = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    self.cur.execute(sql, args)
 
 
   # Execute SQL command
-  def execute(self, con, sql, args=None):
+  def executemany(self, sql, args=None):
 
-    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute(sql, args)
-    return cur
-
-
-  # Execute SQL many command
-  def executemany(self, con, sql, args=None):
-
-    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.executemany(sql, args)
-    return cur
+    self.cur = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    self.cur.executemany(sql, args)
 
 
-  # Copy from
-  def copy_from(self, con, data, schema, table, columns, null, sep):
+  # Select SQL
+  def select(self, sql, args=None):
 
-    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute(f'SET search_path = {schema}, public')
-    cur.copy_from(data, table, null=null, columns=columns, sep=sep)
-    cur.close()
+    self.sel = self.con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    self.sel.execute(sql, args)
+
+
+  # Fetch
+  def fetch(self):
+
+    return self.sel.fetchone()
+
+
+  # Fetch all
+  def fetchall(self):
+
+    return self.sel.fetchall()
+
+
+  # Fetch returning
+  def returning(self):
+
+    return self.cur.fetchone()
+
+
+  # Commit
+  def commit(self):
+
+    self.con.commit()
+
+
+  # Rollback
+  def rollback(self):
+
+    self.con.rollback()
 
 
   # Create large object
-  def object(self, con, data):
+  def object(self, data):
 
-    obj = con.lobject()
+    obj = self.con.lobject()
     obj.write(data)
     return obj.oid

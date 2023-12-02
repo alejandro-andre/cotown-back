@@ -45,18 +45,21 @@ PRODUCTS = {}
 # Get structure data
 # ###################################################
 
-def get_data(dbClient):
+def get_data(dbClient, con):
 
   # Capture exceptions
   try:
 
     # Get product list
-    dbClient.select('''
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, 
+      '''
       SELECT p.id, p."Name", p."Name_en", t.id, t."Name", t."Name_en", t."Value"
       FROM "Billing"."Product" p
       INNER JOIN "Billing"."Tax" t ON t.id = p."Tax_id";
-    ''')
-    data = dbClient.fetchall()
+      ''')
+    data = cur.fetchall()
+    cur.close()
     for product in data:
       PRODUCTS[product[0]] = {
         'concept': product[1],
@@ -66,17 +69,18 @@ def get_data(dbClient):
 
   except Exception as error:
     logger.error(error)
-    dbClient.rollback()
+    con.rollback()
 
 
 # ###################################################
 # Generate booking fee and deposit payment bills
 # ###################################################
 
-def bill_payments(dbClient):
+def bill_payments(dbClient, con):
 
   # Get all payments without bill
-  dbClient.select('''
+  cur = dbClient.execute(con, 
+    '''
     SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code"
     FROM "Billing"."Payment" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
@@ -85,8 +89,9 @@ def bill_payments(dbClient):
     WHERE "Payment_date" IS NOT NULL
     AND i.id IS NULL
     ORDER BY p."Booking_id"
-  ''')
-  data = dbClient.fetchall()
+    ''')
+  data = cur.fetchall()
+  cur.close()
 
   # Loop thru payments
   num = 0
@@ -100,7 +105,8 @@ def bill_payments(dbClient):
     try:
 
       # Create invoice
-      dbClient.execute('''
+      cur = dbClient.execute(con, 
+        '''
         INSERT INTO "Billing"."Invoice"
         ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -119,10 +125,11 @@ def bill_payments(dbClient):
           PRODUCTS[PR_BOOKING_FEE]['concept'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['concept'],
         )
       )
-      billid = dbClient.returning()[0]
+      billid = cur.fetchone()[0]
 
       # Create invoice line
-      dbClient.execute('''
+      cur = dbClient.execute(con, 
+        '''
         INSERT INTO "Billing"."Invoice_line"
         ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
         VALUES (%s, %s, %s, %s, %s)
@@ -137,15 +144,15 @@ def bill_payments(dbClient):
       )
 
       # Update bill
-      dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
-      dbClient.commit()
+      cur = dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+      con.commit()
       num += 1
 
     # Process exception
     except Exception as error:
       err += 1
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
 
   # End
   logger.info('{} payment bills generated'.format(num))
@@ -156,25 +163,27 @@ def bill_payments(dbClient):
 # Generate monthly bills
 # ###################################################
 
-def bill_rent(dbClient):
+def bill_rent(dbClient, con):
 
   # Get all prices not already billed
-  dbClient.select('''
-  SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
-         b."Payer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
-  FROM "Booking"."Booking_price" p
-  INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
-  INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
-  INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
-  INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
-  INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
-  WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout')
-  AND "Invoice_rent_id" IS NULL
-  AND "Invoice_services_id" IS NULL
-  AND "Rent_date" <= %s
-  AND "Rent_date" >= %s
-  ''', (datetime.now(), settings.BILLDATE))
-  data = dbClient.fetchall()
+  cur = dbClient.execute(con,
+    '''
+    SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
+          b."Payer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
+    FROM "Booking"."Booking_price" p
+    INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
+    INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
+    INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+    INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
+    INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
+    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout')
+    AND "Invoice_rent_id" IS NULL
+    AND "Invoice_services_id" IS NULL
+    AND "Rent_date" <= %s
+    AND "Rent_date" >= %s
+    ''', (datetime.now(), settings.BILLDATE))
+  data = cur.fetchall()
+  cur.close()
 
   # Loop thru payments
   num = 0
@@ -201,7 +210,8 @@ def bill_rent(dbClient):
       # Create payment
       if rent > 0 or services > 0:
 
-        dbClient.execute('''
+        cur = dbClient.execute(con,
+          '''
           INSERT INTO "Billing"."Payment"
           ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
           VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -217,12 +227,13 @@ def bill_rent(dbClient):
             'servicios'
           )
         )
-        paymentid = dbClient.returning()[0]
+        paymentid = cur.fetchone()[0]
 
         # Create rent invoice
         if rent > 0:
 
-          dbClient.execute('''
+          cur = dbClient.execute(con, 
+          '''
             INSERT INTO "Billing"."Invoice"
             ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -241,10 +252,11 @@ def bill_rent(dbClient):
               product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
-          rentid = dbClient.returning()[0]
+          rentid = cur.fetchone()[0]
 
           # Create invoice line
-          dbClient.execute('''
+          dbClient.execute(con, 
+            '''
             INSERT INTO "Billing"."Invoice_line"
             ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
             VALUES (%s, %s, %s, %s, %s)
@@ -259,16 +271,17 @@ def bill_rent(dbClient):
           )
 
           # Update bill
-          dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
+          dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
           # Update price
-          dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
+          dbClient.execute(con, 'UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
           q = 1
 
         # Create services invoice
         if services > 0:
          
-          dbClient.execute('''
+          cur = dbClient.execute(con,
+            '''
             INSERT INTO "Billing"."Invoice"
             ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -287,10 +300,11 @@ def bill_rent(dbClient):
               PRODUCTS[PR_SERVICES]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
-          servid = dbClient.returning()[0]
+          servid = cur.fetchone()[0]
 
           # Create invoice line
-          dbClient.execute('''
+          dbClient.execute(con,
+            '''
             INSERT INTO "Billing"."Invoice_line"
             ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
             VALUES (%s, %s, %s, %s, %s)
@@ -305,21 +319,21 @@ def bill_rent(dbClient):
           )
 
           # Update bill
-          dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
+          dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
           # Update price
-          dbClient.execute('UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
+          dbClient.execute(con, 'UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
           q = 2
 
         # Commit
-        dbClient.commit()
+        con.commit()
         num += q
 
     # Process exception
     except Exception as error:
       err += 1
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
 
   # End
   logger.info('{} bills generated'.format(num))
@@ -327,15 +341,15 @@ def bill_rent(dbClient):
   return
 
 
-
 # ###################################################
 # Generate monthly bills for group bookints
 # ###################################################
 
-def bill_group_rent(dbClient):
+def bill_group_rent(dbClient, con):
 
   # Get all prices not already billed
-  dbClient.select('''
+  cur = dbClient.execute(con,
+  '''
   SELECT bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", COUNT(r."Code") as num, MAX(bg."Room_ids") as "Room_ids", MAX(r."Owner_id") as "Owner_id", MAX(r."Service_id") as "Service_id"
   FROM "Booking"."Booking_group_price" bgp
   INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
@@ -348,7 +362,7 @@ def bill_group_rent(dbClient):
   GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
   ''', (datetime.now(), settings.BILLDATE, ))
-  data = dbClient.fetchall()
+  data = cur.fetchall()
 
   # Loop thru payments
   num = 0
@@ -371,7 +385,8 @@ def bill_group_rent(dbClient):
       # Create payment
       if rent + services > 0:
 
-        dbClient.execute('''
+        cur = dbClient.execute(con,
+          '''
           INSERT INTO "Billing"."Payment"
           ("Payment_method_id", "Customer_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type" )
           VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -387,12 +402,13 @@ def bill_group_rent(dbClient):
             'servicios'
           )
         )
-        paymentid = dbClient.returning()[0]
+        paymentid = cur.fetchone()[0]
 
         # Create rent invoice
         if rent > 0:
 
-          dbClient.execute('''
+          cur = dbClient.execute(con,
+            '''
             INSERT INTO "Billing"."Invoice"
             ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -412,10 +428,11 @@ def bill_group_rent(dbClient):
               comments
             )
           )
-          rentid = dbClient.returning()[0]
+          rentid = cur.fetchone()[0]
 
           # Create invoice line
-          dbClient.execute('''
+          dbClient.execute(con,
+            '''
             INSERT INTO "Billing"."Invoice_line"
             ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
             VALUES (%s, %s, %s, %s, %s, %s)
@@ -431,17 +448,18 @@ def bill_group_rent(dbClient):
           )
 
           # Update bill
-          dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
+          dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
           # Update price
-          dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
+          dbClient.execute(con, 'UPDATE "Booking"."Booking_group_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
           q = 1
 
         # Create services invoice
         if services > 0:
          
           comments = 'Recursos: ' + (', '.join(item['Room_ids']))
-          dbClient.execute('''
+          cur = dbClient.execute(con,
+            '''
             INSERT INTO "Billing"."Invoice"
             ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
@@ -461,10 +479,11 @@ def bill_group_rent(dbClient):
               comments
             )
           )
-          servid = dbClient.returning()[0]
+          servid = cur.fetchone()[0]
 
           # Create invoice line
-          dbClient.execute('''
+          dbClient.execute(con,
+            '''
             INSERT INTO "Billing"."Invoice_line"
             ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
             VALUES (%s, %s, %s, %s, %s, %s)
@@ -479,21 +498,21 @@ def bill_group_rent(dbClient):
           )
 
           # Update bill
-          dbClient.execute('UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
+          dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
           # Update price
-          dbClient.execute('UPDATE "Booking"."Booking_group_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
+          dbClient.execute(con, 'UPDATE "Booking"."Booking_group_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
           q = 2
 
         # Commit
-        dbClient.commit()
+        con.commit()
         num += q
            
     # Process exception
     except Exception as error:
       err += 1
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
 
   # End
   logger.info('{} group bills generated'.format(num))
@@ -501,19 +520,20 @@ def bill_group_rent(dbClient):
   return
 
 
-
 # ###################################################
 # Generate payments for new bills
 # ###################################################
 
-def pay_bills(dbClient):
+def pay_bills(dbClient, con):
 
   # Get all bills without payment
-  dbClient.select('''
-  SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
-  FROM "Billing"."Invoice"
-  WHERE "Issued" AND "Billing_type" = 'factura' AND "Payment_id" IS NULL''')
-  data = dbClient.fetchall()
+  cur = dbClient.execute(con,
+    '''
+    SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
+    FROM "Billing"."Invoice"
+    WHERE "Issued" AND "Bill_type" = 'factura' AND "Payment_id" IS NULL
+    ''')
+  data = cur.fetchall()
 
   # Loop thru bills
   num = 0
@@ -526,7 +546,8 @@ def pay_bills(dbClient):
     # Capture exceptions
     try:
 
-      dbClient.execute('''
+      cur = dbClient.execute(con,
+        '''
         INSERT INTO "Billing"."Payment"
         ("Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type")
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -543,25 +564,23 @@ def pay_bills(dbClient):
           'servicios'
         )
       )
-      payid = dbClient.returning()[0]
+      payid = cur.fetchone()[0]
        
       # Update bill
-      dbClient.execute('UPDATE "Billing"."Invoice" SET "Payment_id" = %s WHERE id = %s', (payid, item['id']))
-      dbClient.commit()
+      dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Payment_id" = %s WHERE id = %s', (payid, item['id']))
+      con.commit()
       num += 1
 
     # Process exception
     except Exception as error:
       err += 1
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
 
   # End
-  dbClient.commit()
   logger.info('{} payments generated'.format(num))
   logger.info('{} payments with error'.format(err))
   return
-
 
 
 # ###################################################
@@ -602,6 +621,7 @@ def main():
     sshprivatekey=settings.get('SSHPKEY', None)
   )
   dbClient.connect()
+  con = dbClient.getconn()
 
 
   # ###################################################
@@ -609,19 +629,20 @@ def main():
   # ###################################################
 
   # 0. Get structure data (products)
-  get_data(dbClient)
+  get_data(dbClient, con)
 
   # 1. Generate invoice for each booking fee and deposit payment
-  bill_payments(dbClient)
+  bill_payments(dbClient, con)
 
   # 2. Monthly billing process
-  bill_rent(dbClient)
-  bill_group_rent(dbClient)
+  bill_rent(dbClient, con)
+  bill_group_rent(dbClient, con)
 
   # 3. Generate payment for each manual bill
-  pay_bills(dbClient)
+  pay_bills(dbClient, con)
 
   # Disconnect
+  dbClient.putconn(con)
   dbClient.disconnect()
 
 

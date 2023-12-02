@@ -67,6 +67,7 @@ def runapp():
     sshpassword=settings.get('SSHPASS', None),
     sshprivatekey=settings.get('SSHPKEY', None)
   )
+  dbClient.connect()
 
   # -------------------------------------------------
   # Templating

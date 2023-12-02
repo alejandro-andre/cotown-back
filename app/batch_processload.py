@@ -68,6 +68,7 @@ def main():
     sshprivatekey=settings.get('SSHPKEY', None)
   )
   dbClient.connect()
+  con = dbClient.getconn()
 
 
   # ###################################################
@@ -75,8 +76,9 @@ def main():
   # ###################################################
 
   # Get upload requests
-  dbClient.select('SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
-  data = dbClient.fetchall()
+  cur = dbClient.execute(con, 'SELECT id, "File" FROM "Batch"."Upload" WHERE "Result" IS NULL')
+  data = cur.fetchall()
+  cur.close()
 
   # Loop thru files
   num = 0
@@ -100,8 +102,8 @@ def main():
 
     # Processing
     sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-    dbClient.execute(sql, ('Procesando...', '', id))
-    dbClient.commit()        
+    dbClient.execute(con, sql, ('Procesando...', '', id))
+    con.commit()        
 
     # Process first sheet
     sheet = workbook.sheetnames[0]
@@ -109,17 +111,17 @@ def main():
     # Resources
     if sheet == 'Recursos':
       log += sheet + '\n'
-      ok, l = load_resources(dbClient, workbook[sheet])
+      ok, l = load_resources(dbClient, con, workbook[sheet])
 
     # Prices
     elif sheet == 'Precios':
       log += sheet + '\n'
-      ok, l = load_prices(dbClient, workbook[sheet])
+      ok, l = load_prices(dbClient, con, workbook[sheet])
 
     # Rooming list
     elif sheet == 'Rooming':
       log += sheet + '\n'
-      ok, l = load_rooming(dbClient, workbook[sheet])
+      ok, l = load_rooming(dbClient, con, workbook[sheet])
 
     # Ignore list
     elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
@@ -135,8 +137,8 @@ def main():
 
     # Save result
     sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'
-    dbClient.execute(sql, ('Ok' if ok else 'Error', log, id))
-    dbClient.commit()        
+    dbClient.execute(con, sql, ('Ok' if ok else 'Error', log, id))
+    con.commit()        
     num += 1
 
   # Info

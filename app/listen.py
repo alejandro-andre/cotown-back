@@ -73,22 +73,23 @@ def main():
       # Connect
       logger.info('Connecting...')
       dbClient.connect()
+      con = dbClient.getconn()
 
       # Listen to 'canal'
       psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-      dbClient.con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
-      dbClient.execute("LISTEN email")
+      con.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+      dbClient.execute(con, 'LISTEN email')
       logger.info('Listening to ''email''...')
 
       # Infinite loop
-      while dbClient.con.poll() == psycopg2.extensions.POLL_OK:
+      while con.poll() == psycopg2.extensions.POLL_OK:
 
         # Wait for notification
-        while dbClient.con.notifies:
+        while con.notifies:
 
           # Notification received
-          notify = dbClient.con.notifies.pop(0)
-          logger.info(f"Mensaje recibido en el canal {notify.channel}: {notify.payload}")
+          notify = con.notifies.pop(0)
+          logger.info(f'Mensaje recibido en el canal {notify.channel}: {notify.payload}')
 
           # Get email
           apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
@@ -124,9 +125,10 @@ def main():
     # Error
     except Exception as error:     
       logger.error(error)
-      dbClient.rollback()
+      con.rollback()
 
     # Close connection and tunnel
+    dbClient.putconn(con)
     dbClient.disconnect()
 
     # Wait 30 seconds and try to connect again
