@@ -23,8 +23,8 @@ BEGIN
   -- Boton checkout
   NEW."Button_checkout" := '';
   -- Comprobamos que el usuario no tenga pagos pendientes.
-  SELECT COUNT(*) INTO pending_payments FROM "Billing"."Payment"  WHERE "Payment"."Booking_id" = NEW.id AND "Payment"."Payment_date" IS NULL;
-  IF NEW."Status" = 'checkout' AND pending_payments = 0 THEN   
+  --SELECT COUNT(*) INTO pending_payments FROM "Billing"."Payment"  WHERE "Payment"."Booking_id" = NEW.id AND "Payment"."Payment_date" IS NULL;
+  IF NEW."Status" = 'checkout' THEN -- AND pending_payments = 0
      NEW."Button_checkout" := CONCAT('https://dev.cotown.ciber.es/booking/', NEW.id, '/status/devolvergarantia');
   END IF;
 
