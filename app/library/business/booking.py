@@ -383,19 +383,50 @@ def q_insert_customer(dbClient, customer):
 
 def q_insert_booking(dbClient, booking):
 
-  # SQL
-  sql = f'''
-    INSERT INTO "Booking"."Booking" (
-      "Date_from", "Date_to", "Customer_id", "Building_id", 
-      "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", "Comments", 
-      "Booking_channel_id", "Second_resident", "Lock"
-    )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
-    RETURNING id
-    '''
   try:
+    # Get connection
     con = dbClient.getconn()
-    cur = dbClient.execute(sql, (
+
+    # Check if exists
+    sql = f'''
+      SELECT id 
+      FROM "Booking"."Booking"
+      WHERE "Date_from" = %s
+        AND "Date_to" = %s
+        AND "Customer_id" = %s
+        AND "Building_id" = %s
+        AND "Resource_type" = %s
+        AND "Flat_type_id" = %s
+        AND "Place_type_id" = %s
+      LIMIT 1
+    '''
+    cur = dbClient.execute(con, sql, (
+      booking["Date_from"],
+      booking["Date_to"],
+      booking["Customer_id"],
+      booking["Building_id"],
+      booking["Resource_type"],
+      booking["Flat_type_id"],
+      booking["Place_type_id"]
+    ))
+    id = cur.fetchone()[0]
+    if id:
+      cur.close()
+      dbClient.putconn(con)
+      return id, None
+  
+    # SQL
+    sql = f'''
+      INSERT INTO "Booking"."Booking" (
+        "Date_from", "Date_to", "Customer_id", "Building_id", 
+        "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", "Comments", 
+        "Booking_channel_id", "Second_resident", "Lock"
+      )
+      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
+      RETURNING id
+    '''
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql, (
       booking["Date_from"],
       booking["Date_to"],
       booking["Customer_id"],
@@ -408,6 +439,7 @@ def q_insert_booking(dbClient, booking):
     ))
     id = cur.fetchone()[0]
     con.commit()
+    cur.close()
     dbClient.putconn(con)
     return id, None
  

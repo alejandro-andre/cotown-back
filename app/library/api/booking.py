@@ -302,6 +302,7 @@ def req_pub_booking(step):
     place_type_id = get_var('book_place_type_id')
     flat_type_id  = get_var('book_flat_type_id')
     extras        = get_var('book_extras')
+    booking_id    = 0
 
     # Current user, if logged
     logged   = session.get('logged', None)
@@ -408,9 +409,9 @@ def req_pub_booking(step):
         'Flat_type_id': place_type_id if acom_type == 'ap' else flat_type_id,
         'Place_type_id': None if acom_type == 'ap' else place_type_id,
         'Reason_id': get_var('Reason_id', None),
-        'Comments': summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + ' / ' + extras
+        'Comments': summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + (' / ' + extras) if extras else ''
       }
-      id, error = q_insert_booking(g.dbClient, booking)
+      booking_id, error = q_insert_booking(g.dbClient, booking)
 
       # Error?
       if error:

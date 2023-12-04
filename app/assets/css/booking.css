@@ -925,7 +925,6 @@ button.back p {
 	flex-flow: row;
 	justify-content: flex-start;
 	align-items: flex-start;
-	width: 38%;
 	justify-content: center;
 }
 .main-booking .main-contain .panel-container .right .img-big {
@@ -941,9 +940,6 @@ button.back p {
 }
 
 /* SEGUNDA TAB */
-.main-booking .main-contain .panel-container .left.tab2 {
-	width: 60%;
-}
 .main-booking .main-contain .panel-container .left.tab2 .description {
 	width: 100%;
 	position: relative;
