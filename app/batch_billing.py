@@ -62,6 +62,7 @@ def get_data(dbClient, con):
     cur.close()
     for product in data:
       PRODUCTS[product[0]] = {
+        'id': product[0],
         'concept': product[1],
         'tax': product[3],
         'value': product[5]
@@ -350,19 +351,25 @@ def bill_group_rent(dbClient, con):
   # Get all prices not already billed
   cur = dbClient.execute(con,
   '''
-  SELECT bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", COUNT(r."Code") as num, MAX(bg."Room_ids") as "Room_ids", MAX(r."Owner_id") as "Owner_id", MAX(r."Service_id") as "Service_id"
+  SELECT 
+    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", 
+    COUNT(r."Code") as num, 
+    MIN(bg."Room_ids") as "Room_ids", 
+    MIN(r."Owner_id") as "Owner_id", 
+    MIN(r."Service_id") as "Service_id"
   FROM "Booking"."Booking_group_price" bgp
-  INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
-  INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
-  INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
+    INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
+    INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
+    INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
-  AND bgp."Invoice_rent_id" IS NULL
-  AND bgp."Rent_date" <= %s
-  AND bgp."Rent_date" >= %s
+    AND bgp."Invoice_rent_id" IS NULL
+    AND bgp."Rent_date" <= %s
+    AND bgp."Rent_date" >= %s
   GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
   ''', (datetime.now(), settings.BILLDATE, ))
   data = cur.fetchall()
+  cur.close()
 
   # Loop thru payments
   num = 0
@@ -375,15 +382,33 @@ def bill_group_rent(dbClient, con):
     # Capture exceptions
     try:
 
-      # Resource list
-      comments = 'Recursos: ' + (', '.join(item['Room_ids']))
-   
-      # Amounts
-      rent = float(item['Rent'] or 0.0) * float(item['num'] or 0.0)
-      services = float(item['Services'] or 0.0) * float(item['num'] or 0.0)
+      # Group rooming list by flat
+      flats = {}
+      for r in item['Room_ids']:
+        key = r[:12]
+        if key not in flats:
+          flats[key] = []
+        flats[key].append(r[13:])
 
+      # Get all flat ids
+      args = tuple(flats.keys())
+      cur = dbClient.execute(con, 'SELECT r."Code", id FROM "Resource"."Resource" r WHERE r."Code" IN %s ORDER BY r."Code"', (args, ))
+      flat_ids = cur.fetchall()
+      cur.close()
+
+      # Amounts
+      total_rent = float(item['Rent'] or 0.0) * float(item['num'] or 0.0)
+      total_services = float(item['Services'] or 0.0) * float(item['num'] or 0.0)
+
+      # Same issuer
+      product = PRODUCTS[PR_RENT]
+      if item['Owner_id'] == item['Service_id']:
+        product = PRODUCTS[PR_RENT_SERVICES]
+        total_rent += total_services
+        total_services = 0
+       
       # Create payment
-      if rent + services > 0:
+      if total_rent > 0 or total_services > 0:
 
         cur = dbClient.execute(con,
           '''
@@ -396,16 +421,16 @@ def bill_group_rent(dbClient, con):
             PM_TRANSFER,
             item['Payer_id'],
             item['Booking_id'],
-            rent + services,
+            total_rent + total_services,
             datetime.now(),
-            'Renta y servicios (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+            product['concept'] + ' (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
             'servicios'
           )
         )
         paymentid = cur.fetchone()[0]
 
         # Create rent invoice
-        if rent > 0:
+        if total_rent > 0:
 
           cur = dbClient.execute(con,
             '''
@@ -424,28 +449,35 @@ def bill_group_rent(dbClient, con):
               item['Booking_id'],
               PM_TRANSFER,
               paymentid,
-              'Renta mensual (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
-              comments
+              product['concept'] + ' (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+              ''
             )
           )
           rentid = cur.fetchone()[0]
 
           # Create invoice line
-          dbClient.execute(con,
-            '''
-            INSERT INTO "Billing"."Invoice_line"
-            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
-            VALUES (%s, %s, %s, %s, %s, %s)
-            ''',
-            (
-              rentid,
-              rent,
-              PR_RENT,
-              VAT_0 if item['Tax'] else VAT_21,
-              'Renta mensual (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
-              comments
+          for flat in flat_ids:
+            places = len(flats[flat[0]])
+            if item['Owner_id'] == item['Service_id']:
+              rent = places * (float(item['Rent'] or 0.0) + float(item['Services'] or 0.0))
+            else:
+              rent = places * float(item['Rent'] or 0.0)
+            dbClient.execute(con,
+              '''
+              INSERT INTO "Billing"."Invoice_line"
+              ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+              VALUES (%s, %s, %s, %s, %s, %s, %s)
+              ''',
+              (
+                rentid,
+                flat[1],
+                rent,
+                product['id'],
+                VAT_0 if item['Tax'] else VAT_21,
+                product['concept'] + ' (' + str(places) + ' plazas) ' + str(item['Rent_date'])[:7],
+                'Plazas: ' + flat[0] + ' ' + (', '.join(flats[flat[0]]))
+              )
             )
-          )
 
           # Update bill
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
@@ -455,9 +487,8 @@ def bill_group_rent(dbClient, con):
           q = 1
 
         # Create services invoice
-        if services > 0:
+        if total_services > 0:
          
-          comments = 'Recursos: ' + (', '.join(item['Room_ids']))
           cur = dbClient.execute(con,
             '''
             INSERT INTO "Billing"."Invoice"
@@ -475,27 +506,32 @@ def bill_group_rent(dbClient, con):
               item['Booking_id'],
               PM_TRANSFER,
               paymentid,
-              'Servicios mensuales (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
-              comments
+              PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7],
+              ''
             )
           )
           servid = cur.fetchone()[0]
 
           # Create invoice line
-          dbClient.execute(con,
-            '''
-            INSERT INTO "Billing"."Invoice_line"
-            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
-            VALUES (%s, %s, %s, %s, %s, %s)
-            ''',
-            (
-              servid,
-              services, 
-              PR_SERVICES,
-              PRODUCTS[PR_SERVICES]['tax'], 
-              PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(item['num']) + ' plazas) ' + str(item['Rent_date'])[:7], comments
+          for flat in flat_ids:
+            places = len(flats[flat[0]])
+            services = places * float(item['Services'] or 0.0)
+            dbClient.execute(con,
+              '''
+              INSERT INTO "Billing"."Invoice_line"
+              ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+              VALUES (%s, %s, %s, %s, %s, %s, %s)
+              ''',
+              (
+                servid,
+                flat[1],
+                services, 
+                PR_SERVICES,
+                PRODUCTS[PR_SERVICES]['tax'], 
+                PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(places) + ' plazas) ' + str(item['Rent_date'])[:7], 
+                'Plazas: ' + flat[0] + ' ' + (', '.join(flats[flat[0]]))
+              )
             )
-          )
 
           # Update bill
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
