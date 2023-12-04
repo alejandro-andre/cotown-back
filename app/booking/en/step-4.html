@@ -21,13 +21,14 @@
             <h4>Your booking request has been placed!</h4>
             <h4>Request id #[[data.booking_id]]</h4>
 
-            <form>
+            <form action="/" method="get">
               <fieldset>
                 <section class="next">
                   <button class="btn-secondary" onclick="window.location.href='/';">Back</button>
                 </section>
               </fieldset>
             </form>
+
           </div>
 
           [% include 'en/includes/summary.html' %]
