@@ -2,6 +2,7 @@
 "Owner.Name",
 "Service.Name",
 "Code",
+"SAP_code",
 "Street",
 "Address",
 "Resource_flat_type.Code",

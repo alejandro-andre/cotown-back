@@ -13,6 +13,7 @@
     Billing_type
     Sale_type	
     Pricing_rate: Pricing_rateViaRate_id { Code	}
+    SAP_code
     Description	
     Description_en	
     Area	
