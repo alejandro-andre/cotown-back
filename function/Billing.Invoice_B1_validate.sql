@@ -132,34 +132,33 @@ BEGIN
   END IF;
 
   -- Lee la info del recurso
-  SELECT r.id, r."Code", r."Building_id"
-  INTO resource_id, resource_code, building_id
-  FROM "Booking"."Booking" b
-  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-  WHERE b.id = NEW."Booking_id";
+  --SELECT r.id, r."Code", r."Building_id"
+  --INTO resource_id, resource_code, building_id
+  --FROM "Booking"."Booking" b
+  --INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+  --WHERE b.id = NEW."Booking_id";
 
-  -- Lee el formato de numeración y prefijo SAP del proveedor
+  -- Lee el formato de numeración del proveedor
   SELECT
-    "SAP_code",
     CASE NEW."Bill_type"
       WHEN 'factura' THEN "Bill_pattern"
       WHEN 'rectificativa' THEN "Credit_pattern"
       ELSE "Receipt_pattern"
     END
-  INTO prefix_provider, format
+  INTO format
   FROM "Provider"."Provider"
   WHERE id = NEW."Provider_id";
 
   -- Lee el código SAP del edificio
-  SELECT "Code_SAP"
-  INTO prefix_building
-  FROM "Building"."Building" b
-  WHERE b.id = building_id;
+  --SELECT "Code_SAP"
+  --INTO prefix_building
+  --FROM "Building"."Building" b
+  --WHERE b.id = building_id;
 
   -- SAP Code
-  IF resource_code IS NOT NULL AND prefix_provider IS NOT NULL THEN
-    NEW."SAP_code" := CONCAT(SUBSTRING (prefix_provider, 1, 2), prefix_building, '_', SUBSTRING (resource_code, 8, 5));
-  END IF;
+  --IF resource_code IS NOT NULL AND prefix_provider IS NOT NULL THEN
+  --  NEW."SAP_code" := CONCAT(SUBSTRING (prefix_provider, 1, 2), prefix_building, '_', SUBSTRING (resource_code, 8, 5));
+  --END IF;
  
   -- Año de emisión
   SELECT EXTRACT(YEAR FROM NEW."Issued_date") INTO yy;
