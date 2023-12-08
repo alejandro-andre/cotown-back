@@ -46,12 +46,12 @@ BEGIN
  
     -- Inserta los bloqueos de la reserva
     INSERT INTO "Booking"."Booking_detail" (
-      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
-      "Resource_type", "Status", "Date_from", "Date_to", "Lock"
+      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
+      "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (
-      NULL, NEW.id, NULL, NULL, reg.id, reg."Building_id", reg."Flat_type_id", reg."Place_type_id",
-      reg."Resource_type", NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
+      NULL, NEW.id, NULL, NULL, reg.id, reg."Building_id",
+      NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN reg.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
     );
 
     -- Siguiente registro

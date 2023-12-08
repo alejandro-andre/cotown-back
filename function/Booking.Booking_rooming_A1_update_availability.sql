@@ -48,12 +48,12 @@ BEGIN
  
     -- Inserta bloqueo
     INSERT INTO "Booking"."Booking_detail" (
-      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id", "Flat_type_id", "Place_type_id",
-      "Resource_type", "Status", "Date_from", "Date_to", "Lock"
+      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
+      "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (
-      NULL, NULL, NEW."Booking_id", NEW.id, re.id, re."Building_id", re."Flat_type_id", re."Place_type_id",
-      re."Resource_type", booking."Status", booking."Date_from", booking."Date_to", (CASE WHEN re.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
+      NULL, NULL, NEW."Booking_id", NEW.id, re.id, re."Building_id",
+      booking."Status", booking."Date_from", booking."Date_to", (CASE WHEN re.id = NEW."Resource_id" THEN FALSE ELSE TRUE END)
     );
 
     FETCH res INTO re;
