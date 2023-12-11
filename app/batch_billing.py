@@ -567,7 +567,10 @@ def pay_bills(dbClient, con):
     '''
     SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
     FROM "Billing"."Invoice"
-    WHERE "Issued" AND "Bill_type" = 'factura' AND "Payment_id" IS NULL
+    WHERE "Issued" 
+      AND ("Booking_id" IS NOT NULL OR "Booking_group_id" IS NOT NULL)
+      AND "Bill_type" = 'factura' 
+      AND "Payment_id" IS NULL
     ''')
   data = cur.fetchall()
 
