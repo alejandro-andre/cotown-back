@@ -85,7 +85,7 @@ def bill_payments(dbClient, con):
     SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code"
     FROM "Billing"."Payment" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
-    LEFT JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+    INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
     LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
     WHERE "Payment_date" IS NOT NULL
     AND i.id IS NULL
