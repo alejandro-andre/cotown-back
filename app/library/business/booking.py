@@ -525,7 +525,7 @@ def q_availability(dbClient, type, filter, date_from, date_to):
     # Read cur
     column_names = [desc[0] for desc in cur.description]
     cur.close()
-    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in dbClient.fetchall()]
+    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
     dbClient.putconn(con)
     return result
 
