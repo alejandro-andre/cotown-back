@@ -48,7 +48,7 @@
                   <p class="desc">[[item.Place_type_name]]</p>
                   <div class="price">
                     <p>
-                      [[item.Flat_types[len(item.Flat_types)-1].Price | number]] €
+                      [[item.Flat_types[-1].Price | number]] €
                       <br><span>[% if item.Flat_types | length > 1 %]from [% endif %] /month</span>
                     </p>
                   </div>
