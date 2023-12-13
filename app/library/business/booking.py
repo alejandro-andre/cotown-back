@@ -406,11 +406,11 @@ def q_insert_booking(dbClient, booking):
       booking["Flat_type_id"],
       booking["Place_type_id"]
     ))
-    id = cur.fetchone()[0]
+    id = cur.fetchone()
     if id:
       cur.close()
       dbClient.putconn(con)
-      return id, None
+      return id[0], None
   
     # SQL
     sql = f'''
@@ -422,7 +422,6 @@ def q_insert_booking(dbClient, booking):
       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
       RETURNING id
     '''
-    con = dbClient.getconn()
     cur = dbClient.execute(con, sql, (
       booking["Date_from"],
       booking["Date_to"],
