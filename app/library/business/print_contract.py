@@ -80,8 +80,6 @@ query BookingById ($id: Int) {
     SchoolViaSchool_id {
         Booking_school: Name
     }
-    Cancelation_fee
-    Cancel_date
     Resource_flat_typeViaFlat_type_id {
       Booking_flat_type_code: Code
       Booking_flat_type_name: Name

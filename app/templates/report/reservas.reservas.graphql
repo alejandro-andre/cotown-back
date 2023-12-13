@@ -32,7 +32,6 @@ query Bookings ($fdesde: String, $fhasta:String) {
         Request_date
         Confirmation_date
         Expiry_date
-        Cancel_date
         Contract_signed
         Rent
         Services
@@ -45,7 +44,6 @@ query Bookings ($fdesde: String, $fhasta:String) {
         Deposit_returned
         Link_id
         Comments
-        Cancelation_fee
         Second_resident
         Lock
         Arrival

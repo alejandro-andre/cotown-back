@@ -82,7 +82,7 @@ def q_int_customers(dbClient, date):
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
       WHERE 
-        b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', 'cancelada', 'caducada') AND
+        b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', 'caducada') AND
         (
           c."Created_at" >= '{date}' OR 
           c."Updated_at" >= '{date}' OR

@@ -26,8 +26,6 @@ Booking_school              Nombre de la escuela/empresa
 Booking_second_resident     Marcador de 2º residente en el piso
 Booking_services            Servicios
 Booking_status              Estado de la reserva (código interno)
-Cancel_date                 Fecha de cancelación
-Cancelation_fee             Fee de cancelacion
 Customer_address            Dirección del cliente
 Customer_birth_date         Fecha de nacimiento del cliente
 Customer_city               Ciudad de la dirección postal del cliente
