@@ -46,11 +46,8 @@ def q(dbClient, sql, params):
 
   try:
     con = dbClient.getconn()
-    print(con)
     cur = dbClient.execute(con, sql, params)
-    print(cur)
     result = [dict(row) for row in cur.fetchall()]
-    print(result)
     cur.close()
     dbClient.putconn(con)
     return result
