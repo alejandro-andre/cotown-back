@@ -179,7 +179,7 @@ limit 1
       LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
       LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
     WHERE 
-      b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', , 'caducada')
+      b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', 'cancelada', 'caducada')
       --c."Created_at" >= '{date}' OR 
       --c."Updated_at" >= '{date}' OR
       --b."Created_at" >= '{date}' OR 

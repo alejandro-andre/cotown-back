@@ -30,7 +30,8 @@ BEGIN
   END IF;
  
   -- Ignora los estados que no bloquean
-  IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'caducada') THEN
+  -- WARNING: Las canceladas no bloquean, pero desaparecen del planning...
+  IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'cancelada', 'caducada') THEN
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;

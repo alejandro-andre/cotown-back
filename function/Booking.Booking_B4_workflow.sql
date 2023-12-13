@@ -302,6 +302,13 @@ BEGIN
     change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in");
   END IF;
 
+
+  -- A CANCELADA
+  -- Eliminamos cualquier registro de pago no pagado.
+  IF (NEW."Status" = 'cancelada') THEN
+    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
+  END IF;
+
   -- A IN HOUSE (BOTON 'CHECK IN OK')
   -- Se confirma la llegada del usuario al alojamiento
   IF (NEW."Status" = 'inhouse') THEN 

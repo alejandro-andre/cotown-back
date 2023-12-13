@@ -32,6 +32,12 @@ BEGIN
   -- Obtiene la reserva padre/grupo
   SELECT * INTO booking FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
 
+  -- Ignora los estados que no bloquean
+  IF booking."Status" IN ('cancelada') THEN
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+    RETURN NEW;
+  END IF;
+
   -- Obtiene el código de la plaza
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
