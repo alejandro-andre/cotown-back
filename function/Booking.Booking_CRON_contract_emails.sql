@@ -28,7 +28,7 @@ BEGIN
     IF NOT EXISTS (
 		  SELECT id
   		FROM "Customer"."Customer_email"
-  		WHERE "Template" = "firmacontratorecall"
+  		WHERE "Template" = 'firmacontratorecall'
   		AND "Customer_id" = customer_id
   		AND "Entity_id" = entity_id
   		AND "Created_at" > (CURRENT_DATE - INTERVAL '3 days')

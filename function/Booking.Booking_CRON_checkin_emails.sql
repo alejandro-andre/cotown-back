@@ -23,7 +23,7 @@ BEGIN
     IF NOT EXISTS (
 		  SELECT id
   		FROM "Customer"."Customer_email"
-  		WHERE "Template" = "completachekin"
+  		WHERE "Template" = 'completachekin'
   		AND "Customer_id" = customer_id
   		AND "Entity_id" = entity_id
     ) THEN
