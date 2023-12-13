@@ -48,8 +48,8 @@
                   <p class="desc">[[item.Place_type_name]]</p>
                   <div class="price">
                     <p>
-                      [[item.Flat_types[0].Price | number]] €
-                      <br><span>[% if item.Flat_types | length > 1 %]desde [% endif %]al mes</span>
+                      [[item.Flat_types[len(item.Flat_types)-1].Price | number]] €
+                      <br><span>[% if item.Flat_types | length > 1 %]from [% endif %] /month</span>
                     </p>
                   </div>
                 </div>
@@ -74,7 +74,7 @@
                         </label>
                       </div>
                       <div class="price">
-                        <p>[[share.Price | number]] €<span style="font-size:14px;font-weight:400;"> al mes</span>
+                        <p>[[share.Price | number]] €<span style="font-size:14px;font-weight:400;"> /month</span>
                         </p>
                       </div>
                     </div>
