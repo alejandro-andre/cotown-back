@@ -36,7 +36,7 @@ BEGIN
   END IF;
 
   -- Trick to modify issued bills
-  IF current_setting('myapp.admin', true) = 'true' THEN
+  IF CURRENT_USER = 'modelsadmin' OR current_setting('myapp.admin', true) = 'true' THEN
     OLD."Issued" = FALSE;
   END IF;
 
