@@ -8,9 +8,11 @@ DECLARE
   curs CURSOR FOR
     SELECT cd.id, cd."Customer_id"
     FROM "Customer"."Customer_doc" cd
+    INNER JOIN "Customer"."Customer_doc_type" cdt ON cdt.id = cd."Customer_doc_type_id" 
     LEFT JOIN "Booking"."Booking" b ON cd."Customer_id" = b."Customer_id"
-    WHERE b."Status" IN ('checkinconfirmado', 'checkin', 'inhouse')
+    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'checkin', 'inhouse')
   	AND GREATEST(b."Date_from", b."Check_in") <= (CURRENT_DATE + INTERVAL '20 days')
+    AND cdt."Mandatory" 
   	AND cd."Document" IS NULL;
 
 BEGIN
