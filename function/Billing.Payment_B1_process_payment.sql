@@ -66,7 +66,7 @@ BEGIN
     IF (status_record = 'pendientepago') THEN
 
       -- Deposito no pagado aun
-      IF deposit_actual IS NULL THEN
+      IF deposit > 0 AND deposit_actual IS NULL THEN
         UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
       -- Deposito pagado ANTES QUE EL BOOKING FEE
       ELSE
