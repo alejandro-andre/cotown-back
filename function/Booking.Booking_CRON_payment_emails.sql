@@ -5,6 +5,7 @@ DECLARE
   customer_id INTEGER;
  
   -- Pago no realizado hace más de 3 días
+  -- ERROR: PIDE EL PAGO DE DEPOSITO EMITIDO AUNQUE HAYA PLAZO PARA PAGRLO
   curs CURSOR FOR
     SELECT b.id, b."Customer_id"
     FROM "Billing"."Payment" b
@@ -13,6 +14,8 @@ DECLARE
 
 BEGIN
 
+  RETURN;
+  
   RESET ROLE;
 
   OPEN curs;
