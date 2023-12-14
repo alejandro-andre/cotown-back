@@ -3,11 +3,16 @@ DECLARE
 
   dt_to DATE;
   dt_curr DATE;
+  num INTEGER;
 
 BEGIN
 
-  -- Only calc if not yet confirmed
-  IF NEW."Status" <> 'grupobloqueado' THEN
+  -- Only calc if not yet confirmed or no calculated yet
+  SELECT COUNT(*) 
+  INTO num
+  FROM "Booking"."Booking_group_price"
+  WHERE "Booking_id" = NEW.id;
+  IF num > 0 AND NEW."Status" <> 'grupobloqueado' THEN
     RETURN NEW;
   END IF;
 
