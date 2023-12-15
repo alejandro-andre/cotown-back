@@ -3,8 +3,6 @@
         orderBy: [{attribute: Code, direction:ASC, nullsGo: FIRST}]
     ) {
         Address
-        Booking_fee
-        Booking_fee_flat
         Building_type: Building_typeViaBuilding_type_id {
             Name
         }
