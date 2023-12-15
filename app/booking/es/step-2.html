@@ -49,16 +49,18 @@
                   <div class="price">
                     <p>
                       [[item.Flat_types[-1].Price | number]] €
-                      <br><span>[% if item.Flat_types | length > 1 %]desde [% endif %]al mes</span>
                     </p>
                   </div>
                 </div>
 
                 <div class="second secc">
                   <p>[[item.Building_name]]</p>           
+                  <div class="price">
+                    <span>[% if item.Flat_types | length > 1 %]from [% endif %] /month</span>
+                  </div>
                 </div>
 
-                <div class="prices secc"[% if item.Flat_types | length < 2%] style="display:none;"[% endif %]>
+                <div class="prices secc">
                   <p>Compartiendo con:</p>
                   [% for share in item.Flat_types %]
                   <div class="share">
