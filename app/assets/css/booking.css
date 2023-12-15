@@ -1480,6 +1480,18 @@ button.back p {
 	}
 }
 
+.registry input[type="checkbox"] {
+	margin: 10px 0;
+	width: 18px;
+	height: 18px;
+	margin-right: 10px;
+}
+.registry .label {
+	font-size: 18px;
+	font-weight: 300;
+	display: inline;
+}
+
 /* MOBILE */
 @media only screen and (max-width: 1023.9px) {
 

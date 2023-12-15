@@ -187,6 +187,13 @@
                   <div class="pure-u-1 error-message"><p>[[data.error_register[data.lang]]]</p></div>
                   [% endif %]
 
+                  <div class="pure-u-1">
+                      <input id="accept" name="accept" type="checkbox" required/>
+                      <label for="accept" class="label">
+                        I accept the terms of service and the <a href="/privacy.html">privacy policy</a>
+                      </label>
+                  </div>          
+         
                   <input type="hidden" name="book_action" value="register">
 
                   <section class="next">
