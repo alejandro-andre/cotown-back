@@ -349,8 +349,8 @@ def q_insert_customer(dbClient, customer):
   # SQL
   sql = f'''
     INSERT INTO "Customer"."Customer"
-    ("Type", "Name", "Email", "Phones", "Birth_date", "Nationality_id", "Gender_id", "Black_list")
-    VALUES ('persona', %s, %s, %s, %s, %s, %s, FALSE)
+    ("Type", "Name", "Email", "Phones", "Birth_date", "Nationality_id", "Gender_id", "Black_list", "GDPR")
+    VALUES ('persona', %s, %s, %s, %s, %s, %s, FALSE, TRUE)
     RETURNING id
     '''
   try:
