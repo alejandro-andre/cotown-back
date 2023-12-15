@@ -238,6 +238,7 @@ def do_occupancy(dbClient, vars):
       WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
       ) AS r ON r.id = b."Resource_id"
     WHERE b."Availability_id" IS NULL
+      AND b."Status" NOT IN ('pendientepago', 'grupobloqueado')
     ORDER BY 1, 2, 3
     ''')
   columns = [desc[0] for desc in cur.description]
