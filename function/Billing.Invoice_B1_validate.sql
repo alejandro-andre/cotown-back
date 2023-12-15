@@ -66,7 +66,7 @@ BEGIN
       CLOSE lines;
 
       -- Emite factura
-	    UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = i_id;
+	    UPDATE "Billing"."Invoice" SET "Issued" = TRUE, "Issued_date" = CURRENT_DATE WHERE id = i_id;
       RETURN NEW;
      
     END IF;
