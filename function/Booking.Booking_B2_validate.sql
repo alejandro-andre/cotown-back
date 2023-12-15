@@ -108,16 +108,18 @@ BEGIN
   END IF;
 
   -- Check for overlaps
-  SELECT b."Booking_id"
-  INTO num
-  FROM "Booking"."Booking_detail" b 
-  WHERE b."Resource_id" = NEW."Resource_id"
-  AND b."Booking_id" <> NEW.id
-  AND b."Date_from" <= NEW."Date_to" 
-  AND b."Date_to" >= NEW."Date_from"
-  LIMIT 1;
-  IF num IS NOT NULL THEN
-    RAISE exception '!!!Overlaping with booking %!!!Solapamiento con la la reserva %!!!', num, num;
+  IF NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada') THEN
+    SELECT b."Booking_id"
+    INTO num
+    FROM "Booking"."Booking_detail" b 
+    WHERE b."Resource_id" = NEW."Resource_id"
+    AND b."Booking_id" <> NEW.id
+    AND b."Date_from" <= NEW."Date_to" 
+    AND b."Date_to" >= NEW."Date_from"
+    LIMIT 1;
+    IF num IS NOT NULL THEN
+      RAISE exception '!!!Overlaping % with booking %!!!Solapamiento % con la reserva %!!!', NEW.id, num, NEW.id, num;
+    END IF;
   END IF;
 
   -- Get customer id type
