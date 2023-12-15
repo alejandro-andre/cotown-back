@@ -256,15 +256,18 @@ BEGIN
   IF (NEW."Status" = 'descartada') THEN
     -- Quita el recurso
     NEW."Resource_id" := NULL;
-    -- Eliminamos el registro de pagos no ha pagados.
-    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
+    -- Intentamos eliminar pagos no realizados
+    BEGIN
+      DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
+      EXCEPTION WHEN OTHERS THEN NULL;
+    END;
     -- EMail
     INSERT
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
       VALUES (NEW."Customer_id", 'descartada', NEW.id);
     -- Log
     change := CONCAT('Solicitud descartada. ');
-    IF(NEW."Booking_fee_returned" IS NOT NULL) THEN
+    IF (NEW."Booking_fee_returned" IS NOT NULL) THEN
       change := CONCAT(change, 'Hay que devolver el booking con por importe de: ', NEW."Booking_fee_returned");
     END IF;
   END IF;
@@ -304,9 +307,12 @@ BEGIN
 
 
   -- A CANCELADA
-  -- Eliminamos cualquier registro de pago no pagado.
+  -- Intentamos eliminar pagos no realizados
   IF (NEW."Status" = 'cancelada') THEN
-    DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
+    BEGIN
+      DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
+      EXCEPTION WHEN OTHERS THEN NULL;
+    END;
   END IF;
 
   -- A IN HOUSE (BOTON 'CHECK IN OK')
