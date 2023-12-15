@@ -10,7 +10,7 @@ BEGIN
     WHERE "Booking"."Expiry_date" < CURRENT_DATE
     AND "Booking"."Status"='pendientepago';
   EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error caducando solicitudes pasadas de fecha.';
+    RAISE NOTICE 'Error caducando solicitudes pasadas de fecha: % %', SQLSTATE, SQLERRM;
   END; 
 
   -- Actualiza el estado a 'descartada' de todas las solicitudes que esten caducadas con la fecha de caducidad a NULL o
@@ -21,7 +21,7 @@ BEGIN
     WHERE "Booking"."Status"='caducada'
     AND ("Booking"."Expiry_date" IS NULL OR "Booking"."Expiry_date" < (CURRENT_DATE + INTERVAL '5 days'));
   EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error descartando solicitudes caducadas.';
+    RAISE NOTICE 'Error descartando solicitudes caducadas: % %', SQLSTATE, SQLERRM;
   END; 
 
   -- Actualiza el estado a 'descartada' de todas las solicitudes que no hayan pagado el deposito y falte menos de un
@@ -39,7 +39,7 @@ BEGIN
       AND p."Issued_date" < (CURRENT_DATE - INTERVAL '4 days')
     );
   EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error descartando solicitudes que no pagan deposito.';
+    RAISE NOTICE 'Error descartando solicitudes que no pagan deposito: % %', SQLSTATE, SQLERRM;
   END; 
 
   -- Actualiza el estado a 'check_in' de todas las reservas que tienen que entrar en el dia en curso
@@ -49,7 +49,7 @@ BEGIN
     WHERE CURRENT_DATE >= GREATEST("Booking"."Check_in", "Booking"."Date_from")
     AND ("Booking"."Status"='checkinconfirmado' OR "Booking"."Status"='contrato');
   EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error en check-in.';
+    RAISE NOTICE 'Error en check-in: % %', SQLSTATE, SQLERRM;
   END; 
 
   -- Actualiza el estado a 'check_out' de todas las reservas que tienen que salir en el dia en curso
@@ -59,7 +59,7 @@ BEGIN
     WHERE CURRENT_DATE >= LEAST("Booking"."Check_out", "Booking"."Date_to")
     AND "Booking"."Status"='inhouse';
   EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error en check-out.';
+    RAISE NOTICE 'Error en check-out: % %', SQLSTATE, SQLERRM;
   END; 
 
 END;
