@@ -162,7 +162,8 @@ def q_flat_prices(dbClient, segment, year):
       INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
-    WHERE pd."Year" = %s
+    WHERE r."Sale_type" IN ('ambos', 'completo')
+      AND pd."Year" = %s
       AND b."Segment_id" = %s
     GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3;
@@ -236,7 +237,8 @@ def q_room_prices(dbClient, segment, year):
       INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id"
-    WHERE pd."Year" = %s
+    WHERE r."Sale_type" in ('ambos', 'plazas')
+      AND pd."Year" = %s
       AND b."Segment_id" = %s
       AND rpt.id < 300
     GROUP BY 1, 2, 3, 4, 5
