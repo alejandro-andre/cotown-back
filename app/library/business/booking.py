@@ -192,6 +192,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         LEFT JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Flat_subtype_id" = rfst.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
       WHERE bd.id IS NULL
+        AND r."Sale_type" IN ('ambos', 'completo')
         AND pd."Year" = %s
         AND b."Segment_id" = %s
         AND b."Building_type_id" < 3
@@ -216,6 +217,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         LEFT JOIN "Marketing"."Media_resource_type" mrt ON (mrt."Building_id" = b.id AND mrt."Place_type_id" = rpt.id)
         LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
       WHERE bd.id IS NULL
+        AND r."Sale_type" IN ('ambos', 'plazas')
         AND pd."Year" = %s
         AND b."Segment_id" = %s
         AND b."Building_type_id" IN %s
