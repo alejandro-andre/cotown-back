@@ -544,7 +544,7 @@ def do_contracts(apiClient, id):
       file = generate_doc_file(context, template)
       response = requests.post(
         'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token,
-        files={'file': file}
+        data=file.read()
       )
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
@@ -555,7 +555,7 @@ def do_contracts(apiClient, id):
         file = generate_doc_file(context, template)
         response = requests.post(
           'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token,
-          files={'file': file}
+          data=file.read()
         )
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
