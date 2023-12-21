@@ -542,10 +542,8 @@ def do_contracts(apiClient, id):
     template, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template)
-      response = requests.post(
-        'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token,
-        data=file.read()
-      )
+      url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
+      response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
@@ -553,10 +551,8 @@ def do_contracts(apiClient, id):
       template, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
       if template is not None:
         file = generate_doc_file(context, template)
-        response = requests.post(
-          'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token,
-          data=file.read()
-        )
+        url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
+        response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
@@ -609,10 +605,8 @@ def do_group_contracts(apiClient, id):
     template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template)
-      response = requests.post(
-        'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token,
-        files={'file': file}
-      )
+      url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
+      response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
@@ -620,10 +614,8 @@ def do_group_contracts(apiClient, id):
       template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
       if template is not None:
         file = generate_doc_file(context, template)
-        response = requests.post(
-          'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token,
-          files={'file': file}
-        )
+        url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
+        response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
