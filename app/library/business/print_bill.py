@@ -151,7 +151,7 @@ def do_bill(apiClient, id):
     file = generate_bill_file(context)
     response = requests.post(
       'https://' + apiClient.server + '/document/Billing/Invoice/' + str(id) + '/Document/contents?access_token=' + apiClient.token,
-      files={'file': file}
+      data=file.read()
     )
     oid = response.content
 
