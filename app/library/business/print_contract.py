@@ -264,7 +264,7 @@ query Booking_groupById ($id: Int!) {
       Id_typeViaSigner_id_type_id {
         Customer_signer_id_type: Name
       }
-      Customer_signer_id: Document
+      Customer_signer_id: Signer_document
     }
     Rooms: Booking_roomingListViaBooking_id {
       ResourceViaResource_id {
