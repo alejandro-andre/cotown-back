@@ -103,6 +103,8 @@ def generate_email(apiClient, email):
 def smtp_mail(to, subject, body, file=None):
 
   # Receivers
+  if settings.SMTPSEND != 1:
+    return
   receivers = [to,]
 
   # Prepare mail

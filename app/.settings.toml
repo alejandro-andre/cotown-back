@@ -37,6 +37,9 @@ REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://dev.cotown.ciber.es/api/v1/notify'
 REDSYS_URL='https://sis-t.redsys.es:25443/sis/realizarPago'
 
+# Email send
+SMTPSEND=0
+
 [production]
 
 # Servers
@@ -49,3 +52,6 @@ REDSYS_TERMINAL='002'
 REDSYS_MERCHANTCODE='348032921'
 REDSYS_MERCHANTURL='https://back.cotown.com/api/v1/notify'
 REDSYS_URL='https://sis.redsys.es/sis/realizarPago'
+
+# Email send
+SMTPSEND=0
