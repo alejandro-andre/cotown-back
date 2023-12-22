@@ -979,7 +979,6 @@ button.back p {
 	flex-flow: row wrap;
 	justify-content: space-between;
 	align-items: stretch;
-	padding-bottom: 0.5em;
 }
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.first .desc {
 	width: 60%;
@@ -1005,11 +1004,6 @@ button.back p {
 }
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices {
 	width: 100%;
-}
-.main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices p {
-	font-size: 18px;
-	font-weight: 700;
-	padding-bottom: 5px;
 }
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .share,
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.prices .extra {
@@ -1094,6 +1088,7 @@ button.back p {
 	justify-content: flex-end;
 	align-items: flex-end;
 	position: relative;
+	margin-top: 15px
 }
 
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc.third button {
@@ -1101,7 +1096,6 @@ button.back p {
 	top: -6px;
 	font-size: 16px;
 	letter-spacing: -0.15px;
-	padding: 24px 60px;
 }
 .main-booking .main-contain .panel-container .left.tab2 .description .desc-container .secc button em {
 	font-size: 18px;
@@ -1658,8 +1652,8 @@ button.back p {
 	}
 
 	.tabs-container .nav-booking ul.pure-menu-list li label.label {
-		width: 94%;
-		padding: 0 2%;
+		width: 100%;
+		padding: 24px 0;
 		border: 0;
 	}
 

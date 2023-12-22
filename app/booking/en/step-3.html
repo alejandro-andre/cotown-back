@@ -31,7 +31,7 @@
                     <div class="campo">
                       <label class="label">Reason for stay</label>
                       <select name="Reason_id" required>
-                        <option value="">Select a reason</option>
+                        <option value="">Reason</option>
                         [% for c in data.reasons %]
                         <option value="[[c.id]]">[[c.Name]]</option>
                         [% endfor %]
@@ -74,14 +74,14 @@
                       <div class="campo">
                       <label class="label">Email</label>
                       <input class="input" type="email" name="book_user"
-                             required placeholder="Tu email">
+                             required placeholder="Email">
                     </div>
                   </div>
                   <div class="pure-u-1">
                     <div class="campo psw">
                       <label class="label">Password</label>
                       <input class="input" type="password" name="book_password"
-                             required placeholder="Tu contraseña">
+                             required placeholder="Password">
                     </div>
                   </div>
 
@@ -115,7 +115,7 @@
                     <div class="campo">
                       <label class="label">Full name</label>
                       <input class="input" type="name" name="Name" value="[[data.customer.Name]]"
-                             required placeholder="Tú nombre y apellidos">
+                             required placeholder="Full name">
                     </div>
                   </div>
 
@@ -123,7 +123,7 @@
                     <div class="campo">
                       <label class="label">Email</label>
                       <input class="input" type="email" name="Email" value="[[data.customer.Email]]"
-                             required placeholder="Tu email">
+                             required placeholder="Email">
                     </div>
                   </div>
 
@@ -131,7 +131,7 @@
                     <div class="campo">
                       <label class="label">Phone prefix</label>
                       <select name="Prefix" required>
-                        <option value="">Select phone prefix</option>
+                        <option value="">Prefix</option>
                         [% for c in data.countries %]
                         [% if c.Prefix != null %]
                         <option value="[[c.Prefix]]"[% if c.Prefix==data.customer.Prefix %] selected[% endif %]>[[c.Name]] ([[c.Prefix]])</option>
@@ -145,7 +145,7 @@
                     <div class="campo">
                       <label class="label">Phone number</label>
                       <input class="input" type="name" name="Phone"
-                             required value="[[data.customer.Phone]]" placeholder="Your phone number">
+                             required value="[[data.customer.Phone]]" placeholder="Phone number">
                     </div>
                   </div>
 
@@ -154,7 +154,7 @@
                       <div class="dates">
                         <label class="label">Birth date</label>
                         <input type="date" name="Birth_date"
-                               required value="[[data.customer.Birth_date]]" placeholder="Date dd/mm/aaaa"/>
+                               required value="[[data.customer.Birth_date]]" placeholder="Date mm/dd/yyyy"/>
                       </div>
                     </div>
                   </div>
@@ -163,7 +163,7 @@
                     <div class="campo">
                       <label class="label">Nationality</label>
                       <select name="Nationality_id" required>
-                        <option value="">Select country</option>
+                        <option value="">Country</option>
                         [% for c in data.countries %]
                         <option value="[[c.id]]"[% if c.id==data.customer.Nationality_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]
@@ -175,7 +175,7 @@
                     <div class="campo">
                       <label class="label">Gender</label>
                       <select name="Gender_id" required>
-                        <option value="">Select gender</option>
+                        <option value="">Gender</option>
                         [% for c in data.genders %]
                         <option item="[[data.customer.Gender_id]]" value="[[c.id]]"[% if c.id==data.customer.Gender_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]

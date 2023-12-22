@@ -32,7 +32,7 @@
                     <div class="campo">
                       <label class="label">Motivo de la estancia</label>
                       <select name="Reason_id" required>
-                        <option value="">Selecciona motivo</option>
+                        <option value="">Motivo</option>
                         [% for c in data.reasons %]
                         <option value="[[c.id]]">[[c.Name]]</option>
                         [% endfor %]
@@ -77,14 +77,14 @@
                       <div class="campo">
                       <label class="label">Email</label>
                       <input class="input" type="email" name="book_user"
-                             required placeholder="Tu email">
+                             required placeholder="Email">
                     </div>
                   </div>
                   <div class="pure-u-1">
                     <div class="campo psw">
                       <label class="label">Contraseña</label>
                       <input class="input" type="password" name="book_password"
-                             required placeholder="Tu contraseña">
+                             required placeholder="Contraseña">
                     </div>
                   </div>
 
@@ -120,7 +120,7 @@
                     <div class="campo">
                       <label class="label">Nombre y apellidos</label>
                       <input class="input" type="name" name="Name" value="[[data.customer.Name]]"
-                             required placeholder="Tú nombre y apellidos">
+                             required placeholder="Nombre y apellidos">
                     </div>
                   </div>
 
@@ -136,7 +136,7 @@
                     <div class="campo">
                       <label class="label">Prefijo telefónico</label>
                       <select name="Prefix" required>
-                        <option value="">Selecciona prefijo</option>
+                        <option value="">Prefijo</option>
                         [% for c in data.countries %]
                         [% if c.Prefix != null %]
                         <option value="[[c.Prefix]]"[% if c.Prefix==data.customer.Prefix %] selected[% endif %]>[[c.Name]] ([[c.Prefix]])</option>
@@ -150,7 +150,7 @@
                     <div class="campo">
                       <label class="label">Número de teléfono</label>
                       <input class="input" type="name" name="Phone"
-                             required value="[[data.customer.Phone]]" placeholder="Tu nº de teléfono">
+                             required value="[[data.customer.Phone]]" placeholder="Teléfono">
                     </div>
                   </div>
 
@@ -168,7 +168,7 @@
                     <div class="campo">
                       <label class="label">Nacionalidad</label>
                       <select name="Nationality_id" required>
-                        <option value="">Selecciona país</option>
+                        <option value="">País</option>
                         [% for c in data.countries %]
                         <option value="[[c.id]]"[% if c.id==data.customer.Nationality_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]
@@ -180,7 +180,7 @@
                     <div class="campo">
                       <label class="label">Género</label>
                       <select name="Gender_id" required>
-                        <option value="">Selecciona género</option>
+                        <option value="">Género</option>
                         [% for c in data.genders %]
                         <option item="[[data.customer.Gender_id]]" value="[[c.id]]"[% if c.id==data.customer.Gender_id %] selected[% endif %]>[[c.Name]]</option>
                         [% endfor %]
