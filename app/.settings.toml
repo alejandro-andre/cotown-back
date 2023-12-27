@@ -54,4 +54,4 @@ REDSYS_MERCHANTURL='https://back.cotown.com/api/v1/notify'
 REDSYS_URL='https://sis.redsys.es/sis/realizarPago'
 
 # Email send
-SMTPSEND=0
+SMTPSEND=1
