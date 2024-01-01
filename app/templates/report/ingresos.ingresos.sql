@@ -23,7 +23,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
 WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
-UNION
+UNION ALL
 -- Rentas B2B facturadas
 SELECT pr."Name" as "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
   i."Booking_group_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name",
@@ -47,7 +47,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
 WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NOT NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
-UNION
+UNION ALL
 -- Rentas B2C no facturadas
 SELECT 
   pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
@@ -71,7 +71,7 @@ FROM "Booking"."Booking_price" bp
 WHERE bp."Invoice_rent_id" IS NULL
   AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
   AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
-UNION
+UNION ALL
 -- Rentas B2B no facturadas
 SELECT DISTINCT ON (bp.id)
   pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
@@ -97,7 +97,7 @@ FROM "Booking"."Booking_group_price" bp
 WHERE bp."Invoice_rent_id" IS NULL 
   AND b."Status" IN ('grupoconfirmado', 'inhouse') 
   AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
-UNION
+UNION ALL
 -- Servicios B2C no facturados
 SELECT 
   pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
@@ -121,7 +121,7 @@ FROM "Booking"."Booking_price" bp
 WHERE bp."Invoice_rent_id" IS NULL
   AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
   AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
-UNION
+UNION ALL
 -- Servicios B2B no facturados
 SELECT DISTINCT ON (bp.id)
   pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",

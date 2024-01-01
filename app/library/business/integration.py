@@ -54,7 +54,7 @@ def q_int_customers(dbClient, date):
           b."Created_at" >= '{date}' OR 
           b."Updated_at" >= '{date}'
         )
-      UNION
+      UNION ALL
       SELECT
         c.id,
         c."Type" AS "type", 

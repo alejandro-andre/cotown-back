@@ -141,7 +141,7 @@ def do_occupancy(dbClient, vars):
         LEFT JOIN "Building"."Building" bu on bu.id = r."Building_id"  
       WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NULL
         AND p."Product_type_id" > 2
-    UNION
+    UNION ALL
       -- Rentas B2B facturadas
       SELECT bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
         CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
@@ -153,7 +153,7 @@ def do_occupancy(dbClient, vars):
         LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id"  
       WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NOT NULL
         AND p."Product_type_id" > 2
-    UNION
+    UNION ALL
       -- Rentas B2C no facturadas
       SELECT 
         bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
@@ -171,7 +171,7 @@ def do_occupancy(dbClient, vars):
       INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
         AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
-    UNION
+    UNION ALL
       -- Rentas B2B no facturadas
       SELECT DISTINCT ON (bp.id)
         bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 

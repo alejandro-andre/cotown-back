@@ -55,7 +55,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"  
 WHERE i."Issued" AND p."Product_type_id" IN (3, 4)
-UNION
+UNION ALL
 SELECT bu."Name", r."Code", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
   CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
   CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
@@ -66,7 +66,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"  
 WHERE i."Issued" AND i."Issued" AND p."Product_type_id" IN (3, 4)
-UNION
+UNION ALL
 SELECT 
   bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 
   b."Rooms" * b."Rent" AS "Rent",
@@ -75,7 +75,7 @@ FROM "Booking"."Booking_group" b
 INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
 INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"
 WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > '2023-11-01'
-UNION
+UNION ALL
 SELECT 
   bu."Name" AS "Building", r."Code" AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date",
   bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "Rent",
@@ -151,7 +151,7 @@ limit 1
       --c."Updated_at" >= '{date}' OR
       --b."Created_at" >= '{date}' OR 
       --b."Updated_at" >= '{date}'
-    UNION
+    UNION ALL
     SELECT
       c.id,
       c."Type" AS "type", 
@@ -346,7 +346,7 @@ FROM (
       AND b."Status" <> 'finalizada'     -- Finalizada por error
       AND b."Date_from" <= '2023-11-01'  -- Aun no han entrado
     GROUP BY 1
-    UNION 
+    UNION ALL
     SELECT
       bu."Code",
       count(*) as "Qty",
@@ -483,7 +483,7 @@ FROM (
   INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id" 
   INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
   WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
-  UNION
+  UNION ALL
   SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
   FROM "Booking"."Booking_rooming" br
   INNER JOIN "Booking"."Booking_group" bg on bg.id = br."Booking_id" 

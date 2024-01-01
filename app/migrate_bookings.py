@@ -64,7 +64,7 @@ WHERE b.to > '2023-10-01'
 AND (bl.id IS NULL OR bl.block_motive_id <> 3)
 AND re.id IS NOT NULL
 
-UNION
+UNION ALL
 
 SELECT rq.id, rq.id as core_id, rq.state AS Status, 
     rq.request_type_id AS Booking_channel_id, r.email AS Customer,
@@ -92,7 +92,7 @@ INNER JOIN months m ON m.id = cp.month_id
 INNER JOIN years y ON y.id = m.year_id
 WHERE b.to > '2023-10-01'
 
-UNION
+UNION ALL
 
 SELECT r.id AS "Booking_id", CONCAT (y.number, '-', LPAD(m.number, 2, '0'), '-01') AS "Rent_date", cp.amount AS "Rent", cp.amount_cleaning_service AS "Services"
 FROM requests r

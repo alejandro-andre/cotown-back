@@ -47,7 +47,7 @@ FROM documents d
 INNER JOIN document_types dt ON dt.id = d.type_id
 INNER JOIN users u ON u.id = d.user_id
 WHERE user_id IS NOT NULL
-UNION
+UNION ALL
 SELECT rq.email as "email", 'bookings' as "type", d.booking_id as "id", dt.id as "doc_id", d.path as "path"
 FROM documents d
 INNER JOIN document_types dt ON dt.id = d.type_id

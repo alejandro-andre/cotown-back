@@ -155,7 +155,7 @@ FROM (
       AND b."Status" <> 'finalizada'     -- Finalizada por error
       AND b."Date_from" <= '2023-11-01'  -- Aun no han entrado
     GROUP BY 1
-    UNION 
+    UNION ALL
     SELECT
       bu."Code",
       count(*) as "Qty",
@@ -292,7 +292,7 @@ FROM (
   INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id" 
   INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
   WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
-  UNION
+  UNION ALL
   SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
   FROM "Booking"."Booking_rooming" br
   INNER JOIN "Booking"."Booking_group" bg on bg.id = br."Booking_id" 

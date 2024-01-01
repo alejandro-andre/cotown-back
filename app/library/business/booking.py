@@ -471,7 +471,7 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           AND r."Sale_type" IN ('plazas', 'ambos')
           AND bd.id IS NULL
         GROUP BY 1  
-        UNION
+        UNION ALL
         SELECT 
           CONCAT(r."Building_id", '_F') as "id", COUNT(*) as "Qty"
         FROM
