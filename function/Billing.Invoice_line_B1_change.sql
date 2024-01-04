@@ -38,15 +38,16 @@ BEGIN
 
   -- Resource
   IF NEW."Resource_id" IS NULL THEN
-    resource_id := NULL;
     IF booking_id IS NOT NULL THEN
       SELECT CASE WHEN r."Flat_id" IS NULL THEN r.id ELSE r."Flat_id" END
       INTO resource_id
       FROM "Booking"."Booking" b
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       WHERE b.id = booking_id;
+      NEW."Resource_id" = resource_id;
+    ELSE
+      RAISE EXCEPTION '!!!Resource (flat) is mandatory!!!El recurso (piso) es obligatorio!!!';
     END IF;
-    NEW."Resource_id" = resource_id;
   END IF;
 
   -- Tax
