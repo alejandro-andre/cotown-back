@@ -58,9 +58,9 @@ BEGIN
       FETCH lines INTO reg;
       WHILE (FOUND) LOOP
         INSERT INTO "Billing"."Invoice_line"
-          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
+          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
         VALUES
-          (i_id, -reg."Amount", reg."Product_id", reg."Tax_id", reg."Concept");
+          (i_id, -reg."Amount", reg."Product_id", reg."Tax_id", reg."Concept", reg."Resource_id");
         FETCH lines INTO reg;
       END LOOP;    
       CLOSE lines;
@@ -131,13 +131,6 @@ BEGIN
     END IF;
   END IF;
 
-  -- Lee la info del recurso
-  --SELECT r.id, r."Code", r."Building_id"
-  --INTO resource_id, resource_code, building_id
-  --FROM "Booking"."Booking" b
-  --INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-  --WHERE b.id = NEW."Booking_id";
-
   -- Lee el formato de numeración del proveedor
   SELECT
     CASE NEW."Bill_type"
@@ -149,17 +142,6 @@ BEGIN
   FROM "Provider"."Provider"
   WHERE id = NEW."Provider_id";
 
-  -- Lee el código SAP del edificio
-  --SELECT "Code_SAP"
-  --INTO prefix_building
-  --FROM "Building"."Building" b
-  --WHERE b.id = building_id;
-
-  -- SAP Code
-  --IF resource_code IS NOT NULL AND prefix_provider IS NOT NULL THEN
-  --  NEW."SAP_code" := CONCAT(SUBSTRING (prefix_provider, 1, 2), prefix_building, '_', SUBSTRING (resource_code, 8, 5));
-  --END IF;
- 
   -- Año de emisión
   SELECT EXTRACT(YEAR FROM NEW."Issued_date") INTO yy;
 
