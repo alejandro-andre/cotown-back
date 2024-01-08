@@ -9,8 +9,13 @@
 # ###################################################
  
 # System includes
+from flask import g, send_file
 from schwifty import IBAN, exceptions
 import re
+
+# Cotown includes
+from library.services.utils import flatten
+from library.business.print_contract import BOOKING, generate_doc_file
 
 # Logging
 import logging
@@ -61,3 +66,33 @@ def req_validate_swift(code):
   # Regex to check valid SWIFT Code
   regex = '^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}[0-9]{3}$'
   return 'ok' if re.search(regex, code) else 'ko'
+
+
+# Residence certificate
+def req_cert_booking(booking):
+   
+  # Get template
+  q = '''{
+    data: Provider_Provider_contractList ( where: { Name: { EQ: "Certificado de residencia" } } ) {
+      Name
+      Template
+    }
+  }
+  '''
+  result = g.apiClient.call(q)
+  template = result['data'][0]['Template']
+  print(template)
+  
+  # Get booking
+  booking = g.apiClient.call(BOOKING, { "id": booking })
+  if booking is None:
+    return 'ko'
+  print(booking)
+
+  # Prepare booking
+  context = flatten(booking['data'][0])
+  print(context)
+
+  # Generate rent contract
+  file = generate_doc_file(context, template)
+  return send_file(file, mimetype='application/pdf')

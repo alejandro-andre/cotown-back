@@ -20,7 +20,7 @@ from library.services.config import settings
 
 # Cotown includes - api functions
 from library.api.token import validate_token
-from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift
+from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift, req_cert_booking
 from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
@@ -167,9 +167,6 @@ def runapp():
   # Requests mapping
   # -------------------------------------------------
 
-  # Misc functions
-  app.add_url_rule(settings.API_PREFIX + '/hi', view_func=req_pub_hello, methods=['GET'])
-
   # Airflows plugins - Contracts, get signature image
   app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=req_signature, methods=['GET'])
 
@@ -212,6 +209,10 @@ def runapp():
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=req_pub_asset, methods=['GET'])
   app.add_url_rule('/booking/<int:step>', view_func=req_pub_booking, methods=['GET', 'POST'])
+
+  # Misc functions
+  app.add_url_rule(settings.API_PREFIX + '/hi', view_func=req_pub_hello, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/cert/<int:booking>', view_func=req_cert_booking, methods=['GET'])
 
   # Return app
   return app
