@@ -20,7 +20,7 @@ from library.services.config import settings
 
 # Cotown includes - api functions
 from library.api.token import validate_token
-from library.api.misc import req_pub_hello
+from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift
 from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_availability
 from library.api.web import req_flats, req_rooms, req_amenities
@@ -192,6 +192,8 @@ def runapp():
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_pub_notification, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/iban', view_func=req_validate_iban, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/swift', view_func=req_validate_swift, methods=['GET'])
 
   # SAP integration
   app.add_url_rule(settings.API_PREFIX + '/integration/customers', view_func=req_pub_int_customers, methods=['GET'])
