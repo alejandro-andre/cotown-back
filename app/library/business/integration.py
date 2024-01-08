@@ -23,8 +23,8 @@ def q_int_customers(dbClient, date):
         c.id,
         c."Type" AS "type", 
         CASE 
-          WHEN r."Owner_id" = 10 THEN TRUE
-          ELSE FALSE
+          WHEN r."Owner_id" = 10 THEN FALSE
+          ELSE TRUE
         END AS "third_party",
         i."Name" AS "document_type",
         CASE 
@@ -59,8 +59,8 @@ def q_int_customers(dbClient, date):
         c.id,
         c."Type" AS "type", 
         CASE 
-          WHEN r."Owner_id" = 10 THEN TRUE
-          ELSE FALSE
+          WHEN r."Owner_id" = 10 THEN FALSE
+          ELSE TRUE
         END AS "third_party",
         i."Name" AS "document_type",
         CASE 
