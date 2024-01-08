@@ -192,8 +192,8 @@ def runapp():
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_pub_notification, methods=['POST'])
-  app.add_url_rule(settings.API_PREFIX + '/iban', view_func=req_validate_iban, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/swift', view_func=req_validate_swift, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/iban/<string:code>', view_func=req_validate_iban, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/swift/<string:code>', view_func=req_validate_swift, methods=['GET'])
 
   # SAP integration
   app.add_url_rule(settings.API_PREFIX + '/integration/customers', view_func=req_pub_int_customers, methods=['GET'])
