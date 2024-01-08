@@ -92,11 +92,6 @@ BEGIN
     END IF;
   END IF;
 
-  -- Si no hay pagador, es el cliente
-  IF NEW."Payer_id" IS NULL THEN
-    NEW."Payer_id" = NEW."Customer_id";
-  END IF;
-
   -- Fecha de solicitud
   IF NEW."Request_date" IS NULL THEN
     NEW."Request_date" := NOW();

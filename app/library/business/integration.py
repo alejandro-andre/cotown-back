@@ -76,7 +76,7 @@ def q_int_customers(dbClient, date):
         co."Code" AS "country",
         c."Bank_account" AS "bank_account"
       FROM "Customer"."Customer" c
-        INNER JOIN "Booking"."Booking" b ON b."Payer_id" = c.id
+        INNER JOIN "Booking"."Booking" b ON b."Customer_id" = c.id
         LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
         LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 

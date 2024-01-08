@@ -358,7 +358,6 @@ print('Filas con edificio.........: ', df_bookings.shape[0])
 df_bookings['Booking_referral_id'] = 1
 df_bookings['Second_resident'] = False
 df_bookings['Lock'] = False
-df_bookings['Payer_id']  = df_bookings['Customer_id']
 
 # 5. Convert to dates
 df_bookings['Date_from'] = df_bookings['Date_from'].apply(lambda x: get_date(x))

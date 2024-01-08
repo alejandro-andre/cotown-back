@@ -289,7 +289,7 @@ FROM (
   FROM "Booking"."Booking_price" bp
   INNER JOIN "Booking"."Booking" b on b.id = bp."Booking_id" 
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
-  INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id" 
+  INNER JOIN "Customer"."Customer" c on c.id = b."Customer_id" 
   INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
   WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
   UNION ALL

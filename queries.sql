@@ -173,7 +173,7 @@ limit 1
       co."Code" AS "country",
       COALESCE(c."Bank_account", '') AS "bank_account"
     FROM "Customer"."Customer" c
-      INNER JOIN "Booking"."Booking" b ON b."Payer_id" = c.id
+      INNER JOIN "Booking"."Booking" b ON b."Customer_id" = c.id
       LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
       LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
       LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
@@ -480,7 +480,7 @@ FROM (
   FROM "Booking"."Booking_price" bp
   INNER JOIN "Booking"."Booking" b on b.id = bp."Booking_id" 
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
-  INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id" 
+  INNER JOIN "Customer"."Customer" c on c.id = b."Customer_id" 
   INNER JOIN "Geo"."Country" co on co.id = c."Country_id" 
   WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
   UNION ALL
