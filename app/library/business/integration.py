@@ -21,29 +21,29 @@ def q_int_customers(dbClient, date):
     SELECT DISTINCT * FROM (
       SELECT
         c.id,
-        c."Type" AS "type", 
-        CASE 
-          WHEN r."Owner_id" = 10 THEN FALSE
-          ELSE TRUE
-        END AS "third_party",
-        i."Name" AS "document_type",
-        CASE 
-          WHEN c."Id_type_id" IN (1, 2, 5) THEN 'ES'
-          ELSE na."Code" 
+        CASE WHEN r."Owner_id" = 10 THEN FALSE ELSE TRUE END AS "third_party",
+        CASE WHEN c."Billing_type" IS NOT NULL THEN c."Billing_type" ELSE c."Type" END AS "type",
+        CASE WHEN bi."Name" IS NOT NULL THEN bi."Name" ELSE i."Name" END AS "document_type",
+        CASE WHEN c."Billing_id_type_id" IS NOT NULL THEN
+          CASE WHEN c."Billing_id_type_id" IN (1, 2, 5) THEN 'ES' ELSE na."Code" END
+        ELSE
+          CASE WHEN c."Id_type_id" IN (1, 2, 5) THEN 'ES' ELSE na."Code" END
         END AS "document_country",
-        c."Document" AS "document", 
-        c."Name" AS "name", 
-        c."Address" AS "address", 
-        c."Zip" AS "zip", 
-        c."City" AS "city", 
-        c."Province" AS "province", 
-        co."Code" AS "country",
+        CASE WHEN c."Billing_document" IS NOT NULL THEN c."Billing_document" ELSE c."Document" END AS "document", 
+        CASE WHEN c."Billing_name" IS NOT NULL THEN c."Billing_name" ELSE c."Name" END AS "name", 
+        CASE WHEN c."Billing_address" IS NOT NULL THEN c."Billing_address" ELSE c."Address" END AS "address", 
+        CASE WHEN c."Billing_zip" IS NOT NULL THEN c."Billing_zip" ELSE c."Zip" END AS "zip", 
+        CASE WHEN c."Billing_city" IS NOT NULL THEN c."Billing_city" ELSE c."City" END AS "city", 
+        CASE WHEN c."Billing_province" IS NOT NULL THEN c."Billing_province" ELSE c."Province" END AS "province", 
+        CASE WHEN bco."Code" IS NOT NULL THEN bco."Code" ELSE co."Code" END AS "country",
         c."Bank_account" AS "bank_account"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking_group" b ON b."Payer_id" = c.id
         INNER JOIN "Booking"."Booking_rooming" br ON br."Booking_id" = b.id
         LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
+        LEFT JOIN "Auxiliar"."Id_type" bi ON bi.id = c."Billing_id_type_id"
         LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
+        LEFT JOIN "Geo"."Country" bco ON bco.id = c."Billing_country_id" 
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = br."Resource_id" 
       WHERE 
@@ -57,32 +57,32 @@ def q_int_customers(dbClient, date):
       UNION ALL
       SELECT
         c.id,
-        c."Type" AS "type", 
-        CASE 
-          WHEN r."Owner_id" = 10 THEN FALSE
-          ELSE TRUE
-        END AS "third_party",
-        i."Name" AS "document_type",
-        CASE 
-          WHEN c."Id_type_id" IN (1, 2, 5) THEN 'ES'
-          ELSE na."Code" 
+        CASE WHEN r."Owner_id" = 10 THEN FALSE ELSE TRUE END AS "third_party",
+        CASE WHEN c."Billing_type" IS NOT NULL THEN c."Billing_type" ELSE c."Type" END AS "type",
+        CASE WHEN bi."Name" IS NOT NULL THEN bi."Name" ELSE i."Name" END AS "document_type",
+        CASE WHEN c."Billing_id_type_id" IS NOT NULL THEN
+          CASE WHEN c."Billing_id_type_id" IN (1, 2, 5) THEN 'ES' ELSE na."Code" END
+        ELSE
+          CASE WHEN c."Id_type_id" IN (1, 2, 5) THEN 'ES' ELSE na."Code" END
         END AS "document_country",
-        c."Document" AS "document", 
-        c."Name" AS "name", 
-        c."Address" AS "address", 
-        c."Zip" AS "zip", 
-        c."City" AS "city", 
-        c."Province" AS "province", 
-        co."Code" AS "country",
+        CASE WHEN c."Billing_document" IS NOT NULL THEN c."Billing_document" ELSE c."Document" END AS "document", 
+        CASE WHEN c."Billing_name" IS NOT NULL THEN c."Billing_name" ELSE c."Name" END AS "name", 
+        CASE WHEN c."Billing_address" IS NOT NULL THEN c."Billing_address" ELSE c."Address" END AS "address", 
+        CASE WHEN c."Billing_zip" IS NOT NULL THEN c."Billing_zip" ELSE c."Zip" END AS "zip", 
+        CASE WHEN c."Billing_city" IS NOT NULL THEN c."Billing_city" ELSE c."City" END AS "city", 
+        CASE WHEN c."Billing_province" IS NOT NULL THEN c."Billing_province" ELSE c."Province" END AS "province", 
+        CASE WHEN bco."Code" IS NOT NULL THEN bco."Code" ELSE co."Code" END AS "country",
         c."Bank_account" AS "bank_account"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking" b ON b."Customer_id" = c.id
         LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
+        LEFT JOIN "Auxiliar"."Id_type" bi ON bi.id = c."Billing_id_type_id"
         LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
+        LEFT JOIN "Geo"."Country" bco ON bco.id = c."Billing_country_id" 
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
       WHERE 
-        b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', 'cancelada', 'caducada') AND
+        b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', 'cancelada', 'caducada')  AND
         (
           c."Created_at" >= '{date}' OR 
           c."Updated_at" >= '{date}' OR
