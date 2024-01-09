@@ -142,6 +142,7 @@ query BookingById ($id: Int) {
         Owner_zip: Zip
         Owner_city: City
         Owner_province: Province
+        Owner_bill_line: Bill_line
         CountryViaCountry_id {
           Owner_country: Name
         }

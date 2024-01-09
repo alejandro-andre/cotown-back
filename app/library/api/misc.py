@@ -11,13 +11,17 @@
 # System includes
 from flask import send_file, abort
 from schwifty import IBAN, exceptions
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+from weasyprint import HTML
+from datetime import datetime
+from io import BytesIO
 import re
 
 # Cotown includes
 from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.services.utils import flatten
-from library.business.print_contract import BOOKING, generate_doc_file
+from library.business.print_contract import BOOKING, month, decimal
 
 # Logging
 import logging
@@ -77,17 +81,14 @@ def req_cert_booking(booking):
   apiClient = APIClient(settings.SERVER)
   apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
-  # Get template
-  q = '''{
-    data: Provider_Provider_contractList ( where: { Name: { EQ: "Certificado de residencia" } } ) {
-      Name
-      Template
-    }
-  }
-  '''
-  result = apiClient.call(q)
-  template = result['data'][0]['Template']
-  
+  # Jinja environment
+  env = Environment(
+    loader=FileSystemLoader('./templates/other'),
+    autoescape=select_autoescape(['html', 'xml'])
+  )
+  env.filters['decimal'] = decimal
+  env.filters['month'] = month
+
   # Get booking
   booking = apiClient.call(BOOKING, { "id": booking })
   if booking is None:
@@ -95,7 +96,19 @@ def req_cert_booking(booking):
 
   # Prepare booking
   context = flatten(booking['data'][0])
+  now = datetime.now()
+  context['Today_day'] = now.day
+  context['Today_month'] = now.month
+  context['Today_year'] = now.year
+  context['Server'] = 'https://' + settings.BACK + settings.API_PREFIX
 
-  # Generate rent contract
-  file = generate_doc_file(context, template)
+  # Generate HTML
+  tpl = env.get_template('cert.html')
+  result = tpl.render(context)
+
+  # Generate PDF
+  file = BytesIO()
+  html = HTML(string=result)
+  html.write_pdf(file)
+  file.seek(0)
   return send_file(file, mimetype='application/pdf')
