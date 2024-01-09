@@ -9,11 +9,13 @@
 # ###################################################
  
 # System includes
-from flask import g, send_file
+from flask import send_file, abort
 from schwifty import IBAN, exceptions
 import re
 
 # Cotown includes
+from library.services.config import settings
+from library.services.apiclient import APIClient
 from library.services.utils import flatten
 from library.business.print_contract import BOOKING, generate_doc_file
 
@@ -70,7 +72,11 @@ def req_validate_swift(code):
 
 # Residence certificate
 def req_cert_booking(booking):
-   
+
+  # API Client   
+  apiClient = APIClient(settings.SERVER)
+  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
+
   # Get template
   q = '''{
     data: Provider_Provider_contractList ( where: { Name: { EQ: "Certificado de residencia" } } ) {
@@ -79,19 +85,16 @@ def req_cert_booking(booking):
     }
   }
   '''
-  result = g.apiClient.call(q)
+  result = apiClient.call(q)
   template = result['data'][0]['Template']
-  print(template)
   
   # Get booking
-  booking = g.apiClient.call(BOOKING, { "id": booking })
+  booking = apiClient.call(BOOKING, { "id": booking })
   if booking is None:
-    return 'ko'
-  print(booking)
+    abort(404)
 
   # Prepare booking
   context = flatten(booking['data'][0])
-  print(context)
 
   # Generate rent contract
   file = generate_doc_file(context, template)
