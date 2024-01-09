@@ -49,11 +49,11 @@ p{margin:0.3em;}
     </td>
     <td style="background-color:white;width:1%;"></td>
     <td class="cell" width="49%">
-      <h2>{{Customer_name}}&nbsp;</h2>
-      <p>{{Customer_id}}&nbsp;</p>
-      <p>{{Customer_address}}&nbsp;</p>
-      <p>{{Customer_zip}} {{Customer_city}}&nbsp;</p>
-      <p>{{Customer_country}}&nbsp;</p>
+      <h2>{{Customer_billing_name or Customer_name}}&nbsp;</h2>
+      <p>{{Customer_billing_id or Customer_id}}&nbsp;</p>
+      <p>{{Customer_billing_address or Customer_address}}&nbsp;</p>
+      <p>{{Customer_billing_zip Customer_zip}} {{Customer_billing_city or Customer_city}}&nbsp;</p>
+      <p>{{Customer_billing_country or Customer_country}}&nbsp;</p>
       <p>&nbsp;</p>
     </td>
   </tr>

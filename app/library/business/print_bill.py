@@ -53,8 +53,18 @@ query BillById ($id: Int!) {
             Customer_address: Address
             Customer_zip: Zip
             Customer_city: City
+            Customer_province: Province
             CountryViaCountry_id {
                 Customer_country: Name
+            }
+            Customer_billing_id: Billing_document
+            Customer_billing_name: Billing_name
+            Customer_billing_address: Billing_address
+            Customer_billing_zip: Billing_zip
+            Customer_billing_city: Billing_city
+            Customer_billing_province: Billing_province
+            CountryViaBilling_country_id {
+                Customer_billing_country: Name
             }
         }
         ProviderViaProvider_id {
@@ -147,7 +157,7 @@ def do_bill(apiClient, id):
       taxes[tax]['Tax'] = taxes[tax]['Amount'] - taxes[tax]['Base']
     context['Taxes'] = list(taxes.values())
 
-    # Generate rent contract
+    # Generate bill
     file = generate_bill_file(context)
     response = requests.post(
       'https://' + apiClient.server + '/document/Billing/Invoice/' + str(id) + '/Document/contents?access_token=' + apiClient.token,
