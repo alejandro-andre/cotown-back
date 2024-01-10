@@ -90,8 +90,10 @@ def q_dashboard(dbClient, status = None, vars=None):
         b."Status", 
         b."Date_from", 
         b."Date_to", 
-        b."Check_in", 
-        b."Check_out", 
+        b."Check_in",
+        b."Check_out",
+        COALESCE(b."Check_in", b."Date_from") AS "Date_in",
+        COALESCE(b."Check_out", b."Date_to") AS "Date_out",
         b."Check_in_time",
         b."Arrival", 
         b."Flight", 
@@ -102,14 +104,15 @@ def q_dashboard(dbClient, status = None, vars=None):
         b."Check_out_keys_ok",
         b."Check_out_keyless_ok", 
         ct."Name" AS "Option",
-        bu."Name" as "Building",
+        CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
         r."Code" as "Resource",
         c."Name"
       FROM "Booking"."Booking" b
         INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-        INNER JOIN "Geo"."District" d on d.id = bu."District_id"
-        INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+        INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
+        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+        LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
+        LEFT JOIN "Geo"."District" d on d.id = b1."District_id"
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
 
     # All confirmed
@@ -123,7 +126,7 @@ def q_dashboard(dbClient, status = None, vars=None):
       WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
         AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
       if building:
-        sql += f'''AND bu.id={building} '''
+        sql += f'''AND b2.id={building} '''
       if location:
         sql += f'''AND d."Location_id"={location} '''
 
@@ -133,7 +136,7 @@ def q_dashboard(dbClient, status = None, vars=None):
       WHERE b."Status" IN (\'inhouse\')
         AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
       if building:
-        sql += f'''AND bu.id={building} '''
+        sql += f'''AND b2.id={building} '''
       if location:
         sql += f'''AND d."Location_id"={location} '''
 
