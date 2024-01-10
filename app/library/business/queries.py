@@ -3,8 +3,8 @@
 # ######################################################
 
 # System includes
+from datetime import datetime, timedelta
 import logging
-import datetime
 import json
 
 # Logging
@@ -41,7 +41,14 @@ def q_labels(dbClient, id, locale):
 # Dashboard
 # ######################################################
 
-def q_dashboard(dbClient, status = None):
+def q_dashboard(dbClient, status = None, vars=None):
+
+  # Params
+  date_from       = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
+  date_checkinto  = (datetime.now() + timedelta(days=settings.CHECKINDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  date_checkoutto = (datetime.now() + timedelta(days=settings.CHECKOUTDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  building        = vars.get('building')
+  location        = vars.get('location')
 
   # Connect
   con = dbClient.getconn()
@@ -77,57 +84,67 @@ def q_dashboard(dbClient, status = None):
   # Rows
   else:
     # Get bookings
+    select = '''
+      SELECT 
+        b.id, 
+        b."Status", 
+        b."Date_from", 
+        b."Date_to", 
+        b."Check_in", 
+        b."Check_out", 
+        b."Check_in_time",
+        b."Arrival", 
+        b."Flight", 
+        b."Check_in_room_ok",
+        b."Check_in_notice_ok",
+        b."Check_in_keys_ok",
+        b."Check_in_keyless_ok", 
+        b."Check_out_keys_ok",
+        b."Check_out_keyless_ok", 
+        ct."Name" AS "Option",
+        bu."Name" as "Building",
+        r."Code" as "Resource",
+        c."Name"
+      FROM "Booking"."Booking" b
+        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
+        INNER JOIN "Geo"."District" d on d.id = bu."District_id"
+        INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+        LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
+
+    # All confirmed
     if status == 'ok':
-      sql = '''
-        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
-        FROM "Booking"."Booking" b
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')'''
-      cur = dbClient.execute(con, sql)
+      sql = select + '''
+      WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')'''
+
+    # Next check-ins
     elif status == 'next':
-      sql = '''
-        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", r."Code" as "Resource", b."Flight", b."Arrival", ct."Name" AS "Option"
-        FROM "Booking"."Booking" b
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-        WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
-        AND GREATEST("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKINDAYS) + ' days\''
-      cur = dbClient.execute(con, sql)
+      sql = select + f'''
+      WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
+        AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
+      if building:
+        sql += f'''AND bu.id={building} '''
+      if location:
+        sql += f'''AND d."Location_id"={location} '''
+
+    # Next check-outs
     elif status == 'nextout':
-      sql = '''
-        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_out", bu."Name" as "Building", r."Code" as "Resource"
-        FROM "Booking"."Booking" b
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-        WHERE "Status" IN (\'inhouse\')
-        AND LEAST("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \' ''' + str(settings.CHECKOUTDAYS) + ' days\''
-      cur = dbClient.execute(con, sql)
-    elif status == 'checkout':
-      sql = '''
-        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_out", bu."Name" as "Building", r."Code" as "Resource"
-        FROM "Booking"."Booking" b
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        WHERE "Status" = 'checkout' '''
-      cur = dbClient.execute(con, sql)
+      sql = select + f'''
+      WHERE b."Status" IN (\'inhouse\')
+        AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
+      if building:
+        sql += f'''AND bu.id={building} '''
+      if location:
+        sql += f'''AND d."Location_id"={location} '''
+
+    # Other status
     else:
-      sql = '''
-        SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
-        FROM "Booking"."Booking" b
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        WHERE "Status" = %s'''
-      cur = dbClient.execute(con, sql, (status,))
+      sql = select + f'''
+      WHERE b."Status" = '{status}' '''
 
     # Result
+    print(sql)
+    cur = dbClient.execute(con, sql)
     result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
     cur.close()
 
@@ -358,7 +375,7 @@ def q_get_payment(dbClient, id, generate_order=False):
       cur = dbClient.execute(con, 'SELECT nextval(\'"Auxiliar"."Sequence_Payment_order_seq"\')')
       val = cur.fetchone()
       cur.close()
-      order = "{:02d}{:05d}{:05d}".format(datetime.datetime.now().year - 2000, id, val[0])
+      order = "{:02d}{:05d}{:05d}".format(datetime.now().year - 2000, id, val[0])
       aux['Payment_order'] = order
 
       # Update payment
