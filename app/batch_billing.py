@@ -86,8 +86,10 @@ def bill_payments(dbClient, con):
     FROM "Billing"."Payment" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+    INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
     WHERE "Payment_date" IS NOT NULL
+    AND pr."Bill_since" < CURRENT_DATE
     AND i.id IS NULL
     ORDER BY p."Booking_id"
     ''')
@@ -175,14 +177,16 @@ def bill_rent(dbClient, con):
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
     INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+    INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout')
     AND "Invoice_rent_id" IS NULL
     AND "Invoice_services_id" IS NULL
-    AND "Rent_date" <= %s
+    AND "Rent_date" <= CURRENT_DATE
+    AND "Rent_date" >= pr."Bill_since"
     AND "Rent_date" >= %s
-    ''', (datetime.now(), settings.BILLDATE))
+    ''', (settings.BILLDATE))
   data = cur.fetchall()
   cur.close()
 
@@ -361,13 +365,15 @@ def bill_group_rent(dbClient, con):
     INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
     INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
     INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
+    INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
-    AND bgp."Rent_date" <= %s
+    AND bgp."Rent_date" <= CURRENT_DATE
+    AND bgp."Rent_date" >= pr."Bill_since"
     AND bgp."Rent_date" >= %s
   GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
-  ''', (datetime.now(), settings.BILLDATE, ))
+  ''', (settings.BILLDATE))
   data = cur.fetchall()
   cur.close()
 
