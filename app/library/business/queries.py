@@ -146,7 +146,6 @@ def q_dashboard(dbClient, status = None, vars=None):
       WHERE b."Status" = '{status}' '''
 
     # Result
-    print(sql)
     cur = dbClient.execute(con, sql)
     result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
     cur.close()
