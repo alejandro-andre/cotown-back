@@ -70,7 +70,7 @@ def req_validate_swift(code):
   code = re.sub(r'[^a-zA-Z0-9]', '', code)
 
   # Regex to check valid SWIFT Code
-  regex = '^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]({0,1}[0-9]{3})?$'
+  regex = '^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}([0-9]{3})?$'
   return 'ok' if re.search(regex, code) else 'ko'
 
 
