@@ -186,7 +186,7 @@ def bill_rent(dbClient, con):
     AND "Rent_date" <= CURRENT_DATE
     AND "Rent_date" >= pr."Bill_since"
     AND "Rent_date" >= %s
-    ''', (settings.BILLDATE))
+    ''', (settings.BILLDATE, ))
   data = cur.fetchall()
   cur.close()
 
@@ -373,7 +373,7 @@ def bill_group_rent(dbClient, con):
     AND bgp."Rent_date" >= %s
   GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
-  ''', (settings.BILLDATE))
+  ''', (settings.BILLDATE, ))
   data = cur.fetchall()
   cur.close()
 
