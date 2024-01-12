@@ -36,7 +36,8 @@ def q_int_customers(dbClient, date):
         CASE WHEN c."Billing_city" IS NOT NULL THEN c."Billing_city" ELSE c."City" END AS "city", 
         CASE WHEN c."Billing_province" IS NOT NULL THEN c."Billing_province" ELSE c."Province" END AS "province", 
         CASE WHEN bco."Code" IS NOT NULL THEN bco."Code" ELSE co."Code" END AS "country",
-        c."Bank_account" AS "bank_account"
+        c."Bank_account" AS "bank_account",
+        c."Swift" AS "swift"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking_group" b ON b."Payer_id" = c.id
         INNER JOIN "Booking"."Booking_rooming" br ON br."Booking_id" = b.id
@@ -72,7 +73,8 @@ def q_int_customers(dbClient, date):
         CASE WHEN c."Billing_city" IS NOT NULL THEN c."Billing_city" ELSE c."City" END AS "city", 
         CASE WHEN c."Billing_province" IS NOT NULL THEN c."Billing_province" ELSE c."Province" END AS "province", 
         CASE WHEN bco."Code" IS NOT NULL THEN bco."Code" ELSE co."Code" END AS "country",
-        c."Bank_account" AS "bank_account"
+        c."Bank_account" AS "bank_account",
+        c."Swift" AS "swift"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking" b ON b."Customer_id" = c.id
         LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"

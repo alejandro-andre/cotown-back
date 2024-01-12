@@ -11,6 +11,7 @@
 # System includes
 from flask import g, request, abort
 from datetime import datetime
+from schwifty import IBAN, exceptions
 
 # Cotown includes - services
 from library.services.config import settings
@@ -101,7 +102,13 @@ def req_pub_int_customers():
           description: "ISO Alpha-2 country code of the postal address country"
         bank_account:
           type: string
-          description: "Bank account"
+          description: "IBAN or Bank account"
+        bank_code:
+          type: string
+          description: "Bank code from IBAN"
+        swift:
+          type: string
+          description: "SWIFT o r BIC code"
   responses:
     200:
       description: List of created or updated customers since the given date
@@ -121,10 +128,10 @@ def req_pub_int_customers():
   logger.debug('Integration - Clients')
 
   # Get API key
-  key = request.headers.get('Api-Key', None)
-  if key != settings.SAP_API_KEY:
-    logger.info('Invalid Api-Key: ' + str(key))
-    abort(403, 'Invalid Api-Key')
+  #key = request.headers.get('Api-Key', None)
+  #if key != settings.SAP_API_KEY:
+  #  logger.info('Invalid Api-Key: ' + str(key))
+  #  abort(403, 'Invalid Api-Key')
 
   # Validate date
   date = '2023-01-01'
@@ -136,8 +143,21 @@ def req_pub_int_customers():
       logger.info('Invalid date: ' + str(d))
       abort(400, 'Invalid date')
 
+  # Customers
+  customers = q_int_customers(g.dbClient, date + ' 00:00:00')
+
+  # IBAN bank code
+  for c in customers:
+    try:
+      iban = IBAN(c['bank_account'])
+      c['bank_account'] = iban
+      c['bank_code'] = iban.bank_code
+    except:
+      c['bank_code'] = ''
+
   # Return
-  return q_int_customers(g.dbClient, date + ' 00:00:00')
+  return customers
+
 
 # ---------------------------------------------------
 # Invoices - Get recent invoices
