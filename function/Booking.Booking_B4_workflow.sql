@@ -253,7 +253,7 @@ BEGIN
   END IF;
 
   -- A DESCARTADA
-  IF (NEW."Status" = 'descartada') THEN
+  IF (NEW."Status" = 'descartada' OR NEW."Status" = 'descartadapagada') THEN
     -- Quita el recurso
     NEW."Resource_id" := NULL;
     -- Intentamos eliminar pagos no realizados
@@ -264,11 +264,11 @@ BEGIN
     -- EMail
     INSERT
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      VALUES (NEW."Customer_id", 'descartada', NEW.id);
+      VALUES (NEW."Customer_id", NEW."Status", NEW.id);
     -- Log
-    change := CONCAT('Solicitud descartada. ');
+    change := 'Solicitud descartada.';
     IF (NEW."Booking_fee_returned" IS NOT NULL) THEN
-      change := CONCAT(change, 'Hay que devolver el booking con por importe de: ', NEW."Booking_fee_returned");
+      change := CONCAT(change, ' Hay que devolver el booking con por importe de: ', NEW."Booking_fee_returned");
     END IF;
   END IF;
 
