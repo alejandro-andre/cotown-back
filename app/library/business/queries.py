@@ -144,6 +144,16 @@ def q_dashboard(dbClient, status = None, vars=None):
       if location:
         sql += f'''AND d."Location_id"={location} '''
 
+    # Check-ins with issues
+    elif status == 'issues':
+      sql = select + f'''
+      WHERE b."Status" IN (\'inhouse\')
+        AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
+      if building:
+        sql += f'''AND b2.id={building} '''
+      if location:
+        sql += f'''AND d."Location_id"={location} '''
+
     # Other status
     else:
       sql = select + f'''
