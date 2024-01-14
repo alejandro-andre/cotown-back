@@ -103,10 +103,14 @@ def q_dashboard(dbClient, status = None, vars=None):
         b."Check_in_keyless_ok", 
         b."Check_out_keys_ok",
         b."Check_out_keyless_ok", 
+        b."Damages", 
+        b."Issues", 
         ct."Name" AS "Option",
         CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
         r."Code" as "Resource",
-        c."Name"
+        c."Name",
+        c."Email",
+        c."Phones"
       FROM "Booking"."Booking" b
         INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
         INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
