@@ -121,7 +121,7 @@ def q_dashboard(dbClient, status = None, vars=None):
       WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')'''
 
     # Next check-ins
-    elif status == 'next':
+    elif status in ('next', 'nextin'):
       sql = select + f'''
       WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
         AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
