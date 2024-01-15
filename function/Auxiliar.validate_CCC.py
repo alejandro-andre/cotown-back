@@ -7,7 +7,7 @@ import re
 # Get fields
 iban = TD['new']['Bank_account']
 swift = TD['new']['Swift']
-if iban is None:
+if iban is None or iban == '':
   return None
 
 # Validate IBAN

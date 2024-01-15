@@ -62,9 +62,11 @@
                 </div>
 
                 <div class="prices secc">
+                  [% if data.acom_type != 'rs'%]
                   <p>Compartiendo con:</p>
+                  [% endif %]
                   [% for share in item.Flat_types %]
-                  <div class="share">
+                  <div class="share[% if data.acom_type == 'rs'%] hidden[% endif %]">
                     <div class="sharing">
                       <div class="partners">
                         <label

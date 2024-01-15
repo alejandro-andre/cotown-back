@@ -62,17 +62,19 @@
                 </div>
 
                 <div class="prices secc">
+                  [% if data.acom_type != 'rs'%]
                   <p>Sharing with:</p>
+                  [% endif %]
                   [% for share in item.Flat_types %]
-                  <div class="share">
+                  <div class="share[% if data.acom_type == 'rs'%] hidden[% endif %]">
                     <div class="sharing">
                       <div class="partners">
                         <label
                           for="radio_[[item.Building_id]]_[[item.Place_type_id]]_[[share.Flat_type_id]]" >
-                        <input type="radio"
-                          data-id="[[share.Flat_type_id]]"
-                          name="radio_[[item.Building_id]]_[[item.Place_type_id]]"
-                          [% if loop.index == 1 %]checked[% endif %] />
+                          <input type="radio"
+                            data-id="[[share.Flat_type_id]]"
+                            name="radio_[[item.Building_id]]_[[item.Place_type_id]]"
+                            [% if loop.index == 1 %]checked[% endif %] />
                           [[share.Flat_type_name]]
                         </label>
                       </div>
