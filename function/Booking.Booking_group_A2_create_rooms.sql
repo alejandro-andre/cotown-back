@@ -8,7 +8,7 @@ BEGIN
 
   -- Update status
   IF OLD."Status" <> NEW."Status" THEN
-    UPDATE "Booking"."Booking_rooming" SET id = id WHERE "Booking_id" = NEW.id;
+    UPDATE "Booking"."Booking_group_rooming" SET id = id WHERE "Booking_id" = NEW.id;
   END IF;
   
   -- No changes
@@ -22,15 +22,15 @@ BEGIN
   -- Updates rooms in the list
   RESET ROLE;
   IF room_ids IS NOT NULL THEN
-    DELETE FROM "Booking"."Booking_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
+    DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
     FOREACH room_id IN ARRAY(room_ids) LOOP
       INSERT
-        INTO "Booking"."Booking_rooming" ("Booking_id", "Resource_id", "Check_in", "Check_out")
+        INTO "Booking"."Booking_group_rooming" ("Booking_id", "Resource_id", "Check_in", "Check_out")
         VALUES (NEW.id, room_id, NEW."Date_from", NEW."Date_to")
       ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING;
     END LOOP;
   ELSE
-    DELETE FROM "Booking"."Booking_rooming" WHERE "Booking_id" = NEW.id;
+    DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id;
   END IF;
 
   -- Return record

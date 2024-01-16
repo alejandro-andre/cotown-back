@@ -363,7 +363,7 @@ def bill_group_rent(dbClient, con):
     MIN(r."Service_id") as "Service_id"
   FROM "Booking"."Booking_group_price" bgp
     INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
-    INNER JOIN "Booking"."Booking_rooming" br ON bg.id = br."Booking_id"
+    INNER JOIN "Booking"."Booking_group_rooming" br ON bg.id = br."Booking_id"
     INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')

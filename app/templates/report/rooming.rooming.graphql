@@ -1,5 +1,5 @@
 query Rooms ($id: Int) {
-    data: Booking_Booking_roomingList (
+    data: Booking_Booking_group_roomingList (
         orderBy: [{attribute: Resource_id}]
         where: { Booking_id: { EQ: $id } }
     ) {

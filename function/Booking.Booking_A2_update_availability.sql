@@ -46,7 +46,7 @@ BEGIN
  
     -- Inserta los bloqueos de la reserva
     INSERT INTO "Booking"."Booking_detail" (
-      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
+      "Availability_id", "Booking_id", "Booking_group_id", "Booking_group_rooming_id", "Resource_id", "Building_id",
       "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (

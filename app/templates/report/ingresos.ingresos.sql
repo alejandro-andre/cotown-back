@@ -88,7 +88,7 @@ SELECT DISTINCT ON (bp.id)
   'B2B' AS "Type", pdt."Name" AS "Amount_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b on b.id = bp."Booking_id" 
-  INNER JOIN "Booking"."Booking_rooming" br on b.id = br."Booking_id" 
+  INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
   INNER JOIN "Provider"."Provider" pr on pr.id = r."Owner_id"  
@@ -138,7 +138,7 @@ SELECT DISTINCT ON (bp.id)
   'B2B' AS "Type", pdt."Name" AS "Amount_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b on b.id = bp."Booking_id" 
-  INNER JOIN "Booking"."Booking_rooming" br on b.id = br."Booking_id" 
+  INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
   INNER JOIN "Provider"."Provider" pr on pr.id = r."Service_id"  

@@ -185,7 +185,7 @@ def do_occupancy(dbClient, vars):
         END AS "Services"
       FROM "Booking"."Booking_group" b
         INNER JOIN "Booking"."Booking_group_price" bp ON bp."Booking_id" = b.id
-        INNER JOIN "Booking"."Booking_rooming" br on b.id = br."Booking_id" 
+        INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
         INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
         INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s

@@ -141,7 +141,7 @@ limit 1
       COALESCE(c."Bank_account", '') AS "bank_account"
     FROM "Customer"."Customer" c
       INNER JOIN "Booking"."Booking_group" b ON b."Payer_id" = c.id
-      INNER JOIN "Booking"."Booking_rooming" br ON br."Booking_id" = b.id
+      INNER JOIN "Booking"."Booking_group_rooming" br ON br."Booking_id" = b.id
       LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
       LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
       LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
@@ -228,9 +228,9 @@ TRUNCATE TABLE "Booking"."Booking_group" RESTART IDENTITY CASCADE;
 
 SELECT COUNT(*) FROM "Booking"."Booking";
 SELECT COUNT(*) FROM "Booking"."Booking_group";
-SELECT COUNT(*) FROM "Booking"."Booking_rooming";
+SELECT COUNT(*) FROM "Booking"."Booking_group_rooming";
 SELECT SUM("Rooms") FROM "Booking"."Booking_group";
-SELECT "Booking_id", COUNT(*) FROM "Booking"."Booking_rooming" GROUP BY 1 ORDER BY 1;
+SELECT "Booking_id", COUNT(*) FROM "Booking"."Booking_group_rooming" GROUP BY 1 ORDER BY 1;
 
 -- ---------------------------------------------
 -- Post precios
@@ -485,7 +485,7 @@ FROM (
   WHERE (c."Created_at" > '2023-01-01' OR c."Updated_at" > '2023-01-01')
   UNION ALL
   SELECT c."Type", CASE WHEN r."Owner_id" = 10 THEN 'true' ELSE 'false' END CASE, c."Document", c."Name", c."Address", c."Zip", c."City", c."Province", co."Code" , c."Email"
-  FROM "Booking"."Booking_rooming" br
+  FROM "Booking"."Booking_group_rooming" br
   INNER JOIN "Booking"."Booking_group" bg on bg.id = br."Booking_id" 
   INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id" 
   INNER JOIN "Customer"."Customer" c on c.id = bg."Payer_id" 
@@ -585,7 +585,7 @@ TRUNCATE TABLE "Resource"."Resource" CASCADE;
 
 -- Update
 UPDATE "Booking"."Booking" SET id=id;
-UPDATE "Booking"."Booking_rooming" SET id=id;
+UPDATE "Booking"."Booking_group_rooming" SET id=id;
 UPDATE "Resource"."Resource" SET id=id WHERE "Resource_type" = 'piso';
 UPDATE "Resource"."Resource" SET id=id WHERE "Resource_type" = 'habitacion';
 UPDATE "Resource"."Resource" SET id=id WHERE "Resource_type" = 'plaza';

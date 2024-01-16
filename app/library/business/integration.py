@@ -40,7 +40,7 @@ def q_int_customers(dbClient, date):
         c."Swift" AS "swift"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking_group" b ON b."Payer_id" = c.id
-        INNER JOIN "Booking"."Booking_rooming" br ON br."Booking_id" = b.id
+        INNER JOIN "Booking"."Booking_group_rooming" br ON br."Booking_id" = b.id
         LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
         LEFT JOIN "Auxiliar"."Id_type" bi ON bi.id = c."Billing_id_type_id"
         LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 

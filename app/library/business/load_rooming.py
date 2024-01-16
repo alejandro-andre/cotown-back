@@ -147,7 +147,7 @@ def load_rooming(dbClient, con, data):
       update = update[1:]
       values = [record[field] for field in record.keys()][1:]
       values.append(record['id'])
-      sql = 'UPDATE "Booking"."Booking_rooming" SET {} WHERE id=%s'.format(','.join(update))
+      sql = 'UPDATE "Booking"."Booking_group_rooming" SET {} WHERE id=%s'.format(','.join(update))
       dbClient.execute(con, sql, values)
 
     # Error
