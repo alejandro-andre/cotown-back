@@ -52,25 +52,45 @@
       </div>
       [% endif %]
 
-      <div class="total">
-        <p>Total pago único</p>
-        <p>
-          [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
-          [[(data.summary.Booking_fee + data.summary.Rent + data.summary.Services) | number]] €
-          [% else %]
-          [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
-          [% endif %]
-        </p>
+      <div class="type-summary">
+        <div class="total">
+          <p>Total pago único</p>
+          <p>
+            [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
+            [[(data.summary.Booking_fee + data.summary.Rent + data.summary.Services) | number]] €
+            [% else %]
+            [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
+            [% endif %]
+          </p>
+        </div>
       </div>
-    </div>
 
-    <div class="renta">
       <h3>Renta mensual</h3>
-      <h3>[[(data.summary.Rent + data.summary.Services) | number]] € *</h3>
+
+      [% if data.summary.Rent_first != data.summary.Rent %]
+      <div class="prices">
+        <p>Primer mes</p>
+        <p>[[data.summary.Rent_first | number]] €</p>
+      </div>
+      [% endif %]
+
+      [% if data.summary.Rent_last != data.summary.Rent %]
+      <div class="prices">
+        <p>Último mes</p>
+        <p>[[data.summary.Rent_last | number]] €</p>
+      </div>
+      [% endif %]
+
+      <div class="type-summary">
+        <div class="total">
+          <p>Renta mensual *</p>
+          <p>[[data.summary.Rent | number]] €</p>
+        </div>
+      </div>
+
+      <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.summary.Limit]]€/mes.</p>
+
     </div>
-
-    <p class="advise">* Suministros de agua, gas y luz incluidos en el importe mensual hasta [[data.summary.Limit]]€/mes.</p>
-
     [% endif %]
 
   </div>

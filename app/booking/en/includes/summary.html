@@ -29,7 +29,7 @@
 
     <div class="breakdown">
 
-      <h4>Price breakdown</h4>
+      <h3>Initial single payment</h3>
 
       <div class="prices">
         <p>Booking fee</p>
@@ -54,7 +54,8 @@
       </div>
       [% endif %]
 
-      <div class="total">
+      <div class="type-summary">
+        <div class="total">
         <p>Total single payment</p>
         <p>
           [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
@@ -63,16 +64,35 @@
           [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
           [% endif %]
         </p>
+        </div>
       </div>
-    </div>
 
-    <div class="renta">
       <h3>Monthly rent</h3>
-      <h3>[[(data.summary.Rent + data.summary.Services) | number]] € *</h3>
+
+      [% if data.summary.Rent_first != data.summary.Rent %]
+      <div class="prices">
+        <p>First month</p>
+        <p>[[data.summary.Rent_first | number]] €</p>
+      </div>
+      [% endif %]
+
+      [% if data.summary.Rent_last != data.summary.Rent %]
+      <div class="prices">
+        <p>Last month</p>
+        <p>[[data.summary.Rent_last | number]] €</p>
+      </div>
+      [% endif %]
+
+      <div class="type-summary">
+        <div class="total">
+          <p>Monthly rent *</p>
+          <p>[[data.summary.Rent | number]] €</p>
+        </div>
+      </div>
+
+      <p class="advise">* Water, gas, and electricity supplies included in the monthly amount up to [[data.summary.Limit | number]] €/month</p>
+
     </div>
-
-    <p class="advise">* Water, gas, and electricity supplies included in the monthly amount up to [[data.summary.Limit | number]] €/month</p>
-
     [% endif %]
 
   </div>

@@ -5,6 +5,7 @@
 # System includes
 from datetime import datetime
 from dateutil import relativedelta
+from calendar import monthrange
 
 # Logging
 import logging
@@ -14,6 +15,14 @@ logger = logging.getLogger('COTOWN')
 # ######################################################
 # Misc functions
 # ######################################################
+
+# Num. of the day of a date and num. of days of that month
+def days(date):
+
+  d = datetime.strptime(date, "%Y-%m-%d")
+  days = monthrange(d.year, d.month)[1]
+  return d.day, days
+
 
 def rent_info(date_from, date_to):
 
@@ -31,6 +40,8 @@ def rent_info(date_from, date_to):
 
   # Rates year
   year = df.year if df.month < 9 else df.year + 1
+
+  # Return
   return year, field
 
 
@@ -285,6 +296,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     sql = f'''
       SELECT DISTINCT
         b."Name" as "Building_name", rfst."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
+        r."Billing_type",
         ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
         COALESCE(pd."Services", 0) AS "Services", 
         COALESCE(pd."Limit", 0) as "Limit",
@@ -308,6 +320,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     sql = f'''
       SELECT DISTINCT
         b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
+        r."Billing_type",
         ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
         COALESCE(pd."Services", 0) AS "Services", 
         COALESCE(pd."Limit", 0) as "Limit",
@@ -327,14 +340,39 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       '''
 
   try:
+    # Get data
     con = dbClient.getconn()
     cur = dbClient.execute(con, sql, (year, building_id, flat_type_id, place_type_id))
-    results = cur.fetchall()
+    results = [dict(row) for row in cur.fetchall()]
     cur.close()
+    if len(results) < 1:
+      dbClient.putconn(con)
+      return None
+    
+    # Default first and last month prices
+    data = results[0]
+    data['Rent_first'] = data['Rent']
+    data['Rent_last'] = data['Rent']
+
+    # Day and total days of 1st and last months
+    dayf, daysf = days(date_from) 
+    dayt, dayst = days(date_to)
+
+    # Adjust prices if proportional
+    if data['Billing_type'] == 'proporcional':
+      data['Rent_first'] = data['Rent'] * (daysf - dayf) / daysf
+      data['Rent_last'] = data['Rent'] * dayt / dayst
+
+    # Adjust prices if by fortnights
+    elif data['Billing_type'] == 'quincena':
+      if dayf >= 15:
+        data['Rent_first'] = data['Rent'] / 2
+      if dayt < 15:
+        data['Rent_last'] = data['Rent'] / 2
+
+    print(data)
     dbClient.putconn(con)
-    if len(results) > 0:
-      return results[0]
-    return None
+    return data
  
   except Exception as error:
     logger.error(error)
