@@ -31,6 +31,10 @@ BEGIN
     RAISE exception '!!!Discount reason mandatory!!!Motivo del descuento obligatorio!!!';
   END IF;
 
+  -- Totals
+  NEW."Rent_total" = NEW."Rent" + COALESCE(NEW."Rent_discount", 0);
+  NEW."Services_total" = NEW."Services" + COALESCE(NEW."Services_discount", 0);
+
   -- Apply to all
   IF NEW."Apply_to_all" THEN
 	UPDATE "Booking"."Booking_price"
