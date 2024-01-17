@@ -28,6 +28,11 @@ BEGIN
     END IF;
   END IF;
 
+  -- Booking fee check
+  --IF COALESCE(NEW."Booking_fee", 0) <> COALESCE(NEW."Booking_fee_calc", 0) AND NEW."Booking_discount_type_id" IS NULL THEN
+  --  RAISE EXCEPTION '!!!Discount reason is mandatory!!!Es obligatorio indicar motivo de descuento!!!';
+  --END IF;
+
   -- Update booking fee
   IF OLD."Booking_fee" <> NEW."Booking_fee" OR (OLD."Booking_fee" IS NULL AND NEW."Booking_fee" > 0) THEN
 
