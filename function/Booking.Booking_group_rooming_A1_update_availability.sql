@@ -18,7 +18,7 @@ BEGIN
   RESET ROLE;
  
   -- Borra todas reservas de esa plaza
-  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_rooming_id" = NEW.id;
+  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_rooming_id" = NEW.id;
   IF TG_OP = 'DELETE' OR NEW."Resource_id" IS NULL THEN
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
@@ -43,7 +43,7 @@ BEGIN
  
     -- Inserta bloqueo
     INSERT INTO "Booking"."Booking_detail" (
-      "Availability_id", "Booking_id", "Booking_group_id", "Booking_group_rooming_id", "Resource_id", "Building_id",
+      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
       "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (
