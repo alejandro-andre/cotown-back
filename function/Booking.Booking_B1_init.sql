@@ -12,7 +12,7 @@ BEGIN
   END IF;
 
   -- Calcula el booking fee si está vacío
-  IF NEW."Booking_fee" IS NULL THEN
+  IF NEW."Booking_fee_calc" IS NULL THEN
 
     -- Year
     year := EXTRACT(YEAR FROM NOW());
@@ -31,7 +31,10 @@ BEGIN
     LIMIT 1;
 
     -- Asigna el valor obtenido
-    NEW."Booking_fee" := COALESCE(booking_fee_amount, 0);
+    NEW."Booking_fee_calc" := COALESCE(booking_fee_amount, 0);
+    IF NEW."Booking_fee" IS NULL THEN
+      NEW."Booking_fee" := NEW."Booking_fee_calc";
+    END IF;
 
   END IF;
 
