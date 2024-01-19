@@ -140,6 +140,7 @@ def q_dashboard(dbClient, status = None, vars=None):
     elif status == 'issues':
       sql = select + f'''
       WHERE b."Status" IN (\'inhouse\')
+        AND b."Issues" IS NOT NULL
         AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
 
     # Other status
