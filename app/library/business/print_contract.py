@@ -585,7 +585,7 @@ def do_group_contracts(apiClient, id):
   logger.info('Contrato para la reserva G' + str(id))
 
   try:
-   
+    
     # Empty files
     json_rent = None
     json_svcs = None
@@ -594,6 +594,8 @@ def do_group_contracts(apiClient, id):
     variables = { 'id': id }
     result = apiClient.call(GROUP_BOOKING, variables)
     context = flatten(result['data'][0])
+    if not context['Rooms']:
+      return False
     room = context['Rooms'][0]
 
     # Consolidate flats
