@@ -46,7 +46,7 @@ BEGIN
   BEGIN
     UPDATE "Booking"."Booking"
     SET "Status"='checkin'
-    WHERE CURRENT_DATE >= GREATEST("Booking"."Check_in", "Booking"."Date_from")
+    WHERE CURRENT_DATE >= COALESCE("Booking"."Check_in", "Booking"."Date_from")
     AND ("Booking"."Status"='checkinconfirmado' OR "Booking"."Status"='contrato');
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error en check-in: % %', SQLSTATE, SQLERRM;
@@ -56,7 +56,7 @@ BEGIN
   BEGIN
     UPDATE "Booking"."Booking"
     SET "Status"='checkout'
-    WHERE CURRENT_DATE >= LEAST("Booking"."Check_out", "Booking"."Date_to")
+    WHERE CURRENT_DATE >= COALESCE("Booking"."Check_out", "Booking"."Date_to")
     AND "Booking"."Status"='inhouse';
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error en check-out: % %', SQLSTATE, SQLERRM;

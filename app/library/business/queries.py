@@ -122,37 +122,25 @@ def q_dashboard(dbClient, status = None, vars=None):
     # All confirmed
     if status == 'ok':
       sql = select + '''
-      WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')'''
+      WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') '''
 
     # Next check-ins
     elif status in ('next', 'nextin'):
       sql = select + f'''
       WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
         AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
-      if building:
-        sql += f'''AND b2.id={building} '''
-      if location:
-        sql += f'''AND d."Location_id"={location} '''
 
     # Next check-outs
     elif status == 'nextout':
       sql = select + f'''
       WHERE b."Status" IN (\'inhouse\')
         AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
-      if building:
-        sql += f'''AND b2.id={building} '''
-      if location:
-        sql += f'''AND d."Location_id"={location} '''
 
     # Check-ins with issues
     elif status == 'issues':
       sql = select + f'''
       WHERE b."Status" IN (\'inhouse\')
         AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
-      if building:
-        sql += f'''AND b2.id={building} '''
-      if location:
-        sql += f'''AND d."Location_id"={location} '''
 
     # Other status
     else:
@@ -160,6 +148,10 @@ def q_dashboard(dbClient, status = None, vars=None):
       WHERE b."Status" = '{status}' '''
 
     # Result
+    if building:
+      sql += f'''AND b2.id={building} '''
+    if location:
+      sql += f'''AND d."Location_id"={location} '''
     cur = dbClient.execute(con, sql)
     result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
     cur.close()
