@@ -35,6 +35,7 @@ PR_DEPOSIT = 2
 PR_RENT = 3
 PR_SERVICES = 4
 PR_RENT_SERVICES = 5
+PR_CHECKIN = 10
 
 VAT_21 = 1
 VAT_0  = 2
@@ -107,6 +108,15 @@ def bill_payments(dbClient, con):
     # Capture exceptions
     try:
 
+      # Product id
+      pid = PR_SERVICES
+      if item['Payment_type'] == 'booking':
+        pid = PR_BOOKING_FEE
+      if item['Payment_type'] == 'deposito':
+        pid = PR_DEPOSIT
+      if item['Payment_type'] == 'checkin':
+        pid = PR_CHECKIN
+
       # Create invoice
       cur = dbClient.execute(con, 
         '''
@@ -125,7 +135,7 @@ def bill_payments(dbClient, con):
           item['Booking_id'],
           item['Payment_method_id'],
           item['id'],
-          PRODUCTS[PR_BOOKING_FEE]['concept'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['concept'],
+          PRODUCTS[pid]['concept'],
         )
       )
       billid = cur.fetchone()[0]
@@ -140,9 +150,9 @@ def bill_payments(dbClient, con):
         (
           billid,
           item['Amount'],
-          PR_BOOKING_FEE if item['Payment_type'] == 'booking' else PR_DEPOSIT,
-          PRODUCTS[PR_BOOKING_FEE]['tax'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['tax'],
-          PRODUCTS[PR_BOOKING_FEE]['concept'] if item['Payment_type'] == 'booking' else PRODUCTS[PR_DEPOSIT]['concept'] + ' ' + item['Code']
+          pid,
+          PRODUCTS[pid]['tax'],
+          PRODUCTS[pid]['concept'] + ' ' + item['Code']
         )
       )
 
