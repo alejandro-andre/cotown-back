@@ -12,9 +12,9 @@ DECLARE
 BEGIN
 
   -- No changes, no calc
-  IF OLD."Check_in_option_id" = NEW."Check_in_option_id" AND 
-     OLD."Check_in"           = NEW."Check_in"           AND 
-     OLD."Check_in_time"      = NEW."Check_in_time"      THEN
+  IF OLD."Check_in_option_id" IS NOT DISTINCT FROM NEW."Check_in_option_id" AND 
+     OLD."Check_in"           IS NOT DISTINCT FROM NEW."Check_in"           AND 
+     OLD."Check_in_time"      IS NOT DISTINCT FROM NEW."Check_in_time"      THEN
     RETURN NEW;
   END IF;
 
@@ -125,9 +125,9 @@ BEGIN
   DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'checkin' AND "Customer_id" = NEW."Customer_id" AND "Booking_id" = NEW.id;
   IF price > 0 THEN
     SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
-    INSERT
-      INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-      VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, price, CURRENT_DATE, 'Check-in', 'checkin');
+    --INSERT
+    --  INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+    --  VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, price, CURRENT_DATE, 'Check-in', 'checkin');
   END IF;
   EXECUTE 'SET ROLE "' || curr_user || '"';
 
