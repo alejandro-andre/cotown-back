@@ -18,17 +18,6 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Already paid?
-  SELECT COUNT(*) INTO num 
-  FROM "Billing"."Payment" 
-  WHERE "Payment_type" = 'checkin'
-    AND "Customer_id" = NEW."Customer_id" 
-    AND "Booking_id" = NEW.id
-    AND "Payment_date" IS NOT NULL;
-  IF num > 0 THEN
-    RAISE EXCEPTION '!!!Check-in already paid!!!El check-in ya ha sido pagado!!!';
-  END IF;
-
   -- No option
   IF NEW."Check_in_option_id" IS NULL OR NEW."Resource_id" IS NULL THEN
     NEW."Check_in_option_id" := NULL;
@@ -42,6 +31,10 @@ BEGIN
   IF NEW."Check_in_time" IS NULL THEN
     RAISE EXCEPTION '!!!Must fill check-in time!!!Debes indicar la hora de check-in!!!';
   END IF;
+
+  -- Superuser
+  curr_user := CURRENT_USER;
+  RESET ROLE;
 
   -- Get booking location
   SELECT d."Location_id"
@@ -119,19 +112,44 @@ BEGIN
     RAISE EXCEPTION '!!!Check-in option not available!!!Opción de check-in no disponible!!!';
   END IF;
 
+  -- Check if payment of same price exists
+  SELECT COUNT(*) INTO num 
+  FROM "Billing"."Payment" 
+  WHERE "Payment_type" = 'checkin'
+    AND "Customer_id" = NEW."Customer_id" 
+    AND "Booking_id" = NEW.id
+    AND "Payment_date" IS NOT NULL
+    AND "Amount" = price;
+  IF num > 0 THEN
+    RETURN NEW;
+  END IF;
+
+  -- Already paid?
+  SELECT COUNT(*) INTO num 
+  FROM "Billing"."Payment" 
+  WHERE "Payment_type" = 'checkin'
+    AND "Customer_id" = NEW."Customer_id" 
+    AND "Booking_id" = NEW.id
+    AND "Payment_date" IS NOT NULL;
+  IF num > 0 THEN
+    RAISE EXCEPTION '!!!Check-in already paid!!!El check-in ya ha sido pagado!!!';
+  END IF;
+
   -- Update fee (delete + update)
-  curr_user := CURRENT_USER;
-  RESET ROLE;
-  DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'checkin' AND "Customer_id" = NEW."Customer_id" AND "Booking_id" = NEW.id;
+  DELETE 
+  FROM "Billing"."Payment" 
+  WHERE "Payment_type" = 'checkin' 
+    AND "Customer_id" = NEW."Customer_id" 
+    AND "Booking_id" = NEW.id;
   IF price > 0 THEN
     SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
     --INSERT
     --  INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
     --  VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, price, CURRENT_DATE, 'Check-in', 'checkin');
   END IF;
-  EXECUTE 'SET ROLE "' || curr_user || '"';
 
   -- Return
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;
