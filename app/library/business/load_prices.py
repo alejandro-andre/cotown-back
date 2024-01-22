@@ -70,7 +70,7 @@ def load_prices(dbClient, con, data):
           id = None
           if cell.value is not None and cell.value != '':
             cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', (cell.value,))
-            aux = cur.fetch()
+            aux = cur.fetchone()
             cur.close()
             if aux is None:
               log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
