@@ -124,7 +124,7 @@ def post_ac_add_to_list(id, list):
 
 
 # #####################################
-# Test
+# Add contact to Acgive Campaign
 # #####################################
 
 def add_contact(data, listid=None):

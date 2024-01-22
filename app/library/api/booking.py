@@ -145,7 +145,7 @@ def req_form():
       "180": "Fecha visita",
       "181": "Mensaje"
     }
-    message = '<h2>vanguard-student-housing-com</h2><h3>Formulario: ' + forms[str(listid)] + '</h3>'
+    message = '<h2>' + contact['186'] + '</h2><h3>Formulario: ' + forms[str(listid)] + '</h3>'
     for item in contact:
       if fields.get(item):
         message = message + '<li><b>' + fields[item] + '</b>: ' + contact[item] + '</li>'
