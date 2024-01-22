@@ -210,6 +210,24 @@ query BookingById ($id: Int) {
       }
       Customer_signer_id: Signer_document
     }
+    Residents: Booking_roomingListViaBooking_id {
+      GenderViaGender_id {
+        Customer_gender: Code
+      }
+      Id_typeViaId_type_id {
+        Customer_id_type: Name
+      }
+      Customer_id: Document
+      Customer_name: Name
+      Customer_address: Address
+      Customer_zip: Zip
+      Customer_city: City
+      Customer_province: Province
+      CountryViaCountry_id {
+        Customer_country: Name
+      }
+      Customer_email: Email
+    }
     Prices: Booking_priceListViaBooking_id {
       Rent_date_day
       Rent_date_month
