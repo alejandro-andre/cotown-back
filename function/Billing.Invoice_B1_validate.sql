@@ -35,11 +35,6 @@ BEGIN
     RAISE EXCEPTION '!!!Cannot delete issued bill!!!No se puede borrar una factura emitida!!!';
   END IF;
 
-  -- Trick to modify issued bills
-  IF CURRENT_USER = 'modelsadmin' OR current_setting('myapp.admin', true) = 'true' THEN
-    OLD."Issued" = FALSE;
-  END IF;
-
   -- Update, and already issued
   IF OLD."Issued" = TRUE THEN
 
@@ -81,7 +76,10 @@ BEGIN
        OLD."Concept"           <> NEW."Concept"          OR
        OLD."Issued_date"       <> NEW."Issued_date"      OR
       (OLD."Rectified" = TRUE AND NEW."Rectified" = FALSE) THEN
-      RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
+      IF CURRENT_USER <> 'modelsadmin'AND current_setting('myapp.admin', true) <> 'true' THEN
+        RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
+      END IF;
+      RETURN NEW;
     END IF;
 
   END IF;
@@ -142,7 +140,8 @@ BEGIN
   FROM "Provider"."Provider"
   WHERE id = NEW."Provider_id";
 
-  -- Año de emisión
+  -- Fecha y año de emisión
+  NEW."Issued_date" := CURRENT_DATE;
   SELECT EXTRACT(YEAR FROM NEW."Issued_date") INTO yy;
 
   -- Calcula el siguiente número
