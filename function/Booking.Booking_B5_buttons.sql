@@ -1,9 +1,36 @@
 -- Botones de reserva
 DECLARE
 
-   pending_payments INTEGER;
+   flat INTEGER;
 
 BEGIN
+
+  -- Aviso a compañeros
+  IF OLD."Check_in_notice_ok" <> TRUE AND NEW."Check_in_notice_ok" = TRUE THEN
+    -- Get flat
+    SELECT r."Flat_id" INTO flat
+    FROM "Booking"."Booking" b INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+    WHERE b.id = NEW.id;
+
+    -- Get roommates
+    INSERT
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+      SELECT c.id, 'compis', NEW.id
+      FROM "Booking"."Booking" b
+        INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+      WHERE b.id <> NEW.id
+        AND r."Flat_id" = flat
+        AND COALESCE(b."Check_in", b."Date_from") <= COALESCE(NEW."Check_in", NEW."Date_from")
+        AND COALESCE(b."Check_out", b."Date_to") > COALESCE(NEW."Check_in", NEW."Date_from");
+  END IF;
+
+  -- Keyless
+  IF OLD."Check_in_keyless_ok" <> TRUE AND NEW."Check_in_keyless_ok" = TRUE THEN
+    INSERT
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+      VALUES (NEW."Customer_id", 'keyless', NEW.id);
+  END IF;
 
   -- Boton descartar
   NEW."Button_discard" := '';
@@ -22,8 +49,6 @@ BEGIN
 
   -- Boton checkout
   NEW."Button_checkout" := '';
-  -- Comprobamos que el usuario no tenga pagos pendientes.
-  --SELECT COUNT(*) INTO pending_payments FROM "Billing"."Payment"  WHERE "Payment"."Booking_id" = NEW.id AND "Payment"."Payment_date" IS NULL;
   IF NEW."Status" = 'checkout' THEN -- AND pending_payments = 0
      NEW."Button_checkout" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/devolvergarantia');
   END IF;

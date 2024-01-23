@@ -29,6 +29,7 @@ BEGIN
   END IF;
 
   -- Ignora el email
+  RAISE NOTICE 'EMAIL % A % IGNORADO', NEW."Template", NEW."Customer_id";
   RETURN NULL;
 
 END;
