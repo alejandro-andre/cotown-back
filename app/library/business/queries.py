@@ -148,6 +148,13 @@ def q_dashboard(dbClient, status = None, vars=None):
         AND b."Issues" IS NOT NULL
         AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
 
+    # ECO/EXT
+    elif status == 'ecoext':
+      sql = select + f'''
+      WHERE b."Status" IN (\'inhouse\')
+        AND COALESCE(b."New_check_out", b."Date_from") <> COALESCE(b."Check_out", b."Date_from")
+        AND COALESCE(b."New_check_out", b."Date_from") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
+
     # Other status
     else:
       sql = select + f'''

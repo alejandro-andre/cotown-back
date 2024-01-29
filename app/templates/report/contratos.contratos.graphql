@@ -1,0 +1,29 @@
+query Bookings ($fdesde: String, $fhasta:String) {
+    data: Booking_BookingList (
+        orderBy: [
+            {attribute: id}
+        ]
+        where: { 
+            AND: [
+                { Date_from: { LE: $fhasta } }
+                { Date_to:   { GE: $fdesde } }
+                {
+                    OR: [
+                        { Contract_rent: { IS_NULL: false } }
+                        { Contract_services: { IS_NULL: false } }
+                    ]
+                }
+            ]
+        }
+    ) {
+        id
+        Status
+        Date_from
+        Date_to
+        Contract_rent { name }
+        Contract_services { name }
+        Contract_signed
+        Resource: ResourceViaResource_id { Code }
+        Customer: CustomerViaCustomer_id { id Name}
+    }
+}

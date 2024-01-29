@@ -1,0 +1,11 @@
+[
+"id",
+"Resource.Code",
+"Customer.id",
+"Customer.Name",
+"Date_from",
+"Date_to",
+"Contract_rent.name",
+"Contract_services.name",
+"Contract_signed"
+]
