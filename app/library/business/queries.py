@@ -48,6 +48,7 @@ def q_dashboard(dbClient, status = None, vars=None):
   date_checkinto  = (datetime.now() + timedelta(days=settings.CHECKINDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
   date_checkoutto = (datetime.now() + timedelta(days=settings.CHECKOUTDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
   building        = vars.get('building')
+  buildings       = vars.getlist('building[]')
   location        = vars.get('location')
 
   # Connect
@@ -161,10 +162,13 @@ def q_dashboard(dbClient, status = None, vars=None):
       WHERE b."Status" = '{status}' '''
 
     # Result
-    if building:
+    if buildings:
+      sql += f'''AND b2.id IN ({','.join(buildings)}) '''
+    elif building:
       sql += f'''AND b2.id={building} '''
     if location:
       sql += f'''AND d."Location_id"={location} '''
+    print(sql)
     cur = dbClient.execute(con, sql)
     result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
     cur.close()

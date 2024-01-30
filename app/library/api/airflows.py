@@ -161,14 +161,7 @@ def req_booking_status(id, status):
 def req_dashboard(status = None):
 
   # Querystring variables
-  vars = {}
-  for item in dict(request.args).keys():
-    try:
-      vars[item] = int(request.args[item])
-    except:
-      vars[item] = request.args[item]
-
-  return q_dashboard(g.dbClient, status=status, vars=vars)
+  return q_dashboard(g.dbClient, status=status, vars=request.args)
 
 
 # ---------------------------------------------------
