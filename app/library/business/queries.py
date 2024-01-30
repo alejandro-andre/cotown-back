@@ -111,6 +111,7 @@ def q_dashboard(dbClient, status = None, vars=None):
         b."Issues_ok", 
         b."Damages", 
         b."Damages_ok", 
+        b."Comments",
         ct."Name" AS "Option",
         CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
         r."Code" as "Resource",

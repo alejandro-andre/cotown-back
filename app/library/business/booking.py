@@ -370,7 +370,6 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       if dayt < 15:
         data['Rent_last'] = data['Rent'] / 2
 
-    print(data)
     dbClient.putconn(con)
     return data
  
