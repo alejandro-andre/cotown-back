@@ -10,6 +10,8 @@
 "Date_to",
 "Amount",
 "Amount_due",
+"Management_fee",
+"",
 "Amount_type",
 "Invoice",
 "Payment_status",
