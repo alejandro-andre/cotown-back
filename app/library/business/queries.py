@@ -173,7 +173,6 @@ def q_dashboard(dbClient, status = None, vars=None):
       sql += f'''AND b2.id={building} '''
     if location:
       sql += f'''AND d."Location_id"={location} '''
-    print(sql)
     cur = dbClient.execute(con, sql)
     result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
     cur.close()
