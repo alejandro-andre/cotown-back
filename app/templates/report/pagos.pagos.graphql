@@ -1,69 +1,57 @@
 query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
-    data: Billing_InvoiceList (
-        orderBy: [ {attribute: Issued_date, direction:ASC}
-                  { attribute: Provider_id, direction: ASC }
-                  { attribute: Customer_id, direction: ASC }]
-        where: {
-            AND: [
-            { Issued: { EQ: true } },
-            { Issued_date: { GE: $fdesde } }
-            { Issued_date: { LE: $fhasta } }
-            { Provider_id: { GE: $pdesde } }
-            { Provider_id: { LE: $phasta } }
-            ]
-        }
-    ) {
-        Issued_date
-        Code
+    data: Billing_Invoice_lineList {
         Concept
-        Total
-        Provider: ProviderViaProvider_id {
-            id
-            Name
-        }
-        Customer: CustomerViaCustomer_id {
-            Name
-        }
-
-        # INFORMACIÓN DEL PAGO
-        Payment: PaymentViaPayment_id {
-            Payment_type
-            Payment_date
-            Payment_auth
-            Payment_order
-            Payment_method: Payment_methodViaPayment_method_id {
-                Name
+        Comments
+        Product: ProductViaProduct_id { Name }
+        Invoice: InvoiceViaInvoice_id (
+            joinType: INNER
+            where: {
+                AND: [
+                    { Issued: { EQ: true } },
+                    { Issued_date: { GE: $fdesde } }
+                    { Issued_date: { LE: $fhasta } }
+                    { Provider_id: { GE: $pdesde } }
+                    { Provider_id: { LE: $phasta } }
+                ]
             }
-        }
-
-        #INFORMACIÓN DEL RECURSO
-        Booking: BookingViaBooking_id {
-            id
-            Date_from
-            Date_to
-            Resource: ResourceViaResource_id {
-                Resource_type
-                Code
-                Address
-                Flat_type: Resource_flat_typeViaFlat_type_id {
-                    Code
-                    Name
-                }
-                Place_type: Resource_place_typeViaPlace_type_id {
-                    Code
-                    Name
-                }
-           }
-        }
-
-        #INFORMACIÓN DEL RECURSO
-        Group: Booking_groupViaBooking_group_id {
-            id
-            Date_from
-            Date_to
-            Building: BuildingViaBuilding_id {
-                Code
+        ) {
+            Issued_date
+            Code
+            Concept
+            Comments
+            Total
+            Provider: ProviderViaProvider_id { Name }
+            Customer: CustomerViaCustomer_id { Name }
+            Payment: PaymentViaPayment_id {
+                Payment_type
+                Payment_date
+                Payment_auth
+                Payment_order
+                Payment_method: Payment_methodViaPayment_method_id { Name }
             }
-        }  
+            Booking: BookingViaBooking_id {
+                id
+                Date_from
+                Date_to
+                Resource: ResourceViaResource_id {
+                    Resource_type
+                    Code
+                    Address
+                    Flat_type: Resource_flat_typeViaFlat_type_id {
+                        Code
+                        Name
+                    }
+                    Place_type: Resource_place_typeViaPlace_type_id {
+                        Code
+                        Name
+                    }
+                }
+            }
+            Group: Booking_groupViaBooking_group_id {
+                Date_from
+                Date_to
+                Building: BuildingViaBuilding_id { Code }
+            }  
+        }
     }
 }
