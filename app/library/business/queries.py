@@ -123,7 +123,7 @@ def q_dashboard(dbClient, status = None, vars=None):
         c."Name",
         c."Email",
         c."Phones",
-        p.id,
+        p.id AS "Payment_id",
         p."Payment_date"      
       FROM "Booking"."Booking" b
         INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
