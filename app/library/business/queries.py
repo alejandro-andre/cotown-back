@@ -93,6 +93,7 @@ def q_dashboard(dbClient, status = None, vars=None):
         b."Date_to", 
         b."Check_in",
         b."Check_out",
+        b."Confirmation_date",
         COALESCE(b."Check_in", b."Date_from") AS "Date_in",
         COALESCE(b."Check_out", b."Date_to") AS "Date_out",
         b."New_check_out",
@@ -121,13 +122,17 @@ def q_dashboard(dbClient, status = None, vars=None):
         r."Code" as "Resource",
         c."Name",
         c."Email",
-        c."Phones"
+        c."Phones",
+        p.id,
+        p."Payment_date"      
       FROM "Booking"."Booking" b
         INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
         INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
-        LEFT JOIN "Geo"."District" d on d.id = b1."District_id"
+        LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
+        LEFT JOIN "Billing"."Payment" p ON p."Booking_id" = b.id AND p."Payment_type" = 'checkin'
+        LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id";
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
 
     # All confirmed
