@@ -132,7 +132,6 @@ def q_dashboard(dbClient, status = None, vars=None):
         LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
         LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
         LEFT JOIN "Billing"."Payment" p ON p."Booking_id" = b.id AND p."Payment_type" = 'checkin'
-        LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id";
         LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
 
     # All confirmed
