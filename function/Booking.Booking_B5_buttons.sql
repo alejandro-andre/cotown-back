@@ -5,25 +5,12 @@ DECLARE
 
 BEGIN
 
-  -- Aviso a compañeros
-  IF OLD."Check_in_notice_ok" <> TRUE AND NEW."Check_in_notice_ok" = TRUE THEN
-    -- Get flat
-    SELECT r."Flat_id" INTO flat
-    FROM "Booking"."Booking" b INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-    WHERE b.id = NEW.id;
-
-    -- Get roommates (inhouse)
-    INSERT
-      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      SELECT c.id, 'compis', NEW.id
-      FROM "Booking"."Booking" b
-        INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-      WHERE b.id <> NEW.id
-        AND r."Flat_id" = flat
-        AND b."Status" = 'inhouse'
-        AND COALESCE(b."Check_in", b."Date_from") <= COALESCE(NEW."Check_in", NEW."Date_from")
-        AND COALESCE(b."Check_out", b."Date_to") > COALESCE(NEW."Check_in", NEW."Date_from");
+  -- CHA
+  IF OLD."Destination_id" IS NULL AND NEW."Destination_id" IS NOT NULL THEN
+    UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id WHERE id = NEW."Destination_id" AND "Origin_id" <> NEW.id;
+  END IF;
+  IF OLD."Origin_id" IS NULL AND NEW."Origin_id" IS NOT NULL THEN
+    UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id WHERE id = NEW."Origin_id" AND "Destination_id" <> NEW.id;
   END IF;
 
   -- Keyless
