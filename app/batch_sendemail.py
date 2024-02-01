@@ -86,8 +86,8 @@ def main():
   for email in emails.get('data'):
     try:
       num += do_email(apiClient, email)
-    except:
-        pass
+    except Exception as err:
+      logger.error(err)
   logger.info('{} emails sent'.format(num))
 
 

@@ -63,6 +63,16 @@ BASE = '''
 # Generate email
 # ######################################################
 
+def month(m, lang='es'):
+
+  try:
+    if lang == 'es':
+      return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][m-1]
+    else:
+      return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m-1]
+  except:
+    return '--'
+
 def generate_email(apiClient, email):
 
   # Template and entity id
@@ -88,6 +98,7 @@ def generate_email(apiClient, email):
 
   # Jinja environment
   env = Environment()
+  env.filters['month'] = month
 
   # Generate subject
   text = template['Subject'] if email['Customer']['Lang'] == 'es' else template['Subject_en']

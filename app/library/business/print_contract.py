@@ -418,13 +418,15 @@ def decimal (value, decimals=0):
     value = 0
   return locale.format_string('%.'+str(decimals)+'f', value, grouping=True)
 
-def month(m):
+def month(m, lang='es'):
 
   try:
-    return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][m-1]
+    if lang == 'es':
+      return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][m-1]
+    else:
+      return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m-1]
   except:
     return '--'
-
 
 def part(p):
 
