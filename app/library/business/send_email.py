@@ -80,11 +80,11 @@ def generate_email(apiClient, email):
   if id is not None and template['Query'] != '':
     result = apiClient.call(template['Query'], {'id': id})
     context |= flatten(result['data'][0])
-    if context.get('Birth_date'):
-      d = datetime.strptime(context['Birth_date'], "%Y-%m-%d")
+    if context.get('Customer_birth_date'):
+      d = datetime.strptime(context['Customer_birth_date'], "%Y-%m-%d")
       n = datetime.now()
       edad = relativedelta(n, d)
-      context['Age'] = edad.years
+      context['Customer_age'] = edad.years
 
   # Jinja environment
   env = Environment()
