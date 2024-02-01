@@ -23,7 +23,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id"  
   LEFT JOIN "Building"."Building" bu on bu.id = r."Building_id"  
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NULL 
+WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_group_id" IS NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
@@ -50,7 +50,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
   LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NOT NULL 
+WHERE i."Issued" pd."Product_type_id" <> 2  AND i."Booking_group_id" IS NOT NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
@@ -112,7 +112,6 @@ WHERE bp."Invoice_rent_id" IS NULL
 UNION ALL
 
 -- Servicios B2C no facturados
-
 SELECT 
   pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
   bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name",
@@ -140,7 +139,6 @@ WHERE bp."Invoice_rent_id" IS NULL
 UNION ALL
 
 -- Servicios B2B no facturados
-
 SELECT DISTINCT ON (bp.id)
   pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
   bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name",
