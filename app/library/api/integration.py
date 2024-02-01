@@ -128,10 +128,10 @@ def req_pub_int_customers():
   logger.debug('Integration - Clients')
 
   # Get API key
-  #key = request.headers.get('Api-Key', None)
-  #if key != settings.SAP_API_KEY:
-  #  logger.info('Invalid Api-Key: ' + str(key))
-  #  abort(403, 'Invalid Api-Key')
+  key = request.headers.get('Api-Key', None)
+  if key != settings.SAP_API_KEY:
+    logger.info('Invalid Api-Key: ' + str(key))
+    abort(403, 'Invalid Api-Key')
 
   # Validate date
   date = '2023-01-01'
