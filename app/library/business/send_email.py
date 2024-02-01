@@ -9,9 +9,9 @@ from email.mime.text import MIMEText
 from email import encoders
 from jinja2 import Environment
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 import smtplib
 import markdown
-import datetime
 import ssl
 import logging
 
@@ -191,7 +191,7 @@ def do_email(apiClient, email):
       'id': email['id'],
       'subject': subject,
       'body': body,
-      'sent': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+      'sent': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     }
 
     # Call graphQL endpoint
