@@ -11,7 +11,7 @@ DECLARE
     FROM "Booking"."Booking" b 
       INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
     WHERE r."Flat_id" IS NOT NULL
-      AND b."Check_in_notice_ok"
+      AND NOT b."Check_in_notice_ok"
       AND b."Status" IN ('firmacontrato','checkinconfirmado')
       AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '2 days');
 
