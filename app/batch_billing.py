@@ -83,14 +83,13 @@ def bill_payments(dbClient, con):
   # Get all payments without bill
   cur = dbClient.execute(con, 
     '''
-    SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code"
+    SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code", pr."Receipt"
     FROM "Billing"."Payment" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
     WHERE "Payment_date" IS NOT NULL
-    AND pr."Bill_since" < CURRENT_DATE
     AND i.id IS NULL
     ORDER BY p."Booking_id"
     ''')
@@ -126,7 +125,7 @@ def bill_payments(dbClient, con):
         RETURNING id
         ''',
         (
-          'recibo' if item['Payment_type'] == 'deposito' else 'factura',
+          'recibo' if item['Payment_type'] == 'deposito' or item['Receipt'] else 'factura',
           False,
           False,
           datetime.now(),
@@ -182,7 +181,7 @@ def bill_rent(dbClient, con):
   cur = dbClient.execute(con,
     '''
     SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
-          b."Customer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id"
+          b."Customer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt"
     FROM "Booking"."Booking_price" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
     INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
@@ -194,7 +193,6 @@ def bill_rent(dbClient, con):
     AND "Invoice_rent_id" IS NULL
     AND "Invoice_services_id" IS NULL
     AND "Rent_date" <= CURRENT_DATE
-    AND "Rent_date" >= pr."Bill_since"
     AND "Rent_date" >= %s
     ''', (settings.BILLDATE, ))
   data = cur.fetchall()
@@ -255,7 +253,7 @@ def bill_rent(dbClient, con):
             RETURNING id
             ''',
             (
-              'factura',
+              'recibo' if item['Receipt'] else 'factura',
               False,
               False,
               datetime.now(),
@@ -303,7 +301,7 @@ def bill_rent(dbClient, con):
             RETURNING id
             ''',
             (
-              'factura',
+              'recibo' if item['Receipt'] else 'factura',
               False,
               False,
               datetime.now(),
@@ -366,7 +364,7 @@ def bill_group_rent(dbClient, con):
   cur = dbClient.execute(con,
   '''
   SELECT 
-    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", 
+    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt"
     COUNT(r."Code") as num, 
     MIN(bg."Room_ids") as "Room_ids", 
     MIN(r."Owner_id") as "Owner_id", 
@@ -379,9 +377,8 @@ def bill_group_rent(dbClient, con):
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
-    AND bgp."Rent_date" >= pr."Bill_since"
     AND bgp."Rent_date" >= %s
-  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax"
+  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
   ''', (settings.BILLDATE, ))
   data = cur.fetchall()
@@ -456,7 +453,7 @@ def bill_group_rent(dbClient, con):
             RETURNING id
             ''',
             (
-              'factura',
+              'recibo' if item['Receipt'] else 'factura',
               False,
               False,
               datetime.now(),
@@ -513,7 +510,7 @@ def bill_group_rent(dbClient, con):
             RETURNING id
             ''',
             (
-              'factura',
+              'recibo' if item['Receipt'] else 'factura',
               False,
               False,
               datetime.now(),
@@ -585,7 +582,6 @@ def pay_bills(dbClient, con):
     FROM "Billing"."Invoice"
     WHERE "Issued" 
       AND ("Booking_id" IS NOT NULL OR "Booking_group_id" IS NOT NULL)
-      AND "Bill_type" = 'factura' 
       AND "Payment_id" IS NULL
     ''')
   data = cur.fetchall()
