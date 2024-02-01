@@ -50,7 +50,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
   LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" pd."Product_type_id" <> 2  AND i."Booking_group_id" IS NOT NULL 
+WHERE i."Issued" AND pd."Product_type_id" <> 2  AND i."Booking_group_id" IS NOT NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
