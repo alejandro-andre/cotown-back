@@ -8,6 +8,7 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
 from jinja2 import Environment
+from dateutil.relativedelta import relativedelta
 import smtplib
 import markdown
 import datetime
@@ -79,6 +80,11 @@ def generate_email(apiClient, email):
   if id is not None and template['Query'] != '':
     result = apiClient.call(template['Query'], {'id': id})
     context |= flatten(result['data'][0])
+    if context.get('Birth_date'):
+      d = datetime.strptime(context['Birth_date'], "%Y-%m-%d")
+      n = datetime.now()
+      edad = relativedelta(n, d)
+      context['Age'] = edad.years
 
   # Jinja environment
   env = Environment()
