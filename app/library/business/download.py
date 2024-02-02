@@ -54,9 +54,9 @@ def download_bills(apiClient, variables=None):
       where: {
         AND: [
           { Issued_date: { GE: $fdesde } }
-          { Issued_date: { LE: $fhasta } }
+          { Issued_date: { LT: $fhasta } }
           { Provider_id: { GE: $pdesde } }
-          { Provider_id: { LE: $phasta } }
+          { Provider_id: { LT: $phasta } }
         ]
       }
     ) {
