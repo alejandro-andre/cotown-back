@@ -113,10 +113,10 @@ def q_dashboard(dbClient, status = None, vars=None):
         b."Damages", 
         b."Damages_ok", 
         b."Comments",
-        b."New_check_out",
-        b."Old_check_out",
         b."Origin_id",
         b."Destination_id",
+        b."Eco_ext_change_ok",
+        b."Eco_ext_keyless_ok",
         ct."Name" AS "Option",
         CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
         r."Code" as "Resource",
@@ -162,8 +162,8 @@ def q_dashboard(dbClient, status = None, vars=None):
     elif status == 'ecoext':
       sql = select + f'''
       WHERE b."Status" IN (\'inhouse\')
-        AND COALESCE(b."New_check_out", b."Date_from") <> COALESCE(b."Check_out", b."Date_from")
-        AND COALESCE(b."New_check_out", b."Date_from") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
+        AND COALESCE(b."New_check_out", COALESCE(b."Check_out", b."Date_to")) <> COALESCE(b."Check_out", b."Date_to")
+        AND NOT b."Eco_ext_change_ok" '''
 
     # Other status
     else:
