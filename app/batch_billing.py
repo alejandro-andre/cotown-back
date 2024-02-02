@@ -581,6 +581,7 @@ def pay_bills(dbClient, con):
     SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
     FROM "Billing"."Invoice"
     WHERE "Issued" 
+      AND "Total" > 0
       AND ("Booking_id" IS NOT NULL OR "Booking_group_id" IS NOT NULL)
       AND "Payment_id" IS NULL
     ''')
