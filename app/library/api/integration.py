@@ -130,7 +130,7 @@ def req_pub_int_customers():
   # Get API key
   key = request.headers.get('Api-Key', None)
   if key != settings.SAP_API_KEY:
-    logger.info('Invalid Api-Key: ' + str(key))
+    logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
 
   # Validate date
@@ -140,7 +140,7 @@ def req_pub_int_customers():
     try:
       date = datetime.strptime(str(d), '%Y-%m-%d').strftime('%Y-%m-%d')
     except ValueError:
-      logger.info('Invalid date: ' + str(d))
+      logger.warning('Invalid date: ' + str(d))
       abort(400, 'Invalid date')
 
   # Customers
@@ -257,7 +257,7 @@ def req_pub_int_invoices():
   # Get API key
   key = request.headers.get('Api-Key', None)
   if key != settings.SAP_API_KEY:
-    logger.info('Invalid Api-Key: ' + str(key))
+    logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
 
   # Validate date
@@ -267,7 +267,7 @@ def req_pub_int_invoices():
     try:
       date = datetime.strptime(str(d), '%Y-%m-%d').strftime('%Y-%m-%d')
     except ValueError:
-      logger.info('Invalid date: ' + str(d))
+      logger.warning('Invalid date: ' + str(d))
       abort(400, 'Invalid date')
 
   # Return

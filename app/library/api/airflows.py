@@ -171,3 +171,14 @@ def req_dashboard(status = None):
 def req_labels(id, locale):
 
   return q_labels(g.dbClient, id, locale)
+
+# ---------------------------------------------------
+# Saves answers to questionnaires
+# ---------------------------------------------------
+
+def req_questionnaire(id):
+
+  data = request.get_json()
+  logger.info(id)
+  logger.info(data)
+  return 'ok'

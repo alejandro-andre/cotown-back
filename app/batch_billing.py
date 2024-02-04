@@ -168,7 +168,10 @@ def bill_payments(dbClient, con):
 
   # End
   logger.info('{} payment bills generated'.format(num))
-  logger.info('{} payment bills not ok'.format(err))
+  if err > 0:
+    logger.error('{} payment bills not ok'.format(err))
+  else:    
+    logger.info('{} payment bills not ok'.format(err))
   return
 
 # ###################################################
@@ -350,7 +353,10 @@ def bill_rent(dbClient, con):
 
   # End
   logger.info('{} bills generated'.format(num))
-  logger.info('{} bills not ok'.format(err))
+  if err > 0:
+    logger.error('{} bills not ok'.format(err))
+  else:
+    logger.info('{} bills not ok'.format(err))
   return
 
 
@@ -565,7 +571,10 @@ def bill_group_rent(dbClient, con):
 
   # End
   logger.info('{} group bills generated'.format(num))
-  logger.info('{} group bills not ok'.format(err))
+  if err > 0: 
+    logger.error('{} group bills not ok'.format(err))
+  else: 
+    logger.info('{} group bills not ok'.format(err))
   return
 
 
@@ -631,7 +640,10 @@ def pay_bills(dbClient, con):
 
   # End
   logger.info('{} payments generated'.format(num))
-  logger.info('{} payments not ok'.format(err))
+  if err > 0:
+    logger.error('{} payments not ok'.format(err))
+  else:
+    logger.info('{} payments not ok'.format(err))
   return
 
 
