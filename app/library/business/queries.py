@@ -618,15 +618,27 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
 # ######################################################
 
 # Upsert questionnaire answers
-def q_questionnaire(dbClient, values):
+def q_questionnaire(dbClient, id, values):
 
   try:
     con = dbClient.getconn()
+
+    # Insert answers
     cur = dbClient.executemany(con, '''
     INSERT INTO "Booking"."Booking_answer" 
     ("Questionnaire_id", "Question_id", "Answer")
     VALUES (%s, %s, %s)
+    ON CONFLICT ("Questionnaire_id", "Question_id")
+    DO UPDATE SET "Answer" = EXCLUDED."Answer";
     ''', values)
+
+    # Update answer date
+    cur = dbClient.execute(con, '''
+    UPDATE "Booking"."Booking_questionnaire" 
+    SET "Completed" = CURRENT_DATE
+    WHERE id = %s;
+    ''', id)
+    
     cur.close()
     dbClient.putconn(con)
     return 'ok'

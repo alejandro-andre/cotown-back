@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_labels, q__questionnaire
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_labels, q_questionnaire
 
 # Logging
 import logging
@@ -186,4 +186,4 @@ def req_questionnaire(id):
       values.append((id, question['id'], str(question['value']),))
 
   # Insert answers
-  return q_questionnaire(g.dbClient, values)      
+  return q_questionnaire(g.dbClient, id, values)      
