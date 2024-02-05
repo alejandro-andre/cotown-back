@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_labels
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_labels, q__questionnaire
 
 # Logging
 import logging
@@ -178,7 +178,12 @@ def req_labels(id, locale):
 
 def req_questionnaire(id):
 
-  data = request.get_json()
-  logger.info(id)
-  logger.info(data)
-  return 'ok'
+  # Get answers
+  questionnaire = request.get_json()
+  values = []
+  for group in questionnaire:
+    for question in group['questions']:
+      values.append((id, question['id'], str(question['value']),))
+
+  # Insert answers
+  return q_questionnaire(g.dbClient, values)      

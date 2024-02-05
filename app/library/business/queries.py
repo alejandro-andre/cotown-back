@@ -612,3 +612,26 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
     logger.error(error)
     con.rollback()
     return None
+  
+# ######################################################
+# Questionnaire
+# ######################################################
+
+# Upsert questionnaire answers
+def q_questionnaire(dbClient, values):
+
+  try:
+    con = dbClient.getconn()
+    cur = dbClient.executemany(con, '''
+    INSERT INTO "Booking"."Booking_answer" 
+    ("Questionnaire_id", "Question_id", "Answer")
+    VALUES (%s, %s, %s)
+    ''', values)
+    cur.close()
+    dbClient.putconn(con)
+    return 'ok'
+
+  except Exception as error:
+    logger.error(error)
+    con.rollback()
+    return 'ko'
