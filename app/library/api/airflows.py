@@ -160,13 +160,11 @@ def req_booking_status(id, status):
 
 def req_dashboard(status = None):
 
-  # Querystring variables
   return q_dashboard(g.dbClient, status=status, vars=request.args)
 
 
-def req_prev_next(status = None):
+def req_prev_next():
 
-  # Querystring variables
   return q_prev_next(g.dbClient)
 
 
