@@ -635,7 +635,7 @@ def q_questionnaire(dbClient, id, values):
     # Update answer date
     cur = dbClient.execute(con, '''
     UPDATE "Booking"."Booking_questionnaire" 
-    SET "Completed" = CURRENT_DATE
+    SET "Completed" = NOW()
     WHERE id = %s;
     ''', (id,))
     
