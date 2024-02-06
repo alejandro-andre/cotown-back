@@ -7,10 +7,10 @@ BEGIN
 
   -- CHA
   IF OLD."Destination_id" IS NULL AND NEW."Destination_id" IS NOT NULL THEN
-    UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id WHERE id = NEW."Destination_id" AND "Origin_id" <> NEW.id;
+    UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id WHERE id = NEW."Destination_id" AND ("Origin_id" IS NULL OR "Origin_id" <> NEW.id);
   END IF;
   IF OLD."Origin_id" IS NULL AND NEW."Origin_id" IS NOT NULL THEN
-    UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id WHERE id = NEW."Origin_id" AND "Destination_id" <> NEW.id;
+    UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id WHERE id = NEW."Origin_id" AND ("Destination_id" IS NULL OR "Destination_id" <> NEW.id);
   END IF;
 
   -- Keyless

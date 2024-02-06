@@ -150,13 +150,25 @@ BEGIN
     NEW."Status" := 'descartada';
   END IF;
 
+  -- REVISION a DEVOLVER GARANTIA
+  -- Actualiza el estado a "devolver garantía" cuando se confirma la revisión
+  IF (NEW."Status" = 'revision' AND NEW."Check_out_revision_ok") THEN
+    NEW."Status" := 'devolvergarantia';
+  END IF;
+
+  -- REVISION a CHECK OUT
+  -- Actualiza el estado a "checkout" cuando no se confirma la revisión
+  IF (NEW."Status" = 'revision' AND NOT NEW."Check_out_revision_ok") THEN
+    NEW."Status" := 'checkout';
+  END IF;
+
   -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
   IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
     NEW."Status" := 'finalizada';
   END IF;
 
-  -- CONTTRATO GENERADO
+  -- CONTRATO GENERADO
   -- Borra la fecha de la firma y envia mail contrato
   IF (OLD."Contract_rent" IS NULL AND NOT NEW."Contract_rent" IS NULL) THEN
     NEW."Contract_signed" := NULL;
