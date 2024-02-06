@@ -11,7 +11,7 @@ DECLARE
     FROM "Billing"."Payment" b
     WHERE b."Payment_type" = 'servicios'
     AND b."Payment_date" IS NULL
-    AND b."Payment_method" = 1
+    AND b."Payment_method_id" = 1
     AND b."Issued_date" <= (CURRENT_DATE - INTERVAL '8 days');                   
 
 BEGIN
