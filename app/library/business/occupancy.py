@@ -170,7 +170,7 @@ def do_occupancy(dbClient, vars):
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
       WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
-        AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout') 
+        AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision') 
     UNION ALL
       -- Rentas B2B no facturadas
       SELECT DISTINCT ON (bp.id)

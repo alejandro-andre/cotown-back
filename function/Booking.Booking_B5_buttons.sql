@@ -38,7 +38,7 @@ BEGIN
   -- Boton checkout
   NEW."Button_checkout" := '';
   IF NEW."Status" = 'checkout' THEN -- AND pending_payments = 0
-     NEW."Button_checkout" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/devolvergarantia');
+     NEW."Button_checkout" := CONCAT('https://dev.cotown.ciber.es/api/v1/booking/', NEW.id, '/status/revision');
   END IF;
 
   -- Return

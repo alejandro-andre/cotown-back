@@ -192,7 +192,7 @@ def bill_rent(dbClient, con):
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
-    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout')
+    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
     AND "Invoice_rent_id" IS NULL
     AND "Invoice_services_id" IS NULL
     AND "Rent_date" <= CURRENT_DATE

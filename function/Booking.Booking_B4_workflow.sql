@@ -331,7 +331,7 @@ BEGIN
     change := 'Se confirma que el usuario ha llegado al alojamiento.';  
   END IF;
 
-  -- A DEVOLVER GARANTIA (BOTON 'CHECK OUT OK')
+  -- A DEVOLVER GARANTIA
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
   IF (NEW."Status" = 'devolvergarantia') THEN
     -- EMail
