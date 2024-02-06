@@ -647,3 +647,40 @@ def q_questionnaire(dbClient, id, values):
     logger.error(error)
     con.rollback()
     return 'ko'
+
+
+# ######################################################
+# Next & Prev bookings
+# ######################################################
+
+def q_prev_next(dbClient):
+
+  try:
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, '''
+      SELECT DISTINCT ON (b.id) b.id, COALESCE(b."Check_in", b."Date_from") AS "Date_in", prv.id AS "Prev_id", COALESCE(prv."Check_out", prv."Date_to") AS "Date_out"
+      FROM "Booking"."Booking" b
+        INNER JOIN "Booking"."Booking" prv ON b."Resource_id" = prv."Resource_id" AND b.id != prv.id 
+          AND prv."Date_to" BETWEEN b."Date_from" - INTERVAL '20 days' AND b."Date_from"
+      WHERE b."Status" IN ('firmacontrato', 'contrato', 'checkinconfirmado')
+      ORDER BY b.id, prv."Date_to" DESC;
+    ''')
+    prv = [dict(row) for row in cur.fetchall()]
+    cur.close()
+    cur = dbClient.execute(con, '''
+      SELECT DISTINCT ON (b.id) b.id, COALESCE(nxt."Check_in", nxt."Date_from") AS "Date_out", nxt.id AS "Next_id", COALESCE(b."Check_out", b."Date_to") AS "Date_in"
+      FROM "Booking"."Booking" b
+        INNER JOIN "Booking"."Booking" nxt ON b."Resource_id" = nxt."Resource_id" AND b.id != nxt.id 
+          AND nxt."Date_from" BETWEEN b."Date_to" AND b."Date_to" + INTERVAL '20 days' 
+      WHERE b."Status" IN ('inhouse')
+      ORDER BY b.id, nxt."Date_from" ASC;
+    ''')
+    nxt = [dict(row) for row in cur.fetchall()]
+    cur.close()
+    dbClient.putconn(con)
+    return json.dumps([prv, nxt], default=str)    
+  
+  except Exception as error:
+    logger.error(error)
+    con.rollback()
+    return None
