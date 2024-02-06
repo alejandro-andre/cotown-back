@@ -156,12 +156,6 @@ BEGIN
     NEW."Status" := 'devolvergarantia';
   END IF;
 
-  -- REVISION a CHECK OUT
-  -- Actualiza el estado a "checkout" cuando no se confirma la revisión
-  IF (NEW."Status" = 'revision' AND NOT NEW."Check_out_revision_ok") THEN
-    NEW."Status" := 'checkout';
-  END IF;
-
   -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
   IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
