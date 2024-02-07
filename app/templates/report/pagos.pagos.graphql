@@ -2,6 +2,7 @@ query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
     data: Billing_Invoice_lineList {
         Concept
         Comments
+        Amount
         Product: ProductViaProduct_id { Name }
         Invoice: InvoiceViaInvoice_id (
             joinType: INNER
@@ -19,7 +20,6 @@ query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
             Code
             Concept
             Comments
-            Total
             Provider: ProviderViaProvider_id { Name }
             Customer: CustomerViaCustomer_id { Name }
             Payment: PaymentViaPayment_id {
@@ -28,6 +28,7 @@ query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
                 Payment_auth
                 Payment_order
                 Payment_method: Payment_methodViaPayment_method_id { Name }
+                Comments
             }
             Booking: BookingViaBooking_id {
                 id
