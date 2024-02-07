@@ -679,7 +679,7 @@ def q_prev_next(dbClient):
     prv = [dict(row) for row in cur.fetchall()]
     cur.close()
     cur = dbClient.execute(con, '''
-      SELECT DISTINCT ON (b.id) b.id, nxt.id AS "Next_id", COALESCE(b."Check_out", b."Date_to") AS "Date_out, COALESCE(nxt."Check_in", nxt."Date_from") AS "Next_date""
+      SELECT DISTINCT ON (b.id) b.id, nxt.id AS "Next_id", COALESCE(b."Check_out", b."Date_to") AS "Date_out", COALESCE(nxt."Check_in", nxt."Date_from") AS "Next_date"
       FROM "Booking"."Booking" b
         INNER JOIN "Booking"."Booking" nxt ON b."Resource_id" = nxt."Resource_id" AND b.id != nxt.id 
           AND nxt."Date_from" BETWEEN b."Date_to" AND b."Date_to" + INTERVAL '20 days' 
