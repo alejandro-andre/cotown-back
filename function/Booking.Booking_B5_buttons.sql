@@ -5,12 +5,25 @@ DECLARE
 
 BEGIN
 
-  -- CHA
-  IF OLD."Destination_id" IS NULL AND NEW."Destination_id" IS NOT NULL THEN
-    UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id WHERE id = NEW."Destination_id" AND ("Origin_id" IS NULL OR "Origin_id" <> NEW.id);
+  -- Avoid recursive calls
+  IF pg_trigger_depth() > 1 THEN
+    RETURN NEW;
   END IF;
-  IF OLD."Origin_id" IS NULL AND NEW."Origin_id" IS NOT NULL THEN
-    UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id WHERE id = NEW."Origin_id" AND ("Destination_id" IS NULL OR "Destination_id" <> NEW.id);
+
+  -- CHA
+  IF COALESCE(OLD."Origin_id", 0) <> COALESCE(NEW."Origin_id", 0) THEN
+    IF NEW."Origin_id" IS NULL THEN
+      UPDATE "Booking"."Booking" SET "Destination_id" = NULL WHERE id = OLD."Origin_id";
+    ELSE
+      UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id WHERE id = NEW."Origin_id";
+    END IF;
+  END IF;
+  IF COALESCE(OLD."Destination_id", 0) <> COALESCE(NEW."Destination_id", 0) THEN
+    IF NEW."Destination_id" IS NULL THEN
+      UPDATE "Booking"."Booking" SET "Origin_id" = NULL WHERE id = OLD."Destination_id";
+    ELSE
+      UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id WHERE id = NEW."Destination_id";
+    END IF;
   END IF;
 
   -- Keyless

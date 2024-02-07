@@ -27,6 +27,9 @@ BEGIN
     -- Envia email recordando checkout
     INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'checkoutproximo', entity_id);
 
+    -- Questionnaire
+    INSERT INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type") VALUES (entity_id, 'checkout');
+
     FETCH curs INTO entity_id, customer_id;
   END LOOP;
   CLOSE curs;

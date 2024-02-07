@@ -329,6 +329,10 @@ BEGIN
   -- A IN HOUSE (BOTON 'CHECK IN OK')
   -- Se confirma la llegada del usuario al alojamiento
   IF (NEW."Status" = 'inhouse') THEN 
+    -- Questionnaire
+    INSERT
+      INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
+      VALUES (NEW.id, 'checkin');
     -- EMail
     INSERT
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
