@@ -30,7 +30,9 @@ BEGIN
   UPDATE "Customer"."Customer" SET "User_name" = NULL WHERE id = NEW."Customer_id" AND "User_name" LIKE 'N%';
 
   -- Email
-  INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
+  IF NEW."Origin_id" IS NULL THEN
+    INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (NEW."Customer_id", 'solicitud', NEW.id);
+  END IF;
 
   -- Return
   EXECUTE 'SET ROLE "' || curr_user || '"';

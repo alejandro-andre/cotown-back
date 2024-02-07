@@ -13,15 +13,17 @@ DECLARE
       AND ce."Entity_id" = b.id
       AND ce."Template" = 'deposito'
     WHERE b."Status" = 'confirmada'
-    AND GREATEST(b."Date_from", b."Check_in") <= (CURRENT_DATE + INTERVAL '40 days')
-    AND ce.id IS NULL;
+    AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '40 days')
+    AND ce.id IS NULL
+    AND b."Origin_id" IS NULL;
 
   -- Confirmadas, faltan menos de 32 dias para entrar
   cursrecall CURSOR FOR
     SELECT b.id, b."Customer_id"
     FROM "Booking"."Booking" b
     WHERE b."Status" = 'confirmada'
-    AND GREATEST(b."Date_from", b."Check_in") <= (CURRENT_DATE + INTERVAL '32 days');
+    AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '32 days')
+    AND b."Origin_id" IS NULL;
 
 BEGIN
 

@@ -13,7 +13,8 @@ DECLARE
     WHERE r."Flat_id" IS NOT NULL
       AND NOT b."Check_in_notice_ok"
       AND b."Status" IN ('firmacontrato','checkinconfirmado')
-      AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '2 days');
+      AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '2 days')
+      AND b."Origin_id" IS NULL;
 
 BEGIN
 

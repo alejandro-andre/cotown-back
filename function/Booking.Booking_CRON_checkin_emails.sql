@@ -9,7 +9,8 @@ DECLARE
     SELECT b.id, b."Customer_id"
     FROM "Booking"."Booking" b
     WHERE b."Status" IN ('firmacontrato', 'contrato', 'checkinconfirmado')
-    AND GREATEST(b."Date_from", b."Check_in") <= (CURRENT_DATE + INTERVAL '10 days');
+    AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '10 days')
+    AND b."Origin_id" IS NULL;
 
 BEGIN
 

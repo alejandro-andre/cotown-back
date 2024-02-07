@@ -13,8 +13,9 @@ DECLARE
       AND ce."Entity_id" = b.id
       AND ce."Template" = 'checkoutproximo'
     WHERE b."Status" = 'inhouse'
-    AND LEAST(b."Date_to", b."Check_out") <= (CURRENT_DATE + INTERVAL '10 days')
-    AND ce.id IS NULL;
+    AND COALESCE(b."Check_out", b."Date_to") <= (CURRENT_DATE + INTERVAL '10 days')
+    AND ce.id IS NULL
+    AND b."Origin_id" IS NULL;
 
 BEGIN
 

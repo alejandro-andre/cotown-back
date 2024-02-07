@@ -217,9 +217,11 @@ BEGIN
       END IF;
     END IF;
     -- Email
-    INSERT
-      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
+    IF NEW."Origin_id" IS NULL THEN
+      INSERT
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+        VALUES (NEW."Customer_id", 'pendientepago', NEW.id);
+    END IF;
     -- Log
     change := 'Pendiente de pago';
   END IF;
@@ -244,9 +246,11 @@ BEGIN
     -- Borramos las alternativas asociadas a la solicitud
     DELETE FROM "Booking"."Booking_option" WHERE "Booking_id" = NEW."id";
     -- EMail
-    INSERT
-      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+    IF NEW."Origin_id" IS NULL THEN
+      INSERT
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+        VALUES (NEW."Customer_id", 'confirmada', NEW.id);
+    END IF;
     -- Log
     change := 'Reserva confirmada';
   END IF;
@@ -297,7 +301,7 @@ BEGIN
   -- A CONTRATO
   IF (NEW."Status" = 'contrato') THEN
     -- EMail
-    IF NEW."Check_in" IS NULL THEN
+    IF NEW."Check_in" IS NULL AND NEW."Origin_id" IS NULL THEN
       INSERT
         INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
         VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
@@ -309,9 +313,11 @@ BEGIN
   -- A CHECK IN CONFIRMADO
   IF (NEW."Status" = 'checkinconfirmado' OR (NEW."Status" = 'checkin' AND OLD."Status" = 'contrato')) THEN
     -- Email
-    INSERT
-      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
+    IF NEW."Origin_id" IS NULL THEN
+      INSERT
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+        VALUES (NEW."Customer_id", 'checkinconfirmado', NEW.id);
+    END IF;
     -- Log
     change := CONCAT('Confirmada la fecha de checkin de la reserva ', NEW."Check_in");
   END IF;
@@ -329,14 +335,16 @@ BEGIN
   -- A IN HOUSE (BOTON 'CHECK IN OK')
   -- Se confirma la llegada del usuario al alojamiento
   IF (NEW."Status" = 'inhouse') THEN 
-    -- Questionnaire
-    INSERT
-      INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
-      VALUES (NEW.id, 'checkin');
-    -- EMail
-    INSERT
-      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      VALUES (NEW."Customer_id", 'inhouse', NEW.id);
+    IF NEW."Origin_id" IS NULL THEN
+      -- Questionnaire
+      INSERT
+        INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
+        VALUES (NEW.id, 'checkin');
+      -- EMail
+      INSERT
+        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+        VALUES (NEW."Customer_id", 'inhouse', NEW.id);
+    END IF;
     -- Log
     change := 'Se confirma que el usuario ha llegado al alojamiento.';  
   END IF;

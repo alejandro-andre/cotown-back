@@ -27,7 +27,7 @@ BEGIN
   END IF;
 
   -- Keyless
-  IF OLD."Check_in_keyless_ok" <> TRUE AND NEW."Check_in_keyless_ok" = TRUE THEN
+  IF OLD."Check_in_keyless_ok" <> TRUE AND NEW."Check_in_keyless_ok" = TRUE AND NEW."Origin_id" IS NULL THEN
     INSERT
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
       VALUES (NEW."Customer_id", 'keyless', NEW.id);

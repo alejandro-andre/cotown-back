@@ -11,7 +11,7 @@ DECLARE
     INNER JOIN "Customer"."Customer_doc_type" cdt ON cdt.id = cd."Customer_doc_type_id" 
     LEFT JOIN "Booking"."Booking" b ON cd."Customer_id" = b."Customer_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'checkin', 'inhouse')
-  	AND GREATEST(b."Date_from", b."Check_in") <= (CURRENT_DATE + INTERVAL '20 days')
+  	AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '20 days')
     AND cdt."Mandatory" 
   	AND cd."Document" IS NULL;
 
