@@ -183,11 +183,11 @@ def req_labels(id, locale):
 def req_questionnaire(id):
 
   # Get answers
-  questionnaire = request.get_json()
+  answers = request.get_json()
   values = []
-  for group in questionnaire:
+  for group in answers['questions']:
     for question in group['questions']:
       values.append((id, question['id'], str(question['value']),))
 
   # Insert answers
-  return q_questionnaire(g.dbClient, id, values)      
+  return q_questionnaire(g.dbClient, id, values, answers.get('issues'))
