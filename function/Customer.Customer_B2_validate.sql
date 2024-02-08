@@ -22,6 +22,16 @@ BEGIN
     END IF;
   END IF;
 
+  -- Same account
+  IF NEW."Same_account" THEN
+    NEW."Bank_account"    = NULL;
+    NEW."Bank_holder"     = NULL;
+    NEW."Bank_name"       = NULL;
+    NEW."Bank_address"    = NULL;
+    NEW."Bank_city"       = NULL;
+    NEW."Bank_country_id" = NULL;
+  END IF;
+
   -- Superuser ROLE
   curr_user := CURRENT_USER;
   RESET ROLE; 
