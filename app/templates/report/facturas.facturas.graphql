@@ -7,10 +7,10 @@ query Invoices ($fdesde: String, $fhasta:String, $pdesde:Int, $phasta:Int) {
         where: {
             AND: [
                 { Issued: { EQ: true } }
-                { Provider_id: { GE: $pdesde } }
-                { Provider_id: { LE: $phasta } }
                 { Issued_date: { GE: $fdesde } }
                 { Issued_date: { LT: $fhasta } }
+                { Provider_id: { GE: $pdesde } }
+                { Provider_id: { LE: $phasta } }
             ]
         }
     ) {
