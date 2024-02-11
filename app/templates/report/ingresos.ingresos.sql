@@ -98,7 +98,10 @@ SELECT DISTINCT ON (bp.id)
     WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
     ELSE b."Rooms" * bp."Rent"
   END AS "Amount",
-  t."Value" / 100 AS "Tax",
+  CASE
+    WHEN "Tax" THEN t."Value" / 100,
+    ELSE 0
+  END AS "Tax"
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
     ELSE b."Rooms" * bp."Rent"
