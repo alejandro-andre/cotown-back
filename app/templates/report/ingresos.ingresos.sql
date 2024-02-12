@@ -1,5 +1,5 @@
 (
--- Rentas B2C (y otras) facturadas
+-- Rentas B2C facturadas
 SELECT pr."Name" as "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
   i."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name",
   il."Amount" AS "Amount",
@@ -67,7 +67,10 @@ SELECT
     WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
     ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
   END AS "Amount",
-  t."Value" / 100 AS "Tax",
+  CASE 
+    WHEN bt."Tax_id" IS NOT NULL THEN t."Value" / 100 
+    ELSE 0
+  END AS "Tax",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
     ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
@@ -114,7 +117,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id"
-  INNER JOIN "Billing"."Tax" t ON t.id = bt."Tax_id"
+  INNER JOIN "Billing"."Tax" t ON t.id = 1
   INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
   INNER JOIN "Provider"."Provider" pr on pr.id = r."Owner_id"  
   INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id"
