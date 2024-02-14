@@ -59,5 +59,11 @@ FROM "Booking"."Booking" b
 	WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
 GROUP BY 1) sums ON sums."Booking_id" = b.id
 WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
+  AND (
+	b."Created_at" >= %(fdesde)s OR 
+	b."Updated_at" >= %(fdesde)s OR
+	c."Created_at" >= %(fdesde)s OR
+	c."Updated_at" >= %(fdesde)s
+  )
 ORDER BY b.id
 ;
