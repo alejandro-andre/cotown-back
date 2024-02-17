@@ -72,21 +72,21 @@
       [% if data.summary.Rent_first != data.summary.Rent %]
       <div class="prices">
         <p>First month</p>
-        <p>[[data.summary.Rent_first | number]] €</p>
+        <p>[[data.summary.Rent_first + data.summary.Services | number]] €</p>
       </div>
       [% endif %]
 
       [% if data.summary.Rent_last != data.summary.Rent %]
       <div class="prices">
         <p>Last month</p>
-        <p>[[data.summary.Rent_last | number]] €</p>
+        <p>[[data.summary.Rent_last + data.summary.Services | number]] €</p>
       </div>
       [% endif %]
 
       <div class="type-summary">
         <div class="total">
           <p>Monthly rent *</p>
-          <p>[[data.summary.Rent | number]] €</p>
+          <p>[[data.summary.Rent + data.summary.Services | number]] €</p>
         </div>
       </div>
 
