@@ -70,7 +70,7 @@ def do_occupancy(dbClient, vars):
 
   # 0.1 Get all months from the selected range
   # http://localhost:5000/api/v1/occupancy?fdesde=2023-01-01&fhasta=2024-12-31
-  start_date = '2023-07-01'
+  start_date = '2024-01-01'
   if vars.get('fdesde'):
     start_date = vars.get('fdesde')
   end_date = (datetime.now() + timedelta(days=366)).strftime('%Y-%m-%d')
