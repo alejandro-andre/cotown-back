@@ -48,13 +48,10 @@ def q_int_customers(dbClient, date):
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = br."Resource_id" 
       WHERE 
-        b."Status" NOT IN ('grupobloqueado') AND 
-        (
           c."Created_at" >= '{date}' OR 
           c."Updated_at" >= '{date}' OR
           b."Created_at" >= '{date}' OR 
           b."Updated_at" >= '{date}'
-        )
       UNION ALL
       SELECT
         c.id,
