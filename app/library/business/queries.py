@@ -204,6 +204,9 @@ def q_flat_prices(dbClient, segment, year):
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
+      MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_long", 0)) AS "Rent_long_next",
+      MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_medium", 0)) AS "Rent_medium_next",
+      MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short", 0)) AS "Rent_short_next",
       COUNT(*) AS "Qty"
     FROM
       "Resource"."Resource" r
@@ -212,13 +215,15 @@ def q_flat_prices(dbClient, segment, year):
       INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
+      INNER JOIN "Billing"."Pricing_detail" px ON pd."Building_id" = r."Building_id" AND px."Flat_type_id" = r."Flat_type_id" AND px."Place_type_id" IS NULL
     WHERE r."Sale_type" IN ('ambos', 'completo')
       AND pd."Year" = %s
+      AND px."Year" = %s
       AND b."Segment_id" = %s
     GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3;
   '''
-  cur = dbClient.execute(con, sql, (year, segment))
+  cur = dbClient.execute(con, sql, (year, year + 1, segment))
 
   # Obtener los resultados de la consulta
   results = cur.fetchall()
@@ -248,6 +253,9 @@ def q_flat_prices(dbClient, segment, year):
         'Rent_long': int(row['Rent_long']),
         'Rent_medium': int(row['Rent_medium']),
         'Rent_short': int(row['Rent_short']),
+        'Rent_long_next': int(row['Rent_long_next']),
+        'Rent_medium_next': int(row['Rent_medium_next']),
+        'Rent_short_next': int(row['Rent_short_next']),
         'Qty': row['Qty']
       })
 
@@ -279,6 +287,9 @@ def q_room_prices(dbClient, segment, year):
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0)) AS "Rent_long",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
       MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short", 0)) AS "Rent_short",
+      MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_long", 0)) AS "Rent_long_next",
+      MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_medium", 0)) AS "Rent_medium_next",
+      MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short", 0)) AS "Rent_short_next",
       COUNT(*) AS "Qty"
     FROM
       "Resource"."Resource" r
@@ -287,14 +298,16 @@ def q_room_prices(dbClient, segment, year):
       INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
       INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
       INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id"
+      INNER JOIN "Billing"."Pricing_detail" px ON px."Building_id" = r."Building_id" AND px."Flat_type_id" = r."Flat_type_id" AND px."Place_type_id" = r."Place_type_id"
     WHERE r."Sale_type" in ('ambos', 'plazas')
       AND pd."Year" = %s
+      AND px."Year" = %s
       AND b."Segment_id" = %s
       AND rpt.id < 300
     GROUP BY 1, 2, 3, 4, 5
     ORDER BY 1, 2, 3
   '''
-  cur = dbClient.execute(con, sql, (year, segment))
+  cur = dbClient.execute(con, sql, (year, year + 1, segment))
 
   # Obtener los resultados de la consulta
   results = cur.fetchall()
@@ -332,6 +345,9 @@ def q_room_prices(dbClient, segment, year):
       'Rent_long': int(row['Rent_long']),
       'Rent_medium': int(row['Rent_medium']),
       'Rent_short': int(row['Rent_short']),
+      'Rent_long_next': int(row['Rent_long_next']),
+      'Rent_medium_next': int(row['Rent_medium_next']),
+      'Rent_short_next': int(row['Rent_short_next']),
       'Qty': row['Qty']
     })
 
