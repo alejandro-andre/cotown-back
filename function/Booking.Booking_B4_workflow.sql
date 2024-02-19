@@ -337,9 +337,9 @@ BEGIN
   IF (NEW."Status" = 'inhouse') THEN 
     IF NEW."Origin_id" IS NULL THEN
       -- Questionnaire
-      INSERT
-        INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
-        VALUES (NEW.id, 'checkin');
+      --?INSERT
+      --?  INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
+      --?  VALUES (NEW.id, 'checkin');
       -- EMail
       INSERT
         INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
