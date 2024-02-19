@@ -1,6 +1,16 @@
-SELECT b.id, b."Status", c."Name", b."Date_from", b."Date_to", b."Check_in", bu."Name" as "Building", r."Code" as "Resource"
+SELECT 
+  b.id, 
+  b."Status", 
+  c."Name", 
+  b."Date_from", 
+  b."Date_to", 
+  b."Check_in", 
+  bu."Name" as "Building", 
+  r."Code" as "Resource",
+  b."Issues",
+  b."Damages"
 FROM "Booking"."Booking" b
-INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+  INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+  INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
+  LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
 WHERE "Status" IN %(status)s
