@@ -173,7 +173,6 @@ def runapp():
   # Airflows plugins - Reports
   app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=req_download, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=req_export, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/occupancy', view_func=req_occupancy, methods=['GET'])
 
   # Airflows plugins - Planning
   app.add_url_rule(settings.API_PREFIX + '/availability', view_func=req_availability, methods=['POST'])

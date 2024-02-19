@@ -79,6 +79,8 @@ def req_export(name):
 
   # Debug
   logger.debug('Export ' + name)
+  if name == 'occupancy':
+    return req_occupancy()
 
   # Querystring variables
   vars = {}
