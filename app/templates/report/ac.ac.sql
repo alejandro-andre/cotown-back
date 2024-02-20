@@ -1,22 +1,22 @@
-SELECT 
+SELECT DISTINCT ON (c.id)
 	b.id,
 	c."Name",
 	c."Email",
 	c."Phones",
-	c."Birth_date",
+	TO_CHAR(c."Birth_date", 'YYYY-MM-DD') AS "Birth_date",
 	EXTRACT(YEAR FROM age(c."Birth_date")) AS "Age",
 	g."Name" AS "Gender",
 	co."Name" AS "Nationality",
 	s."Name" AS "School",
 	c."Lang" AS "Language",
-	b."Request_date",
-	b."Confirmation_date",
+	TO_CHAR(b."Request_date", 'YYYY-MM-DD') AS "Request_date",
+	TO_CHAR(b."Confirmation_date", 'YYYY-MM-DD') AS "Confirmation_date",
 	bc."Name" AS "Origin",
 	br."Name" AS "Suborigin",
-	b."Date_from",
-	b."Date_to",
-	b."Check_in",
-	b."Check_out",
+	TO_CHAR(b."Date_from", 'YYYY-MM-DD') AS "Date_from",
+	TO_CHAR(b."Date_to", 'YYYY-MM-DD') AS "Date_to",
+	TO_CHAR(b."Check_in", 'YYYY-MM-DD') AS "Check_in",
+	TO_CHAR(b."Check_out", 'YYYY-MM-DD') AS "Check_out",
 	l."Name" AS "City",
 	substring(r."Code",1, 6) AS "Building",
 	substring(r."Code",8, 5) AS "Flat",
@@ -65,5 +65,5 @@ WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descarta
 	c."Created_at" >= %(fdesde)s OR
 	c."Updated_at" >= %(fdesde)s
   )
-ORDER BY b.id
+ORDER BY c.id, b.id DESC
 ;
