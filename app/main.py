@@ -123,7 +123,7 @@ def runapp():
           "version": "0.0.1"
       },
       "basePath": "/api/v1",
-      "schemes": [ "http", "https" ]
+      "schemes": [ "https" ]
   }
   
   Swagger(app, config=swagger_config, template=swagger_template)
