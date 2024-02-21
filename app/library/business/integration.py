@@ -167,8 +167,8 @@ def q_int_invoices(dbClient, date):
     INNER JOIN "Customer"."Customer" c ON c.id = i."Customer_id"
     INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
     WHERE i."Issued"
-      AND i."Provider_id" <> 1 AND i."Provider_id" <> 10
-      AND i."Issued_date" >= '2024-01-01'
+      AND p."SAP_code" IS NOT NULL
+      AND i."Issued_date" >= '{date}'
     ORDER BY 2, 3
   '''
   try:

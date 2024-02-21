@@ -222,6 +222,9 @@ def req_pub_int_invoices():
           enum:
             - CI
             - CCM
+            - FT
+            - AT
+            - GF
         issuer_id:
           type: string
           description: "SAP Id of the company that issued the invoice"
