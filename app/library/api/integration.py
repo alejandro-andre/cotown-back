@@ -174,6 +174,7 @@ def req_pub_int_customers():
       c['bank_account'] = iban
       c['bank_code'] = iban.bank_code
       c['bank_name'] = iban.bank_name
+      c['bank_country'] = iban.bank_country_code
     except:
       c['bank_code'] = ''
     try:
