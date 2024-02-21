@@ -189,6 +189,7 @@ def runapp():
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/notify', view_func=req_pub_notification, methods=['POST'])
+  app.add_url_rule(settings.API_PREFIX + '/notify/<string:pos>', view_func=req_pub_notification, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/iban/<string:code>', view_func=req_validate_iban, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/swift/<string:code>', view_func=req_validate_swift, methods=['GET'])
 

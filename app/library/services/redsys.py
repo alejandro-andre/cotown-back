@@ -20,15 +20,7 @@ from library.services.config import settings
 # 3DES cypher
 # # #####################################
 
-def encrypt_DES3(order: str) -> bytes:
-
-  secret_key: bytes = settings.REDSYS_KEY.encode('utf-8')
-  key = base64.b64decode(secret_key)
-  cipher = DES3.new(key, DES3.MODE_CBC, IV=b'\0\0\0\0\0\0\0\0')
-  return cipher.encrypt(order.encode('utf-8').ljust(16, b'\0'))
-
-
-def calc_signature(order, params):
+def calc_signature(pos, order, params):
 
   # Diversify key
   secret_key: bytes = settings.REDSYS_KEY.encode('utf-8')
@@ -44,7 +36,7 @@ def calc_signature(order, params):
 # Payment form
 # #####################################
 
-def pay(order, amount, id, urlok, urlko):
+def pay(pos, order, amount, id, urlok, urlko):
 
   # Transaction data
   data = {
@@ -52,7 +44,7 @@ def pay(order, amount, id, urlok, urlko):
     'DS_MERCHANT_TRANSACTIONTYPE': '0', # Pago
     'DS_MERCHANT_TERMINAL'       : settings.REDSYS_TERMINAL,
     'DS_MERCHANT_MERCHANTCODE'   : settings.REDSYS_MERCHANTCODE,
-    'DS_MERCHANT_MERCHANTURL'    : settings.REDSYS_MERCHANTURL,
+    'DS_MERCHANT_MERCHANTURL'    : settings.REDSYS_MERCHANTURL + '/' + pos,
     'DS_MERCHANT_URLOK'          : urlok,
     'DS_MERCHANT_URLKO'          : urlko,
     'DS_MERCHANT_MERCHANTDATA'   : str(id),
@@ -67,7 +59,7 @@ def pay(order, amount, id, urlok, urlko):
   logger.debug(params.decode('utf-8'))
 
   # Signature
-  signature = calc_signature(order, params)
+  signature = calc_signature(pos, order, params)
   logger.debug(signature.decode('utf-8'))
 
   #<html>
@@ -90,7 +82,7 @@ def pay(order, amount, id, urlok, urlko):
 # Validate payment
 # #####################################
 
-def validate(response):
+def validate(pos, response):
 
   # Received params
   params = response['Ds_MerchantParameters']
@@ -101,7 +93,7 @@ def validate(response):
   logger.debug(result)
 
   # Calc signatures
-  calculated_signature = calc_signature(result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
+  calculated_signature = calc_signature(pos, result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
   received_signature = response['Ds_Signature'].replace('_', '/').replace('-', '+')
   logger.debug(calculated_signature)
   logger.debug(received_signature)

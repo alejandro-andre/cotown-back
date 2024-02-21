@@ -407,7 +407,7 @@ def q_get_payment(dbClient, id, generate_order=False):
   try:
     # Get payment
     con = dbClient.getconn()
-    cur = dbClient.execute(con, 'SELECT id, "Issued_date", "Concept", "Amount", "Payment_order" FROM "Billing"."Payment" WHERE id=%s', (id,))
+    cur = dbClient.execute(con, 'SELECT id, "Issued_date", "Concept", "Amount", "Payment_order", "Pos" FROM "Billing"."Payment" WHERE id=%s', (id,))
     result = cur.fetchone()
     cur.close()
     if result is None:
@@ -417,6 +417,8 @@ def q_get_payment(dbClient, id, generate_order=False):
     # Get data
     aux = dict(result)
     aux['Issued_date'] = aux['Issued_date'].strftime("%Y-%m-%d")
+    if aux['Pos'] is None:
+      aux['Pos'] = 'default'
 
     if generate_order:
 

@@ -37,6 +37,7 @@ def req_pay(id):
  
     # Redsys data
     params = pay(
+      pos       = payment['Pos'],
       order     = payment['Payment_order'],
       amount    = int(100 * float(payment['Amount'])),
       id        = payment['id'],
@@ -50,13 +51,13 @@ def req_pay(id):
     return payment | params
  
 # Notification
-def req_pub_notification():
+def req_pub_notification(pos='default'):
 
     # Validate response
     response = validate(request.values)
     logger.debug(response)
     if response is None:
-      return 'OK'
+      return 'KO'
 
     # Transaction denied
     if response['Ds_Response'][:2] != '00':
