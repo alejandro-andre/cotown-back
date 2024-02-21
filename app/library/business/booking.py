@@ -29,7 +29,7 @@ def rent_info(date_from, date_to):
   # Calculate length type
   df = datetime.strptime(date_from, "%Y-%m-%d")
   dt = datetime.strptime(date_to, "%Y-%m-%d") + timedelta(days=1)
-  difference = relativedelta.relativedelta(dt, df)
+  difference = relativedelta(dt, df)
   months = difference.years * 12 + difference.months
   if months < 3:
     field = 'Rent_short'
