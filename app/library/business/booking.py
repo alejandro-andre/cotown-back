@@ -4,7 +4,7 @@
 
 # System includes
 from datetime import datetime, timedelta
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 from calendar import monthrange
 
 # Logging

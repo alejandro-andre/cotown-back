@@ -25,7 +25,7 @@ from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub
 from library.api.airflows import req_signature, req_export, req_occupancy, req_download, req_booking_status, req_labels, req_dashboard, req_prev_next, req_availability, req_questionnaire
 from library.api.web import req_flats, req_rooms, req_amenities
 from library.api.payment import req_pay, req_pub_notification
-from library.api.integration import req_pub_int_customers, req_pub_int_invoices
+from library.api.integration import req_pub_int_customers, req_pub_int_invoices, req_pub_int_management_fees
 
 # Logging
 import logging
@@ -123,7 +123,7 @@ def runapp():
           "version": "0.0.1"
       },
       "basePath": "/api/v1",
-      "schemes": [ "https" ]
+      "schemes": [ "http", "https" ]
   }
   
   Swagger(app, config=swagger_config, template=swagger_template)
@@ -195,6 +195,7 @@ def runapp():
   # SAP integration
   app.add_url_rule(settings.API_PREFIX + '/integration/customers', view_func=req_pub_int_customers, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/integration/invoices', view_func=req_pub_int_invoices, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/integration/managementfees', view_func=req_pub_int_management_fees, methods=['GET'])
 
   # Static web (11ty data retrieving)
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:segment>/<int:year>', view_func=req_flats, methods=['GET'])

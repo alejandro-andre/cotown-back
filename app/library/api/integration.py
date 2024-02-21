@@ -17,7 +17,7 @@ from schwifty import IBAN, exceptions
 from library.services.config import settings
 
 # Cotown includes - business functions
-from library.business.integration import q_int_customers, q_int_invoices
+from library.business.integration import q_int_customers, q_int_invoices, q_int_management_fees
 
 # Logging
 import logging
@@ -100,15 +100,36 @@ def req_pub_int_customers():
         country:
           type: string
           description: "ISO Alpha-2 country code of the postal address country"
+        direct_debit_bank_account:
+          type: string
+          description: "IBAN or Bank account for direct debit"
+        direct_debit_bank_code:
+          type: string
+          description: "Bank code from IBAN for direct_debit"
         bank_account:
           type: string
-          description: "IBAN or Bank account"
+          description: "IBAN or Bank account for deposit return"
         bank_code:
           type: string
-          description: "Bank code from IBAN"
+          description: "Bank code from IBAN for deposit return"
         swift:
           type: string
-          description: "SWIFT o r BIC code"
+          description: "SWIFT or BIC code for deposit return"
+        bank_holder:
+          type: string
+          description: "Bank holder"
+        bank_name:
+          type: string
+          description: "Bank name"
+        bank_address:
+          type: string
+          description: "Bank address"
+        bank_city:
+          type: string
+          description: "Bank city"
+        bank_country:
+          type: string
+          description: "Bank country ISO code"
   responses:
     200:
       description: List of created or updated customers since the given date
@@ -152,8 +173,17 @@ def req_pub_int_customers():
       iban = IBAN(c['bank_account'])
       c['bank_account'] = iban
       c['bank_code'] = iban.bank_code
+      c['bank_name'] = iban.bank_name
     except:
       c['bank_code'] = ''
+    try:
+      iban = IBAN(c['direc_debit_bank_account'])
+      c['direc_debit_bank_account'] = iban
+      c['direc_debit_bank_code'] = iban.bank_code
+      c['direc_debit_bank_name'] = iban.bank_name
+    except:
+      c['direc_debit_bank_code'] = ''
+      c['direc_debit_bank_name'] = ''
 
   # Return
   return customers
@@ -272,3 +302,86 @@ def req_pub_int_invoices():
 
   # Return
   return q_int_invoices(g.dbClient, date + ' 00:00:00')
+
+
+# ---------------------------------------------------
+# Management fee
+# ---------------------------------------------------
+
+def req_pub_int_management_fees():
+  '''
+  Retrieve monthly management fees
+  ---
+  tags:
+    - name: "Management fees"
+  parameters:
+    - name: month
+      in: query
+      type: string
+      required: false
+      default: "2024-01"
+      description: "Month from which management fees are required, YYYY-MM format"
+    - name: Api-Key
+      in: header
+      type: string
+      required: true
+      description: "Security API KEY that must be present in the HTTP request header"
+  definitions:
+    Fee:
+      type: object
+      properties:
+        month:
+          type: string
+          description: "Management fees month"
+        owner:
+          type: string
+          description: "SAP Id of the owner to be billed"
+        resource:
+          type: string
+          description: "Building code"
+        gross:
+          type: float
+          description: "Gross amount that the owner billed"
+        net:
+          type: float
+          description: "Net amount that the owner billed"
+        gross:
+          type: float
+          description: "Resulting amount of the fees"
+  responses:
+    200:
+      description: Management fees by owner and building since the given date
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Fee'
+    400:
+      description: Invalid month or month format
+    403:
+      description: Invalid Api-Key
+  '''
+
+  # Debug
+  logger.debug('Integration - Management Fees')
+
+  # Get API key
+  key = request.headers.get('Api-Key', None)
+  if key != settings.SAP_API_KEY:
+    logger.warning('Invalid Api-Key: ' + str(key))
+    abort(403, 'Invalid Api-Key')
+
+  # Validate date
+  d = request.args.get('month')
+  if d == None:
+    logger.warning('Empty month: ' + str(d))
+    abort(400, 'Empty month')
+  try:
+    date = datetime.strptime(str(d) + '-01', '%Y-%m-%d').strftime('%Y-%m-%d')
+  except ValueError:
+    logger.warning('Invalid month: ' + str(d))
+    abort(400, 'Invalid month')
+
+  # Fees
+  return q_int_management_fees(g.dbClient, date)

@@ -2,6 +2,10 @@
 # Imports
 # ######################################################
 
+# 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
@@ -36,8 +40,15 @@ def q_int_customers(dbClient, date):
         CASE WHEN c."Billing_city" IS NOT NULL THEN c."Billing_city" ELSE c."City" END AS "city", 
         CASE WHEN c."Billing_province" IS NOT NULL THEN c."Billing_province" ELSE c."Province" END AS "province", 
         CASE WHEN bco."Code" IS NOT NULL THEN bco."Code" ELSE co."Code" END AS "country",
+        c."IBAN" AS "direc_debit_bank_account",
+        c."Same_account" AS "same_account",
         c."Bank_account" AS "bank_account",
-        c."Swift" AS "swift"
+        c."Swift" AS "swift",
+        c."Bank_holder" AS "bank_holder",
+        c."Bank_name" AS "bank_name",
+        c."Bank_address" AS "bank_address",
+        c."Bank_city" AS "bank_city",
+        cc."Code" AS "bank_country"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking_group" b ON b."Payer_id" = c.id
         INNER JOIN "Booking"."Booking_group_rooming" br ON br."Booking_id" = b.id
@@ -46,6 +57,7 @@ def q_int_customers(dbClient, date):
         LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
         LEFT JOIN "Geo"."Country" bco ON bco.id = c."Billing_country_id" 
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
+        LEFT JOIN "Geo"."Country" cc ON cc.id = c."Bank_country_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = br."Resource_id" 
       WHERE 
           c."Created_at" >= '{date}' OR 
@@ -70,8 +82,15 @@ def q_int_customers(dbClient, date):
         CASE WHEN c."Billing_city" IS NOT NULL THEN c."Billing_city" ELSE c."City" END AS "city", 
         CASE WHEN c."Billing_province" IS NOT NULL THEN c."Billing_province" ELSE c."Province" END AS "province", 
         CASE WHEN bco."Code" IS NOT NULL THEN bco."Code" ELSE co."Code" END AS "country",
+        c."IBAN" AS "direc_debit_bank_account",
+        c."Same_account" AS "same_account",
         c."Bank_account" AS "bank_account",
-        c."Swift" AS "swift"
+        c."Swift" AS "swift",
+        c."Bank_holder" AS "bank_holder",
+        c."Bank_name" AS "bank_name",
+        c."Bank_address" AS "bank_address",
+        c."Bank_city" AS "bank_city",
+        cc."Code" AS "bank_country"
       FROM "Customer"."Customer" c
         INNER JOIN "Booking"."Booking" b ON b."Customer_id" = c.id
         LEFT JOIN "Auxiliar"."Id_type" i ON i.id = c."Id_type_id"
@@ -79,6 +98,7 @@ def q_int_customers(dbClient, date):
         LEFT JOIN "Geo"."Country" co ON co.id = c."Country_id" 
         LEFT JOIN "Geo"."Country" bco ON bco.id = c."Billing_country_id" 
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
+        LEFT JOIN "Geo"."Country" cc ON cc.id = c."Bank_country_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
       WHERE 
         b."Status" NOT IN ('solicitud', 'alternativas', 'pendientepago', 'finalizada', 'descartada', 'cancelada', 'caducada')  AND
@@ -176,3 +196,68 @@ def q_int_invoices(dbClient, date):
     logger.error(error)
     con.rollback()
     return None
+  
+
+# ------------------------------------------------------
+# Management fees query
+# ------------------------------------------------------
+
+def q_int_management_fees(dbClient, fdesde):
+
+  # Next month
+  fhasta = datetime.strftime(datetime.strptime(fdesde, '%Y-%m-%d') + relativedelta(months=1), '%Y-%m-%d')
+
+  # Query
+  sql = f'''
+    SELECT 
+      "month", "owner", "resource", 
+      round(sum("gross"), 2) AS "gross",
+      round(sum("net"), 2) AS "net",
+      round(sum("fee"), 2) AS "fee"
+    FROM (
+      SELECT TO_CHAR(i."Issued_date", 'YYYY-MM') AS "month", 
+        p."SAP_code" as "owner",
+        bu."Code" AS "resource",
+        il."Amount" AS "gross",
+        il."Amount" / (1 + t."Value" / 100) AS "net",
+        il."Amount" / (1 + t."Value" / 100) * bu."Management_fee" / 100 AS "fee"
+      FROM "Billing"."Invoice_line" il
+        INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
+        INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
+        INNER JOIN "Provider"."Provider" p on p.id = i."Provider_id" 
+        LEFT JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
+        LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id"
+        LEFT JOIN "Building"."Building" bu on bu.id = r."Building_id"
+      WHERE i."Issued" AND p.id <> 1 AND i."Booking_group_id" IS NULL 
+        AND i."Issued_date" >= '{fdesde}' AND i."Issued_date" < '{fhasta}'
+      UNION ALL
+      SELECT TO_CHAR(i."Issued_date", 'YYYY-MM') AS "month",
+        p."SAP_code" as "owner", 
+        bu."Code" AS "resource",
+        il."Amount" AS "gross",
+        il."Amount" / (1 + t."Value" / 100) AS "net",
+        il."Amount" / (1 + t."Value" / 100) * bu."Management_fee" / 100 AS "fee"
+      FROM "Billing"."Invoice_line" il
+        INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
+        INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
+        INNER JOIN "Provider"."Provider" p on p.id = i."Provider_id" 
+        LEFT JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
+        LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id"  
+      WHERE i."Issued" AND p.id <> 1 AND i."Booking_id" IS NULL 
+        AND i."Issued_date" >= '{fdesde}' AND i."Issued_date" < '{fhasta}'
+    ) AS "data"
+    GROUP BY 1, 2, 3
+  '''
+  try:
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql)
+    column_names = [desc[0] for desc in cur.description]
+    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
+    cur.close()
+    dbClient.putconn(con)
+    return result
+ 
+  except Exception as error:
+    logger.error(error)
+    con.rollback()
+    return None  
