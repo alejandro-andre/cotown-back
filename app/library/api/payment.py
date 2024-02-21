@@ -54,7 +54,7 @@ def req_pay(id):
 def req_pub_notification(pos='default'):
 
     # Validate response
-    response = validate(request.values)
+    response = validate(pos, request.values)
     logger.debug(response)
     if response is None:
       return 'KO'
