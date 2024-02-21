@@ -134,8 +134,18 @@ def q_int_invoices(dbClient, date):
   sql = f'''
     SELECT
       CASE 
-        WHEN i."Bill_type" = 'factura' THEN 'CI'
-        ELSE 'CCM'
+        WHEN i."Provider_id" = 1 OR i."Provider_id" = 10 THEN
+          CASE
+	        WHEN pr."Product_type_id" = 2 THEN 'GF'
+            WHEN i."Bill_type" = 'rectificativa' THEN 'CCM'
+            ELSE 'CI'
+          END
+        ELSE
+          CASE
+	        WHEN pr."Product_type_id" = 2 THEN 'GF'
+            WHEN i."Bill_type" = 'rectificativa' THEN 'AT'
+            ELSE 'FT'
+          END
       END AS "document_type",
       p."SAP_code" AS "issuer_id",
       i."Code" AS "invoice_id",
@@ -157,9 +167,8 @@ def q_int_invoices(dbClient, date):
     INNER JOIN "Customer"."Customer" c ON c.id = i."Customer_id"
     INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
     WHERE i."Issued"
-      AND i."Bill_type" <> 'recibo'
-      AND p."SAP_code" IS NOT NULL
-      AND i."Issued_date" >= '{date}'
+      AND i."Provider_id" <> 1 AND i."Provider_id" <> 10
+      AND i."Issued_date" >= '2024-01-01'
     ORDER BY 2, 3
   '''
   try:
