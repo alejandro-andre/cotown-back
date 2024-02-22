@@ -23,7 +23,7 @@ from library.services.config import settings
 def calc_signature(pos, order, params):
 
   # Diversify key
-  secret_key: bytes = settings.REDSYS_KEY.encode('utf-8')
+  secret_key: bytes = settings['REDSYS_KEY_' + pos.upper()].encode('utf-8')
   cipher = DES3.new(base64.b64decode(secret_key), DES3.MODE_CBC, IV=b'\0\0\0\0\0\0\0\0')
   key = cipher.encrypt(order.encode('utf-8').ljust(16, b'\0'))
 
@@ -42,8 +42,8 @@ def pay(pos, order, amount, id, urlok, urlko):
   data = {
     'DS_MERCHANT_CURRENCY'       : '978', # Euro
     'DS_MERCHANT_TRANSACTIONTYPE': '0', # Pago
-    'DS_MERCHANT_TERMINAL'       : settings.REDSYS_TERMINAL,
-    'DS_MERCHANT_MERCHANTCODE'   : settings.REDSYS_MERCHANTCODE,
+    'DS_MERCHANT_TERMINAL'       : settings['REDSYS_TERMINAL_' + pos.upper()],
+    'DS_MERCHANT_MERCHANTCODE'   : settings['REDSYS_MERCHANTCODE_' + pos.upper()],
     'DS_MERCHANT_MERCHANTURL'    : settings.REDSYS_MERCHANTURL + '/' + pos,
     'DS_MERCHANT_URLOK'          : urlok,
     'DS_MERCHANT_URLKO'          : urlko,
