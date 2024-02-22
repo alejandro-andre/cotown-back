@@ -165,7 +165,7 @@ def do_occupancy(dbClient, vars):
       INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
-      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" >= %s
         AND b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision') 
     UNION ALL
       -- Rentas B2B no facturadas
@@ -184,7 +184,7 @@ def do_occupancy(dbClient, vars):
         INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
         INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
         INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
-      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" > %s
+      WHERE bp."Invoice_rent_id" IS NULL AND "Rent_date" >= %s
         AND b."Status" IN ('grupoconfirmado', 'inhouse') 
     ) AS income
     GROUP BY 1, 2, 3
