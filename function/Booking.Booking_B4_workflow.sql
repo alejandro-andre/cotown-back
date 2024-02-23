@@ -145,6 +145,16 @@ BEGIN
     NEW."Status" := 'checkinconfirmado';
   END IF;
 
+  -- CHECK IN A CONTRATO o CHECK IN CONFIRMADO
+  -- Actualiza al estado cuando se aplaza el checkin
+  IF (NEW."Status" = 'checkin' AND COALESCE(NEW."Check_in", NEW."Date_from") > CURRENT_DATE) THEN
+    IF NEW."Check_in" IS NULL THEN
+      NEW."Status" := 'contrato';
+    ELSE
+      NEW."Status" := 'checkinconfirmado';
+    END IF;
+  END IF;
+
   -- DESCARTADA PAGADA a DESCARTADA
   -- Actualiza el estado a "descartada" cuando se devuelve el booking fee
   IF (NEW."Status" = 'descartadapagada' AND NEW."Booking_fee_returned" IS NOT NULL) THEN
