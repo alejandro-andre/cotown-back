@@ -27,6 +27,7 @@
         Gate_phone
         Gate_url
         Lat_lon
+        Order
         Management_fee
         Name
         Notes
