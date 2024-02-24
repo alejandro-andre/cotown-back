@@ -376,7 +376,7 @@ def bill_group_rent(dbClient, con):
   '''
   SELECT 
     bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", 
-    pr."Pos", sv."Pos" as "Service_pos"
+    pr."Pos", sv."Pos" as "Service_pos",
     COUNT(r."Code") as num, 
     MIN(bg."Room_ids") as "Room_ids", 
     MIN(r."Owner_id") as "Owner_id", 
@@ -386,12 +386,12 @@ def bill_group_rent(dbClient, con):
     INNER JOIN "Booking"."Booking_group_rooming" br ON bg.id = br."Booking_id"
     INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
-    LEFT JOIN "Provider"."Provider" v ON pr.id = r."Service_id"
+    LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
     AND bgp."Rent_date" >= %s
-  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt"
+  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", pr."Pos", sv."Pos"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
   ''', (settings.BILLDATE, ))
   data = cur.fetchall()
@@ -597,7 +597,7 @@ def pay_bills(dbClient, con):
   # Get all bills without payment
   cur = dbClient.execute(con,
     '''
-    SELECT id, i."Payment_method_id", i."Customer_id", i."Booking_id", i."Booking_group_id", i."Total", i."Issued_date", i."Concept", p."Pos"
+    SELECT i.id, i."Payment_method_id", i."Customer_id", i."Booking_id", i."Booking_group_id", i."Total", i."Issued_date", i."Concept", p."Pos"
     FROM "Billing"."Invoice" i
       INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id"
     WHERE "Issued" 
