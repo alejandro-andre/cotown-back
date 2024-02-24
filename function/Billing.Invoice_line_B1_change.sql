@@ -36,6 +36,11 @@ BEGIN
     RAISE EXCEPTION '!!!Bill has been already issued, cannot change!!!La factura ya ha sido emitida, no puede cambiarse!!!';
   END IF;
 
+  -- Delete
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+
   -- Resource
   IF NEW."Resource_id" IS NULL THEN
     IF booking_id IS NOT NULL THEN
@@ -63,10 +68,6 @@ BEGIN
   END IF;
 
   -- Return
-  IF TG_OP = 'DELETE' THEN
-    RETURN OLD;
-  ELSE
-    RETURN NEW;
-  END IF;
+  RETURN NEW;
 
 END;
