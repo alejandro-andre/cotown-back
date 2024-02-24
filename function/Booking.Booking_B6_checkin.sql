@@ -144,8 +144,8 @@ BEGIN
   IF price > 0 THEN
     SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
     INSERT
-      INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-      VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, price, CURRENT_DATE, 'Check-in', 'checkin');
+      INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+      VALUES (COALESCE(payment_method_id, 1), 'cotown', NEW."Customer_id", NEW.id, price, CURRENT_DATE, 'Check-in', 'checkin');
   END IF;
 
   -- Return

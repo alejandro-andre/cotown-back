@@ -7,6 +7,7 @@ DECLARE
   curr_user VARCHAR;
   deposit BOOLEAN = FALSE;
   num INTEGER;
+  pos VARCHAR;
 
 BEGIN
 
@@ -54,8 +55,8 @@ BEGIN
     IF NEW."Booking_fee" > 0 THEN
       SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
       INSERT
-        INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-        VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
+        INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+        VALUES (COALESCE(payment_method_id, 1), 'cotown', NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
     END IF;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     
@@ -86,9 +87,10 @@ BEGIN
     -- Add payment if actual deposit is 0
     IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
       SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
+      SELECT p."Pos" INTO pos FROM "Resource"."Resource" r LEFT JOIN "Provider"."Provider" p ON p.id = r."Owner_id" WHERE r.id = b."Resource_id";
       INSERT
-        INTO "Billing"."Payment"("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-        VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
+        INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+        VALUES (COALESCE(payment_method_id, 1), pos, NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
     END IF;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     
@@ -199,9 +201,10 @@ BEGIN
     IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW."id" AND "Payment_date" IS NULL and "Payment_type" = 'deposito' ;
       IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
+        SELECT p."Pos" INTO pos FROM "Resource"."Resource" r LEFT JOIN "Provider"."Provider" p ON p.id = r."Owner_id" WHERE r.id = b."Resource_id";
         INSERT
-          INTO "Billing"."Payment" ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) 
-          VALUES (COALESCE(payment_method_id, 1), NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
+          INTO "Billing"."Payment" ("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) 
+          VALUES (COALESCE(payment_method_id, 1), pos, NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
       END IF;
     END IF;
   END IF;

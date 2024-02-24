@@ -184,12 +184,14 @@ def bill_rent(dbClient, con):
   cur = dbClient.execute(con,
     '''
     SELECT p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
-          b."Customer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt"
+          b."Customer_id", c."Payment_method_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt", 
+          pr."Pos", sv."Pos" as "Service_pos"
     FROM "Booking"."Booking_price" p
     INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
     INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
+    LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
     INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
@@ -222,6 +224,8 @@ def bill_rent(dbClient, con):
         product = PRODUCTS[PR_RENT_SERVICES]
         rent += services
         services = 0
+      if item['Pos'] != item['Service_pos']:
+        item['Pos'] = 'default'
        
       # Create payment
       if rent > 0 or services > 0:
@@ -229,12 +233,13 @@ def bill_rent(dbClient, con):
         cur = dbClient.execute(con,
           '''
           INSERT INTO "Billing"."Payment"
-          ("Payment_method_id", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-          VALUES (%s, %s, %s, %s, %s, %s, %s)
+          ("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''',
           (
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
+            item['Pos'],
             item['Customer_id'],
             item['Booking_id'],
             rent + services,
@@ -370,7 +375,8 @@ def bill_group_rent(dbClient, con):
   cur = dbClient.execute(con,
   '''
   SELECT 
-    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt",
+    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", 
+    pr."Pos", sv."Pos" as "Service_pos"
     COUNT(r."Code") as num, 
     MIN(bg."Room_ids") as "Room_ids", 
     MIN(r."Owner_id") as "Owner_id", 
@@ -380,6 +386,7 @@ def bill_group_rent(dbClient, con):
     INNER JOIN "Booking"."Booking_group_rooming" br ON bg.id = br."Booking_id"
     INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
+    LEFT JOIN "Provider"."Provider" v ON pr.id = r."Service_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
@@ -425,6 +432,8 @@ def bill_group_rent(dbClient, con):
         product = PRODUCTS[PR_RENT_SERVICES]
         total_rent += total_services
         total_services = 0
+      if item['Pos'] != item['Service_pos']:
+        item['Pos'] = 'default'
        
       # Create payment
       if total_rent > 0 or total_services > 0:
@@ -432,12 +441,13 @@ def bill_group_rent(dbClient, con):
         cur = dbClient.execute(con,
           '''
           INSERT INTO "Billing"."Payment"
-          ("Payment_method_id", "Customer_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-          VALUES (%s, %s, %s, %s, %s, %s, %s)
+          ("Payment_method_id", "Pos", "Customer_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''',
           (
             PM_TRANSFER,
+            item['Pos'],
             item['Payer_id'],
             item['Booking_id'],
             total_rent + total_services,
@@ -587,8 +597,9 @@ def pay_bills(dbClient, con):
   # Get all bills without payment
   cur = dbClient.execute(con,
     '''
-    SELECT id, "Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Total", "Issued_date", "Concept"
-    FROM "Billing"."Invoice"
+    SELECT id, i."Payment_method_id", i."Customer_id", i."Booking_id", i."Booking_group_id", i."Total", i."Issued_date", i."Concept", p."Pos"
+    FROM "Billing"."Invoice" i
+      INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id"
     WHERE "Issued" 
       AND NOT "Rectified"
       AND "Total" > 0
@@ -611,12 +622,13 @@ def pay_bills(dbClient, con):
       cur = dbClient.execute(con,
         '''
         INSERT INTO "Billing"."Payment"
-        ("Payment_method_id", "Customer_id", "Booking_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type")
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        ("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type")
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         RETURNING ID
         ''',
         (
           item['Payment_method_id'],
+          item['Pos'],
           item['Customer_id'],
           item['Booking_id'],
           item['Booking_group_id'],
