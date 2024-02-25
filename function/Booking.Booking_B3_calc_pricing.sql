@@ -111,7 +111,7 @@ BEGIN
     )
   SELECT 
     p."Billing_type",
-    ROUND(p."Rent" * e."Extra") as "Rent",
+    ROUND(COALESCE(p."Rent", 0) * e."Extra") as "Rent",
     COALESCE(p."Services", 0),
     COALESCE(p."Deposit", 0),
     COALESCE(p."Final_cleaning", 0),
@@ -122,12 +122,11 @@ BEGIN
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  rent := rent + second_resident;
-  NEW."Deposit" := GREATEST(deposit, rent + services);
-  NEW."Rent" := rent;
-  NEW."Services" := services;
-  NEW."Final_cleaning" := final_cleaning;
-  NEW."Limit" := "limit";
+  NEW."Deposit"        := GREATEST(deposit, rent + services, COALESCE(NEW."Deposit", 0));
+  NEW."Rent"           := GREATEST(rent + second_resident, COALESCE(NEW."Rent", 0));
+  NEW."Services"       := GREATEST(services, COALESCE(NEW."Services", 0));
+  NEW."Final_cleaning" := GREATEST(final_cleaning, COALESCE(NEW."Final_cleaning", 0));
+  NEW."Limit"          := GREATEST("limit", COALESCE(NEW."Limit", 0));
 
   -- Loop to insert prices
   dt_curr = NEW."Date_from";
@@ -135,8 +134,8 @@ BEGIN
   WHILE dt_curr < dt_to LOOP
 
     -- Prices
-    monthly_rent := rent;
-    monthly_services := services;
+    monthly_rent := NEW."Rent";
+    monthly_services := New."Services";
 
     -- End of period (first day next month or last day + 1)
     dt_next := LEAST(date_trunc('month', dt_curr) + INTERVAL '1 month', dt_to);
@@ -157,12 +156,12 @@ BEGIN
         monthly_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
         monthly_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / days, 1);
       END IF;
-   
+
     END IF;
-   
+
     -- Final cleaning
     IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to THEN
-      monthly_services := ROUND(monthly_services + final_cleaning, 0);
+      monthly_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
     END IF;
 
     -- Insert price
