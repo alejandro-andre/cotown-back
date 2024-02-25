@@ -183,10 +183,12 @@ BEGIN
       NEW."Old_check_out" := NEW."Date_to";
       NEW."Check_out" := NEW."New_check_out";
       NEW."Date_to" := NEW."New_check_out";
+      NEW."Eco_ext_change_ok" := FALSE;
     ELSE
       NEW."Old_check_out" := NEW."Check_out";
       NEW."Check_out" := NEW."New_check_out";
       NEW."New_check_out" := NULL;
+      NEW."Eco_ext_change_ok" := NULL;
     END IF;
   END IF;
 
