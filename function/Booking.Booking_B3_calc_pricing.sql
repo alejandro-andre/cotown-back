@@ -178,10 +178,14 @@ BEGIN
   -- ECO/EXT, update dates
   IF NEW."New_check_out" IS NOT NULL THEN
     SELECT SUM("Rent") INTO curr_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
+    NEW."Old_check_out" := COALESCE(NEW."Check_out", NEW."Date_to");
     IF curr_total <> prev_total THEN
-      NEW."Old_check_out" := COALESCE(NEW."Check_out", NEW."Date_to");
-      NEW."Date_to" := dt_to - INTERVAL '1 day';
+      NEW."Old_check_out" := NEW."Date_to";
+      NEW."Check_out" := NEW."New_check_out";
+      NEW."Date_to" := NEW."New_check_out";
     ELSE
+      NEW."Old_check_out" := NEW."Check_out";
+      NEW."Check_out" := NEW."New_check_out";
       NEW."New_check_out" := NULL;
     END IF;
   END IF;
