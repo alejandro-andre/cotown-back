@@ -30,9 +30,6 @@ BEGIN
   WHERE "Building_id" = NEW."Building_id"
   AND r."Flat_type_id" = NEW."Flat_type_id"
   AND r."Place_type_id" = NEW."Place_type_id";
-  --?IF num < 1 THEN
-  --?  RAISE exception '!!!Selected flat/place type doesnt exist on that building!!!Las tipologías elegidas no existen en el edificio!!!'; 	
-  --?END IF;
 
   -- Reserva bloqueada?
   IF NEW."Lock" AND
@@ -40,13 +37,6 @@ BEGIN
     OLD."Resource_id" <> NEW."Resource_id" THEN
     RAISE exception '!!!Locked booking!!!Reserva bloqueada!!!';
   END IF;
-
-  --? Se ha intentado quitar el recurso?
-  --?IF TG_OP = 'UPDATE' THEN
-  --?  IF OLD."Resource_id" IS NOT NULL AND NEW."Resource_id" IS NULL THEN
-  --?    RAISE exception '!!!Resource % cannot be removed!!!El recurso % no se puede quitar!!!', OLD."Resource_id", OLD."Resource_id";
-  --?  END IF;
-  --?END IF;
 
   -- Verifica las fechas
   IF NEW."Check_in" < '2000-01-01' THEN
@@ -82,6 +72,13 @@ BEGIN
     END IF;
     IF NEW."Check_out" > NEW."Date_to"THEN
       RAISE exception '!!!Check-out date cannot be later than the end of the reservation!!!Fecha de check out no puede ser posterior al final de la reserva!!!';
+    END IF;
+  END IF;
+
+  -- Valida que la nueva fecha de checkout es valida
+  IF NEW."New_check_out" IS NOT NULL THEN
+    IF NEW."New_check_out" < COALESCE(NEW."Check_in", NEW."Date_to") THEN
+      RAISE exception '!!!New check-out is wrong!!!Nueva fecha de check out incorrecta!!!';
     END IF;
   END IF;
 
