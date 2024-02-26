@@ -9,7 +9,7 @@
 # ###################################################
 
 # System includes
-from flask import g, request, abort, send_file
+from flask import g, request, abort, send_file, redirect
 from io import BytesIO
 
 # Cotown includes - business functions
@@ -26,6 +26,15 @@ logger = logging.getLogger('COTOWN')
 # ###################################################
 # Airflows plugins
 # ###################################################
+
+# ---------------------------------------------------
+# Href - Redirects
+# ---------------------------------------------------
+
+def req_href(path):
+
+  return redirect(path, code=302)
+
 
 # ---------------------------------------------------
 # Signature - Gets the signature image for the contracts

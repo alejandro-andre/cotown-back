@@ -34,22 +34,28 @@ BEGIN
 
   -- No resource, ignore
   IF NEW."Resource_id" IS NULL THEN
+    NEW."Deposit"        := 0;
+    NEW."Rent"           := 0;
+    NEW."Services"       := 0;
+    NEW."Final_cleaning" := 0;
+    NEW."Limit"          := 0;
     RETURN NEW;
   END IF;
 
   -- Not ECO_EXT?
   IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
 
-    -- Not yet confirmed, ignore
-    IF NEW."Status" NOT IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'pendientepago') THEN
-      RETURN NEW;
-    END IF;
-
     -- Dates and resource not changed, ignore
     IF NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
       RETURN NEW;
     END IF;
 
+    -- Delete not billed prices
+    DELETE FROM "Booking"."Booking_price"
+    WHERE "Booking_id" = NEW.id 
+      AND "Invoice_rent_id" IS NULL
+      AND "Invoice_services_id" IS NULL;
+ 
   -- ECO/EXT
   ELSE
 
@@ -111,22 +117,22 @@ BEGIN
     )
   SELECT 
     p."Billing_type",
-    ROUND(COALESCE(p."Rent", 0) * e."Extra") as "Rent",
-    COALESCE(p."Services", 0),
-    COALESCE(p."Deposit", 0),
-    COALESCE(p."Final_cleaning", 0),
-    COALESCE(p."Second_resident", 0),
-    COALESCE(p."Limit", 0)
+    ROUND(p."Rent" * e."Extra") as "Rent",
+    p."Services",
+    p."Deposit",
+    p."Final_cleaning",
+    p."Second_resident",
+    p."Limit"
   INTO billing_type, rent, services, deposit, final_cleaning, second_resident, limit
   FROM "Prices" p
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  NEW."Deposit"        := GREATEST(deposit, rent + services, COALESCE(NEW."Deposit", 0));
-  NEW."Rent"           := GREATEST(rent + second_resident, COALESCE(NEW."Rent", 0));
-  NEW."Services"       := GREATEST(services, COALESCE(NEW."Services", 0));
-  NEW."Final_cleaning" := GREATEST(final_cleaning, COALESCE(NEW."Final_cleaning", 0));
-  NEW."Limit"          := GREATEST("limit", COALESCE(NEW."Limit", 0));
+  NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent");
+  NEW."Services"       := COALESCE(services, NEW."Services");
+  NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit");
+  NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning");
+  NEW."Limit"          := COALESCE("limit", NEW."Limit");
 
   -- Loop to insert prices
   dt_curr = NEW."Date_from";
@@ -175,25 +181,25 @@ BEGIN
  
   END LOOP; 
 
-  -- ECO/EXT, update dates
-  IF NEW."New_check_out" IS NOT NULL THEN
-    SELECT SUM("Rent") INTO curr_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
-    NEW."Old_check_out" := COALESCE(NEW."Check_out", NEW."Date_to");
-    IF curr_total <> prev_total THEN
-      NEW."Old_check_out" := NEW."Date_to";
-      NEW."Check_out" := NEW."New_check_out";
-      NEW."Date_to" := NEW."New_check_out";
-      NEW."Eco_ext_change_ok" := FALSE;
-    ELSE
-      NEW."Old_check_out" := NEW."Check_out";
-      NEW."Check_out" := NEW."New_check_out";
-      NEW."New_check_out" := NULL;
-      NEW."Eco_ext_change_ok" := NULL;
-    END IF;
+  -- Not ECO/EXT
+  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
+    RETURN NEW;
   END IF;
 
-
-  -- Return
+  -- ECO/EXT, update dates
+  SELECT SUM("Rent") INTO curr_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
+  NEW."Old_check_out" := COALESCE(NEW."Check_out", NEW."Date_to");
+  IF curr_total <> prev_total THEN
+    NEW."Old_check_out" := NEW."Date_to";
+    NEW."Check_out" := NEW."New_check_out";
+    NEW."Date_to" := NEW."New_check_out";
+    NEW."Eco_ext_change_ok" := FALSE;
+  ELSE
+    NEW."Old_check_out" := NEW."Check_out";
+    NEW."Check_out" := NEW."New_check_out";
+    NEW."New_check_out" := NULL;
+    NEW."Eco_ext_change_ok" := NULL;
+  END IF;
   RETURN NEW;
 
 END;
