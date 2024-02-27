@@ -77,7 +77,7 @@ BEGIN
 
   -- Valida que la nueva fecha de checkout es valida
   IF NEW."New_check_out" IS NOT NULL THEN
-    IF NEW."New_check_out" < COALESCE(NEW."Check_in", NEW."Date_to") THEN
+    IF NEW."New_check_out" < COALESCE(NEW."Check_in", NEW."Date_from") THEN
       RAISE exception '!!!New check-out is wrong!!!Nueva fecha de check out incorrecta!!!';
     END IF;
   END IF;

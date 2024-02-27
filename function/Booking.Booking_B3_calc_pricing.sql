@@ -34,11 +34,11 @@ BEGIN
 
   -- No resource, ignore
   IF NEW."Resource_id" IS NULL THEN
-    NEW."Deposit"        := 0;
-    NEW."Rent"           := 0;
-    NEW."Services"       := 0;
-    NEW."Final_cleaning" := 0;
-    NEW."Limit"          := 0;
+    NEW."Deposit"        := NULL;
+    NEW."Rent"           := NULL;
+    NEW."Services"       := NULL;
+    NEW."Final_cleaning" := NULL;
+    NEW."Limit"          := NULL;
     RETURN NEW;
   END IF;
 
@@ -46,7 +46,7 @@ BEGIN
   IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
 
     -- Dates and resource not changed, ignore
-    IF NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
+    IF NEW."Rent" IS NOT NULL AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
       RETURN NEW;
     END IF;
 
@@ -65,12 +65,21 @@ BEGIN
     -- Get previous accumulated rent
     SELECT SUM("Rent") INTO prev_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
 
-    -- Delete not billed last prices
-    DELETE FROM "Booking"."Booking_price"
-    WHERE "Booking_id" = NEW.id 
-      AND "Invoice_rent_id" IS NULL
-      AND "Invoice_services_id" IS NULL
-      AND "Rent_date" >= date_trunc('month', LEAST(NEW."New_check_out", NEW."Date_to"));
+    IF NEW."New_check_out" < COALESCE(NEW."Check_out", NEW."Date_to") THEN
+      -- ECO: Delete last month price
+      DELETE FROM "Booking"."Booking_price"
+      WHERE "Booking_id" = NEW.id 
+        AND "Invoice_rent_id" IS NULL
+        AND "Invoice_services_id" IS NULL
+        AND "Rent_date" >= date_trunc('month', LEAST(NEW."New_check_out", NEW."Date_to"));
+    ELSE 
+      -- EXT: Delete not billed prices
+      DELETE FROM "Booking"."Booking_price"
+      WHERE "Booking_id" = NEW.id 
+        AND "Invoice_rent_id" IS NULL
+        AND "Invoice_services_id" IS NULL
+        AND "Rent_date" >= CURRENT_DATE;
+ 	END IF;
  
   END IF;
 
@@ -128,12 +137,22 @@ BEGIN
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent", 0);
-  NEW."Services"       := COALESCE(services, NEW."Services", 0);
-  NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit", 0);
-  NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning", 0);
-  NEW."Limit"          := COALESCE("limit", NEW."Limit", 0);
+  IF NEW."New_check_out" < COALESCE(NEW."Check_out", NEW."Date_to") THEN
+    NEW."Rent"           := COALESCE(NEW."Rent", rent + second_resident, 0);
+    NEW."Services"       := COALESCE(NEW."Services", services, 0);
+    NEW."Deposit"        := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
+    NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
+    NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
 
+  -- Base values for EXT
+  ELSE
+    NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent", 0);
+    NEW."Services"       := COALESCE(services, NEW."Services", 0);
+    NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit", 0);
+    NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning", 0);
+    NEW."Limit"          := COALESCE("limit", NEW."Limit", 0);
+  END IF;
+ 
   -- Loop to insert prices
   dt_curr = NEW."Date_from";
   dt_to = dt_to + INTERVAL '1 day';
@@ -189,16 +208,14 @@ BEGIN
   -- ECO/EXT, update dates
   SELECT SUM("Rent") INTO curr_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
   NEW."Old_check_out" := COALESCE(NEW."Check_out", NEW."Date_to");
+    NEW."Check_out" := NEW."New_check_out";
+  NEW."Eco_ext_change_ok" := FALSE;
   IF curr_total <> prev_total THEN
     NEW."Old_check_out" := NEW."Date_to";
-    NEW."Check_out" := NEW."New_check_out";
     NEW."Date_to" := NEW."New_check_out";
-    NEW."Eco_ext_change_ok" := FALSE;
   ELSE
     NEW."Old_check_out" := NEW."Check_out";
-    NEW."Check_out" := NEW."New_check_out";
     NEW."New_check_out" := NULL;
-    NEW."Eco_ext_change_ok" := FALSE;
   END IF;
   RETURN NEW;
 
