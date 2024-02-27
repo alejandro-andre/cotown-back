@@ -128,11 +128,11 @@ BEGIN
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent");
-  NEW."Services"       := COALESCE(services, NEW."Services");
-  NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit");
-  NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning");
-  NEW."Limit"          := COALESCE("limit", NEW."Limit");
+  NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent", 0);
+  NEW."Services"       := COALESCE(services, NEW."Services", 0);
+  NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit", 0);
+  NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning", 0);
+  NEW."Limit"          := COALESCE("limit", NEW."Limit", 0);
 
   -- Loop to insert prices
   dt_curr = NEW."Date_from";
@@ -198,7 +198,7 @@ BEGIN
     NEW."Old_check_out" := NEW."Check_out";
     NEW."Check_out" := NEW."New_check_out";
     NEW."New_check_out" := NULL;
-    NEW."Eco_ext_change_ok" := NULL;
+    NEW."Eco_ext_change_ok" := FALSE;
   END IF;
   RETURN NEW;
 
