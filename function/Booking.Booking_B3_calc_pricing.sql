@@ -43,7 +43,8 @@ BEGIN
   END IF;
 
   -- Not ECO_EXT?
-  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
+  --IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
+  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
 
     -- Dates and resource not changed, ignore
     IF NEW."Rent" IS NOT NULL AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
@@ -65,7 +66,7 @@ BEGIN
     -- Get previous accumulated rent
     SELECT SUM("Rent") INTO prev_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
 
-    IF NEW."New_check_out" < COALESCE(NEW."Check_out", NEW."Date_to") THEN
+    IF NEW."New_check_out" < NEW."Date_to" THEN
       -- ECO: Delete last month price
       DELETE FROM "Booking"."Booking_price"
       WHERE "Booking_id" = NEW.id 
@@ -137,7 +138,7 @@ BEGIN
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  IF NEW."New_check_out" < COALESCE(NEW."Check_out", NEW."Date_to") THEN
+  IF NEW."New_check_out" < NEW."Date_to" THEN
     NEW."Rent"           := COALESCE(NEW."Rent", rent + second_resident, 0);
     NEW."Services"       := COALESCE(NEW."Services", services, 0);
     NEW."Deposit"        := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
@@ -201,20 +202,16 @@ BEGIN
   END LOOP; 
 
   -- Not ECO/EXT
-  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
+  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
     RETURN NEW;
   END IF;
 
   -- ECO/EXT, update dates
   SELECT SUM("Rent") INTO curr_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
-  NEW."Old_check_out" := COALESCE(NEW."Check_out", NEW."Date_to");
-    NEW."Check_out" := NEW."New_check_out";
+  NEW."Old_check_out" := NEW."Date_to";
+  NEW."Date_to" := NEW."New_check_out";
   NEW."Eco_ext_change_ok" := FALSE;
-  IF curr_total <> prev_total THEN
-    NEW."Old_check_out" := NEW."Date_to";
-    NEW."Date_to" := NEW."New_check_out";
-  ELSE
-    NEW."Old_check_out" := NEW."Check_out";
+  IF curr_total = prev_total THEN
     NEW."New_check_out" := NULL;
   END IF;
   RETURN NEW;
