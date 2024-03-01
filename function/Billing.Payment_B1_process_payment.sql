@@ -24,6 +24,11 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  -- Ya pagado?
+  IF OLD."Payment_date" IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
+
   -- Pago manual (sin auth code)
   IF (NEW."Payment_auth" IS NULL) THEN
 	  SELECT to_char(now(), 'YY') INTO y;

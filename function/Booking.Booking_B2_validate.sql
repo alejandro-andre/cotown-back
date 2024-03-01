@@ -14,11 +14,6 @@ DECLARE
 
 BEGIN
 
-  -- Do not chech some status 
-  IF NEW."Status" IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
-    RETURN NEW;
-  END IF;
-
   -- Superuser ROLE 
   curr_user := CURRENT_USER;
   RESET ROLE;
@@ -105,7 +100,7 @@ BEGIN
   END IF;
 
   -- Check for overlaps
-  IF NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada') THEN
+  IF NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
     SELECT b."Booking_id"
     INTO num
     FROM "Booking"."Booking_detail" b 
