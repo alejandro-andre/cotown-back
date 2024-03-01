@@ -350,7 +350,7 @@ FROM
   INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
   INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id" 
 WHERE pd."Year" = 2023
-  AND rpt.id < 300
+  AND rpt."Code" NOT LIKE 'DUI_%'
 GROUP BY 1, 2, 3
 ORDER BY 1, 2, 3;
     
