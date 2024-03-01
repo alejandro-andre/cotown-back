@@ -303,7 +303,7 @@ def q_room_prices(dbClient, segment, year):
       AND pd."Year" = %s
       AND px."Year" = %s
       AND b."Segment_id" = %s
-      AND rpt."Code" NOT LIKE 'DUI_%'
+      AND rpt."Code" NOT LIKE 'DUI_%%'
     GROUP BY 1, 2, 3, 4, 5
     ORDER BY 1, 2, 3
   '''
