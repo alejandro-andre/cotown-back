@@ -13,8 +13,13 @@ DECLARE
   curr_user VARCHAR;
 
 BEGIN
-	
-  -- Superuser ROLE
+
+  -- Do not chech some status 
+  IF NEW."Status" IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
+    RETURN NEW;
+  END IF;
+
+  -- Superuser ROLE 
   curr_user := CURRENT_USER;
   RESET ROLE;
 
