@@ -375,7 +375,7 @@ def bill_group_rent(dbClient, con):
   cur = dbClient.execute(con,
   '''
   SELECT 
-    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", 
+    bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id",
     pr."Pos", sv."Pos" as "Service_pos",
     COUNT(r."Code") as num, 
     MIN(bg."Room_ids") as "Room_ids", 
@@ -387,11 +387,13 @@ def bill_group_rent(dbClient, con):
     INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
+    INNER JOIN "Building"."Building" bu ON bu.id = bg."Building_id"
+    INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
     AND bgp."Rent_date" >= %s
-  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", pr."Pos", sv."Pos"
+  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id", pr."Pos", sv."Pos"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
   ''', (settings.BILLDATE, ))
   data = cur.fetchall()
@@ -501,8 +503,8 @@ def bill_group_rent(dbClient, con):
                 rentid,
                 flat[1],
                 rent,
-                product['id'],
-                VAT_0 if item['Tax'] else VAT_21,
+                product['id'],               
+                (VAT_0 if item['Tax'] else VAT_21) if item['Tax_id'] is None else item['Tax_id'],
                 product['concept'] + ' (' + str(places) + ' plazas) ' + str(item['Rent_date'])[:7],
                 'Plazas: ' + flat[0] + ' ' + (', '.join(flats[flat[0]]))
               )
