@@ -3,257 +3,217 @@ DECLARE
 
   curr_user VARCHAR;
 
+  days INTEGER;
+  months INTEGER;
+  year INTEGER;
+ 
   dt_to DATE;
   dt_curr DATE;
   dt_next DATE;
   dt_intr INTERVAL;
 
-  building_id INTEGER;
-  flat_type INTEGER;
-  place_type INTEGER;
   billing_type VARCHAR;
-  rate INTEGER;
-  resource INTEGER;
-  multiplier NUMERIC;
-  incpct NUMERIC;
-  payment_method_id INTEGER;
 
-  months INTEGER;
-  days INTEGER;
+  rent NUMERIC;
+  services NUMERIC;
+  deposit NUMERIC;
+  final_cleaning NUMERIC;
+  second_resident NUMERIC;
+  limit NUMERIC;
 
-  cy_rent NUMERIC;
-  cy_services NUMERIC;
-  cy_limit NUMERIC;
-  cy_deposit NUMERIC;
-  cy_second NUMERIC;
-  cy_final_cleaning NUMERIC;
+  monthly_rent NUMERIC;
+  monthly_services NUMERIC;
 
-  ny_rent NUMERIC;
-  ny_services NUMERIC;
-  ny_limit NUMERIC;
-  ny_deposit NUMERIC;
-  ny_second NUMERIC;
-  ny_final_cleaning NUMERIC;
-
-  m_rent NUMERIC;
-  m_services NUMERIC;
-  m_limit NUMERIC;
-  m_deposit NUMERIC;
-  m_final_cleaning NUMERIC;
-
-  p_rent NUMERIC;
-  p_services NUMERIC;
-
-  num INTEGER;
+  prev_total NUMERIC;
+  curr_total NUMERIC;
 
 BEGIN
 
-  -- Only calc if not yet confirmed
-  IF NEW."Status" NOT IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'pendientepago') THEN
-    RETURN NEW;
-  END IF;
+  -- Date to
+  dt_to = NEW."Date_to";
 
-  -- No resource
+  -- No resource, ignore
   IF NEW."Resource_id" IS NULL THEN
+    NEW."Deposit"        := NULL;
+    NEW."Rent"           := NULL;
+    NEW."Services"       := NULL;
+    NEW."Final_cleaning" := NULL;
+    NEW."Limit"          := NULL;
     RETURN NEW;
   END IF;
 
-  -- Prices already billed? Ignore
-  SELECT COUNT(*)
-  INTO num
-  FROM "Booking"."Booking_price"
-  WHERE "Booking_id" = NEW.id
-  AND ("Invoice_rent_id" IS NOT NULL OR "Invoice_services_id" IS NOT NULL);
-  IF num > 0 THEN
-    RETURN NEW;
-  END IF;
+  -- Not ECO_EXT?
+  --IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
+  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
 
-  -- Prices already calculated and resource or dates not changed? Ignore
-  SELECT COUNT(*)
-  INTO num
-  FROM "Booking"."Booking_price"
-  WHERE "Booking_id" = NEW.id;
-  IF num > 0 AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
-    RETURN NEW;
-  END IF;
+    -- Dates and resource not changed, ignore
+    IF NEW."Rent" IS NOT NULL AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
+      RETURN NEW;
+    END IF;
 
-  -- Delete old prices
-  NEW."Rent" := 0;
-  NEW."Services" := 0;
-  NEW."Limit" := 0;
-  NEW."Final_cleaning" := 0;
-  DELETE FROM "Booking"."Booking_price"
-  WHERE "Booking_id" = NEW.id;
-
-  -- Get resource building, tipology and rate
-  SELECT "Building_id", "Flat_type_id", "Place_type_id", "Billing_type", "Rate_id"
-  INTO building_id, flat_type, place_type, billing_type, rate
-  FROM "Resource"."Resource"
-  WHERE id = NEW."Resource_id";
-
-  -- Get amenities
-  SELECT COALESCE(SUM("Increment"), 0)
-  INTO incpct
-  FROM "Resource"."Resource_amenity" ra
-  INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id"
-  WHERE ra."Resource_id" = NEW."Resource_id"
-  AND rat."Increment" > 0;
-
-  -- Get rate multiplier
-  SELECT "Multiplier"
-  INTO multiplier
-  FROM "Billing"."Pricing_rate"
-  WHERE id = rate;
-
-  -- Calculate stay length
-  dt_curr = NEW."Date_from";
-  dt_to = NEW."Date_to" + INTERVAL '1 day';
-  SELECT EXTRACT(MONTH FROM AGE(dt_to, dt_curr)) INTO months;
-
-  -- Get current year prices
-  SELECT
-    CASE
-      WHEN months < 3 THEN "Rent_short"
-      WHEN months < 7 THEN "Rent_medium"
-      ELSE "Rent_long"
-    END,
-    "Services",
-    "Second_resident",
-    "Deposit",
-    "Limit",
-    "Final_cleaning"
-  INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit, cy_final_cleaning
-  FROM "Billing"."Pricing_detail"
-  WHERE "Building_id" = building_id
-  AND "Flat_type_id" = flat_type
-  AND ("Place_type_id" = place_type OR ("Place_type_id" IS NULL AND place_type IS NULL))
-  AND "Year" = EXTRACT(YEAR FROM dt_curr);
+    -- Delete not billed prices
+    DELETE FROM "Booking"."Booking_price"
+    WHERE "Booking_id" = NEW.id 
+      AND "Invoice_rent_id" IS NULL
+      AND "Invoice_services_id" IS NULL;
  
-  -- Get next year prices
-  SELECT
-    CASE
-      WHEN months < 3 THEN "Rent_short"
-      WHEN months < 7 THEN "Rent_medium"
-      ELSE "Rent_long"
-    END,
-    "Services",
-    "Second_resident",
-    "Deposit",
-    "Limit",
-    "Final_cleaning"
-  INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit, ny_final_cleaning
-  FROM "Billing"."Pricing_detail"
-  WHERE "Building_id" = building_id
-  AND "Flat_type_id" = flat_type
-  AND ("Place_type_id" = place_type OR ("Place_type_id" IS NULL AND place_type IS NULL))
-  AND "Year" = 1 + EXTRACT(YEAR FROM dt_curr);
+  -- ECO/EXT
+  ELSE
 
-  -- Default prices to 0
-  SELECT coalesce(cy_rent, 0), 
-         coalesce(cy_services, 0), 
-         coalesce(cy_second, 0), 
-         coalesce(cy_deposit, 0), 
-         coalesce(cy_limit, 0),
-         coalesce(cy_final_cleaning, 0)
-    INTO cy_rent, cy_services, cy_second, cy_deposit, cy_limit, cy_final_cleaning;
+    -- Update dates
+    dt_to := NEW."New_check_out";
+   
+    -- Get previous accumulated rent
+    SELECT SUM("Rent") INTO prev_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
 
-  -- Default prices to previous year
-  SELECT coalesce(ny_rent, cy_rent), 
-         coalesce(ny_services, cy_services), 
-         coalesce(ny_second, cy_second), 
-         coalesce(ny_deposit, cy_deposit), 
-         coalesce(ny_limit, cy_limit),
-         coalesce(ny_final_cleaning, cy_final_cleaning)
-    INTO ny_rent, ny_services, ny_second, ny_deposit, ny_limit, ny_final_cleaning;
-
-  -- Second resident
-  IF NEW."Second_resident" THEN
-    cy_rent = cy_rent + cy_second;
-    ny_rent = ny_rent + ny_second;
+    IF NEW."New_check_out" < NEW."Date_to" THEN
+      -- ECO: Delete last month price
+      DELETE FROM "Booking"."Booking_price"
+      WHERE "Booking_id" = NEW.id 
+        AND "Invoice_rent_id" IS NULL
+        AND "Invoice_services_id" IS NULL
+        AND "Rent_date" >= date_trunc('month', LEAST(NEW."New_check_out", NEW."Date_to"));
+    ELSE 
+      -- EXT: Delete not billed prices
+      DELETE FROM "Booking"."Booking_price"
+      WHERE "Booking_id" = NEW.id 
+        AND "Invoice_rent_id" IS NULL
+        AND "Invoice_services_id" IS NULL
+        AND "Rent_date" >= CURRENT_DATE;
+ 	END IF;
+ 
   END IF;
 
-  -- Increment factor
-  multiplier := multiplier * (1 + (incpct / 100.0));
-  cy_rent := cy_rent * multiplier;
-  ny_rent := ny_rent * multiplier;
+  -- Calculate stay length in montns
+  SELECT EXTRACT(MONTH FROM AGE(dt_to, NEW."Date_from")) INTO months;
 
-  -- Current year prices
-  m_rent := ROUND(cy_rent, 0);
-  m_services := ROUND(cy_services, 0);
-  m_deposit := ROUND(cy_deposit, 0);
-  m_limit := ROUND(cy_limit, 0);
-  m_final_cleaning := ROUND(cy_final_cleaning, 0);
-  IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
-    m_rent := ROUND(ny_rent, 0);
-    m_services := ROUND(ny_services, 0);
-    m_deposit := ROUND(ny_deposit, 0);
-    m_limit := ROUND(ny_limit, 0);
-    m_final_cleaning := ROUND(ny_final_cleaning, 0);
-  END IF; 
-
-  -- Insert base values
-  IF m_deposit < m_rent + m_services THEN
-    m_deposit := m_rent + m_services;
+  -- Calculate year
+  SELECT EXTRACT(YEAR FROM NEW."Date_from") INTO year;
+  IF EXTRACT(MONTH FROM dt_curr) > 8 THEN
+    year := year + 1;
   END IF;
-  IF NEW."Deposit" IS NULL THEN
-    NEW."Deposit" := m_deposit;
-  END IF;
-  NEW."Rent" := m_rent;
-  NEW."Services" := m_services;
-  NEW."Limit" := m_limit;
-  NEW."Final_cleaning" := m_final_cleaning;
 
-  -- Insert prices
+  -- Get prices
+  WITH
+    "Extras" AS (
+      SELECT r.id,
+        EXP(SUM(LN(1 + COALESCE(rat."Increment", 0) / 100))) AS "Extra"
+      FROM "Resource"."Resource" r
+        LEFT JOIN "Resource"."Resource_amenity" ra ON ra."Resource_id" = r.id 
+        LEFT JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
+      GROUP BY 1
+    ),
+    "Prices" AS (
+      SELECT r.id,
+        r."Billing_type",
+        CASE
+          WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
+          WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
+          ELSE pd."Rent_long" * pr."Multiplier"
+        END as "Rent",
+        pd."Services",
+        pd."Deposit",
+        pd."Final_cleaning",
+        pd."Second_resident",
+        pd."Limit"
+      FROM "Resource"."Resource" r
+        INNER JOIN "Billing"."Pricing_detail" pd 
+          ON pd."Building_id" = r."Building_id"
+          AND pd."Flat_type_id" = r."Flat_type_id" 
+          AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
+        INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
+      WHERE pd."Year" = YEAR
+        AND r.id = NEW."Resource_id"
+    )
+  SELECT 
+    p."Billing_type",
+    ROUND(p."Rent" * e."Extra") as "Rent",
+    p."Services",
+    p."Deposit",
+    p."Final_cleaning",
+    p."Second_resident",
+    p."Limit"
+  INTO billing_type, rent, services, deposit, final_cleaning, second_resident, limit
+  FROM "Prices" p
+  LEFT JOIN "Extras" e ON p.id = e.id;
+
+  -- Base values
+  IF NEW."New_check_out" < NEW."Date_to" THEN
+    NEW."Rent"           := COALESCE(NEW."Rent", rent + second_resident, 0);
+    NEW."Services"       := COALESCE(NEW."Services", services, 0);
+    NEW."Deposit"        := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
+    NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
+    NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
+
+  -- Base values for EXT
+  ELSE
+    NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent", 0);
+    NEW."Services"       := COALESCE(services, NEW."Services", 0);
+    NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit", 0);
+    NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning", 0);
+    NEW."Limit"          := COALESCE("limit", NEW."Limit", 0);
+  END IF;
+ 
+  -- Loop to insert prices
+  dt_curr = NEW."Date_from";
+  dt_to = dt_to + INTERVAL '1 day';
   WHILE dt_curr < dt_to LOOP
+
+    -- Prices
+    monthly_rent := NEW."Rent";
+    monthly_services := New."Services";
 
     -- End of period (first day next month or last day + 1)
     dt_next := LEAST(date_trunc('month', dt_curr) + INTERVAL '1 month', dt_to);
-    dt_intr := AGE(dt_next, dt_curr);
  
-    -- Year change?
-    IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
-      m_rent := ROUND(ny_rent, 0);
-      m_services := ROUND(ny_services, 0);
-    END IF; 
- 
-    -- Prices
-    p_rent := m_rent;
-    p_services := m_services;
-
     -- Incomplete months
+    dt_intr := AGE(dt_next, dt_curr);
     IF dt_intr < INTERVAL '1 month' THEN
      
       IF billing_type = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
-          p_rent := ROUND(m_rent / 2, 1);
-          p_services := ROUND(m_services / 2, 1);
+          monthly_rent := ROUND(monthly_rent / 2, 1);
+          monthly_services := ROUND(monthly_services / 2, 1);
         END IF;
       END IF;
    
       IF billing_type = 'proporcional' THEN
         days := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
-        p_rent := ROUND(m_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
-        p_services := ROUND(m_services * EXTRACT(DAY FROM dt_intr) / days, 1);
+        monthly_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
+        monthly_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / days, 1);
       END IF;
-   
+
     END IF;
-   
+
     -- Final cleaning
-    IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to AND place_type IS NULL THEN
-      p_services := ROUND(p_services + coalesce(m_final_cleaning, 0), 0);
+    IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to THEN
+      monthly_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
     END IF;
- 
+
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
-    ("Booking_id", "Rent_date", "Rent", "Services")
-    VALUES (NEW.id, dt_curr, p_rent, p_services);
+      ("Booking_id", "Rent_date", "Rent", "Services", "Rent_total", "Services_total")
+      VALUES (NEW.id, dt_curr, monthly_rent, monthly_services, monthly_rent, monthly_services)
+      ON CONFLICT ("Booking_id", "Rent_date") DO NOTHING;
  
     -- Next month
     dt_curr := date_trunc('month', dt_curr) + interval '1 month';
  
   END LOOP; 
 
-  -- Return
+  -- Not ECO/EXT
+  IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
+    RETURN NEW;
+  END IF;
+
+  -- ECO/EXT, update dates
+  SELECT SUM("Rent") INTO curr_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
+  NEW."Old_check_out" := NEW."Date_to";
+  NEW."Date_to" := NEW."New_check_out";
+  NEW."Eco_ext_change_ok" := FALSE;
+  IF curr_total = prev_total THEN
+    NEW."New_check_out" := NULL;
+  END IF;
   RETURN NEW;
 
 END;
