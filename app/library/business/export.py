@@ -184,7 +184,7 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None):
         data = cur.fetchall()
         cur.close()
       except Exception as e:
-        logging.error(e)
+        logger.error(e)
         con.rollback()
         dbClient.putconn(con)
         return
