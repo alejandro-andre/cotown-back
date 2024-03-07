@@ -67,7 +67,7 @@ BEGIN
     SELECT SUM("Rent") INTO prev_total FROM "Booking"."Booking_price" WHERE "Booking_id" = NEW.id;
 
     IF NEW."New_check_out" < NEW."Date_to" THEN
-      -- ECO: Delete last month price
+      -- ECO: Delete last months price
       DELETE FROM "Booking"."Booking_price"
       WHERE "Booking_id" = NEW.id 
         AND "Invoice_rent_id" IS NULL
@@ -213,6 +213,8 @@ BEGIN
   NEW."Eco_ext_change_ok" := FALSE;
   IF curr_total = prev_total THEN
     NEW."New_check_out" := NULL;
+  ELSE
+    NEW."Check_out" := NULL;
   END IF;
   RETURN NEW;
 
