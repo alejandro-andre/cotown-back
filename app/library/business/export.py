@@ -119,14 +119,12 @@ def fill_sheet(df, columns, sheet):
         else:
           cell.value = row[c]
 
-  #http://localhost:5000/api/v1/export/rooming?id=1
-
 
 # ###################################################
 # Export graphql to excel
 # ###################################################
 
-def do_export_to_excel(apiClient, dbClient, name, variables=None):
+def do_export_to_excel(apiClient, dbClient, name, variables=None, sql=None):
 
   # Process variables (convert lists to tuple, for SQL WHERE IN)
   for var in variables:
@@ -155,11 +153,12 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None):
       fi.close()
 
     # Get SQL query
-    file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
-    if os.path.exists(file):
-      fi = open(file, 'r')
-      sql = fi.read()
-      fi.close()
+    if sql is None:
+      file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
+      if os.path.exists(file):
+        fi = open(file, 'r')
+        sql = fi.read()
+        fi.close()
 
     # Get columns
     file = 'templates/report/' + name + '.' + sheet.lower() + '.json'
