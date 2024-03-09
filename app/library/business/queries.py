@@ -41,7 +41,7 @@ def q_labels(dbClient, id, locale):
 # Dashboard
 # ######################################################
 
-def q_dashboard(dbClient, status = None, vars=None):
+def sql_dashboard(status, vars):
 
   # Params
   date_from       = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
@@ -50,6 +50,106 @@ def q_dashboard(dbClient, status = None, vars=None):
   building        = vars.get('building')
   buildings       = vars.getlist('building[]')
   location        = vars.get('location')
+
+  # Get bookings
+  select = '''
+    SELECT 
+      b.id, 
+      b."Status", 
+      b."Date_from", 
+      b."Date_to", 
+      b."Check_in",
+      b."Check_out",
+      b."Confirmation_date",
+      COALESCE(b."Check_in", b."Date_from") AS "Date_in",
+      COALESCE(b."Check_out", b."Date_to") AS "Date_out",
+      b."New_check_out",
+      b."Old_check_out",
+      b."Check_in_time",
+      b."Arrival", 
+      b."Flight", 
+      b."Check_in_room_ok",
+      b."Check_in_notice_ok",
+      b."Check_in_keys_ok",
+      b."Check_in_keyless_ok", 
+      b."Check_out_keys_ok",
+      b."Check_out_keyless_ok", 
+      b."Check_out_revision_ok", 
+      b."Issues", 
+      b."Issues_ok", 
+      b."Damages", 
+      b."Damages_ok", 
+      b."Comments",
+      b."Origin_id",
+      b."Destination_id",
+      b."Eco_ext_change_ok",
+      b."Eco_ext_keyless_ok",
+      ct."Name" AS "Option",
+      CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
+      r."Code" as "Resource",
+      c."Name",
+      c."Email",
+      c."Phones",
+      p.id AS "Payment_id",
+      p."Payment_date"      
+    FROM "Booking"."Booking" b
+      INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+      INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
+      LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
+      LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
+      LEFT JOIN "Billing"."Payment" p ON p."Booking_id" = b.id AND p."Payment_type" = 'checkin'
+      LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
+
+  # All confirmed
+  if status == 'ok':
+    sql = select + '''
+    WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') '''
+
+  # Next check-ins
+  elif status in ('next', 'nextin'):
+    sql = select + f'''
+    WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
+      AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
+
+  # Next check-outs
+  elif status == 'nextout':
+    sql = select + f'''
+    WHERE b."Status" IN (\'inhouse\')
+      AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
+
+  # Check-ins with issues
+  elif status == 'issues':
+    sql = select + f'''
+    WHERE b."Status" IN (\'inhouse\')
+      AND b."Issues" IS NOT NULL
+      AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
+
+  # ECO/EXT
+  elif status == 'ecoext':
+    sql = select + f'''
+    WHERE b."Status" IN (\'inhouse\')
+      AND COALESCE(b."New_check_out", COALESCE(b."Check_out", b."Date_to")) <> COALESCE(b."Check_out", b."Date_to")
+      AND NOT b."Eco_ext_change_ok" '''
+
+  # Other status
+  else:
+    sql = select + f'''
+    WHERE b."Status" = '{status}' '''
+
+  # Result
+  if buildings:
+    sql += f'''AND b2.id IN ({','.join(buildings)}) '''
+  elif building:
+    sql += f'''AND b2.id={building} '''
+  if location:
+    sql += f'''AND d."Location_id"={location} '''
+
+  # SQL
+  return sql
+
+
+def q_dashboard(dbClient, status=None, vars=None):
 
   # Connect
   con = dbClient.getconn()
@@ -82,109 +182,14 @@ def q_dashboard(dbClient, status = None, vars=None):
     cur.close()
     result['nextout'] = row[0]
 
-  # Rows
-  else:
-    # Get bookings
-    select = '''
-      SELECT 
-        b.id, 
-        b."Status", 
-        b."Date_from", 
-        b."Date_to", 
-        b."Check_in",
-        b."Check_out",
-        b."Confirmation_date",
-        COALESCE(b."Check_in", b."Date_from") AS "Date_in",
-        COALESCE(b."Check_out", b."Date_to") AS "Date_out",
-        b."New_check_out",
-        b."Old_check_out",
-        b."Check_in_time",
-        b."Arrival", 
-        b."Flight", 
-        b."Check_in_room_ok",
-        b."Check_in_notice_ok",
-        b."Check_in_keys_ok",
-        b."Check_in_keyless_ok", 
-        b."Check_out_keys_ok",
-        b."Check_out_keyless_ok", 
-        b."Check_out_revision_ok", 
-        b."Issues", 
-        b."Issues_ok", 
-        b."Damages", 
-        b."Damages_ok", 
-        b."Comments",
-        b."Origin_id",
-        b."Destination_id",
-        b."Eco_ext_change_ok",
-        b."Eco_ext_keyless_ok",
-        ct."Name" AS "Option",
-        CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
-        r."Code" as "Resource",
-        c."Name",
-        c."Email",
-        c."Phones",
-        p.id AS "Payment_id",
-        p."Payment_date"      
-      FROM "Booking"."Booking" b
-        INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
-        INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
-        LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
-        LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
-        LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
-        LEFT JOIN "Billing"."Payment" p ON p."Booking_id" = b.id AND p."Payment_type" = 'checkin'
-        LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
+    # Return
+    return result
 
-    # All confirmed
-    if status == 'ok':
-      sql = select + '''
-      WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') '''
-
-    # Next check-ins
-    elif status in ('next', 'nextin'):
-      sql = select + f'''
-      WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
-        AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
-
-    # Next check-outs
-    elif status == 'nextout':
-      sql = select + f'''
-      WHERE b."Status" IN (\'inhouse\')
-        AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
-
-    # Check-ins with issues
-    elif status == 'issues':
-      sql = select + f'''
-      WHERE b."Status" IN (\'inhouse\')
-        AND b."Issues" IS NOT NULL
-        AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
-
-    # ECO/EXT
-    elif status == 'ecoext':
-      sql = select + f'''
-      WHERE b."Status" IN (\'inhouse\')
-        AND COALESCE(b."New_check_out", COALESCE(b."Check_out", b."Date_to")) <> COALESCE(b."Check_out", b."Date_to")
-        AND NOT b."Eco_ext_change_ok" '''
-
-    # Other status
-    else:
-      sql = select + f'''
-      WHERE b."Status" = '{status}' '''
-
-    # Result
-    if buildings:
-      sql += f'''AND b2.id IN ({','.join(buildings)}) '''
-    elif building:
-      sql += f'''AND b2.id={building} '''
-    if location:
-      sql += f'''AND d."Location_id"={location} '''
-    cur = dbClient.execute(con, sql)
-    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-    cur.close()
-
-  # Disconnect
+  # Get bookings
+  cur = dbClient.execute(con, sql_dashboard(status, vars), vars)
+  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+  cur.close()
   dbClient.putconn(con)
-
-  # Return
   return result
 
 

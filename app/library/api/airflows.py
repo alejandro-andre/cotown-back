@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_prev_next, q_labels, q_questionnaire
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_prev_next, q_labels, q_questionnaire, sql_dashboard
 
 # Logging
 import logging
@@ -169,7 +169,7 @@ def req_booking_status(id, status):
 # Gets dashboard information
 # ---------------------------------------------------
 
-def req_dashboard(status = None):
+def req_dashboard(status=None):
 
   return q_dashboard(g.dbClient, status=status, vars=request.args)
 
@@ -177,6 +177,29 @@ def req_dashboard(status = None):
 def req_prev_next():
 
   return q_prev_next(g.dbClient)
+
+
+def req_report(status=None):
+
+  # Querystring variables
+  vars = {}
+  for item in dict(request.args).keys():
+    try:
+      vars[item] = int(request.args[item])
+    except:
+      vars[item] = request.args[item]
+
+  # Export
+  external_sql = sql_dashboard(status, request.args)
+  result = do_export_to_excel(g.apiClient, g.dbClient, 'operaciones.' + status, vars, external_sql)
+  if result is None:
+    abort(404)
+
+  # Response
+  response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  response.headers['Content-Disposition'] = 'inline; filename="operaciones.xlsx"'
+  return response   
+
 
 
 # ---------------------------------------------------

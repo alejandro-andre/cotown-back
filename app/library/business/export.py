@@ -124,7 +124,7 @@ def fill_sheet(df, columns, sheet):
 # Export graphql to excel
 # ###################################################
 
-def do_export_to_excel(apiClient, dbClient, name, variables=None, sql=None):
+def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=None):
 
   # Process variables (convert lists to tuple, for SQL WHERE IN)
   for var in variables:
@@ -141,11 +141,8 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, sql=None):
   wb = load_workbook(filename=BytesIO(template.read()))
   for sheet in wb.sheetnames:
 
-    # Querys
-    query = None
-    sql = None
-
     # Get graphQL query
+    query = None
     file = 'templates/report/' + name + '.' + sheet.lower() + '.graphql'
     if os.path.exists(file):   
       fi = open(file, 'r')
@@ -153,15 +150,21 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, sql=None):
       fi.close()
 
     # Get SQL query
-    if sql is None:
+    sql = None
+    if external_sql is None:
       file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
       if os.path.exists(file):
         fi = open(file, 'r')
         sql = fi.read()
         fi.close()
+    else:
+      sql = external_sql
 
     # Get columns
-    file = 'templates/report/' + name + '.' + sheet.lower() + '.json'
+    if external_sql is None:
+      file = 'templates/report/' + name + '.' + sheet.lower() + '.json'
+    else:
+      file = 'templates/report/' + name + '.json'
     if os.path.exists(file):
       fi = open(file, 'r')
       columns = json.load(fi)
