@@ -138,20 +138,15 @@ BEGIN
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
+  NEW."Deposit"        := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
+  NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
+  NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
   IF NEW."New_check_out" < NEW."Date_to" THEN
     NEW."Rent"           := COALESCE(NEW."Rent", rent + second_resident, 0);
     NEW."Services"       := COALESCE(NEW."Services", services, 0);
-    NEW."Deposit"        := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
-    NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
-    NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
-
-  -- Base values for EXT
   ELSE
     NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent", 0);
     NEW."Services"       := COALESCE(services, NEW."Services", 0);
-    NEW."Deposit"        := COALESCE(deposit, rent + second_resident + services, NEW."Deposit", 0);
-    NEW."Final_cleaning" := COALESCE(final_cleaning, NEW."Final_cleaning", 0);
-    NEW."Limit"          := COALESCE("limit", NEW."Limit", 0);
   END IF;
  
   -- Loop to insert prices
