@@ -45,20 +45,21 @@ BEGIN
       AND "Booking_id" = NEW.id
       AND "Payment_date" IS NOT NULL;
     IF num > 0 THEN
-      RAISE EXCEPTION '!!!Booking fee already paid!!!El booking fee ya ha sido pagado!!!';
-    END IF;
+      RAISE WARNING '!!!Booking fee already paid!!!El booking fee ya ha sido pagado!!!';
 
     -- Update fee (delete + update)
-    curr_user := CURRENT_USER;
-    RESET ROLE;
-    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'booking' AND "Customer_id" = NEW."Customer_id" AND "Booking_id" = NEW.id;
-    IF NEW."Booking_fee" > 0 THEN
-      SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
-      INSERT
-        INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-        VALUES (COALESCE(payment_method_id, 1), 'cotown', NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
+    ELSE
+      curr_user := CURRENT_USER;
+      RESET ROLE;
+      DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'booking' AND "Customer_id" = NEW."Customer_id" AND "Booking_id" = NEW.id;
+      IF NEW."Booking_fee" > 0 THEN
+        SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
+        INSERT
+          INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+          VALUES (COALESCE(payment_method_id, 1), 'cotown', NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
+      END IF;
+      EXECUTE 'SET ROLE "' || curr_user || '"';
     END IF;
-    EXECUTE 'SET ROLE "' || curr_user || '"';
     
   END IF;
 
@@ -73,26 +74,27 @@ BEGIN
       AND "Booking_id" = NEW.id
       AND "Payment_date" IS NOT NULL;
     IF num > 0 THEN
-      RAISE EXCEPTION '!!!Deposit already paid!!!La garantía ya ha sido pagada!!!';
-    END IF;
+      RAISE WARNING '!!!Deposit already paid!!!La garantía ya ha sido pagada!!!';
 
     -- Update deposit (delete + update)
-    curr_user := CURRENT_USER;
-    RESET ROLE;
-    DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposito' AND "Customer_id" = NEW."Customer_id" AND "Booking_id" = NEW.id;
-    -- Deposit is 0
-    IF NEW."Deposit" = 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
-      NEW."Deposit_actual" = 0;
+    ELSE
+      curr_user := CURRENT_USER;
+      RESET ROLE;
+      DELETE FROM "Billing"."Payment" WHERE "Payment_type" = 'deposito' AND "Customer_id" = NEW."Customer_id" AND "Booking_id" = NEW.id;
+      -- Deposit is 0
+      IF NEW."Deposit" = 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
+        NEW."Deposit_actual" = 0;
+      END IF;
+      -- Add payment if actual deposit is 0
+      IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
+        SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
+        SELECT p."Pos" INTO pos FROM "Resource"."Resource" r LEFT JOIN "Provider"."Provider" p ON p.id = r."Owner_id" WHERE r.id = NEW."Resource_id";
+        INSERT
+          INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+          VALUES (COALESCE(payment_method_id, 1), pos, NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
+      END IF;
+      EXECUTE 'SET ROLE "' || curr_user || '"';
     END IF;
-    -- Add payment if actual deposit is 0
-    IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
-      SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
-      SELECT p."Pos" INTO pos FROM "Resource"."Resource" r LEFT JOIN "Provider"."Provider" p ON p.id = r."Owner_id" WHERE r.id = NEW."Resource_id";
-      INSERT
-        INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-        VALUES (COALESCE(payment_method_id, 1), pos, NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
-    END IF;
-    EXECUTE 'SET ROLE "' || curr_user || '"';
     
   END IF;
 
