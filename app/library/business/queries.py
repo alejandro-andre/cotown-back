@@ -322,7 +322,6 @@ def q_room_prices(dbClient, segment, year):
   grouped_data = []
 
   # Procesar los resultados y agruparlos en tres niveles (Building, Place_type, Flat_type)
-  print(results)
   for row in results:
      
     # Building
