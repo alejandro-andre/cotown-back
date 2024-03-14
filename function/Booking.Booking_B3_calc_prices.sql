@@ -47,13 +47,14 @@ BEGIN
   IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
 
     -- Dates and resource not changed, ignore
-    IF NEW."Rent" IS NOT NULL AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
+    IF NEW."Rent" IS NOT NULL AND NEW."Services" IS NOT NULL AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
       RETURN NEW;
     END IF;
 
-    -- Delete not billed prices
+    -- Delete future not billed prices
     DELETE FROM "Booking"."Booking_price"
-    WHERE "Booking_id" = NEW.id 
+    WHERE "Booking_id" = NEW.id
+      AND "Rent_date" > CURRENT_DATE
       AND "Invoice_rent_id" IS NULL
       AND "Invoice_services_id" IS NULL;
  
@@ -74,12 +75,12 @@ BEGIN
         AND "Invoice_services_id" IS NULL
         AND "Rent_date" >= date_trunc('month', LEAST(NEW."New_check_out", NEW."Date_to"));
     ELSE 
-      -- EXT: Delete not billed prices
+      -- EXT: Delete future not billed prices
       DELETE FROM "Booking"."Booking_price"
       WHERE "Booking_id" = NEW.id 
+        AND "Rent_date" > CURRENT_DATE
         AND "Invoice_rent_id" IS NULL
-        AND "Invoice_services_id" IS NULL
-        AND "Rent_date" >= CURRENT_DATE;
+        AND "Invoice_services_id" IS NULL;
  	END IF;
  
   END IF;
