@@ -34,7 +34,7 @@ def zip(name, folder):
       for filename in filenames:
         logger.info(filename)
         file_path = os.path.join(foldername, filename)
-        zip_file.write(file_path, filename)
+        zip_file.write(file_path, foldername[len(folder):] + '/' + filename)
         os.remove(file_path)
     return name
 
@@ -62,6 +62,7 @@ def download_bills(apiClient, variables=None):
     ) {
       id
       Code
+      Bill_type
       Provider: ProviderViaProvider_id { Document }
       Document { name }
     }
@@ -75,8 +76,9 @@ def download_bills(apiClient, variables=None):
     # Bill
     if item['Document']:
       name = item['Provider']['Document'] + '_' + item['Code']
+      folder = 'recibos' if item['Bill_type'] == 'recibo' else 'facturas'
       file = apiClient.getFile(item['id'], 'Billing/Invoice', 'Document')
-      with open('download/' + name + '.pdf', 'wb') as pdf:
+      with open('download/' + folder + '/' + name + '.pdf', 'wb') as pdf:
         logger.info(name)
         num += 1
         pdf.write(file.content)
@@ -88,7 +90,8 @@ def download_bills(apiClient, variables=None):
   # Zip
   if num > 0:
     zip('facturas.zip', 'download')
-    clear('download')
+    clear('download/recibos')
+    clear('download/facturas')
     return 'facturas.zip'
 
 
