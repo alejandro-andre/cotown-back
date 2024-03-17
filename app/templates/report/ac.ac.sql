@@ -11,6 +11,7 @@ SELECT DISTINCT ON (c.id)
 	c."Lang" AS "Language",
 	TO_CHAR(b."Request_date", 'YYYY-MM-DD') AS "Request_date",
 	TO_CHAR(b."Confirmation_date", 'YYYY-MM-DD') AS "Confirmation_date",
+	CASE WHEN "Confirmation_date" IS NOT NULL THEN 'win' ELSE '' END AS "Tags",
 	bc."Name" AS "Origin",
 	br."Name" AS "Suborigin",
 	TO_CHAR(b."Date_from", 'YYYY-MM-DD') AS "Date_from",

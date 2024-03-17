@@ -17,7 +17,7 @@ BEGIN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}$' THEN
       RAISE EXCEPTION '!!!Wrong flat code %, must have XXXnnn.nn.nn format!!!Código de piso % incorrecto, debe formato XXXnnn.nn.nn!!!', NEW."Code", NEW."Code";
     END IF;
-    UPDATE "Resource"."Resource" SET id=id WHERE "Flat_id" = NEW.id;
+    UPDATE "Resource"."Resource" SET id = id WHERE "Flat_id" = NEW.id AND id <> NEW.id;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
@@ -54,6 +54,7 @@ BEGIN
   NEW."Service_id" := reg."Service_id";
   NEW."Billing_type" := reg."Billing_type";
   NEW."Sale_type" := reg."Sale_type";
+  NEW."Management_fee" := reg."Management_fee";
 
   -- Return
   EXECUTE 'SET ROLE "' || curr_user || '"';
