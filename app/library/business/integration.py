@@ -251,6 +251,7 @@ def q_int_management_fees(dbClient, fdesde):
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
         INNER JOIN "Provider"."Provider" p on p.id = i."Provider_id" 
         LEFT JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
+        LEFT JOIN "Resource"."Resource" r on r.id = il."Resource_id"
         LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id"  
       WHERE i."Issued" AND p.id <> 1 AND i."Booking_id" IS NULL 
         AND i."Issued_date" >= '{fdesde}' AND i."Issued_date" < '{fhasta}'
