@@ -84,7 +84,19 @@ BEGIN
 
   END IF;
 
-  -- Reserva
+  -- Campos obligatorios
+  IF NEW."Billing_type" IS NULL THEN
+    RAISE EXCEPTION '!!!Type field is mandatory!!!El campo tipo es obligatorio!!!';
+  END IF;
+  IF NEW."Payment_method_id" IS NULL THEN
+    RAISE EXCEPTION '!!!Payment method field is mandatory!!!El campo medio de pago es obligatorio!!!';
+  END IF;
+  IF NEW."Provider_id" IS NULL THEN
+    RAISE EXCEPTION '!!!Issuer field is mandatory!!!El campo emisor es obligatorio!!!';
+  END IF;
+  IF NEW."Concept" IS NULL THEN
+    RAISE EXCEPTION '!!!Concept field is mandatory!!!El campo concepto es obligatorio!!!';
+  END IF;
   IF NEW."Booking_id" IS NULL AND NEW."Booking_group_id" IS NULL THEN
     RAISE EXCEPTION '!!!Booking or Group booking is missing!!!Falta indicar la reserva o la reserva de grupo!!!';
   END IF;
