@@ -34,7 +34,7 @@ SELECT
 	r."Billing_type", r."Sale_type",
 	pr."Code" AS "Pricing_rate.Code",
 	r."Description", r."Description_en", 
-	r."Area", r."Baths", r."Places", r."Orientation", r."Wifi_ssid", r."Wifi_key", r."Gate_mac", r."Gate_phone", r."Notes"
+	r."Area", r."Baths", r."Places", r."Orientation", r."Wifi_ssid", r."Wifi_key", r."Gate_mac", r."Gate_phone", r."Notes", r."Management_fee"
 FROM "Resource"."Resource" r
 INNER JOIN "Provider"."Provider" o ON o.id = r."Owner_id" 
 INNER JOIN "Provider"."Provider" s ON s.id = r."Service_id"

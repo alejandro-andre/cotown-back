@@ -85,7 +85,7 @@ BEGIN
   END IF;
 
   -- Campos obligatorios
-  IF NEW."Billing_type" IS NULL THEN
+  IF NEW."Bill_type" IS NULL THEN
     RAISE EXCEPTION '!!!Type field is mandatory!!!El campo tipo es obligatorio!!!';
   END IF;
   IF NEW."Payment_method_id" IS NULL THEN
