@@ -27,8 +27,8 @@ SELECT
   b."Damages",
   CASE 
 	WHEN b."Status" = 'checkout' THEN 'Check-out'
-	WHEN b."Status" = 'revision' THEN 'Revisión'
-	ELSE 'Devolución fianza'
+	WHEN b."Status" = 'revision' THEN 'Revision'
+	ELSE 'Devolucion fianza'
   END AS "Status",
   CASE 
 	WHEN b."Destination_id" IS NOT NULL THEN 'CHA' 	
