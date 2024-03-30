@@ -1,0 +1,20 @@
+[
+"id",
+"Check_out",
+"Deposit_actual",
+"Amount_due",
+"Amount_from_deposit",
+"Damages",
+"Status",
+"Substatus",
+"Name",
+"Email",
+"Phones",
+"Code",
+"Bank_account", 
+"Swift", 
+"Bank_holder", 
+"Bank_name", 
+"Bank_address", 
+"Bank_city", "Bank_country"
+]
