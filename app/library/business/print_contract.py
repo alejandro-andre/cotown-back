@@ -228,7 +228,9 @@ query BookingById ($id: Int) {
       }
       Customer_email: Email
     }
-    Prices: Booking_priceListViaBooking_id {
+    Prices: Booking_priceListViaBooking_id (
+        orderBy: [{ attribute: Rent_date }]
+      ) {
       Rent_date_day
       Rent_date_month
       Rent_date_year
@@ -377,7 +379,9 @@ query Booking_groupById ($id: Int!) {
       }
       Resident_email: Email
     }
-    Prices: Booking_group_priceListViaBooking_id {
+    Prices: Booking_group_priceListViaBooking_id (
+        orderBy: [{ attribute: Rent_date }]
+      ) {
       Rent_date_day
       Rent_date_month
       Rent_date_year
