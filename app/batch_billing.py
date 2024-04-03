@@ -528,7 +528,7 @@ def bill_group_rent(dbClient, con):
             RETURNING id
             ''',
             (
-              'recibo' if item['Receipt'] else 'factura',
+              'factura',
               False,
               False,
               datetime.now(),
