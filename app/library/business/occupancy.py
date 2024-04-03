@@ -135,7 +135,7 @@ def do_occupancy(dbClient, vars):
         LEFT JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
         LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
         LEFT JOIN "Building"."Building" bu on bu.id = r."Building_id"  
-      WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NULL
+      WHERE i."Issued" AND i."Booking_group_id" IS NULL
         AND p."Product_type_id" > 2
     UNION ALL
       -- Rentas B2B facturadas
@@ -147,7 +147,7 @@ def do_occupancy(dbClient, vars):
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
         LEFT JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
         LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id"  
-      WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NOT NULL
+      WHERE i."Issued" AND i."Booking_group_id" IS NOT NULL
         AND p."Product_type_id" > 2
     UNION ALL
       -- Rentas B2C no facturadas
