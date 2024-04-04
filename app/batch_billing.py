@@ -129,7 +129,7 @@ def bill_payments(dbClient, con):
           False,
           False,
           datetime.now(),
-          ID_COTOWN if item['Payment_type'] == 'booking' else item['Owner_id'],
+          ID_COTOWN if item['Payment_type'] in ('booking','checkin') else item['Owner_id'],
           item['Customer_id'],
           item['Booking_id'],
           item['Payment_method_id'],
