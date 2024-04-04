@@ -21,6 +21,9 @@ DECLARE
   second_resident NUMERIC;
   limit NUMERIC;
 
+  n_rent NUMERIC;
+  n_services NUMERIC;
+
   monthly_rent NUMERIC;
   monthly_services NUMERIC;
 
@@ -54,7 +57,7 @@ BEGIN
     -- Delete future not billed prices
     DELETE FROM "Booking"."Booking_price"
     WHERE "Booking_id" = NEW.id
-      AND "Rent_date" > CURRENT_DATE
+      --? AND "Rent_date" > 'CURRENT_DATE'
       AND "Invoice_rent_id" IS NULL
       AND "Invoice_services_id" IS NULL;
  
@@ -94,7 +97,7 @@ BEGIN
     year := year + 1;
   END IF;
 
-  -- Get prices
+  -- Get current year prices
   WITH
     "Extras" AS (
       SELECT r.id,
@@ -137,11 +140,45 @@ BEGIN
   INTO billing_type, rent, services, deposit, final_cleaning, second_resident, limit
   FROM "Prices" p
   LEFT JOIN "Extras" e ON p.id = e.id;
+  
+  -- Get next year prices
+  WITH
+    "Extras" AS (
+      SELECT r.id,
+        EXP(SUM(LN(1 + COALESCE(rat."Increment", 0) / 100))) AS "Extra"
+      FROM "Resource"."Resource" r
+        LEFT JOIN "Resource"."Resource_amenity" ra ON ra."Resource_id" = r.id 
+        LEFT JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
+      GROUP BY 1
+    ),
+    "Prices" AS (
+      SELECT r.id,
+        CASE
+          WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
+          WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
+          ELSE pd."Rent_long" * pr."Multiplier"
+        END as "Rent",
+        pd."Services"
+      FROM "Resource"."Resource" r
+        INNER JOIN "Billing"."Pricing_detail" pd 
+          ON pd."Building_id" = r."Building_id"
+          AND pd."Flat_type_id" = r."Flat_type_id" 
+          AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
+        INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
+      WHERE pd."Year" = YEAR + 1
+        AND r.id = NEW."Resource_id"
+    )
+  SELECT 
+    ROUND(COALESCE(p."Rent", rent) * e."Extra", 0) as "Rent",
+    COALESCE(p."Services", services, 0)
+  INTO n_rent, n_services
+  FROM "Prices" p
+  LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  NEW."Deposit"        := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
-  NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
-  NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
+  NEW."Deposit"          := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
+  NEW."Final_cleaning"   := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
+  NEW."Limit"            := COALESCE(NEW."Limit", "limit", 0);
   IF NEW."New_check_out" < NEW."Date_to" THEN
     NEW."Rent"           := COALESCE(NEW."Rent", rent + second_resident, 0);
     NEW."Services"       := COALESCE(NEW."Services", services, 0);
@@ -150,15 +187,21 @@ BEGIN
     NEW."Services"       := COALESCE(services, NEW."Services", 0);
   END IF;
  
+  -- Prices
+  monthly_rent     := NEW."Rent";
+  monthly_services := New."Services";
+
   -- Loop to insert prices
   dt_curr = NEW."Date_from";
   dt_to = dt_to + INTERVAL '1 day';
   WHILE dt_curr < dt_to LOOP
 
-    -- Prices
-    monthly_rent := NEW."Rent";
-    monthly_services := New."Services";
-
+    -- Year change?
+    IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
+      monthly_rent     := ROUND(n_rent, 0);
+      monthly_services := ROUND(n_services, 0);
+    END IF; 
+ 
     -- End of period (first day next month or last day + 1)
     dt_next := LEAST(date_trunc('month', dt_curr) + INTERVAL '1 month', dt_to);
  
