@@ -1,7 +1,9 @@
 -- Drop tables
 DROP TABLE IF EXISTS gold.date CASCADE;
 DROP TABLE IF EXISTS gold.owner CASCADE;
+DROP TABLE IF EXISTS gold.location CASCADE;
 DROP TABLE IF EXISTS gold.resource CASCADE;
+DROP TABLE IF EXISTS gold.income CASCADE;
 
 -- Create owners table
 CREATE TABLE gold.owner (
@@ -11,14 +13,24 @@ CREATE TABLE gold.owner (
 CONSTRAINT owner_pk PRIMARY KEY ("id")
 );
 
+-- Create locations table
+CREATE TABLE gold.location (
+  "id" varchar NOT NULL,
+  "province" varchar NOT NULL,
+  "country" varchar NOT NULL,
+CONSTRAINT location_pk PRIMARY KEY ("id")
+);
+
 -- Create resources table
 CREATE TABLE gold.resource (
   "id" varchar NOT NULL,
-  "building" varchar NOT NULL,
   "flat" varchar NOT NULL,
-  "owner_id" varchar NOT NULL,
+  "building" varchar NOT NULL,
+  "owner" varchar NOT NULL,
+  "location" varchar NOT NULL,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
-CONSTRAINT resource_owner_fk FOREIGN KEY ("owner_id") REFERENCES gold.owner("id")
+CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
+CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.location("id")
 );
 
 -- Create dates table
@@ -40,6 +52,24 @@ CREATE TABLE gold.date (
   "yearmonth" varchar NOT NULL,
   "yearweek" varchar NOT NULL,
 CONSTRAINT date_pk PRIMARY KEY ("date")
+);
+
+-- Create income table
+CREATE TABLE gold.income (
+  "id" varchar NOT NULL,
+  "doc_id" varchar NOT NULL,
+  "doc_type" varchar NOT NULL,
+  "booking" int8 NOT NULL,
+  "date" date NOT NULL,
+  "provider" varchar NOT NULL,
+  "resource" varchar NOT NULL,
+  "product" varchar NOT NULL,
+  "amount" decimal(10, 2) NOT NULL,
+  "rate" decimal(10, 2) NOT NULL,
+  "discount" decimal(5, 2) NOT NULL,
+  "income_type" varchar NOT NULL,
+  "data_type" varchar NOT NULL,
+CONSTRAINT income_pk PRIMARY KEY ("id")
 );
 
 -- Insert dates

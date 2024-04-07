@@ -79,11 +79,11 @@ if __name__ == '__main__':
   # Logging
 
   logger.setLevel(settings.LOGLEVEL)
-  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)d] [%(levelname)s] %(message)s')
+  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)3d] [%(levelname)s] %(message)s')
   console_handler = logging.StreamHandler()
   console_handler.setLevel(settings.LOGLEVEL)
   console_handler.setFormatter(formatter)
-  file_handler = RotatingFileHandler('log/create.log', maxBytes=1000000, backupCount=5)
+  file_handler = RotatingFileHandler('log/etl.log', maxBytes=1000000, backupCount=5)
   file_handler.setLevel(settings.LOGLEVEL)
   file_handler.setFormatter(formatter)
   logger.addHandler(console_handler)
@@ -94,11 +94,14 @@ if __name__ == '__main__':
   dbOrigin, dbDestination = connect()
 
   # Init destination
-  #execute(dbDestination, 'init')
+  #execute(dbDestination, '_init')
 
   # Load tables
-  load(dbOrigin, dbDestination, 'owner')
-  load(dbOrigin, dbDestination, 'resource')
+  #load(dbOrigin, dbDestination, 'owner', 'owner')
+  #load(dbOrigin, dbDestination, 'location', 'location')
+  #load(dbOrigin, dbDestination, 'resource', 'resource')
+  load(dbOrigin, dbDestination, 'income', 'income_real')
+  load(dbOrigin, dbDestination, 'income', 'income_otb')
 
   # Disconnect
   dbDestination.disconnect()

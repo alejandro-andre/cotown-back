@@ -76,13 +76,13 @@ def get_data(dbClient, script):
 # Load entity
 # ###################################################
 
-def load(dbOrigin, dbDestination, table):
+def load(dbOrigin, dbDestination, table, query):
 
   # Log
   logger.info('Loading ' + table + 's...')
 
   # Get data
-  data = get_data(dbOrigin, table)
+  data = get_data(dbOrigin, query)
   if data is None or data.empty:
     return
 
@@ -119,7 +119,7 @@ def load(dbOrigin, dbDestination, table):
       records.append(list(record.values()))
 
       # Insert block
-      if len(records) == 500:
+      if len(records) == 100:
         cur = dbDestination.executemany(con, sql, records)
         cur.close()
         logger.info('Loaded ' + str(len(records)) + ' record(s)...')
