@@ -10,7 +10,7 @@ WITH
 SELECT 
   CONCAT('BOR-', bp.id) AS "id",
   b.id as "doc_id",
-  'otb' AS "doc_type",
+  '-' AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
@@ -20,7 +20,10 @@ SELECT
   b."Rooms" * bp."Rent" AS "rate", 
   0 AS discount,
   'B2C' AS "income_type",
-  'OTB' AS "data_type"
+  CASE
+    WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
+    ELSE 'Tentativa' 
+  END AS "data_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
   INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
@@ -28,7 +31,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Rooms" r on r.id = b.id 
 WHERE bp."Rent_date" >= '2024-01-01'
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
-  AND b."Status" IN ('grupoconfirmado', 'inhouse')
+  AND b."Status" <> 'cancelada'
 )  
 UNION
 (
@@ -43,7 +46,7 @@ WITH
 SELECT 
   CONCAT('BOS-', bp.id) AS "id",
   b.id as "doc_id",
-  'otb' AS "doc_type",
+  '-'AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
@@ -53,7 +56,10 @@ SELECT
   bp."Services" AS "rate", 
   0 AS discount,
   'B2B' AS "income_type",
-  'OTB' AS "data_type"
+  CASE
+    WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
+    ELSE 'Tentativa' 
+  END AS "data_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
   INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
@@ -61,5 +67,5 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Rooms" r on r.id = b.id 
 WHERE bp."Rent_date" >= '2024-01-01'
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
-  AND b."Status" IN ('grupoconfirmado', 'inhouse')
+  AND b."Status" <> 'cancelada'
 );

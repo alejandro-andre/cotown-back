@@ -25,7 +25,7 @@ UNION
 SELECT 
   CONCAT('COS-', bp.id) AS "id",
   b.id as "doc_id",
-  'otb' AS "doc_type",
+  '-' AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   p."Document" AS "provider",
