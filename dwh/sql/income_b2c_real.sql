@@ -1,5 +1,5 @@
 SELECT
-  CONCAT('F-', i.id) AS "id",
+  CONCAT('F-', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   b.id AS "booking",
@@ -22,7 +22,7 @@ SELECT
 	WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") - il."Amount"
 	WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") - il."Amount"
   END AS "discount",
-  pt."Name" AS "income_type",
+  'B2C' AS "income_type",
   'Real' AS "data_type"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Invoice" i ON i.id = il."Invoice_id" 
@@ -32,6 +32,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Booking"."Booking" b ON b.id = i."Booking_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   LEFT JOIN "Booking"."Booking_price" bp ON bp."Invoice_rent_id" = i.id 
-WHERE i."Issued_date" >= '2024-01-01'
+WHERE i."Issued" 
+  AND i."Issued_date" >= '2024-01-01'
   AND pr."Product_type_id" <> 2
 ;

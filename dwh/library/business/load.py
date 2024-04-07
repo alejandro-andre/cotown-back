@@ -79,7 +79,7 @@ def get_data(dbClient, script):
 def load(dbOrigin, dbDestination, table, query):
 
   # Log
-  logger.info('Loading ' + table + 's...')
+  logger.info('Loading ' + query + '...')
 
   # Get data
   data = get_data(dbOrigin, query)
@@ -108,7 +108,8 @@ def load(dbOrigin, dbDestination, table, query):
   fields = list(map(lambda key: '"' + key + '"', columns))
   update = list(map(lambda key: '"' + key + '"=EXCLUDED."' + key + '"', columns))
   markers = ['%s'] * len(columns)
-  sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({}) ON CONFLICT (id) DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
+  #sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({}) ON CONFLICT (id) DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
+  sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({})'.format(','.join(fields), ','.join(markers))
 
   try:
     # Loop thru all rows

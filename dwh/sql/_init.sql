@@ -1,5 +1,6 @@
 -- Drop tables
 DROP TABLE IF EXISTS gold.date CASCADE;
+DROP TABLE IF EXISTS gold.product CASCADE;
 DROP TABLE IF EXISTS gold.owner CASCADE;
 DROP TABLE IF EXISTS gold.location CASCADE;
 DROP TABLE IF EXISTS gold.resource CASCADE;
@@ -13,6 +14,13 @@ CREATE TABLE gold.owner (
 CONSTRAINT owner_pk PRIMARY KEY ("id")
 );
 
+-- Create product table
+CREATE TABLE gold.product (
+  "id" varchar NOT NULL,
+  "type" varchar NOT NULL,
+CONSTRAINT product_pk PRIMARY KEY ("id")
+);
+
 -- Create locations table
 CREATE TABLE gold.location (
   "id" varchar NOT NULL,
@@ -24,10 +32,12 @@ CONSTRAINT location_pk PRIMARY KEY ("id")
 -- Create resources table
 CREATE TABLE gold.resource (
   "id" varchar NOT NULL,
-  "flat" varchar NOT NULL,
-  "building" varchar NOT NULL,
   "owner" varchar NOT NULL,
   "location" varchar NOT NULL,
+  "building" varchar NOT NULL,
+  "flat" varchar DEFAULT NULL,
+  "flat_type" varchar DEFAULT NULL,
+  "place_type" varchar DEFAULT NULL,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
 CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
 CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.location("id")
@@ -56,19 +66,19 @@ CONSTRAINT date_pk PRIMARY KEY ("date")
 
 -- Create income table
 CREATE TABLE gold.income (
-  "id" varchar NOT NULL,
-  "doc_id" varchar NOT NULL,
-  "doc_type" varchar NOT NULL,
-  "booking" int8 NOT NULL,
-  "date" date NOT NULL,
+  "id" varchar NOT NULL,                -- Record id
+  "doc_id" varchar NOT NULL,            -- Id of the income document (invoice, ...)
+  "doc_type" varchar NOT NULL,          -- Document type
+  "booking" int8 NOT NULL,              -- Booking id
+  "date" date NOT NULL,                 -- Date of the income
   "provider" varchar NOT NULL,
   "resource" varchar NOT NULL,
   "product" varchar NOT NULL,
   "amount" decimal(10, 2) NOT NULL,
   "rate" decimal(10, 2) NOT NULL,
   "discount" decimal(5, 2) NOT NULL,
-  "income_type" varchar NOT NULL,
-  "data_type" varchar NOT NULL,
+  "income_type" varchar NOT NULL,       -- B2B, B2C
+  "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
 CONSTRAINT income_pk PRIMARY KEY ("id")
 );
 

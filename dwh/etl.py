@@ -94,14 +94,17 @@ if __name__ == '__main__':
   dbOrigin, dbDestination = connect()
 
   # Init destination
-  #execute(dbDestination, '_init')
+  execute(dbDestination, '_init')
 
   # Load tables
-  #load(dbOrigin, dbDestination, 'owner', 'owner')
-  #load(dbOrigin, dbDestination, 'location', 'location')
-  #load(dbOrigin, dbDestination, 'resource', 'resource')
-  load(dbOrigin, dbDestination, 'income', 'income_real')
-  load(dbOrigin, dbDestination, 'income', 'income_otb')
+  load(dbOrigin, dbDestination, 'owner', 'owner')
+  load(dbOrigin, dbDestination, 'location', 'location')
+  load(dbOrigin, dbDestination, 'product', 'product')
+  load(dbOrigin, dbDestination, 'resource', 'resource')
+  load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
+  load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
+  load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
+  load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
 
   # Disconnect
   dbDestination.disconnect()
