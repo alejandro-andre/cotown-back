@@ -10,17 +10,13 @@ SELECT
   il."Amount" AS "amount",
   CASE 
     WHEN pr.id = 1 AND i."Bill_type" = 'factura' THEN il."Amount"
-	WHEN pr."Product_type_id" = 1 THEN il."Amount"
-	WHEN pr."Product_type_id" = 1 THEN COALESCE(bp."Rent", il."Amount") 	
-	WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") 	
-	WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") 	
+	  WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") 	
+	  WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") 	
   END AS "rate",
   CASE 
     WHEN pr.id = 1 AND i."Bill_type" = 'factura' THEN 0
-	WHEN pr."Product_type_id" = 1 THEN 0
-	WHEN pr."Product_type_id" = 1 THEN COALESCE(bp."Rent", il."Amount") - il."Amount"
-	WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") - il."Amount"
-	WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") - il."Amount"
+  	WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") - il."Amount"
+  	WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") - il."Amount"
   END AS "discount",
   'B2B' AS "income_type",
   'Real' AS "data_type"
