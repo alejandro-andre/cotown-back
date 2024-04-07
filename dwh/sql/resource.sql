@@ -2,8 +2,8 @@ SELECT
   r."Code" AS "id",
   p."Document" AS "owner", 
   l."Name" AS "location", 
-  substring(r."Code", 1, 6) AS "building", 
-  substring(r."Code", 1, 12) AS "flat",
+  SUBSTRING(r."Code", 1, 6) AS "building", 
+  SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
   rpt."Code" AS "place_type"
 FROM "Resource"."Resource" r 
@@ -17,10 +17,10 @@ LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
 UNION
 
 SELECT DISTINCT
-  substring(r."Code", 1, 6) AS "id",
+  SUBSTRING(r."Code", 1, 6) AS "id",
   p."Document" AS "owner", 
   l."Name" AS "location", 
-  substring(r."Code", 1, 6) AS "building", 
+  SUBSTRING(r."Code", 1, 6) AS "building", 
   NULL AS "flat",
   NULL AS "flat_type",
   NULL AS "place_type"
