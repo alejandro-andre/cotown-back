@@ -1,0 +1,16 @@
+[default]
+
+# Log level: CRITICAL=50, ERROR=40, WARNING=30, INFO=20, DEBUG=10
+LOGLEVEL=10
+
+# Origin DB
+DBHOST='core.cotown.com'
+DBUSER='postgres'
+DBNAME='niledb'
+SSHUSER='partner'
+
+# Destination DB
+DWDBHOST='data.cotown.com'
+DWDBUSER='cotown'
+DWDBPASS='Ciber$2022'
+DWDBNAME='dw'
