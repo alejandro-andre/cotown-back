@@ -105,6 +105,7 @@ if __name__ == '__main__':
   load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
   load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
   load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
+  load(dbOrigin, dbDestination, 'income', 'income_forecast')
 
   # Disconnect
   dbDestination.disconnect()

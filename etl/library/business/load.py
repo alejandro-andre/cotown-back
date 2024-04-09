@@ -5,7 +5,7 @@
 # System includes
 import os
 import pandas as pd
-import json
+import csv
 
 # Logging
 import logging
@@ -18,10 +18,8 @@ logger = logging.getLogger('COTOWN')
 
 def execute(dbDestination, script):
 
-  # Get script
+  # Get SQL
   file = 'sql/' + script + '.sql'
-  if not os.path.exists(file):
-    return False
   fi = open(file, 'r')
   sql = fi.read()
   fi.close()
@@ -44,32 +42,41 @@ def execute(dbDestination, script):
 
 def get_data(dbClient, script):
 
-  # Get script
-  file = 'sql/' + script + '.sql'
-  if not os.path.exists(file):
-    return None
-  fi = open(file, 'r')
-  sql = fi.read()
-  fi.close()
+  # Get CSV
+  file = 'csv/' + script + '.csv'
+  if os.path.exists(file):
+    return pd.read_csv(file)
 
-  # Execute script
-  try:
-    con = dbClient.getconn()
-    cur = dbClient.execute(con, sql)
-    desc = [desc[0] for desc in cur.description]
-    data = cur.fetchall()
-  except Exception as e:
-    logger.error(e)
-    con.rollback()
-    dbClient.putconn(con)
-    return None
-  finally:
-    cur.close()
-    dbClient.putconn(con)
-  
-  # Dataframe
-  df = pd.DataFrame(data, columns=desc)
-  return df
+  # Or get from SQL
+  file = 'sql/' + script + '.sql'
+  if os.path.exists(file):
+
+    # Load file
+    fi = open(file, 'r')
+    sql = fi.read()
+    fi.close()
+
+    # Execute script
+    try:
+      con = dbClient.getconn()
+      cur = dbClient.execute(con, sql)
+      desc = [desc[0] for desc in cur.description]
+      data = cur.fetchall()
+    except Exception as e:
+      logger.error(e)
+      con.rollback()
+      dbClient.putconn(con)
+      return None
+    finally:
+      cur.close()
+      dbClient.putconn(con)
+    
+    # Dataframe
+    df = pd.DataFrame(data, columns=desc)
+    return df
+
+  # No data
+  return None
 
 
 # ###################################################
