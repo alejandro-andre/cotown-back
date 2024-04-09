@@ -8,7 +8,7 @@ WITH
     GROUP BY 1, 2
 )
 SELECT 
-  CONCAT('BOR-', bp.id) AS "id",
+  CONCAT('BOR', bp.id) AS "id",
   b.id as "doc_id",
   '-' AS "doc_type",
   bp."Booking_id" AS "booking",
@@ -44,7 +44,7 @@ WITH
     GROUP BY 1, 2
 )
 SELECT 
-  CONCAT('BOS-', bp.id) AS "id",
+  CONCAT('BOS', bp.id) AS "id",
   b.id as "doc_id",
   '-'AS "doc_type",
   bp."Booking_id" AS "booking",

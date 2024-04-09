@@ -76,7 +76,7 @@ CREATE TABLE gold.income (
   "product" varchar NOT NULL,
   "amount" decimal(10, 2) NOT NULL,
   "rate" decimal(10, 2) NOT NULL,
-  "discount" decimal(5, 2) NOT NULL,
+  "discount" decimal(10, 2) NOT NULL,
   "income_type" varchar NOT NULL,       -- B2B, B2C, ...
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
 CONSTRAINT income_pk PRIMARY KEY ("id")

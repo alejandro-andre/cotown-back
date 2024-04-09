@@ -1,5 +1,5 @@
 SELECT
-  CONCAT('F-', il.id) AS "id",
+  CONCAT('BRX', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   b.id AS "booking",
