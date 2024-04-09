@@ -19,10 +19,10 @@ SELECT
   b."Rooms" * bp."Rent" AS "amount",
   b."Rooms" * bp."Rent" AS "rate", 
   0 AS discount,
-  'B2C' AS "income_type",
+  'B2B' AS "income_type",
   CASE
-    WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
-    ELSE 'Tentativa' 
+    WHEN b."Status" IN ('grupobloqueado') THEN 'Tentativa' 
+    ELSE 'OTB' 
   END AS "data_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
