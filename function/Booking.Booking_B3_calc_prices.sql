@@ -50,7 +50,7 @@ BEGIN
   IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
 
     -- Dates and resource not changed, ignore
-    IF NEW."Rent" IS NOT NULL AND NEW."Services" IS NOT NULL AND NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
+    IF NEW."Resource_id" = OLD."Resource_id" AND NEW."Date_from" = OLD."Date_from" AND NEW."Date_to" = OLD."Date_to" THEN
       RETURN NEW;
     END IF;
 
