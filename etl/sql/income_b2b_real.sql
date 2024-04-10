@@ -6,6 +6,7 @@ SELECT
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
   r."Code" AS "resource",
+  i."Customer_id" AS "customer",
   pr."Name" AS "product",
   il."Amount" AS "amount",
   CASE 
@@ -13,11 +14,6 @@ SELECT
 	  WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") 	
 	  WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") 	
   END AS "rate",
-  CASE 
-    WHEN pr.id = 1 AND i."Bill_type" = 'factura' THEN 0
-  	WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") - il."Amount"
-  	WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") - il."Amount"
-  END AS "discount",
   'B2B' AS "income_type",
   'Real' AS "data_type"
 FROM "Billing"."Invoice_line" il 

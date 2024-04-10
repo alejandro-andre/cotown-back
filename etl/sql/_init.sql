@@ -72,11 +72,11 @@ CREATE TABLE gold.income (
   "booking" int8 DEFAULT NULL,          -- Booking id
   "date" date NOT NULL,                 -- Date of the income
   "provider" varchar DEFAULT NULL,
+  "customer" int8 DEFAULT NULL,
   "resource" varchar NOT NULL,
   "product" varchar NOT NULL,
   "amount" decimal(10, 2) NOT NULL,
   "rate" decimal(10, 2) NOT NULL,
-  "discount" decimal(10, 2) NOT NULL,
   "income_type" varchar NOT NULL,       -- B2B, B2C, ...
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
 CONSTRAINT income_pk PRIMARY KEY ("id")

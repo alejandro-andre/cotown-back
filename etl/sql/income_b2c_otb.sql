@@ -5,11 +5,11 @@ SELECT
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   p."Document" AS "provider",
+  b."Customer_id" AS "customer",
   r."Code" AS "resource",
   'Renta mensual' AS "product",
   bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "amount", 
   bp."Rent" AS "rate", 
-  COALESCE(bp."Rent_discount", 0) AS discount,
   'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentativa' 
@@ -32,11 +32,11 @@ SELECT
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   p."Document" AS "provider",
+  b."Customer_id" AS "customer",
   r."Code" AS "resource",
   'Servicios mensuales' AS "product",
   bp."Services" + COALESCE(bp."Services_discount", 0) AS "amount", 
   bp."Services" AS "rate", 
-  COALESCE(bp."Services_discount", 0) AS discount,
   'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentativa' 

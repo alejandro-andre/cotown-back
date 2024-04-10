@@ -5,6 +5,7 @@ SELECT
   b.id AS "booking",
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
+  i."Customer_id" AS "customer",
   r."Code" AS "resource",
   pr."Name" AS "product",
   il."Amount" AS "amount",
@@ -13,11 +14,6 @@ SELECT
 	  WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") 	
 	  WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") 	
   END AS "rate",
-  CASE 
-    WHEN pr.id = 1 AND i."Bill_type" = 'factura' THEN b."Booking_fee" - il."Amount"
-	  WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") - il."Amount"
-	  WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") - il."Amount"
-  END AS "discount",
   'B2C' AS "income_type",
   'Real' AS "data_type"
 FROM "Billing"."Invoice_line" il 

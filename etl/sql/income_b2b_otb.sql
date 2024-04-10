@@ -14,11 +14,11 @@ SELECT
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
+  b."Payer_id" AS "customer",
   r."Code" AS "resource",
   'Renta mensual' AS "product",
   b."Rooms" * bp."Rent" AS "amount",
   b."Rooms" * bp."Rent" AS "rate", 
-  0 AS discount,
   'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupobloqueado') THEN 'Tentativa' 
@@ -50,11 +50,11 @@ SELECT
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
+  b."Payer_id" AS "customer",
   r."Code" AS "resource",
   'Servicios mensuales' AS "product",
   bp."Services" AS "amount", 
   bp."Services" AS "rate", 
-  0 AS discount,
   'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
