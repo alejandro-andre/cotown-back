@@ -127,8 +127,8 @@ def do_occupancy(dbClient, vars):
     FROM (
       -- Rentas B2C (y otras) facturadas
       SELECT bu."Name" AS "Building", r."Code" AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
-        CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
-        CASE WHEN p."Product_type_id" <> 3 THEN il."Amount" ELSE 0 END AS "Services"
+        CASE WHEN i."Provider_id" <> 10 THEN il."Amount" ELSE 0 END AS "Rent",
+        CASE WHEN i."Provider_id" = 10 THEN il."Amount" ELSE 0 END AS "Services"
       FROM "Billing"."Invoice_line" il 
         INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
@@ -140,8 +140,8 @@ def do_occupancy(dbClient, vars):
     UNION ALL
       -- Rentas B2B facturadas
       SELECT bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
-        CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
-        CASE WHEN p."Product_type_id" <> 3 THEN il."Amount" ELSE 0 END AS "Services"
+        CASE WHEN i."Provider_id" <> 10 THEN il."Amount" ELSE 0 END AS "Rent",
+        CASE WHEN i."Provider_id" = 10 THEN il."Amount" ELSE 0 END AS "Services"
       FROM "Billing"."Invoice_line" il 
         INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 

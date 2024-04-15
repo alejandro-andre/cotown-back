@@ -1,11 +1,11 @@
 (
 WITH 
 "Rooms" AS (
-	SELECT bgr."Booking_id" AS "id", p."Document", SUBSTRING(MIN(r."Code"), 1, 12) AS "Code"
+	SELECT bgr."Booking_id" AS "id", r."Owner_id", r."Service_id", p."Document", SUBSTRING(MIN(r."Code"), 1, 12) AS "Code"
 	FROM "Booking"."Booking_group_rooming" bgr 
     INNER JOIN "Resource"."Resource" r ON r.id = bgr."Resource_id"
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 3, 4
 )
 SELECT 
   CONCAT('BOR', bp.id) AS "id",
@@ -37,11 +37,11 @@ UNION
 (
 WITH 
 "Rooms" AS (
-	SELECT bgr."Booking_id" AS "id", p."Document", SUBSTRING(MIN(r."Code"), 1, 12) AS "Code"
+	SELECT bgr."Booking_id" AS "id", r."Owner_id", r."Service_id", p."Document", SUBSTRING(MIN(r."Code"), 1, 12) AS "Code"
 	FROM "Booking"."Booking_group_rooming" bgr 
     INNER JOIN "Resource"."Resource" r ON r.id = bgr."Resource_id"
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 3, 4
 )
 SELECT 
   CONCAT('BOS', bp.id) AS "id",
@@ -52,7 +52,10 @@ SELECT
   r."Document" AS "provider",
   b."Payer_id" AS "customer",
   r."Code" AS "resource",
-  'Servicios mensuales' AS "product",
+  CASE
+    WHEN r."Owner_id" = r."Service_id" THEN 'Renta mensual'
+    ELSE 'Servicios mensuales'
+  END "product",
   bp."Services" AS "amount", 
   bp."Services" AS "rate", 
   'B2B' AS "income_type",

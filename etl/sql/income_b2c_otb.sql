@@ -34,7 +34,10 @@ SELECT
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
   r."Code" AS "resource",
-  'Servicios mensuales' AS "product",
+  CASE
+    WHEN r."Service_id" = r."Owner_id" THEN 'Renta mensual'
+    ELSE 'Servicios mensuales'
+  END "product",
   bp."Services" + COALESCE(bp."Services_discount", 0) AS "amount", 
   bp."Services" AS "rate", 
   'B2C' AS "income_type",

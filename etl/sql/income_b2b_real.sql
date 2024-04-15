@@ -7,11 +7,14 @@ SELECT
   p."Document" AS "provider", 
   r."Code" AS "resource",
   i."Customer_id" AS "customer",
-  pr."Name" AS "product",
+  CASE
+    WHEN pr."Product_type_id" > 3 AND i."Provider_id" <> 1 THEN 'Renta mensual'
+    ELSE pr."Name"
+  END "product",
   il."Amount" AS "amount",
   CASE 
-    WHEN pr.id = 1 AND i."Bill_type" = 'factura' THEN il."Amount"
-	  WHEN pr."Product_type_id" IN (1, 3) THEN COALESCE(bp."Rent", il."Amount") 	
+    WHEN pr.id = 1 THEN il."Amount"
+	  WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") 	
 	  WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") 	
   END AS "rate",
   'B2B' AS "income_type",
