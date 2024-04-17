@@ -21,7 +21,7 @@ query Invoices ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
             Concept
             Comments
             Provider: ProviderViaProvider_id { Name }
-            Customer: CustomerViaCustomer_id { Name }
+            Customer: CustomerViaCustomer_id { Name Email }
             Payment: PaymentViaPayment_id {
                 Payment_type
                 Payment_date

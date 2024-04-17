@@ -6,6 +6,7 @@
 "Booking_id",
 "Code",
 "Name",
+"Email",
 "Date_from",
 "Date_to",
 "Amount",

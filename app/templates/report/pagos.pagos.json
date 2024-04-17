@@ -14,6 +14,7 @@
 "Invoice.Payment.Payment_method.Name",
 "",
 "Invoice.Customer.Name",
+"Invoice.Customer.Email",
 "",
 "",
 "Invoice.Booking.Resource.Address",
