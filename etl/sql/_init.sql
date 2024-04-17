@@ -34,6 +34,7 @@ CREATE TABLE gold.resource (
   "id" varchar NOT NULL,
   "owner" varchar NOT NULL,
   "location" varchar NOT NULL,
+  "start_date" date DEFAULT NULL,
   "building" varchar NOT NULL,
   "flat" varchar DEFAULT NULL,
   "flat_type" varchar DEFAULT NULL,
