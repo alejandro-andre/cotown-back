@@ -19,6 +19,7 @@ from library.services.apiclient import APIClient
 from library.business.load_prices import load_prices
 from library.business.load_resources import load_resources
 from library.business.load_rooming import load_rooming
+from library.business.load_inventory import load_inventory
 
 # Logging
 import logging
@@ -117,6 +118,11 @@ def main():
     elif sheet == 'Precios':
       log += sheet + '\n'
       ok, l = load_prices(dbClient, con, workbook[sheet])
+
+    # Inventory
+    elif sheet == 'Inventario':
+      log += sheet + '\n'
+      ok, l = load_inventory(dbClient, con, workbook[sheet])
 
     # Rooming list
     elif sheet == 'Rooming':
