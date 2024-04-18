@@ -189,7 +189,9 @@ BEGIN
  
   -- Prices
   monthly_rent     := NEW."Rent";
-  monthly_services := New."Services";
+  monthly_services := NEW."Services";
+  n_rent           := COALESCE(n_rent, NEW."Rent");
+  n_services       := COALESCE(n_services, NEW."Services");
 
   -- Loop to insert prices
   dt_curr = NEW."Date_from";
