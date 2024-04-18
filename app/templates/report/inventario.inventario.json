@@ -1,0 +1,13 @@
+[
+"Resource.Code",
+"Inventory_type.Name",
+"Inventory_zone.Name",
+"Description",
+"Brand",
+"model",
+"Purchase_date",
+"Warranty_date",
+"Price",
+"Asset",
+"Comments"
+]

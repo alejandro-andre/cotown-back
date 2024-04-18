@@ -1,0 +1,21 @@
+{
+    data: Resource_Resource_inventoryList {
+        Resource: ResourceViaResource_id {
+            Code
+        }
+        Inventory_type: Resource_inventory_typeViaInventory_type_id {
+            Name
+        }
+        Inventory_zone: Resource_inventory_zoneViaInventory_zone_id {
+            Name
+        }
+        Description
+        Brand
+        Model
+        Purchase_date
+        Warranty_date
+        Price
+        Asset
+        Comments
+    }
+}
