@@ -61,14 +61,7 @@ class APIClient:
   def getFile(self, id, entity, field='File'):
 
     # Get file from Airflows
-    return requests.get(
-      'https://' + self.server + '/wopi/files/'
-      + entity
-      + '/'
-      + str(id)
-      + '/'
-      + field
-      + '/contents?inline=true&access_token='
-      + self.token
-    )
+    url = 'https://' + self.server + '/wopi/files/' + entity + '/' + str(id) + '/' + field + '/contents?inline=true&access_token=' + self.token
+    result = requests.get(url)
+    return result
 

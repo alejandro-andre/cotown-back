@@ -144,6 +144,8 @@ def download_contracts(apiClient, variables=None):
       name = 'Reserva_' + str(item['id']) + '_renta'
       file = apiClient.getFile(item['id'], 'Booking/Booking', 'Contract_rent')
       with open('download/' + name + '.pdf', 'wb') as pdf:
+        logger.info(name)
+        num += 1
         pdf.write(file.content)
         pdf.close()
 
@@ -152,9 +154,10 @@ def download_contracts(apiClient, variables=None):
       name = 'Reserva_' + str(item['id']) + '_servicios'
       file = apiClient.getFile(item['id'], 'Booking/Booking', 'Contract_services')
       with open('download/' + name + '.pdf', 'wb') as pdf:
+        logger.info(name)
+        num += 1
         pdf.write(file.content)
         pdf.close()
-        num += 1
 
   # Info
   logger.info('Downloaded {} contracts'.format(num))
