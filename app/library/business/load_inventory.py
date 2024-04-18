@@ -14,8 +14,7 @@ logger = logging.getLogger('COTOWN')
 def load_inventory(dbClient, con, data):
 
   # Delete
-  sql = 'DELETE FROM "Resource"."Resource_inventory"'
-  dbClient.execute(con, sql, values)
+  dbClient.execute(con, 'DELETE FROM "Resource"."Resource_inventory"')
 
   # Return values
   n_ok = n_ko = 0
