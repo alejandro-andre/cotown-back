@@ -34,7 +34,7 @@ PR_BOOKING_FEE = 1
 PR_DEPOSIT = 2
 PR_RENT = 3
 PR_SERVICES = 4
-PR_RENT_SERVICES = 5
+#PR_RENT_SERVICES = 5
 PR_CHECKIN = 10
 
 VAT_21 = 1
@@ -221,7 +221,7 @@ def bill_rent(dbClient, con):
       # Same issuer
       product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
-        product = PRODUCTS[PR_RENT_SERVICES]
+        #product = PRODUCTS[PR_RENT_SERVICES]
         rent += services
         services = 0
       if item['Pos'] != item['Service_pos']:
@@ -431,7 +431,7 @@ def bill_group_rent(dbClient, con):
       # Same issuer
       product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
-        product = PRODUCTS[PR_RENT_SERVICES]
+        #product = PRODUCTS[PR_RENT_SERVICES]
         total_rent += total_services
         total_services = 0
       if item['Pos'] != item['Service_pos']:
