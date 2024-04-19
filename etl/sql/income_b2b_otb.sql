@@ -56,8 +56,8 @@ SELECT
     WHEN r."Owner_id" = r."Service_id" THEN 'Renta mensual'
     ELSE 'Servicios mensuales'
   END "product",
-  bp."Services" AS "amount", 
-  bp."Services" AS "rate", 
+  b."Rooms" * bp."Services" AS "amount", 
+  b."Rooms" * bp."Services" AS "rate", 
   'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
