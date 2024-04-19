@@ -48,24 +48,24 @@ SELECT "Name", "Date", SUM("Rent"), SUM("Services")
 FROM (
 SELECT bu."Name", bu."Code", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
   CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
-  CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
+  CASE WHEN p."Product_type_id" <> 3 THEN il."Amount" ELSE 0 END AS "Services"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
   INNER JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id"  
-WHERE i."Issued" AND p."Product_type_id" IN (3, 4)
+WHERE i."Issued" AND p."Product_type_id" > 2
 UNION ALL
 SELECT bu."Name", r."Code", i."Code", DATE_TRUNC('month', i."Issued_date") AS "Date", 
   CASE WHEN p."Product_type_id" = 3 THEN il."Amount" ELSE 0 END AS "Rent",
-  CASE WHEN p."Product_type_id" = 4 THEN il."Amount" ELSE 0 END AS "Services"
+  CASE WHEN p."Product_type_id" <> 3 THEN il."Amount" ELSE 0 END AS "Services"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Product" p on p.id = il."Product_id" 
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id" 
   INNER JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id" 
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"  
-WHERE i."Issued" AND i."Issued" AND p."Product_type_id" IN (3, 4)
+WHERE i."Issued" AND i."Issued" AND p."Product_type_id" > 2
 UNION ALL
 SELECT 
   bu."Name" AS "Building", (bu."Code" || '-' || b.id) AS "Resource", '', DATE_TRUNC('month', bp."Rent_date") AS "Date", 

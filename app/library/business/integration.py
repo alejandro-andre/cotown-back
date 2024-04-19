@@ -136,13 +136,13 @@ def q_int_invoices(dbClient, date):
       CASE 
         WHEN i."Provider_id" = 1 OR i."Provider_id" = 10 THEN
           CASE
-	        WHEN pr."Product_type_id" = 2 THEN 'GF'
+	          WHEN pr."Product_type_id" = 2 THEN 'GF'
             WHEN i."Bill_type" = 'rectificativa' THEN 'CCM'
             ELSE 'CI'
           END
         ELSE
           CASE
-	        WHEN pr."Product_type_id" = 2 THEN 'GF'
+	          WHEN pr."Product_type_id" = 2 THEN 'GF'
             WHEN i."Bill_type" = 'rectificativa' THEN 'AT'
             ELSE 'FT'
           END

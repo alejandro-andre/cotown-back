@@ -15,7 +15,7 @@ SELECT
   CASE 
     WHEN pr.id = 1 THEN il."Amount"
 	  WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") 	
-	  WHEN pr."Product_type_id" = 4 THEN COALESCE(bp."Services", il."Amount") 	
+	  WHEN pr."Product_type_id" <> 3 THEN COALESCE(bp."Services", il."Amount") 	
   END AS "rate",
   'B2B' AS "income_type",
   'Real' AS "data_type"

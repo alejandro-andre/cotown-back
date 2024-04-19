@@ -8,7 +8,7 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   CASE
-    WHEN pr."Product_type_id" = 4 AND i."Provider_id" <> 1 THEN 'Renta mensual'
+    WHEN pr."Product_type_id" <> 3 AND i."Provider_id" <> 1 THEN 'Renta mensual'
     ELSE pr."Name"
   END "product",
   il."Amount" AS "amount",
