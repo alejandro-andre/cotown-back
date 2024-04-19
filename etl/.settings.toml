@@ -10,7 +10,7 @@ DBNAME='niledb'
 SSHUSER='partner'
 
 # Destination DB
-DWDBHOST='data.cotown.com'
+DWDBHOST='localhost'
 DWDBUSER='cotown'
 DWDBPASS='Ciber$2022'
 DWDBNAME='dw'

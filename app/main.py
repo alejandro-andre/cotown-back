@@ -60,6 +60,7 @@ def runapp():
   # DB API
   dbClient = DBClient(
     host=settings.SERVER,
+    port=settings.get('DBPORT', 5432),
     dbname=settings.DATABASE,
     user=settings.DBUSER,
     password=settings.DBPASS,

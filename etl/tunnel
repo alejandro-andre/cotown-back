@@ -1,1 +1,1 @@
-ssh -i cotown.key.pem -L 5432:localhost:5432 cotown@data.cotown.com
+ssh -i cotown.key.pem -p 23141 -L 5432:localhost:5432 cotown@data.cotown.com

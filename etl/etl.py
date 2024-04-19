@@ -33,10 +33,11 @@ def connect():
 
   dbOrigin = DBClient(
     host=settings.DBHOST,
+    port=settings.get('DBPORT', 5432),
     dbname=settings.DBNAME,
     user=settings.DBUSER,
     password=settings.DBPASS,
-    sshuser=settings.SSHUSER,
+    sshuser=settings.get('SSHUSER', None),
     sshpassword=settings.get('SSHPASS', None),
     sshprivatekey=settings.get('SSHPKEY', None),
     readonly=True
@@ -50,10 +51,11 @@ def connect():
 
   dbDestination = DBClient(
     host=settings.DWDBHOST,
+    port=settings.get('DWDBPORT', 5432),
     dbname=settings.DWDBNAME,
     user=settings.DWDBUSER,
     password=settings.DWDBPASS,
-    sshuser=settings.DWSSHUSER,
+    sshuser=settings.get('DWSSHUSER', None),
     sshpassword=settings.get('DWSSHPASS', None),
     sshprivatekey=settings.get('DWSSHPKEY', None)
   )

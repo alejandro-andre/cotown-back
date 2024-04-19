@@ -14,9 +14,10 @@ import psycopg2.extras
 class DBClient:
 
   # Init
-  def __init__(self, host, dbname, user, password, sshuser=None, sshpassword=None, sshprivatekey=None, schema='public', readonly=False):
+  def __init__(self, host, port, dbname, user, password, sshuser=None, sshpassword=None, sshprivatekey=None, schema='public', readonly=False ):
 
     self.host = host
+    self.port = port
     self.dbname = dbname
     self.user = user
     self.password = password
@@ -29,8 +30,8 @@ class DBClient:
     self.tunnel = None
     self.pool = None
     self.autocommit = True
-   
 
+    
   # Is closed?
   def closed(self):
 
@@ -61,13 +62,15 @@ class DBClient:
           remote_bind_address=('127.0.0.1', 5432)
         )
       self.tunnel.start()
-  
+      self.port = self.tunnel.local_bind_port
+      self.host='localhost'
+
     # Connect to DB using pool
     self.pool = psycopg2.pool.SimpleConnectionPool(
       1, 
       20, 
-      host="localhost",
-      port=self.tunnel.local_bind_port,
+      host=self.host,
+      port=self.port,
       dbname=self.dbname, 
       user=self.user, 
       password=self.password
@@ -83,8 +86,9 @@ class DBClient:
       self.pool.closeall()
 
       # Close tunnel
-      self.tunnel.stop()
-      self.tunnel.close()
+      if self.tunnel:
+        self.tunnel.stop()
+        self.tunnel.close()
 
     self.pool = None
     self.tunnel = None
