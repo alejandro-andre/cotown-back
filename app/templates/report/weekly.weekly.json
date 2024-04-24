@@ -31,7 +31,7 @@
 "Resource.Place_type.Name",
 "Rent",
 "Services",
-"Prices.Rent",
+"Prices.0.Rent",
 "Resource.Building.Segment.Name",
 "Limit",
 "Resource.Code",
