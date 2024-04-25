@@ -58,7 +58,7 @@ def connect():
     sshpassword=settings.get('DWSSHPASS', None),
     sshprivatekey=settings.get('DWSSHPKEY', None)
   )
-  #dbDestination.connect()
+  dbDestination.connect()
 
   return dbOrigin, dbDestination
 
@@ -87,23 +87,23 @@ if __name__ == '__main__':
   dbOrigin, dbDestination = connect()
 
   # Calc availability
-  #?forecast()
+  forecast()
   occupancy(dbOrigin)
 
   # Init destination
-  #?execute(dbDestination, '_init')
+  execute(dbDestination, '_init')
 
   # Load tables
-  #?load(dbOrigin, dbDestination, 'owner', 'owner')
-  #?load(dbOrigin, dbDestination, 'location', 'location')
-  #?load(dbOrigin, dbDestination, 'product', 'product')
-  #?load(dbOrigin, dbDestination, 'resource', 'resource')
-  #?load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
-  #?load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
-  #?load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
-  #?load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
-  #?load(dbOrigin, dbDestination, 'income', 'income_forecast')
-  #?load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
+  load(dbOrigin, dbDestination, 'owner', 'owner')
+  load(dbOrigin, dbDestination, 'location', 'location')
+  load(dbOrigin, dbDestination, 'product', 'product')
+  load(dbOrigin, dbDestination, 'resource', 'resource')
+  load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
+  load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
+  load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
+  load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
+  load(dbOrigin, dbDestination, 'income', 'income_forecast')
+  load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
 
   # Disconnect
   dbDestination.disconnect()
