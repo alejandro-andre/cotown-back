@@ -183,7 +183,12 @@ def occupancy(dbClient):
   df_occupied = pd.melt(df_occupied, id_vars=['id', 'resource', 'type'], var_name='date', value_name='occupied')
   df_sold     = pd.melt(df_sold, id_vars=['id', 'resource', 'type'], var_name='date', value_name='sold')
   df_final    = pd.merge(pd.merge(df_beds, df_occupied, on=['id', 'resource', 'type', 'date']), df_sold, on=['id', 'resource', 'type', 'date'])
-  df_final.reset_index(drop=True, inplace=True)
+
+  # Reindex
+  df_final['id'] = range(1, 1 + len(df_final))
+  df_final.set_index('id', inplace=True)
+
+  # To CSV
   df_final.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'resource', 'date', 'available', 'occupied', 'sold'])
 
   # Log

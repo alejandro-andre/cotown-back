@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS gold.owner CASCADE;
 DROP TABLE IF EXISTS gold.location CASCADE;
 DROP TABLE IF EXISTS gold.resource CASCADE;
 DROP TABLE IF EXISTS gold.income CASCADE;
+DROP TABLE IF EXISTS gold.occupancy CASCADE;
 
 -- Create owners table
 CREATE TABLE gold.owner (
