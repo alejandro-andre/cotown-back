@@ -66,7 +66,7 @@ def occupancy(dbClient):
 
   # Dates interval
   start_date = '2024-01-01'
-  end_date   = '2029-12-31'
+  end_date   = '2026-12-31'
   dates      = [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')][:-1]
 
   # Existing resources
@@ -186,7 +186,6 @@ def occupancy(dbClient):
 
   # Reindex
   df_final['id'] = range(1, 1 + len(df_final))
-  df_final.set_index('id', inplace=True)
 
   # To CSV
   df_final.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'resource', 'date', 'available', 'occupied', 'sold'])
