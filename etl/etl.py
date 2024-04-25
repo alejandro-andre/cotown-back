@@ -8,13 +8,12 @@
 # Imports
 # ###################################################
 
-# System includes
-import os
-
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.config import settings
 from library.business.load import load, execute
+from library.business.occupancy import occupancy
+from library.business.forecast import forecast
 
 # Logging
 import logging
@@ -63,14 +62,6 @@ def connect():
 
   return dbOrigin, dbDestination
 
-  '''
-  columnas = cur.description
-  for col in columnas:
-      cur.execute("SELECT typname FROM pg_type WHERE oid = %s;", (col.type_code,))
-      type_name = cur.fetchone()
-      print(f'{col.name}, {col.type_code}, {type_name[0]}')
-
-  '''
 
 # ###################################################
 # Startup
@@ -95,6 +86,10 @@ if __name__ == '__main__':
   # Connect
   dbOrigin, dbDestination = connect()
 
+  # Calc availability
+  forecast()
+  occupancy(dbOrigin)
+
   # Init destination
   execute(dbDestination, '_init')
 
@@ -108,6 +103,7 @@ if __name__ == '__main__':
   load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
   load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
   load(dbOrigin, dbDestination, 'income', 'income_forecast')
+  load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
 
   # Disconnect
   dbDestination.disconnect()

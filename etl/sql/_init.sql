@@ -44,6 +44,18 @@ CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
 CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.location("id")
 );
 
+-- Create occupancy table
+CREATE TABLE gold.occupancy (
+  "id" varchar NOT NULL,
+  "resource" varchar NOT NULL,
+  "date" date NOT NULL,
+  "available" int NOT NULL,
+  "occupied" int NOT NULL,
+  "sold" int NOT NULL,
+CONSTRAINT occupancy_pk PRIMARY KEY ("id"),
+CONSTRAINT occupancy_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
+);
+
 -- Create dates table
 CREATE TABLE gold.date (
   "date" date NOT NULL,

@@ -5,7 +5,6 @@
 # System includes
 import os
 import pandas as pd
-import csv
 
 # Logging
 import logging
@@ -112,9 +111,9 @@ def load(dbOrigin, dbDestination, table, query):
     logger.info(f"Columnas en ORIGEN pero no en DESTINO: {list(set(data.columns) - set(columns))}")
 
   # Insert sentence
-  fields = list(map(lambda key: '"' + key + '"', columns))
-  update = list(map(lambda key: '"' + key + '"=EXCLUDED."' + key + '"', columns))
   markers = ['%s'] * len(columns)
+  fields = list(map(lambda key: '"' + key + '"', columns))
+  #update = list(map(lambda key: '"' + key + '"=EXCLUDED."' + key + '"', columns))
   #sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({}) ON CONFLICT (id) DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
   sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({})'.format(','.join(fields), ','.join(markers))
 
