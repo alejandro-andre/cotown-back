@@ -1,6 +1,6 @@
 (
 -- Rentas B2C facturadas
-SELECT pr."Name" as "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
+SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
   i."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   il."Amount" AS "Amount",
   t."Value" / 100 AS "Tax",
@@ -9,7 +9,7 @@ SELECT pr."Name" as "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXT
     ELSE 0.0
   END AS "Amount_due",
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
-  pm."Name" AS "Payment_method", p."Payment_date", i."Code" as "Invoice",
+  pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
   CASE WHEN i."Booking_id" IS NOT NULL THEN 'B2C' ELSE '---' END AS "Type",
   pdt."Name" AS "Amount_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
@@ -30,7 +30,7 @@ WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_group_id" IS NULL
 UNION ALL
 
 -- Rentas B2B facturadas
-SELECT pr."Name" as "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
+SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
   i."Booking_group_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   il."Amount" AS "Amount",
   t."Value" / 100 AS "Tax",
@@ -39,7 +39,7 @@ SELECT pr."Name" as "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXT
     ELSE 0.0
   END AS "Amount_due",
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
-  pm."Name" AS "Payment_method", p."Payment_date", i."Code" as "Invoice",
+  pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
   'B2B' AS "Type", pdt."Name" AS "Amount_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Billing"."Invoice_line" il
@@ -61,7 +61,7 @@ UNION ALL
 
 -- Rentas B2C no facturadas
 SELECT 
-  pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
+  pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
   bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
@@ -75,7 +75,7 @@ SELECT
     WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
     ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
   END AS "Amount_due",
-  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL as "Invoice",
+  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
   'B2C' AS "Type", pdt."Name" AS "Amount_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_price" bp 
@@ -95,7 +95,7 @@ UNION ALL
 
 -- Rentas B2B no facturadas
 SELECT DISTINCT ON (bp.id)
-  pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
+  pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
   bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
@@ -109,7 +109,7 @@ SELECT DISTINCT ON (bp.id)
     WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
     ELSE b."Rooms" * bp."Rent"
   END AS "Amount_due",
-  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL as "Invoice",
+  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
   'B2B' AS "Type", pdt."Name" AS "Amount_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_group_price" bp 
@@ -129,7 +129,7 @@ UNION ALL
 
 -- Servicios B2C no facturados
 SELECT 
-  pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
+  pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
   bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN 0
@@ -140,7 +140,7 @@ SELECT
     WHEN r."Owner_id" = r."Service_id" THEN 0
     ELSE bp."Services" + COALESCE(bp."Services_discount", 0)
   END AS "Amount_due",
-  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL as "Invoice",
+  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
   'B2C' AS "Type", pdt."Name" AS "Amount_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_price" bp 
@@ -157,7 +157,7 @@ UNION ALL
 
 -- Servicios B2B no facturados
 SELECT DISTINCT ON (bp.id)
-  pr."Name" as "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
+  pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
   bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN 0
@@ -168,7 +168,7 @@ SELECT DISTINCT ON (bp.id)
     WHEN r."Owner_id" = r."Service_id" THEN 0
     ELSE b."Rooms" * bp."Services"
   END AS "Amount_due",
-  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL as "Invoice",
+  'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
   'B2B' AS "Type", pdt."Name" AS "Amount_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_group_price" bp 

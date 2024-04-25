@@ -9,7 +9,7 @@ WITH
 )
 SELECT 
   CONCAT('BOR', bp.id) AS "id",
-  b.id as "doc_id",
+  b.id AS "doc_id",
   '-' AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
@@ -45,7 +45,7 @@ WITH
 )
 SELECT 
   CONCAT('BOS', bp.id) AS "id",
-  b.id as "doc_id",
+  b.id AS "doc_id",
   '-'AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",

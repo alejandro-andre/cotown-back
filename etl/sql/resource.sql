@@ -2,11 +2,12 @@ SELECT
   r."Code" AS "id",
   p."Document" AS "owner", 
   l."Name" AS "location", 
-  b."Start_date" as "start_date",
+  b."Start_date" AS "start_date",
   SUBSTRING(r."Code", 1, 6) AS "building", 
   SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
-  rpt."Code" AS "place_type"
+  rpt."Code" AS "place_type",
+  r."Billing_type" AS "billing_type"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
@@ -21,11 +22,12 @@ SELECT DISTINCT
   SUBSTRING(r."Code", 1, 6) AS "id",
   p."Document" AS "owner", 
   l."Name" AS "location", 
-  b."Start_date" as "start_date",
+  b."Start_date" AS "start_date",
   SUBSTRING(r."Code", 1, 6) AS "building", 
   NULL AS "flat",
   NULL AS "flat_type",
-  NULL AS "place_type"
+  NULL AS "place_type",
+  NULL AS "billing_type"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 

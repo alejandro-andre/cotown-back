@@ -1,6 +1,6 @@
 SELECT 
   CONCAT('COR-', bp.id) AS "id",
-  b.id as "doc_id",
+  b.id AS "doc_id",
   'otb' AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
@@ -27,7 +27,7 @@ UNION
 
 SELECT 
   CONCAT('COS-', bp.id) AS "id",
-  b.id as "doc_id",
+  b.id AS "doc_id",
   '-' AS "doc_type",
   bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",

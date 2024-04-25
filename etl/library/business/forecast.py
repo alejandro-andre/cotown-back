@@ -15,7 +15,7 @@ def forecast():
   # Log
   logger.info('Calculating forecast...')
 
-  workbook = openpyxl.load_workbook('csv/fc-st.xlsx')
+  workbook = openpyxl.load_workbook('csv/income_forecast.xlsx')
 
   result = '''"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","income_type","data_type"\n''' 
   for name in ('Forecast', 'Stabilised'):

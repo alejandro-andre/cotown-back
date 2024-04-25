@@ -114,7 +114,7 @@ BEGIN
           WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
           WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
           ELSE pd."Rent_long" * pr."Multiplier"
-        END as "Rent",
+        END AS "Rent",
         pd."Services",
         pd."Deposit",
         pd."Final_cleaning",
@@ -131,7 +131,7 @@ BEGIN
     )
   SELECT 
     p."Billing_type",
-    ROUND(p."Rent" * e."Extra") as "Rent",
+    ROUND(p."Rent" * e."Extra") AS "Rent",
     p."Services",
     p."Deposit",
     p."Final_cleaning",
@@ -157,7 +157,7 @@ BEGIN
           WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
           WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
           ELSE pd."Rent_long" * pr."Multiplier"
-        END as "Rent",
+        END AS "Rent",
         pd."Services"
       FROM "Resource"."Resource" r
         INNER JOIN "Billing"."Pricing_detail" pd 
@@ -169,7 +169,7 @@ BEGIN
         AND r.id = NEW."Resource_id"
     )
   SELECT 
-    ROUND(COALESCE(p."Rent", rent) * e."Extra", 0) as "Rent",
+    ROUND(COALESCE(p."Rent", rent) * e."Extra", 0) AS "Rent",
     COALESCE(p."Services", services, 0)
   INTO n_rent, n_services
   FROM "Prices" p

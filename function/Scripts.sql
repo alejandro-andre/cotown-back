@@ -139,13 +139,13 @@ UPDATE "Booking"."Booking_group" b SET "Contract_rent" = null, "Contract_service
 
 SELECT sum("Qty"), sum("Rent"), sum("Services"), sum("Rent") + sum("Services")
 FROM (
-  SELECT "Code", sum("Qty") as "Qty", sum("Rent") as "Rent", sum("Services") as "Services"
+  SELECT "Code", sum("Qty") AS "Qty", sum("Rent") AS "Rent", sum("Services") AS "Services"
   FROM (
     SELECT
-      substring(r."Code", 1, 6) as "Code",
-      count(*) as "Qty",
-      sum(bp."Rent" + coalesce(bp."Rent_discount", 0)) as "Rent",
-      sum(bp."Services" + coalesce(bp."Services_discount", 0)) as "Services"
+      substring(r."Code", 1, 6) AS "Code",
+      count(*) AS "Qty",
+      sum(bp."Rent" + coalesce(bp."Rent_discount", 0)) AS "Rent",
+      sum(bp."Services" + coalesce(bp."Services_discount", 0)) AS "Services"
     FROM 
       "Booking"."Booking_price" bp 
       INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
@@ -158,9 +158,9 @@ FROM (
     UNION ALL
     SELECT
       bu."Code",
-      count(*) as "Qty",
-      sum(b."Rooms" * bp."Rent") as "Rent",
-      sum(b."Rooms" * bp."Services") as "Services"
+      count(*) AS "Qty",
+      sum(b."Rooms" * bp."Rent") AS "Rent",
+      sum(b."Rooms" * bp."Services") AS "Services"
     FROM 
       "Booking"."Booking_group_price" bp 
       INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
@@ -236,8 +236,8 @@ and b."Date_to" > now();
 
 -- Rooms
 SELECT 
-  b."Code" as "Building_code", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code", 
-  b."Name" as "Building_name", rpt."Name" AS "Place_type_name", rft."Name" AS "Flat_type_name", 
+  b."Code" AS "Building_code", rpt."Code" AS "Place_type_code", rft."Code" AS "Flat_type_code", 
+  b."Name" AS "Building_name", rpt."Name" AS "Place_type_name", rft."Name" AS "Flat_type_name", 
   ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long", 0) AS "Price", MIN(mrt.id) AS "Photo"
 FROM "Resource"."Resource" r
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"

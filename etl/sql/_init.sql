@@ -40,6 +40,7 @@ CREATE TABLE gold.resource (
   "flat" varchar DEFAULT NULL,
   "flat_type" varchar DEFAULT NULL,
   "place_type" varchar DEFAULT NULL,
+  "billing_type" varchar DEFAULT NULL,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
 CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
 CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.location("id")
@@ -50,6 +51,7 @@ CREATE TABLE gold.occupancy (
   "id" varchar NOT NULL,
   "resource" varchar NOT NULL,
   "date" date NOT NULL,
+  "beds" int NOT NULL,
   "available" int NOT NULL,
   "occupied" int NOT NULL,
   "sold" int NOT NULL,

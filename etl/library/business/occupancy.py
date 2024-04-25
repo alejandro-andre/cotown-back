@@ -5,6 +5,7 @@
 # System includes
 import calendar
 import pandas as pd
+from itertools import product
 from dateutil.relativedelta import relativedelta
 
 # Logging
@@ -20,7 +21,6 @@ logger = logging.getLogger('COTOWN')
 def occupancy(dbClient):
 
   def nights(resource, type, date):
-
     # First and last days of the month
     mfrom = date.replace(day=1)
     mto = date + relativedelta(months=1) - relativedelta(days=1)
@@ -45,34 +45,38 @@ def occupancy(dbClient):
     return n
 
 
-  def available(flat, date):
-
+  def beds(id, date):
     # All flat non availability rows
-    rows = df_avail[df_avail['Resource_id'] == flat]
+    rows = df_avail[df_avail['Resource_id'] == id]
 
     # Check if the date is in between any range
     for _, row in rows.iterrows():
       if row['Date_from'] <= date <= row['Date_to']:
-        return 0  # Not available
-      
-    # Available days that month
+        return 0
+    return 1
+  
+  
+  def available(id, date, rooms=False):
+    # All flat non availability rows
+    rows = df_avail[df_avail['Resource_id'] == id]
+
+    # Check if the date is in between any range
+    for _, row in rows.iterrows():
+      if row['Date_from'] <= date <= row['Date_to']:
+        return 0
     return calendar.monthrange(date.year, date.month)[1]
   
+
   # Log
   logger.info('Calculating occupancy...')
 
   # Connection
   con = dbClient.getconn()
 
-  # Dates interval
-  start_date = '2024-01-01'
-  end_date   = '2026-12-31'
-  dates      = [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')][:-1]
-
   # Existing resources
   sql = '''
   -- All places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id", r."Billing_type" as "type"
+  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", r."Billing_type" as "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE r."Resource_type" = 'plaza'
@@ -80,7 +84,7 @@ def occupancy(dbClient):
   UNION
   
   -- All rooms without places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id", r."Billing_type" as "type"
+  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", r."Billing_type" as "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE "Resource_type" = 'habitacion' AND 
@@ -89,7 +93,7 @@ def occupancy(dbClient):
   UNION
   
   -- All Flats without rooms
-  SELECT r.id, r."Code" AS "resource", r.id as "Flat_id", r."Billing_type" as "type"
+  SELECT r.id, r."Code" AS "resource", r.id AS "flat", r."Billing_type" as "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE "Resource_type" = 'piso' AND 
@@ -158,37 +162,35 @@ def occupancy(dbClient):
     cur.close()
   logger.info('- Bookings retrieved')
 
-  # Check available resources (beds) by month
-  df_beds = df_res.copy()
-  for dt in dates:
-    df_beds[dt] = df_beds.apply(lambda row: available(row['Flat_id'], dt), axis=1)
-  df_beds.drop('Flat_id', axis=1, inplace=True)
-  df_res.drop('Flat_id', axis=1, inplace=True)
+  # Dates
+  start_date = '2024-01-01'
+  end_date   = '2026-12-31'
+  df_dates = pd.DataFrame({'date': [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')]})
+
+  # Resources x dates Cross table
+  df_dates['key'] = 1
+  df_res['key'] = 1
+  df_cross = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
+
+  # Beds
+  df_cross['beds'] = df_cross.apply(lambda row: beds(row['flat'], row['date']), axis=1)
   logger.info('- Beds calculated')
 
-  # Pivot booked room nights by month
-  df_occupied = df_res.copy()
-  for dt in dates:
-    df_occupied[dt] = df_occupied.apply(lambda row: nights(row['resource'], None, dt), axis=1)
-  logger.info('- Nights occupied calculated')
+  # Available nights
+  df_cross['available'] = df_cross.apply(lambda row: available(row['flat'], row['date']), axis=1)
+  logger.info('- Available nights calculated')
 
-  # Pivot booked room nights by month
-  df_sold = df_res.copy()
-  for dt in dates:
-    df_sold[dt] = df_sold.apply(lambda row: nights(row['resource'], row['type'], dt), axis=1)
-  logger.info('- Nights sold calculated')
+  # Ocuppied nights
+  df_cross['occupied'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date']), axis=1)
+  logger.info('- Occupied nights calculated')
 
-  # Reformat dataframes
-  df_beds     = pd.melt(df_beds, id_vars=['id', 'resource', 'type'], var_name='date', value_name='available')
-  df_occupied = pd.melt(df_occupied, id_vars=['id', 'resource', 'type'], var_name='date', value_name='occupied')
-  df_sold     = pd.melt(df_sold, id_vars=['id', 'resource', 'type'], var_name='date', value_name='sold')
-  df_final    = pd.merge(pd.merge(df_beds, df_occupied, on=['id', 'resource', 'type', 'date']), df_sold, on=['id', 'resource', 'type', 'date'])
-
-  # Reindex
-  df_final['id'] = range(1, 1 + len(df_final))
+  # Sold nights
+  df_cross['sold'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date']), axis=1)
+  logger.info('- Sold nights calculated')
 
   # To CSV
-  df_final.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'resource', 'date', 'available', 'occupied', 'sold'])
+  df_cross['id'] = range(1, 1 + len(df_cross))
+  df_cross.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'resource', 'date', 'beds', 'available', 'occupied', 'sold'])
 
   # Log
   logger.info('Done')
