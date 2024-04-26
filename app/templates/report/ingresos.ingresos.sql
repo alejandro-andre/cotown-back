@@ -101,8 +101,8 @@ SELECT DISTINCT ON (bp.id)
     WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
     ELSE b."Rooms" * bp."Rent"
   END AS "Amount",
-  CASE
-    WHEN "Tax" THEN t."Value" / 100
+  CASE 
+    WHEN bt."Tax_id" IS NOT NULL THEN t."Value" / 100 
     ELSE 0
   END AS "Tax",
   CASE 
@@ -117,11 +117,11 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id"
-  INNER JOIN "Billing"."Tax" t ON t.id = 1
   INNER JOIN "Resource"."Resource" r on r.id = br."Resource_id"  
   INNER JOIN "Provider"."Provider" pr on pr.id = r."Owner_id"  
   INNER JOIN "Customer"."Customer" c on c.id = b."Payer_id"
   INNER JOIN "Billing"."Product_type" pdt on pdt.id = 3
+  LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id"
 WHERE bp."Invoice_rent_id" IS NULL 
   AND b."Status" IN ('grupoconfirmado', 'inhouse') 
   AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s AND r."Owner_id" BETWEEN %(pdesde)s AND %(phasta)s
