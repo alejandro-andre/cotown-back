@@ -27,6 +27,9 @@ DECLARE
   monthly_rent NUMERIC;
   monthly_services NUMERIC;
 
+  curr_rent NUMERIC;
+  curr_services NUMERIC;
+
   prev_total NUMERIC;
   curr_total NUMERIC;
 
@@ -207,34 +210,38 @@ BEGIN
     -- End of period (first day next month or last day + 1)
     dt_next := LEAST(date_trunc('month', dt_curr) + INTERVAL '1 month', dt_to);
  
+    -- Complete months
+    cur_rent     := monthly_rent;
+    cur_services := monthly_services;
+
     -- Incomplete months
     dt_intr := AGE(dt_next, dt_curr);
     IF dt_intr < INTERVAL '1 month' THEN
      
       IF billing_type = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
-          monthly_rent := ROUND(monthly_rent / 2, 1);
-          monthly_services := ROUND(monthly_services / 2, 1);
+          curr_rent := ROUND(monthly_rent / 2, 1);
+          curr_services := ROUND(monthly_services / 2, 1);
         END IF;
       END IF;
    
       IF billing_type = 'proporcional' THEN
         days := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
-        monthly_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
-        monthly_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / days, 1);
+        curr_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
+        curr_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / days, 1);
       END IF;
 
     END IF;
 
     -- Final cleaning
     IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to THEN
-      monthly_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
+      curr_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
     END IF;
 
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
       ("Booking_id", "Rent_date", "Rent", "Services", "Rent_total", "Services_total")
-      VALUES (NEW.id, dt_curr, monthly_rent, monthly_services, monthly_rent, monthly_services)
+      VALUES (NEW.id, dt_curr, curr_rent, curr_services, curr_rent, curr_services)
       ON CONFLICT ("Booking_id", "Rent_date") DO NOTHING;
  
     -- Next month
