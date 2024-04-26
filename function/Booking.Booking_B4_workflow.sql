@@ -29,12 +29,12 @@ BEGIN
     END IF;
   END IF;
 
-  -- Booking fee check
+  -- Membership fee check
   --IF COALESCE(NEW."Booking_fee", 0) <> COALESCE(NEW."Booking_fee_calc", 0) AND NEW."Booking_discount_type_id" IS NULL THEN
   --  RAISE EXCEPTION '!!!Discount reason is mandatory!!!Es obligatorio indicar motivo de descuento!!!';
   --END IF;
 
-  -- Update booking fee
+  -- Update membership fee
   IF OLD."Booking_fee" <> NEW."Booking_fee" OR (OLD."Booking_fee" IS NULL AND NEW."Booking_fee" > 0) THEN
 
     -- Already paid?
@@ -45,7 +45,7 @@ BEGIN
       AND "Booking_id" = NEW.id
       AND "Payment_date" IS NOT NULL;
     IF num > 0 THEN
-      RAISE WARNING '!!!Booking fee already paid!!!El booking fee ya ha sido pagado!!!';
+      RAISE WARNING '!!!Mambership fee already paid!!!El Mambership fee ya ha sido pagado!!!';
 
     -- Update fee (delete + update)
     ELSE
@@ -56,7 +56,7 @@ BEGIN
         SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
         INSERT
           INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-          VALUES (COALESCE(payment_method_id, 1), 'cotown', NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Booking fee', 'booking');
+          VALUES (COALESCE(payment_method_id, 1), 'cotown', NEW."Customer_id", NEW.id, NEW."Booking_fee", CURRENT_DATE, 'Membership fee', 'booking');
       END IF;
       EXECUTE 'SET ROLE "' || curr_user || '"';
     END IF;
@@ -160,7 +160,7 @@ BEGIN
   END IF;
 
   -- DESCARTADA PAGADA a DESCARTADA
-  -- Actualiza el estado a "descartada" cuando se devuelve el booking fee
+  -- Actualiza el estado a "descartada" cuando se devuelve el membership fee
   IF (NEW."Status" = 'descartadapagada' AND NEW."Booking_fee_returned" IS NOT NULL) THEN
     NEW."Status" := 'descartada';
   END IF;

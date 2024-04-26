@@ -75,7 +75,7 @@ def get_data(dbClient, con):
 
 
 # ###################################################
-# Generate booking fee and deposit payment bills
+# Generate membership fee and deposit payment bills
 # ###################################################
 
 def bill_payments(dbClient, con):
@@ -711,7 +711,7 @@ def main():
   # 0. Get structure data (products)
   get_data(dbClient, con)
 
-  # 1. Generate invoice for each booking fee and deposit payment
+  # 1. Generate invoice for each membership fee and deposit payment
   bill_payments(dbClient, con)
 
   # 2. Monthly billing process

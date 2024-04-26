@@ -11,7 +11,7 @@ BEGIN
     NEW."Status" := 'solicitud';
   END IF;
 
-  -- Calcula el booking fee si está vacío
+  -- Calcula el membership fee si está vacío
   IF NEW."Booking_fee_calc" IS NULL THEN
 
     -- Year
@@ -20,7 +20,7 @@ BEGIN
       year := year + 1;
     END IF; 
 
-    -- Obtiene el valor del booking fee
+    -- Obtiene el valor del membership fee
     SELECT "Booking_fee"
     INTO booking_fee_amount
     FROM "Billing"."Pricing_detail" pd

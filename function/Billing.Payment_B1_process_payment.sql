@@ -52,7 +52,7 @@ BEGIN
   IF (NEW."Payment_type" = 'booking') THEN
 
     -- Registra el pago
-    INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Booking fee pagado');
+    INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Membership fee pagado');
 
     -- SOLICITUD a SOLICITUD PAGADA
     -- Comprobamos si el estado es 'solicitud'
@@ -73,7 +73,7 @@ BEGIN
       -- Deposito no pagado aun
       IF deposit > 0 AND deposit_actual IS NULL THEN
         UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      -- Deposito pagado ANTES QUE EL BOOKING FEE
+      -- Deposito pagado ANTES QUE EL MEMBERSHIP FEE
       ELSE
         UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
       END IF;
