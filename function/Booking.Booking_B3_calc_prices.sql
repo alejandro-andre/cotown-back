@@ -211,8 +211,8 @@ BEGIN
     dt_next := LEAST(date_trunc('month', dt_curr) + INTERVAL '1 month', dt_to);
  
     -- Complete months
-    cur_rent     := monthly_rent;
-    cur_services := monthly_services;
+    curr_rent     := monthly_rent;
+    curr_services := monthly_services;
 
     -- Incomplete months
     dt_intr := AGE(dt_next, dt_curr);
