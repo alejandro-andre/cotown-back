@@ -4,10 +4,13 @@
 "Inventory_zone.Name",
 "Description",
 "Brand",
-"model",
+"Model",
 "Purchase_date",
 "Warranty_date",
 "Price",
+"Base",
+"Qty",
+"Bill",
 "Asset",
 "Comments"
 ]
