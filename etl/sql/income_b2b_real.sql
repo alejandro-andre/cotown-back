@@ -6,6 +6,7 @@ SELECT
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
   r."Code" AS "resource",
+  'GROUP' AS "stay_length",
   i."Customer_id" AS "customer",
   CASE
     WHEN pr."Product_type_id" > 3 AND i."Provider_id" <> 1 THEN 'Renta mensual'

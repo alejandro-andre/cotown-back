@@ -16,6 +16,7 @@ SELECT
   r."Document" AS "provider",
   b."Payer_id" AS "customer",
   r."Code" AS "resource",
+  'GROUP' AS "stay_length",
   'Renta mensual' AS "product",
   b."Rooms" * bp."Rent" AS "amount",
   b."Rooms" * bp."Rent" AS "rate", 
@@ -52,6 +53,7 @@ SELECT
   r."Document" AS "provider",
   b."Payer_id" AS "customer",
   r."Code" AS "resource",
+  'GROUP' AS "stay_length",
   CASE
     WHEN r."Owner_id" = r."Service_id" THEN 'Renta mensual'
     ELSE 'Servicios mensuales'

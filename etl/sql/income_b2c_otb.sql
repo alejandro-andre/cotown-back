@@ -7,6 +7,11 @@ SELECT
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
   r."Code" AS "resource",
+  CASE
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
+    ELSE 'LONG'
+  END AS "stay_length",
   'Renta mensual' AS "product",
   bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "amount", 
   bp."Rent" AS "rate", 
@@ -34,6 +39,11 @@ SELECT
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
   r."Code" AS "resource",
+  CASE
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
+    ELSE 'LONG'
+  END AS "stay_length",
   CASE
     WHEN r."Service_id" = r."Owner_id" THEN 'Renta mensual'
     ELSE 'Servicios mensuales'

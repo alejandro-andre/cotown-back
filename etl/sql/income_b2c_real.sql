@@ -8,6 +8,11 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   CASE
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
+    ELSE 'LONG'
+  END AS "stay_length",
+  CASE
     WHEN pr."Product_type_id" <> 3 AND i."Provider_id" <> 1 THEN 'Renta mensual'
     ELSE pr."Name"
   END "product",

@@ -93,6 +93,7 @@ CREATE TABLE gold.income (
   "product" varchar NOT NULL,
   "amount" decimal(10, 2) NOT NULL,
   "rate" decimal(10, 2) NOT NULL,
+  "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP  
   "income_type" varchar NOT NULL,       -- B2B, B2C, ...
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
 CONSTRAINT income_pk PRIMARY KEY ("id")
