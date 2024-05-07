@@ -102,17 +102,15 @@ BEGIN
   END IF;
 
   -- Cliente
-  IF NEW."Customer_id" IS NULL THEN
-    IF NEW."Booking_id" IS NOT NULL THEN
-      SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+  IF NEW."Booking_id" IS NOT NULL THEN
+    SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+    NEW."Customer_id" := customer_id;
+  ELSE
+    IF NEW."Booking_group_id" IS NOT NULL THEN
+      SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
       NEW."Customer_id" := customer_id;
     ELSE
-      IF NEW."Booking_group_id" IS NOT NULL THEN
-        SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
-        NEW."Customer_id" := customer_id;
-      ELSE
-        RAISE EXCEPTION '!!!Client is missing!!!Falta indicar el cliente!!!';
-      END IF;
+      RAISE EXCEPTION '!!!Client is missing!!!Falta indicar el cliente!!!';
     END IF;
   END IF;
 
