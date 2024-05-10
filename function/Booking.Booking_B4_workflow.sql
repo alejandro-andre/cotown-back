@@ -316,11 +316,11 @@ BEGIN
   -- A CONTRATO
   IF (NEW."Status" = 'contrato') THEN
     -- EMail
-    IF NEW."Check_in" IS NULL AND NEW."Origin_id" IS NULL THEN
-      INSERT
-        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-        VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
-    END IF;
+    --?IF NEW."Check_in" IS NULL AND NEW."Origin_id" IS NULL THEN
+    --?  INSERT
+    --?    INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+    --?    VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
+    --?END IF;
     -- Log
     change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed");
   END IF;
