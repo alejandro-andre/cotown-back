@@ -12,6 +12,13 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
+# Constants
+# ###################################################
+
+BATCH = 1000
+
+
+# ###################################################
 # Execute scripts
 # ###################################################
 
@@ -126,7 +133,7 @@ def load(dbOrigin, dbDestination, table, query):
       records.append(list(record.values()))
 
       # Insert block
-      if len(records) == 100:
+      if len(records) >= BATCH:
         cur = dbDestination.executemany(con, sql, records)
         cur.close()
         logger.info('Loaded ' + str(len(records)) + ' record(s)...')

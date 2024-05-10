@@ -64,10 +64,10 @@ def connect():
 
 
 # ###################################################
-# Startup
+# Main
 # ###################################################
 
-if __name__ == '__main__':
+def main():
 
   # Logging
 
@@ -84,28 +84,49 @@ if __name__ == '__main__':
   logger.info('Started')
 
   # Connect
-  dbOrigin, dbDestination = connect()
+  try:
+    dbOrigin, dbDestination = connect()
+  except Exception as e:
+    logger.error(e)
+    return
 
-  # Calc availability
-  forecast()
-  occupancy(dbOrigin)
+  # Process
+  try:
+    # Calc forecast
+    forecast()
 
-  # Init destination
-  execute(dbDestination, '_init')
+    # Calc availability
+    occupancy(dbOrigin)
 
-  # Load tables
-  load(dbOrigin, dbDestination, 'owner', 'owner')
-  load(dbOrigin, dbDestination, 'location', 'location')
-  load(dbOrigin, dbDestination, 'product', 'product')
-  load(dbOrigin, dbDestination, 'resource', 'resource')
-  load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
-  load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
-  load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
-  load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
-  load(dbOrigin, dbDestination, 'income', 'income_forecast')
-  load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
+    # Init destination
+    execute(dbDestination, '_init')
 
-  # Disconnect
-  dbDestination.disconnect()
-  dbOrigin.disconnect()
+    # Load dimensions
+    load(dbOrigin, dbDestination, 'owner', 'owner')
+    load(dbOrigin, dbDestination, 'location', 'location')
+    load(dbOrigin, dbDestination, 'product', 'product')
+    load(dbOrigin, dbDestination, 'resource', 'resource')
 
+    # Load facts
+    load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
+    load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
+    load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
+    load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
+    load(dbOrigin, dbDestination, 'income', 'income_forecast')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
+
+  except Exception as e:
+    # Error
+    logger.error(e)
+  
+  finally:
+    # Disconnect
+    dbDestination.disconnect()
+    dbOrigin.disconnect()
+
+# ###################################################
+# Startup
+# ###################################################
+
+if __name__ == '__main__':
+  main()
