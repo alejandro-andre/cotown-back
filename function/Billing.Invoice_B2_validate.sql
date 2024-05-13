@@ -107,7 +107,7 @@ BEGIN
     NEW."Customer_id" := customer_id;
   ELSE
     IF NEW."Booking_group_id" IS NOT NULL THEN
-      SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
+      SELECT "Payer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
       NEW."Customer_id" := customer_id;
     ELSE
       RAISE EXCEPTION '!!!Client is missing!!!Falta indicar el cliente!!!';
