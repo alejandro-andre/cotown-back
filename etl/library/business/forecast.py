@@ -26,7 +26,7 @@ def forecast():
             line = [
                 'C' + name[0] + row[0] + '2024' + str(month).zfill(2),
                 '-', '-', '', '2024-' + str(month).zfill(2) + '-01',
-                '', '', row[0], 'Renta mensual', round(cel, 2), round(cel, 2), 'B2X', name, ""
+                '', '', row[0], 'Monthly rent', round(cel, 2), round(cel, 2), 'B2X', name, ""
             ]
             result += ','.join([f'"{e}"' for e in line]) + '\n'
             month += 1

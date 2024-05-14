@@ -76,7 +76,12 @@ def occupancy(dbClient):
   # Existing resources
   sql = '''
   -- All places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", r."Billing_type" as "type"
+  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", 
+  CASE
+    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+  END AS "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE r."Resource_type" = 'plaza'
@@ -84,7 +89,12 @@ def occupancy(dbClient):
   UNION
   
   -- All rooms without places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", r."Billing_type" as "type"
+  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", 
+  CASE
+    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+  END AS "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE "Resource_type" = 'habitacion' AND 
@@ -93,7 +103,12 @@ def occupancy(dbClient):
   UNION
   
   -- All Flats without rooms
-  SELECT r.id, r."Code" AS "resource", r.id AS "flat", r."Billing_type" as "type"
+  SELECT r.id, r."Code" AS "resource", r.id AS "flat", 
+  CASE
+    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+  END AS "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE "Resource_type" = 'piso' AND 

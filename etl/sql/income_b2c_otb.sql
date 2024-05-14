@@ -12,12 +12,12 @@ SELECT
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
     ELSE 'LONG'
   END AS "stay_length",
-  'Renta mensual' AS "product",
+  'Monthly rent' AS "product",
   bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "amount", 
   bp."Rent" AS "rate", 
   'B2C' AS "income_type",
   CASE
-    WHEN b."Status" = 'confirmada' THEN 'Tentativa' 
+    WHEN b."Status" = 'confirmada' THEN 'Tentative' 
     ELSE 'OTB' 
   END AS "data_type"
 FROM "Booking"."Booking_price" bp 
@@ -45,14 +45,14 @@ SELECT
     ELSE 'LONG'
   END AS "stay_length",
   CASE
-    WHEN r."Service_id" = r."Owner_id" THEN 'Renta mensual'
+    WHEN r."Service_id" = r."Owner_id" THEN 'Monthly rent'
     ELSE 'Servicios mensuales'
   END "product",
   bp."Services" + COALESCE(bp."Services_discount", 0) AS "amount", 
   bp."Services" AS "rate", 
   'B2C' AS "income_type",
   CASE
-    WHEN b."Status" = 'confirmada' THEN 'Tentativa' 
+    WHEN b."Status" = 'confirmada' THEN 'Tentative' 
     ELSE 'OTB' 
   END AS "data_type"
 FROM "Booking"."Booking_price" bp 

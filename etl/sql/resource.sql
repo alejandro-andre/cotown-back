@@ -7,7 +7,11 @@ SELECT
   SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
   rpt."Code" AS "place_type",
-  r."Billing_type"::TEXT AS "billing_type"
+  CASE
+    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+  END AS "billing_type"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 

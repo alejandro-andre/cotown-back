@@ -17,12 +17,12 @@ SELECT
   b."Payer_id" AS "customer",
   r."Code" AS "resource",
   'GROUP' AS "stay_length",
-  'Renta mensual' AS "product",
+  'Monthly rent' AS "product",
   b."Rooms" * bp."Rent" AS "amount",
   b."Rooms" * bp."Rent" AS "rate", 
   'B2B' AS "income_type",
   CASE
-    WHEN b."Status" IN ('grupobloqueado') THEN 'Tentativa' 
+    WHEN b."Status" IN ('grupobloqueado') THEN 'Tentative'
     ELSE 'OTB' 
   END AS "data_type"
 FROM "Booking"."Booking_group_price" bp 
@@ -55,7 +55,7 @@ SELECT
   r."Code" AS "resource",
   'GROUP' AS "stay_length",
   CASE
-    WHEN r."Owner_id" = r."Service_id" THEN 'Renta mensual'
+    WHEN r."Owner_id" = r."Service_id" THEN 'Monthly rent'
     ELSE 'Servicios mensuales'
   END "product",
   b."Rooms" * bp."Services" AS "amount", 
@@ -63,7 +63,7 @@ SELECT
   'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
-    ELSE 'Tentativa' 
+    ELSE 'Tentative' 
   END AS "data_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
