@@ -23,12 +23,13 @@ def forecast():
     for row in sheet.iter_rows(values_only=True):
         month = 1
         for cel in row[1:]:
-            line = [
-                'C' + name[0] + row[0] + '2024' + str(month).zfill(2),
-                '-', '-', '', '2024-' + str(month).zfill(2) + '-01',
-                '', '', row[0], 'Monthly rent', round(cel, 2), round(cel, 2), 'B2X', name, ""
-            ]
-            result += ','.join([f'"{e}"' for e in line]) + '\n'
+            if row[0] != 0:
+              line = [
+                  'C' + name[0] + row[0] + '2024' + str(month).zfill(2),
+                  '-', '-', '', '2024-' + str(month).zfill(2) + '-01',
+                  '', '', row[0], 'Monthly rent', round(cel, 2), round(cel, 2), 'B2X', name, ""
+              ]
+              result += ','.join([f'"{e}"' for e in line]) + '\n'
             month += 1
 
   workbook.close()
