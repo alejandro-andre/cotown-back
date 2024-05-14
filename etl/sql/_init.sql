@@ -1,5 +1,7 @@
 -- Drop tables
 DROP TABLE IF EXISTS gold.date CASCADE;
+DROP TABLE IF EXISTS gold.flat_type CASCADE;
+DROP TABLE IF EXISTS gold.place_type CASCADE;
 DROP TABLE IF EXISTS gold.product CASCADE;
 DROP TABLE IF EXISTS gold.owner CASCADE;
 DROP TABLE IF EXISTS gold.location CASCADE;
@@ -28,6 +30,20 @@ CREATE TABLE gold.location (
   "province" varchar NOT NULL,
   "country" varchar NOT NULL,
 CONSTRAINT location_pk PRIMARY KEY ("id")
+);
+
+-- Create flat type table
+CREATE TABLE gold.flat_type (
+  "id" varchar NOT NULL,
+  "name" varchar NOT NULL,
+CONSTRAINT flat_type_pk PRIMARY KEY ("id")
+);
+
+-- Create place type table
+CREATE TABLE gold.place_type (
+  "id" varchar NOT NULL,
+  "name" varchar NOT NULL,
+CONSTRAINT place_type_pk PRIMARY KEY ("id")
 );
 
 -- Create resources table

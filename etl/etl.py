@@ -92,20 +92,22 @@ def main():
 
   # Process
   try:
-    # Calc forecast
-    forecast()
-
-    # Calc availability
-    occupancy(dbOrigin)
-
     # Init destination
     execute(dbDestination, '_init')
 
     # Load dimensions
     load(dbOrigin, dbDestination, 'owner', 'owner')
+    load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
+    load(dbOrigin, dbDestination, 'place_type', 'place_type')
     load(dbOrigin, dbDestination, 'location', 'location')
     load(dbOrigin, dbDestination, 'product', 'product')
     load(dbOrigin, dbDestination, 'resource', 'resource')
+
+    # Calc forecast
+    forecast()
+
+    # Calc availability
+    occupancy(dbOrigin)
 
     # Load facts
     load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
