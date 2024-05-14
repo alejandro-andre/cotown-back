@@ -1,7 +1,7 @@
 SELECT 
   r."Code" AS "id",
   p."Document" AS "owner", 
-  l."Name" AS "location", 
+  l."Name_en" AS "location", 
   b."Start_date" AS "start_date",
   SUBSTRING(r."Code", 1, 6) AS "building", 
   SUBSTRING(r."Code", 1, 12) AS "flat",
@@ -21,7 +21,7 @@ UNION
 SELECT DISTINCT
   SUBSTRING(r."Code", 1, 6) AS "id",
   p."Document" AS "owner", 
-  l."Name" AS "location", 
+  l."Name_en" AS "location", 
   b."Start_date" AS "start_date",
   SUBSTRING(r."Code", 1, 6) AS "building", 
   NULL AS "flat",

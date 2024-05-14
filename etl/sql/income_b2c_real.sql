@@ -13,8 +13,8 @@ SELECT
     ELSE 'LONG'
   END AS "stay_length",
   CASE
-    WHEN pr."Product_type_id" <> 3 AND i."Provider_id" <> 1 THEN 'Renta mensual'
-    ELSE pr."Name"
+    WHEN pr."Product_type_id" <> 3 AND i."Provider_id" <> 1 THEN 'Monthly rent'
+    ELSE pr."Name_en"
   END "product",
   il."Amount" AS "amount",
   CASE 
