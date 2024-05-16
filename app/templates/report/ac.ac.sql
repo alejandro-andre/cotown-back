@@ -34,7 +34,6 @@ SELECT DISTINCT ON (c.id)
 	b."Status"
 FROM "Booking"."Booking" b
   INNER JOIN "Booking"."Booking_channel" bc ON bc.id = b."Booking_channel_id" 
-  INNER JOIN "Booking"."Booking_referral" br ON br.id = b."Booking_referral_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   INNER JOIN "Building"."Building" bub ON bub.id = r."Building_id" 
   INNER JOIN "Building"."Building" bur ON bur.id = b."Building_id" 
@@ -43,22 +42,24 @@ FROM "Booking"."Booking" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
   INNER JOIN "Auxiliar"."Gender" g ON g.id = c."Gender_id"
   INNER JOIN "Geo"."Country" co ON co.id = c."Nationality_id"
-  INNER JOIN "Auxiliar"."School" s ON s.id = b."School_id"
   INNER JOIN "Auxiliar"."Segment" see ON see.id = bub."Segment_id"  
   INNER JOIN "Auxiliar"."Segment" seo ON seo.id = bur."Segment_id"
   INNER JOIN (
-	SELECT 
-	  bp."Booking_id", 
-	  SUM(bp."Rent") AS "Total_rent", 
-	  SUM(bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * bu."Management_fee" / 100) AS "Management_fee", 
-	  SUM(bp."Services") AS "Total_services"
-	FROM "Booking"."Booking_price" bp
-	  INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
-	  INNER JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-	  INNER JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
-	  LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
-	WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
-GROUP BY 1) sums ON sums."Booking_id" = b.id
+  	SELECT 
+  	  bp."Booking_id", 
+  	  SUM(bp."Rent") AS "Total_rent", 
+  	  SUM(bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * bu."Management_fee" / 100) AS "Management_fee", 
+  	  SUM(bp."Services") AS "Total_services"
+  	FROM "Booking"."Booking_price" bp
+  	  LEFT JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
+  	  LEFT  JOIN "Building"."Building" bu ON bu.id = b."Building_id"
+  	  LEFT  JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
+  	  LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
+  	WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
+  	GROUP BY 1
+  	) sums ON sums."Booking_id" = b.id
+  LEFT JOIN "Booking"."Booking_referral" br ON br.id = b."Booking_referral_id" 
+  LEFT JOIN "Auxiliar"."School" s ON s.id = b."School_id"
 WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
   AND (
 	b."Created_at" >= %(fdesde)s OR 
