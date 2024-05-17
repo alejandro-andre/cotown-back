@@ -13,8 +13,9 @@
 "Code",
 "Bank_account", 
 "Swift", 
-"Bank_holder", 
 "Bank_name", 
+"Bank_holder", 
 "Bank_address", 
-"Bank_city", "Bank_country"
+"Bank_city", 
+"Bank_country"
 ]
