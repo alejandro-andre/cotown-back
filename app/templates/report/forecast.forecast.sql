@@ -17,12 +17,12 @@ WITH
     SELECT 
       date_trunc('month', generate_series)::date AS "Date",
       CASE
-        WHEN EXTRACT(MONTH FROM generate_series) < 3 THEN
-    		(EXTRACT(YEAR FROM generate_series) || '-01-01')::date
-        WHEN EXTRACT(MONTH FROM generate_series) < 9 THEN
-    		(EXTRACT(YEAR FROM generate_series) || '-03-01')::date
+        WHEN EXTRACT(MONTH FROM generate_series) BETWEEN 3 AND 8 THEN
+          (EXTRACT(YEAR FROM generate_series) || '-02-01')::date
+        WHEN EXTRACT(MONTH FROM generate_series) BETWEEN 11 AND 12 THEN
+          (EXTRACT(YEAR FROM generate_series) || '-10-01')::date
         ELSE
-          (EXTRACT(YEAR FROM generate_series) || '-09-01')::date	
+          date_trunc('month', generate_series)::date
       END AS "Consolidated_date",
       CASE 
         WHEN EXTRACT(MONTH FROM generate_series) < 9 THEN
@@ -39,12 +39,12 @@ WITH
     d."Date", 
     substring(r."Code", 1, 6) AS "Building",
     CASE
-  	  WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" < d."Date" AND ra."Date_to" > d."Date") THEN 0
-   	  ELSE 1
+      WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Date" AND ra."Date_to" >= d."Date") THEN 0
+       ELSE 1
     END AS "Beds",
     CASE
-	  WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" < d."Consolidated_date" AND ra."Date_to" > d."Consolidated_date") THEN 0
-	  ELSE 1
+    WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Consolidated_date" AND ra."Date_to" >= d."Consolidated_date") THEN 0
+    ELSE 1
     END AS "Consolidated_beds",
     pd."Rent_short" * pr."Multiplier" AS "Rent_short",
     pd."Rent_medium" * pr."Multiplier" AS "Rent_medium",
