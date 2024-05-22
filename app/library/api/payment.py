@@ -9,6 +9,7 @@
 # ###################################################
 
 from flask import g, request, abort
+import urllib.parse
 
 # Logging
 import logging
@@ -71,8 +72,8 @@ def req_pub_notification(pos='default'):
       return 'KO'
 
     # Update payment
-    date = response['Ds_Date']
-    hour = response['Ds_Hour']
+    date = urllib.parse.unquote(response['Ds_Date'])
+    hour = urllib.parse.unquote(response['Ds_Hour'])
     ts = date[6:] + '-' + date[3:5] + '-' + date[:2] + ' ' + hour + ':00'
     logger.debug(ts)
     q_put_payment(g.dbClient, id, response['Ds_AuthorisationCode'], ts)
