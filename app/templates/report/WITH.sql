@@ -29,7 +29,7 @@ WITH
           1 + EXTRACT(YEAR FROM generate_series) 
       END AS "Year"
     FROM 
-      generate_series(%(fdesde)s::date, %(fhasta)s::date - '1 day'::interval, '1 month'::interval)
+      generate_series(%(fdesde)s, %(fhasta)s, '1 month'::interval)
   )
   -- Detalles por plaza
   SELECT 
@@ -57,7 +57,7 @@ WITH
     CROSS JOIN "Dates" d
   WHERE b."Active"
     AND pd."Year" = d."Year"
-    AND (r."Place_type_id" < 300 OR r."Flat_type_id" = 5)
+    AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
 )
 SELECT
   p."Date",
