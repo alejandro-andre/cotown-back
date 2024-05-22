@@ -15,7 +15,7 @@ DECLARE
     WHERE b."Status" = 'inhouse'
     AND COALESCE(b."Check_out", b."Date_to") <= (CURRENT_DATE + INTERVAL '10 days')
     AND ce.id IS NULL
-    AND b."Origin_id" IS NULL;
+    AND b."Destination_id" IS NULL;
 
 BEGIN
 
