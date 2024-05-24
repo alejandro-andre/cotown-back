@@ -2,6 +2,8 @@
 "id",
 "Check_out",
 "Deposit_actual",
+"Amount_due_cotown",
+"Amount_from_deposit_cotown",
 "Amount_due",
 "Amount_from_deposit",
 "Damages",

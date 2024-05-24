@@ -1,22 +1,49 @@
 WITH 
 "Invoices_due" AS (
-	SELECT i."Booking_id", SUM(i."Total") AS "Amount"
-	FROM "Billing"."Invoice" i 
+  SELECT i."Booking_id", SUM(i."Total") AS "Amount"
+  FROM "Billing"."Invoice" i 
     INNER JOIN "Billing"."Payment" p ON p.id = i."Payment_id" 
-	WHERE p."Payment_method_id" <> 43 
-	AND p."Payment_date" IS NULL 
-	AND i."Booking_id" IS NOT NULL
-	GROUP BY 1
-	HAVING SUM(i."Total") > 0
+  WHERE NOT i."Rectified"
+    AND i."Total" > 0
+    AND p."Payment_method_id" <> 43 
+    AND p."Payment_auth" IS NULL 
+    AND i."Booking_id" IS NOT NULL
+    AND i."Provider_id" <> 1
+  GROUP BY 1
 ),
 "Invoices_from_deposit" AS (
-	SELECT i."Booking_id", SUM(i."Total") AS "Amount"
-	FROM "Billing"."Invoice" i 
+  SELECT i."Booking_id", SUM(i."Total") AS "Amount"
+  FROM "Billing"."Invoice" i 
     INNER JOIN "Billing"."Payment" p ON p.id = i."Payment_id" 
-	WHERE p."Payment_method_id" = 43 
-	AND i."Booking_id" IS NOT NULL
-	GROUP BY 1
-	HAVING SUM(i."Total") > 0
+  WHERE NOT i."Rectified"
+    AND i."Total" > 0
+    AND p."Payment_method_id" = 43 
+    AND i."Booking_id" IS NOT NULL
+    AND i."Provider_id" <> 1
+  GROUP BY 1
+),
+"Invoices_due_cotown" AS (
+  SELECT i."Booking_id", SUM(i."Total") AS "Amount"
+  FROM "Billing"."Invoice" i 
+    INNER JOIN "Billing"."Payment" p ON p.id = i."Payment_id" 
+  WHERE NOT i."Rectified"
+    AND i."Total" > 0
+    AND p."Payment_method_id" <> 43 
+    AND p."Payment_auth" IS NULL 
+    AND i."Booking_id" IS NOT NULL
+    AND i."Provider_id" = 1
+  GROUP BY 1
+),
+"Invoices_from_deposit_cotown" AS (
+  SELECT i."Booking_id", SUM(i."Total") AS "Amount"
+  FROM "Billing"."Invoice" i 
+    INNER JOIN "Billing"."Payment" p ON p.id = i."Payment_id" 
+  WHERE NOT i."Rectified"
+    AND i."Total" > 0
+    AND p."Payment_method_id" = 43 
+    AND i."Booking_id" IS NOT NULL
+    AND i."Provider_id" = 1
+  GROUP BY 1
 )
 SELECT 
   b.id,
@@ -24,14 +51,16 @@ SELECT
   b."Deposit_actual",
   COALESCE(d."Amount", 0) AS "Amount_due",
   COALESCE(g."Amount", 0) AS "Amount_from_deposit",
+  COALESCE(dc."Amount", 0) AS "Amount_due_cotown",
+  COALESCE(gc."Amount", 0) AS "Amount_from_deposit_cotown",
   b."Damages",
   CASE 
-	WHEN b."Status" = 'checkout' THEN 'Check-out'
-	WHEN b."Status" = 'revision' THEN 'Revision'
-	ELSE 'Devolucion fianza'
+  WHEN b."Status" = 'checkout' THEN 'Check-out'
+  WHEN b."Status" = 'revision' THEN 'Revision'
+  ELSE 'Devolucion fianza'
   END AS "Status",
   CASE 
-	WHEN b."Destination_id" IS NOT NULL THEN 'CHA' 	
+  WHEN b."Destination_id" IS NOT NULL THEN 'CHA'   
   END AS "Substatus",
   c."Name",
   c."Email",
@@ -44,5 +73,7 @@ FROM "Booking"."Booking" b
   LEFT JOIN "Geo"."Country" co ON co.id = c."Bank_country_id" 
   LEFT JOIN "Invoices_due" d ON d."Booking_id" = b.id
   LEFT JOIN "Invoices_from_deposit" g ON g."Booking_id" = b.id
+  LEFT JOIN "Invoices_due_cotown" dc ON dc."Booking_id" = b.id
+  LEFT JOIN "Invoices_from_deposit_cotown" gc ON gc."Booking_id" = b.id
 WHERE b."Status" IN ('checkout', 'revision', 'devolvergarantia')
 ORDER BY 2, 1 ASC

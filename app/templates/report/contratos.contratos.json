@@ -3,6 +3,7 @@
 "Resource.Code",
 "Customer.id",
 "Customer.Name",
+"Customer.Email",
 "Date_from",
 "Date_to",
 "Contract_rent.name",

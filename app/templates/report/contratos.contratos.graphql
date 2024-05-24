@@ -25,6 +25,6 @@ query Bookings ($fdesde: String, $fhasta:String) {
         Contract_services { name }
         Contract_signed
         Resource: ResourceViaResource_id { Code }
-        Customer: CustomerViaCustomer_id { id Name}
+        Customer: CustomerViaCustomer_id { id Name Email }
     }
 }
