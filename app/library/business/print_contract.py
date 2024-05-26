@@ -209,6 +209,7 @@ query BookingById ($id: Int) {
         Customer_signer_id_type: Name
       }
       Customer_signer_id: Signer_document
+      Customer_lang: Lang
     }
     Residents: Booking_roomingListViaBooking_id {
       GenderViaGender_id {
@@ -529,14 +530,16 @@ def get_template(apiClient, templates, resource_type, provider):
       data: Provider_Provider_contractList ( where: { id: { EQ: $id } } ) {
         Name
         Template
+        Annex
       }
     }
     '''
     result = apiClient.call(q, variables)
     template = result['data'][0]['Template']
+    annex = result['data'][0]['Annex']
     if template is None:
       logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + resource_type)
-    return template, fname
+    return template, annex, fname
    
 
 def do_contracts(apiClient, id):
@@ -564,8 +567,10 @@ def do_contracts(apiClient, id):
       template_type = 'residencia'
 
     # Generate rent contract
-    template, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
+    template, annex, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
     if template is not None:
+      if context['Customer_lang'] == 'en':
+        template += annex
       file = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
       response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
@@ -573,8 +578,10 @@ def do_contracts(apiClient, id):
 
     # Generate services contract
     if context['Owner_id'] != context['Service_id']:
-      template, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
+      template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
       if template is not None:
+        if context['Customer_lang'] == 'en':
+          template += annex
         file = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
         response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
@@ -629,7 +636,7 @@ def do_group_contracts(apiClient, id):
       context['Flats'] = ', '.join(sorted(list({r["Resource_code"] for r in context['Rooms']})))
 
     # Generate rent contract
-    template, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
+    template, annex, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
     if template is not None:
       file = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
@@ -638,7 +645,7 @@ def do_group_contracts(apiClient, id):
 
     # Generate services contract
     if room['Owner_id'] != room['Service_id']:
-      template, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
+      template, annex, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
       if template is not None:
         file = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
