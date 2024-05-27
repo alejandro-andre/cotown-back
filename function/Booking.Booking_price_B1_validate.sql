@@ -6,28 +6,33 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Rent discount
-  IF NEW."Rent_discount" IS NOT NULL THEN
-    NEW."Rent_discount_pct" := (NEW."Rent_discount" * 100) / NEW."Rent";
-  ELSE
-    IF NEW."Rent_discount_pct" IS NOT NULL THEN
-    	NEW."Rent_discount" := NEW."Rent" * NEW."Rent_discount_pct" / 100;
+  -- Rent discount %
+  IF COALESCE(NEW."Rent_discount", 0) = 0 AND COALESCE(NEW."Rent_discount_pct", 0) <> 0 THEN
+    NEW."Rent_discount" := NEW."Rent" * NEW."Rent_discount_pct" / 100;
+  END IF;
+  IF COALESCE(NEW."Rent_discount", 0) <> 0 THEN
+	  IF NEW."Rent" <> 0 THEN
       NEW."Rent_discount_pct" := (NEW."Rent_discount" * 100) / NEW."Rent";
+    ELSE
+      NEW."Rent_discount_pct" := NULL;
     END IF;
   END IF;
 
   -- Services discount
-  IF NEW."Services_discount" IS NOT NULL THEN
-    NEW."Services_discount_pct" := (NEW."Services_discount" * 100) / NEW."Services";
-  ELSE
-    IF NEW."Services_discount_pct" IS NOT NULL THEN
-    	NEW."Services_discount" := NEW."Services" * NEW."Services_discount_pct" / 100;
+  IF COALESCE(NEW."Services_discount", 0) = 0 AND COALESCE(NEW."Services_discount_pct", 0) <> 0 THEN
+    NEW."Services_discount" := NEW."Services" * NEW."Services_discount_pct" / 100;
+  END IF;
+  IF COALESCE(NEW."Services_discount", 0) <> 0 THEN
+	  IF NEW."Services" <> 0 THEN
       NEW."Services_discount_pct" := (NEW."Services_discount" * 100) / NEW."Services";
+    ELSE
+      NEW."Services_discount_pct" := NULL;
     END IF;
   END IF;
 
   -- Discount reason
-  IF (NEW."Rent_discount" IS NOT NULL OR NEW."Services_discount" IS NOT NULL) AND NEW."Discount_type_id" IS NULL THEN
+  IF (COALESCE(NEW."Rent_discount", 0) <> 0 OR COALESCE(NEW."Services_discount", 0) <> 0) AND NEW."Discount_type_id" IS NULL THEN
+    RAISE EXCEPTION '% % % %', NEW."Rent_date", NEW."Booking_id", NEW."Rent_discount", NEW."Services_discount";
     RAISE exception '!!!Discount reason mandatory!!!Motivo del descuento obligatorio!!!';
   END IF;
 
