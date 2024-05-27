@@ -95,6 +95,11 @@ def main():
     # Init destination
     execute(dbDestination, '_init')
 
+    load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
+    load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
+    load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
+    load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
+    
     # Load dimensions
     load(dbOrigin, dbDestination, 'owner', 'owner')
     load(dbOrigin, dbDestination, 'flat_type', 'flat_type')

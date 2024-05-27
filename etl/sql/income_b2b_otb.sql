@@ -24,7 +24,8 @@ SELECT
   CASE
     WHEN b."Status" IN ('grupobloqueado') THEN 'Tentative'
     ELSE 'OTB' 
-  END AS "data_type"
+  END AS "data_type",
+  NULL AS "discount_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
   INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
@@ -64,7 +65,8 @@ SELECT
   CASE
     WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
     ELSE 'Tentative' 
-  END AS "data_type"
+  END AS "data_type",
+  NULL AS "discount_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
   INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 

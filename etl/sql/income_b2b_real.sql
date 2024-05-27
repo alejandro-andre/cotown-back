@@ -19,7 +19,8 @@ SELECT
 	  WHEN pr."Product_type_id" <> 3 THEN COALESCE(bp."Services", il."Amount") 	
   END AS "rate",
   'B2B' AS "income_type",
-  'Real' AS "data_type"
+  'Real' AS "data_type",
+  NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Invoice" i ON i.id = il."Invoice_id" 
   INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id" 
