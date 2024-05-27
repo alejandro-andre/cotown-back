@@ -18,6 +18,7 @@ SELECT
   END "product",
   il."Amount" AS "amount",
   CASE 
+    WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN il."Amount"
     WHEN pr."Product_type_id" = 1 THEN COALESCE(b."Booking_fee", il."Amount")
 	  WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") 	
 	  WHEN pr."Product_type_id" > 3 THEN COALESCE(bp."Services", il."Amount") 	
