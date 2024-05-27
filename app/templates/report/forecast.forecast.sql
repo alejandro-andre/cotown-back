@@ -37,11 +37,21 @@ WITH
     d."Date", 
     substring(r."Code", 1, 6) AS "Building",
     CASE
-      WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Date" AND ra."Date_to" >= d."Date") THEN 0
+      WHEN EXISTS (
+        SELECT ra.id 
+        FROM "Resource"."Resource_availability" ra 
+        INNER JOIN "Resource"."Resource_status" rs on rs.id = ra."Status_id"
+        WHERE NOT rs."Available" AND ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Date" AND ra."Date_to" >= d."Date"
+      ) THEN 0
       ELSE 1
     END AS "Beds",
     CASE
-      WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Consolidated_date" AND ra."Date_to" >= d."Consolidated_date") THEN 0
+      WHEN EXISTS (
+        SELECT ra.id 
+        FROM "Resource"."Resource_availability" ra 
+        INNER JOIN "Resource"."Resource_status" rs on rs.id = ra."Status_id"
+        WHERE NOT rs."Available" AND ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Consolidated_date" AND ra."Date_to" >= d."Consolidated_date"
+      ) THEN 0
       ELSE 1
     END AS "Consolidated_beds",
     pd."Rent_short" * pr."Multiplier" AS "Rent_short",
