@@ -38,11 +38,11 @@ WITH
     substring(r."Code", 1, 6) AS "Building",
     CASE
       WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Date" AND ra."Date_to" >= d."Date") THEN 0
-       ELSE 1
+      ELSE 1
     END AS "Beds",
     CASE
-    WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Consolidated_date" AND ra."Date_to" >= d."Consolidated_date") THEN 0
-    ELSE 1
+      WHEN EXISTS (SELECT ra.id FROM "Resource"."Resource_availability" ra WHERE ra."Resource_id" = r."Flat_id" AND ra."Date_from" <= d."Consolidated_date" AND ra."Date_to" >= d."Consolidated_date") THEN 0
+      ELSE 1
     END AS "Consolidated_beds",
     pd."Rent_short" * pr."Multiplier" AS "Rent_short",
     pd."Rent_medium" * pr."Multiplier" AS "Rent_medium",
@@ -57,13 +57,13 @@ WITH
     CROSS JOIN "Dates" d
   WHERE b."Active"
     AND pd."Year" = d."Year"
-    AND (r."Place_type_id" < 300 OR r."Flat_type_id" = 5)
+    AND (r."Place_type_id" < 300 OR r."Flat_type_id" = 4)
 )
 SELECT
   p."Date",
   p."Building",
   SUM(p."Beds") AS "Beds",
-  SUM(p."Beds") + (SUM(p."Beds") - SUM(p."Consolidated_beds")) / 2.0 AS "Consolidated_beds",
+  SUM(p."Consolidated_beds") + (SUM(p."Beds") - SUM(p."Consolidated_beds")) / 2.0 AS "Consolidated_beds",
   ROUND(AVG(p."Rent_short" * e."Extra"), 2) AS "Short",
   ROUND(AVG(p."Rent_medium" * e."Extra"), 2) AS "Medium",
   ROUND(AVG(p."Rent_long" * e."Extra"), 2) AS "Long",

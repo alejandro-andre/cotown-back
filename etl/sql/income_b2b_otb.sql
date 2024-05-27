@@ -56,7 +56,7 @@ SELECT
   'GROUP' AS "stay_length",
   CASE
     WHEN r."Owner_id" = r."Service_id" THEN 'Monthly rent'
-    ELSE 'Servicios mensuales'
+    ELSE 'Monthly services'
   END "product",
   b."Rooms" * bp."Services" AS "amount", 
   b."Rooms" * bp."Services" AS "rate", 

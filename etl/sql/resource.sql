@@ -3,6 +3,7 @@ SELECT
   p."Document" AS "owner", 
   l."Name_en" AS "location", 
   b."Start_date" AS "start_date",
+  s."Name" AS "segment",
   SUBSTRING(r."Code", 1, 6) AS "building", 
   SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
@@ -15,6 +16,7 @@ SELECT
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
+INNER JOIN "Auxiliar"."Segment" s on s.id = b."Segment_id"
 INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
@@ -27,6 +29,7 @@ SELECT DISTINCT
   p."Document" AS "owner", 
   l."Name_en" AS "location", 
   b."Start_date" AS "start_date",
+  s."Name" AS "segment",
   SUBSTRING(r."Code", 1, 6) AS "building", 
   NULL AS "flat",
   NULL AS "flat_type",
@@ -35,6 +38,7 @@ SELECT DISTINCT
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
+INNER JOIN "Auxiliar"."Segment" s on s.id = b."Segment_id"
 INNER JOIN "Geo"."District" d ON d.id = b."District_id" 
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 

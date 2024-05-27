@@ -46,7 +46,7 @@ SELECT
   END AS "stay_length",
   CASE
     WHEN r."Service_id" = r."Owner_id" THEN 'Monthly rent'
-    ELSE 'Servicios mensuales'
+    ELSE 'Monthly services'
   END "product",
   bp."Services" + COALESCE(bp."Services_discount", 0) AS "amount", 
   bp."Services" AS "rate", 
