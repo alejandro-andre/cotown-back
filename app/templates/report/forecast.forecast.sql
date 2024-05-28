@@ -77,9 +77,9 @@ SELECT
   p."Building",
   SUM(p."Beds") AS "Beds",
   SUM(p."Consolidated_beds") + (SUM(p."Beds") - SUM(p."Consolidated_beds")) / 2.0 AS "Consolidated_beds",
-  ROUND(AVG(p."Rent_short" * e."Extra"), 2) AS "Short",
-  ROUND(AVG(p."Rent_medium" * e."Extra"), 2) AS "Medium",
-  ROUND(AVG(p."Rent_long" * e."Extra"), 2) AS "Long",
+  AVG(p."Rent_short" * e."Extra") AS "Short",
+  AVG(p."Rent_medium" * e."Extra") AS "Medium",
+  AVG(p."Rent_long" * e."Extra") AS "Long",
   AVG(p."Management_fee") / 100.0 AS "Management_fee"
 FROM "Details" p
 LEFT JOIN "Extras" e ON p.id = e.id
