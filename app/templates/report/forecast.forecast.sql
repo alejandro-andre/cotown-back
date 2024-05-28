@@ -64,10 +64,13 @@ WITH
       AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
     INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id"
     INNER JOIN "Building"."Building" b ON b."id" = r."Building_id" 
+    LEFT JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
+    LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
     CROSS JOIN "Dates" d
   WHERE b."Active"
     AND pd."Year" = d."Year"
     AND (r."Place_type_id" < 300 OR r."Flat_type_id" = 4)
+    AND (rpt."Code" NOT LIKE 'DUI%%' OR rft."Code" = 'APT1')
 )
 SELECT
   p."Date",
