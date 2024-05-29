@@ -69,7 +69,6 @@ WITH
     CROSS JOIN "Dates" d
   WHERE b."Active"
     AND pd."Year" = d."Year"
-    AND (r."Place_type_id" < 300 OR r."Flat_type_id" = 4)
     AND (rpt."Code" NOT LIKE 'DUI%%' OR rft."Code" = 'APT1')
 )
 SELECT
