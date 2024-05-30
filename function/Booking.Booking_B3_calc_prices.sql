@@ -233,10 +233,10 @@ BEGIN
 
     END IF;
 
-    -- Final cleaning
-    IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to THEN
-      curr_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
-    END IF;
+    -- Final cleaning - Change for new extra services functionality !!!
+    --IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to THEN
+    --  curr_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
+    --END IF;
 
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
