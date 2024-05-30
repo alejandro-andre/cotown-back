@@ -656,8 +656,8 @@ def bill_services(dbClient, con):
         cur = dbClient.execute(con, 
           '''
           INSERT INTO "Billing"."Invoice"
-          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept")
-          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
           RETURNING id
           ''',
           (
@@ -670,7 +670,8 @@ def bill_services(dbClient, con):
             item['id'],
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
             paymentid,
-            item['Concept']
+            item['Concept'],
+            item['Comments']
           )
         )
         billid = cur.fetchone()[0]
@@ -679,20 +680,21 @@ def bill_services(dbClient, con):
         dbClient.execute(con, 
           '''
           INSERT INTO "Billing"."Invoice_line"
-          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
-          VALUES (%s, %s, %s, %s, %s)
+          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+          VALUES (%s, %s, %s, %s, %s, %s)
           ''',
           (
             billid,
             item['Amount'],
             PR_RENT,
             item['Tax_id'],
-            item['Concept']
+            item['Concept'],
+            item['Comments']
           )
         )
 
         # Update bill
-        dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+        #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
         dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_services_id" = %s WHERE id = %s', (billid, item['id']))
