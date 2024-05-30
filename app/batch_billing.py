@@ -602,15 +602,15 @@ def bill_services(dbClient, con):
     SELECT
       b.id, b."Customer_id",
       s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",
-      c."Payment_method_id", 
+      s."Payment_method_id", 
       r."Code", r."Service_id",
-      sv."Pos" as "Service_pos"
+      sv."Pos" as "Pos"
     FROM "Booking"."Booking" b
       INNER JOIN "Booking"."Booking_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
       INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
       LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
-    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
+    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
       AND s."Billing_date_from" <= CURRENT_DATE 
@@ -643,7 +643,7 @@ def bill_services(dbClient, con):
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
             item['Pos'],
             item['Customer_id'],
-            item['Booking_id'],
+            item['id'],
             item['Amount'],
             datetime.now(),
             item['Concept'],
@@ -667,7 +667,7 @@ def bill_services(dbClient, con):
             datetime.now(),
             item['Service_id'],
             item['Customer_id'],
-            item['Booking_id'],
+            item['id'],
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
             paymentid,
             item['Concept']
@@ -687,20 +687,19 @@ def bill_services(dbClient, con):
             item['Amount'],
             PR_RENT,
             item['Tax_id'],
-            item['concept']
+            item['Concept']
           )
         )
 
         # Update bill
-        #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
+        dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
-        dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_rent_id" = %s WHERE id = %s', (billid, item['id']))
+        dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_services_id" = %s WHERE id = %s', (billid, item['id']))
         q = 1
 
         # Commit
-        #?con.commit()
-        con.rollback()
+        con.commit()
         num += q
 
     # Process exception
@@ -847,7 +846,7 @@ def main():
   bill_group_rent(dbClient, con)
 
   # 3. Bill extra services
-  #?bill_services(dbClient, con)
+  bill_services(dbClient, con)
 
   # 4. Generate payment for each manual bill
   pay_bills(dbClient, con)

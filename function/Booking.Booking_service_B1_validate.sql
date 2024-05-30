@@ -3,6 +3,8 @@ DECLARE
 
   tax_id INTEGER;
   concept VARCHAR;
+  customer_id INTEGER;
+  payment_method_id INTEGER;
 
   date_from DATE;
   date_to DATE;
@@ -10,19 +12,13 @@ DECLARE
 BEGIN
 	
   -- Validate dates
-  SELECT "Date_from", "Date_to" INTO date_from, date_to FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+  SELECT "Date_from", "Date_to", "Customer_id" INTO date_from, date_to, customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
   IF NEW."Billing_date_from" < date_from THEN
     RAISE exception '!!!Billing date cannot be earlier than the start of the reservation!!!Fecha de factura no puede ser anterior al inicio de la reserva!!!';
-  END IF;
-  IF NEW."Billing_date_from" > date_to THEN
-    RAISE exception '!!!Billing date cannot be later than the end of the reservation!!!Fecha de factura in no puede ser posterior al final de la reserva!!!';
   END IF;
   IF NEW."Billing_date_to" IS NOT NULL THEN
     IF NEW."Billing_date_to" <= NEW."Billing_date_from" THEN
       RAISE exception '!!!Billing end date cannot be earlier than the start of the billing!!!Facturación hasta no puede ser anterior al inicio de la facturación!!!';
-    END IF;
-    IF NEW."Billing_date_to" > date_to THEN
-      RAISE exception '!!!Billing end date cannot be later than the end of the reservation!!!Facturación hasta no puede ser posterior al final de la reserva!!!';
     END IF;
   END IF; 
 
@@ -39,6 +35,12 @@ BEGIN
   IF NEW."Concept" IS NULL THEN
     SELECT "Name" INTO concept FROM "Billing"."Product" WHERE id = NEW."Product_id";
     NEW."Concept" := concept;
+  END IF;
+
+  -- Payment method
+  IF NEW."Payment_method_id" IS NULL THEN
+    SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = customer_id;
+    NEW."Payment_method_id" := payment_method_id;
   END IF;
 
   -- Return record 
