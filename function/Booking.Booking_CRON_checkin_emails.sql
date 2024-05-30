@@ -8,8 +8,8 @@ DECLARE
   curs CURSOR FOR
     SELECT b.id, b."Customer_id"
     FROM "Booking"."Booking" b
-    WHERE b."Status" IN ('firmacontrato', 'contrato', 'checkinconfirmado')
-    AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '30 days')
+    WHERE b."Status" IN ('firmacontrato', 'contrato')
+    AND COALESCE(b."Check_in", b."Date_from") BETWEEN (CURRENT_DATE + INTERVAL '30 days') AND CURRENT_DATE
     AND b."Origin_id" IS NULL;
 
 BEGIN
@@ -24,7 +24,7 @@ BEGIN
     IF NOT EXISTS (
 		  SELECT id
   		FROM "Customer"."Customer_email"
-  		WHERE "Template" = 'completacheckin'
+  		WHERE "Template" LIKE 'completacheckin%'
   		AND "Customer_id" = customer_id
   		AND "Entity_id" = entity_id
     ) THEN
