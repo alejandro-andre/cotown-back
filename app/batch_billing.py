@@ -600,7 +600,7 @@ def bill_services(dbClient, con):
   cur = dbClient.execute(con,
     '''
     SELECT
-      b.id, b."Customer_id",
+      s.id, b.id as "Booking_id", b."Customer_id",
       s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",
       s."Payment_method_id", 
       r."Code", r."Service_id",
@@ -643,7 +643,7 @@ def bill_services(dbClient, con):
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
             item['Pos'],
             item['Customer_id'],
-            item['id'],
+            item['Booking_id'],
             item['Amount'],
             datetime.now(),
             item['Concept'],
@@ -667,7 +667,7 @@ def bill_services(dbClient, con):
             datetime.now(),
             item['Service_id'],
             item['Customer_id'],
-            item['id'],
+            item['Booking_id'],
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
             paymentid,
             item['Concept'],
@@ -694,7 +694,7 @@ def bill_services(dbClient, con):
         )
 
         # Update bill
-        dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+        #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
         dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_services_id" = %s WHERE id = %s', (billid, item['id']))
