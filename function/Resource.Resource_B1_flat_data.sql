@@ -1,8 +1,7 @@
----- Calcula y valida los campos del recurso
+-- Calcula y valida los campos del recurso
 -- BEFORE INSERT/UPDATE
 DECLARE
 
-  reg RECORD;
   code VARCHAR;
   curr_user VARCHAR;
   
@@ -17,13 +16,19 @@ BEGIN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}$' THEN
       RAISE EXCEPTION '!!!Wrong flat code %, must have XXXnnn.nn.nn format!!!Código de piso % incorrecto, debe formato XXXnnn.nn.nn!!!', NEW."Code", NEW."Code";
     END IF;
-    UPDATE "Resource"."Resource" SET id = id WHERE "Flat_id" = NEW.id AND id <> NEW.id;
+    UPDATE "Resource"."Resource"
+    SET
+      "Building_id" = NEW."Building_id",
+      "Owner_id" = NEW."Owner_id",
+      "Service_id" = NEW."Service_id",
+      "Billing_type" = NEW."Billing_type",
+      "Sale_type" = NEW."Sale_type",
+      "Management_fee" = NEW."Management_fee"
+    WHERE "Flat_id" = NEW.id 
+      AND id <> NEW.id;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
-
-  -- Lee el piso al que pertenece
-  SELECT * INTO reg FROM "Resource"."Resource" WHERE id = NEW."Flat_id";
 
   -- Habitacion
   IF NEW."Resource_type" = 'habitacion' THEN
@@ -47,14 +52,6 @@ BEGIN
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RAISE EXCEPTION '%', CONCAT('!!!Wrong resource code, must start with ', code, '!!!Código de recurso incorrecto, debe comenzar por ', code, '!!!');
   END IF;
-
-  -- Asigna los datos
-  NEW."Building_id" := reg."Building_id";
-  NEW."Owner_id" := reg."Owner_id";
-  NEW."Service_id" := reg."Service_id";
-  NEW."Billing_type" := reg."Billing_type";
-  NEW."Sale_type" := reg."Sale_type";
-  NEW."Management_fee" := reg."Management_fee";
 
   -- Return
   EXECUTE 'SET ROLE "' || curr_user || '"';
