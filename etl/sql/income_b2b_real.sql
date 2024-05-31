@@ -12,17 +12,18 @@ SELECT
     WHEN pr."Product_type_id" > 3 AND i."Provider_id" <> 1 THEN 'Monthly rent'
     ELSE pr."Name_en"
   END "product",
-  il."Amount" AS "amount",
+  il."Amount" / (1 + (t."Value" / 100)) AS "amount",
   CASE 
-    WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN il."Amount"
-    WHEN pr.id = 1 THEN il."Amount"
-    WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") 	
-    WHEN pr."Product_type_id" <> 3 THEN COALESCE(bp."Services", il."Amount") 	
+    WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN il."Amount" / (1 + (t."Value" / 100))
+    WHEN pr.id = 1 THEN il."Amount" / (1 + (t."Value" / 100))
+    WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") / (1 + (t."Value" / 100))
+    WHEN pr."Product_type_id" <> 3 THEN COALESCE(bp."Services", il."Amount") / (1 + (t."Value" / 100))
   END AS "rate",
   'B2B' AS "income_type",
   'Real' AS "data_type",
   NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il 
+  INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i ON i.id = il."Invoice_id" 
   INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id" 
   INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 

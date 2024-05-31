@@ -13,8 +13,14 @@ SELECT
     ELSE 'LONG'
   END AS "stay_length",
   'Monthly rent' AS "product",
-  bp."Rent" + COALESCE(bp."Rent_discount", 0) AS "amount", 
-  bp."Rent" AS "rate", 
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN (bp."Rent" + COALESCE(bp."Rent_discount", 0)) / 1.1
+  	ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
+  END AS "amount",
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN bp."Rent"/ 1.1
+  	ELSE bp."Rent"
+  END AS "rate",
   'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
@@ -24,6 +30,7 @@ SELECT
 FROM "Booking"."Booking_price" bp 
   INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
 WHERE bp."Rent_date" >= '2024-01-01'
@@ -50,8 +57,14 @@ SELECT
     WHEN r."Service_id" = r."Owner_id" THEN 'Monthly rent'
     ELSE 'Monthly services'
   END "product",
-  bp."Services" + COALESCE(bp."Services_discount", 0) AS "amount", 
-  bp."Services" AS "rate", 
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN (bp."Services" + COALESCE(bp."Services_discount", 0)) / 1.1
+  	ELSE bp."Services" + COALESCE(bp."Services_discount", 0)
+  END AS "amount",
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN bp."Services"/ 1.1
+  	ELSE bp."Services"
+  END AS "rate",
   'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
@@ -61,6 +74,7 @@ SELECT
 FROM "Booking"."Booking_price" bp 
   INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
 WHERE bp."Rent_date" >= '2024-01-01'

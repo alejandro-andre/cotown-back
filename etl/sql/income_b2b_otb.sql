@@ -18,8 +18,14 @@ SELECT
   r."Code" AS "resource",
   'GROUP' AS "stay_length",
   'Monthly rent' AS "product",
-  b."Rooms" * bp."Rent" AS "amount",
-  b."Rooms" * bp."Rent" AS "rate", 
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
+  	ELSE b."Rooms" * bp."Rent"
+  END AS "amount",
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
+  	ELSE b."Rooms" * bp."Rent"
+  END AS "rate",
   'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupobloqueado') THEN 'Tentative'
@@ -59,8 +65,14 @@ SELECT
     WHEN r."Owner_id" = r."Service_id" THEN 'Monthly rent'
     ELSE 'Monthly services'
   END "product",
-  b."Rooms" * bp."Services" AS "amount", 
-  b."Rooms" * bp."Services" AS "rate", 
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Services") / 1.1
+  	ELSE b."Rooms" * bp."Services"
+  END AS "amount",
+  CASE 
+  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Services") / 1.1
+  	ELSE b."Rooms" * bp."Services"
+  END AS "rate",
   'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 
