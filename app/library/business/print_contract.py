@@ -509,7 +509,7 @@ def get_template(apiClient, templates, resource_type, provider):
     # No templates
     if templates is None:
       logger.warning(provider + ' no tiene plantillas de contrato')
-      return None, None
+      return None, None, None
    
     # Look for proper template
     fid = None
@@ -521,7 +521,7 @@ def get_template(apiClient, templates, resource_type, provider):
         break
     if fid is None:
       logger.warning(provider + ' no tiene plantilla de contrato de ' + resource_type)
-      return None, None
+      return None, None, None
 
     # Get template
     variables = { 'id': fid }
@@ -570,7 +570,7 @@ def do_contracts(apiClient, id):
     template, annex, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
     if template is not None:
       if context['Customer_lang'] == 'en':
-        template += ('\n' + annex)
+        template += ('\n' + annex if annex else '')
       file = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
       response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
@@ -581,7 +581,7 @@ def do_contracts(apiClient, id):
       template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
       if template is not None:
         if context['Customer_lang'] == 'en':
-          template += ('\n' + annex)
+          template += ('\n' + annex if annex else '')
         file = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
         response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
