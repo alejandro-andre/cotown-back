@@ -1,0 +1,34 @@
+query Payments ($fdesde:String, $fhasta:String) {
+    data: Billing_PaymentList (
+        orderBy: [{ attribute: Payment_date }]
+        where: {
+            AND: [
+                { Payment_date: { GE: $fdesde } }
+                { Payment_date: { LT: $fhasta } }
+            ]
+        } 
+    ) {
+        id
+        Amount
+        Booking_group_id
+        Booking_id
+        Comments
+        Concept
+        Customer: CustomerViaCustomer_id {
+            Name
+            Email
+        }
+        Issued_date
+        Payment_auth
+        Payment_date
+        Payment_method: Payment_methodViaPayment_method_id {
+            Name
+        }
+        Payment_order
+        Pos
+        Invoices: InvoiceListViaPayment_id {
+            Code
+            Issued_date
+        }
+    }
+}

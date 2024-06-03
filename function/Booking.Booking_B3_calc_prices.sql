@@ -87,8 +87,7 @@ BEGIN
         AND "Rent_date" > CURRENT_DATE
         AND "Invoice_rent_id" IS NULL
         AND "Invoice_services_id" IS NULL;
- 	END IF;
- 
+ 	  END IF;
   END IF;
 
   -- Calculate stay length in montns
@@ -232,11 +231,6 @@ BEGIN
       END IF;
 
     END IF;
-
-    -- Final cleaning - Change for new extra services functionality !!!
-    --IF date_trunc('month', dt_curr) + interval '1 month' >= dt_to THEN
-    --  curr_services := ROUND(monthly_services + NEW."Final_cleaning", 0);
-    --END IF;
 
     -- Insert price
     INSERT INTO "Booking"."Booking_price"

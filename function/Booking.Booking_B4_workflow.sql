@@ -315,13 +315,6 @@ BEGIN
 
   -- A CONTRATO
   IF (NEW."Status" = 'contrato') THEN
-    -- EMail
-    --?IF NEW."Check_in" IS NULL AND NEW."Origin_id" IS NULL THEN
-    --?  INSERT
-    --?    INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-    --?    VALUES (NEW."Customer_id", 'completacheckin', NEW.id);
-    --?END IF;
-    -- Log
     change := CONCAT('Firmado contrato de la reserva ', NEW."Contract_signed");
   END IF;
 
@@ -350,16 +343,14 @@ BEGIN
   -- A IN HOUSE (BOTON 'CHECK IN OK')
   -- Se confirma la llegada del usuario al alojamiento
   IF (NEW."Status" = 'inhouse') THEN 
-    IF NEW."Origin_id" IS NULL THEN
-      -- Questionnaire
-      INSERT
-        INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
-        VALUES (NEW.id, 'checkin');
-      -- EMail
-      INSERT
-        INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-        VALUES (NEW."Customer_id", 'inhouse', NEW.id);
-    END IF;
+    -- Questionnaire
+    INSERT
+      INTO "Booking"."Booking_questionnaire" ("Booking_id", "Questionnaire_type")
+      VALUES (NEW.id, 'checkin');
+    -- EMail
+    INSERT
+      INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
+      VALUES (NEW."Customer_id", 'inhouse', NEW.id);
     -- Log
     change := 'Se confirma que el usuario ha llegado al alojamiento.';  
   END IF;
