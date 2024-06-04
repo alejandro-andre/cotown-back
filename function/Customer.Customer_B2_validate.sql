@@ -23,13 +23,16 @@ BEGIN
   END IF;
 
   -- Same account
-  IF NEW."Same_account" THEN
-    NEW."Bank_account"    = NULL;
+  IF NEW."IBAN" IS NOT NULL AND NEW."IBAN" <> '' AND NEW."Same_account" THEN
+    NEW."Bank_account"    = NEW."IBAN";
+    NEW."Swift"           = NULL;
     NEW."Bank_holder"     = NULL;
     NEW."Bank_name"       = NULL;
     NEW."Bank_address"    = NULL;
     NEW."Bank_city"       = NULL;
     NEW."Bank_country_id" = NULL;
+  ELSE
+    NEW."Same_account" = FALSE;
   END IF;
 
   -- Superuser ROLE
