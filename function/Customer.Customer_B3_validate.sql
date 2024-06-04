@@ -22,6 +22,13 @@ BEGIN
     END IF;
   END IF;
 
+  -- IBAN/SEPA
+  IF NEW."IBAN" IS NOT NULL AND NEW."IBAN" <> '' THEN
+    IF NOT EXISTS (SELECT id FROM "Geo"."Country" WHERE "Code" = upper(substring(trim(NEW."IBAN"), 1, 2)) AND "Sepa" = TRUE) THEN
+      RAISE EXCEPTION '!!!IBAN from non-SEPA country!!!IBAN de un país no-SEPA!!!';
+    END IF;
+  END IF;
+
   -- Same account
   IF NEW."IBAN" IS NOT NULL AND NEW."IBAN" <> '' AND NEW."Same_account" THEN
     NEW."Bank_account"    = NEW."IBAN";
