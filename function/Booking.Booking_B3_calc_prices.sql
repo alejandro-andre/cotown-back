@@ -234,8 +234,8 @@ BEGIN
 
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
-      ("Booking_id", "Rent_date", "Rent", "Services", "Rent_total", "Services_total")
-      VALUES (NEW.id, dt_curr, curr_rent, curr_services, curr_rent, curr_services)
+      ("Booking_id", "Rent_date", "Rent", "Services", "Rent_total", "Services_total", "Rent_rack", "Services_rack")
+      VALUES (NEW.id, dt_curr, curr_rent, curr_services, curr_rent, curr_services, monthly_rent, monthly_services)
       ON CONFLICT ("Booking_id", "Rent_date") DO NOTHING;
  
     -- Next month
