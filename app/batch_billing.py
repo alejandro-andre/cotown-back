@@ -224,8 +224,9 @@ def bill_rent(dbClient, con):
       if item['Owner_id'] == item['Service_id']:
         rent += services
         services = 0
-      if item['Pos'] != item['Service_pos']:
-        item['Pos'] = 'default'
+      if services > 0:
+        if item['Pos'] != item['Service_pos']:
+          item['Pos'] = 'default'
        
       # Create payment
       if rent > 0 or services > 0:
@@ -431,11 +432,11 @@ def bill_group_rent(dbClient, con):
       # Same issuer
       product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
-        #product = PRODUCTS[PR_RENT_SERVICES]
         total_rent += total_services
         total_services = 0
-      if item['Pos'] != item['Service_pos']:
-        item['Pos'] = 'default'
+      if total_services > 0:
+        if item['Pos'] != item['Service_pos']:
+          item['Pos'] = 'default'
        
       # Create payment
       if total_rent > 0 or total_services > 0:
