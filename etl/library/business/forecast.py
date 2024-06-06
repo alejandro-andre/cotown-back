@@ -17,6 +17,7 @@ def forecast(apiClient):
   logger.info('Retrieving forecast...')
 
   # CSV header
+  c = 0
   result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","income_type","data_type","stay_length","discount_type"\n' 
 
   # Get files
@@ -37,24 +38,25 @@ def forecast(apiClient):
       # Process sheet
       sheet = workbook[name]
       for row in sheet.iter_rows(min_row=5):
+        c += 1
         month = str(row[0].value)[:10]
 
         # Forecast
-        line = ['XXXX', '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[22].value, row[22].value, 'B2X', 'Forecast', 'LONG', '' ]
+        line = ['FL' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[22].value, row[22].value, 'B2X', 'Forecast', 'LONG', '' ]
         result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['XXXX', '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[23].value, row[23].value, 'B2X', 'Forecast', 'MEDIUM', '' ]
+        line = ['FM' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[23].value, row[23].value, 'B2X', 'Forecast', 'MEDIUM', '' ]
         result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['XXXX', '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[24].value, row[24].value, 'B2X', 'Forecast', 'SHORT', '' ]
+        line = ['FS' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[24].value, row[24].value, 'B2X', 'Forecast', 'SHORT', '' ]
         result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['XXXX', '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[25].value, row[25].value, 'B2X', 'Forecast', 'GROUP', '' ]
+        line = ['FG' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[25].value, row[25].value, 'B2X', 'Forecast', 'GROUP', '' ]
         result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
-        line = ['XXXX', '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[36].value, row[36].value, 'B2X', 'Stabilised', '', '' ]
+        line = ['ST' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[36].value, row[36].value, 'B2X', 'Stabilised', '', '' ]
         result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # UW
-        line = ['XXXX', '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[39].value, row[39].value, 'B2X', 'UW', '', '' ]
+        line = ['UW' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[39].value, row[39].value, 'B2X', 'UW', '', '' ]
         result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
