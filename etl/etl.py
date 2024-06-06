@@ -124,7 +124,7 @@ def main():
     forecast(apiClient)
 
     # Calc availability
-    #?occupancy(dbOrigin)
+    occupancy(dbOrigin)
 
     # Load facts
     load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
@@ -132,7 +132,7 @@ def main():
     load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
     load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
     load(dbOrigin, dbDestination, 'income', 'income_forecast')
-    #?load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy')
 
   except Exception as e:
     # Error
