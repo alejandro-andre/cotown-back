@@ -178,7 +178,7 @@ def bill_payments(dbClient, con):
 # Generate monthly bills
 # ###################################################
 
-def bill_rent(dbClient, con):
+def bill_month(dbClient, con):
 
   # Get all prices not already billed
   cur = dbClient.execute(con,
@@ -212,6 +212,28 @@ def bill_rent(dbClient, con):
     # Debug
     logger.debug(item)
 
+    # Get all recurrent services
+    cur = dbClient.execute(con,
+      '''
+      SELECT
+        s.id, b.id as "Booking_id", b."Customer_id",
+        s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",
+        s."Payment_method_id", 
+        r."Code", r."Service_id",
+        sv."Pos" as "Pos"
+      FROM "Booking"."Booking" b
+        INNER JOIN "Booking"."Booking_service" s ON s."Booking_id" = b.id
+        INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
+        INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+        LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
+      WHERE b.id = %s
+        AND s."Billing_date_to" >= CURRENT_DATE
+        AND s."Billing_date_from" <= CURRENT_DATE 
+      ''', (item['Booking_id'], ))
+    extra = cur.fetchall()
+    cur.close()
+    extra_services = float(sum(r['Amount'] for r in extra) or 0.0)
+
     # Capture exceptions
     try:
 
@@ -222,14 +244,15 @@ def bill_rent(dbClient, con):
       # Same issuer
       product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
-        rent += services
+        rent = rent + services + extra_services
         services = 0
+        extra_services = 0
       if services > 0:
         if item['Pos'] != item['Service_pos']:
           item['Pos'] = 'default'
        
       # Create payment
-      if rent > 0 or services > 0:
+      if rent + services + extra_services > 0:
 
         cur = dbClient.execute(con,
           '''
@@ -243,7 +266,7 @@ def bill_rent(dbClient, con):
             item['Pos'],
             item['Customer_id'],
             item['Booking_id'],
-            rent + services,
+            rent + services + extra_services,
             datetime.now(),
             product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date']),
             'servicios'
@@ -300,7 +323,7 @@ def bill_rent(dbClient, con):
           q = 1
 
         # Create services invoice
-        if services > 0:
+        if services + extra_services > 0:
          
           cur = dbClient.execute(con,
             '''
@@ -324,21 +347,39 @@ def bill_rent(dbClient, con):
           )
           servid = cur.fetchone()[0]
 
-          # Create invoice line
-          dbClient.execute(con,
-            '''
-            INSERT INTO "Billing"."Invoice_line"
-            ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
-            VALUES (%s, %s, %s, %s, %s)
-            ''',
-            (
-              servid,
-              services,
-              PR_SERVICES,
-              PRODUCTS[PR_SERVICES]['tax'] if item['Tax_id'] is None else item['Tax_id'],
-              PRODUCTS[PR_SERVICES]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+          # Monthly services
+          if services > 0:
+            dbClient.execute(con,
+              '''
+              INSERT INTO "Billing"."Invoice_line"
+              ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
+              VALUES (%s, %s, %s, %s, %s)
+              ''',
+              (
+                servid,
+                services,
+                PR_SERVICES,
+                PRODUCTS[PR_SERVICES]['tax'] if item['Tax_id'] is None else item['Tax_id'],
+                PRODUCTS[PR_SERVICES]['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
+              )
             )
-          )
+
+          # Extra services
+          if extra_services > 0:
+            for e in extra:
+              dbClient.execute(con,
+                '''
+                INSERT INTO "Billing"."Invoice_line"
+                ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
+                VALUES (%s, %s, %s, %s, %s)
+                ''',
+                ( servid,
+                  e['Amount'],
+                  e['Product_id'],
+                  e['Tax_id'],
+                  e['Concept']
+                )
+              )
 
           # Update bill
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
@@ -370,7 +411,7 @@ def bill_rent(dbClient, con):
 # Generate monthly bills for group bookints
 # ###################################################
 
-def bill_group_rent(dbClient, con):
+def bill_group_month(dbClient, con):
 
   # Get all prices not already billed
   cur = dbClient.execute(con,
@@ -984,8 +1025,8 @@ def main():
   bill_payments(dbClient, con)
 
   # 2. Monthly billing process
-  bill_rent(dbClient, con)
-  bill_group_rent(dbClient, con)
+  bill_month(dbClient, con)
+  bill_group_month(dbClient, con)
 
   # 3. Bill extra services
   bill_services(dbClient, con)
