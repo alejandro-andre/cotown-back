@@ -11,6 +11,7 @@
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.config import settings
+from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.occupancy import occupancy
 from library.business.forecast import forecast
@@ -21,10 +22,25 @@ from logging.handlers import RotatingFileHandler
 logger = logging.getLogger('COTOWN')
 
 # ###################################################
+# Connect to GraphQL
+# ###################################################
+
+def apiConnect():
+
+# ---------------------------------------------------
+# Connect to Core
+# ---------------------------------------------------
+
+  apiClient = APIClient(settings.DBHOST)
+  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
+  return apiClient
+
+
+# ###################################################
 # Connect to BD
 # ###################################################
 
-def connect():
+def dbConnect():
 
 # ---------------------------------------------------
 # Open origin DB
@@ -85,7 +101,8 @@ def main():
 
   # Connect
   try:
-    dbOrigin, dbDestination = connect()
+    dbOrigin, dbDestination = dbConnect()
+    apiClient = apiConnect()
   except Exception as e:
     logger.error(e)
     return
@@ -104,7 +121,7 @@ def main():
     load(dbOrigin, dbDestination, 'resource', 'resource')
 
     # Calc forecast
-    forecast()
+    forecast(apiClient)
 
     # Calc availability
     occupancy(dbOrigin)

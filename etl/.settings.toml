@@ -3,6 +3,9 @@
 # Log level: CRITICAL=50, ERROR=40, WARNING=30, INFO=20, DEBUG=10
 LOGLEVEL=10
 
+# Core
+GQLUSER='modelsadmin'
+
 # Origin DB
 DBHOST='core.cotown.com'
 DBUSER='postgres'
