@@ -12,7 +12,7 @@ DECLARE
 BEGIN
 	
   -- Validate dates
-  SELECT "Date_from", "Date_to", "Customer_id" INTO date_from, date_to, customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
+  SELECT "Date_from", "Date_to", "Payer_id" INTO date_from, date_to, customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
   IF NEW."Billing_date_from" < date_from THEN
     RAISE exception '!!!Billing date cannot be earlier than the start of the reservation!!!Fecha de factura no puede ser anterior al inicio de la reserva!!!';
   END IF;

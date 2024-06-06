@@ -358,11 +358,11 @@ def bill_rent(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} bills generated'.format(num))
+  logger.info('{} rent bills generated'.format(num))
   if err > 0:
-    logger.error('{} bills not ok'.format(err))
+    logger.error('{} rent bills not ok'.format(err))
   else:
-    logger.info('{} bills not ok'.format(err))
+    logger.info('{} rent bills not ok'.format(err))
   return
 
 
@@ -583,11 +583,11 @@ def bill_group_rent(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} group bills generated'.format(num))
+  logger.info('{} rent group bills generated'.format(num))
   if err > 0: 
-    logger.error('{} group bills not ok'.format(err))
+    logger.error('{} rent group bills not ok'.format(err))
   else: 
-    logger.info('{} group bills not ok'.format(err))
+    logger.info('{} rent group bills not ok'.format(err))
   return
 
 
@@ -721,6 +721,145 @@ def bill_services(dbClient, con):
 
 
 # ###################################################
+# Generate service bills for group bookints
+# ###################################################
+
+def bill_group_services(dbClient, con):
+
+  # Get all non recurrent services not already billed
+  cur = dbClient.execute(con,
+    '''
+    SELECT
+      s.id, b.id as "Booking_id", b."Payer_id", b."Room_ids",
+      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id"
+    FROM "Booking"."Booking_group" b
+      INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
+      INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
+    WHERE b."Status" IN ('grupoconfirmado','inhouse')
+      AND s."Invoice_services_id" IS NULL
+      AND s."Billing_date_to" IS NULL
+      AND s."Billing_date_from" <= CURRENT_DATE 
+    ''')
+  data = cur.fetchall()
+  cur.close()
+
+  # Loop thru services
+  num = 0
+  err = 0
+  for item in data:
+
+    # Debug
+    logger.debug(item)
+
+    # Capture exceptions
+    try:
+
+      if item['Amount'] > 0:
+
+        # Group rooming list by flat
+        flats = {}
+        for r in item['Room_ids']:
+          key = r[:12]
+          if key not in flats:
+            flats[key] = []
+          flats[key].append(r[13:])
+
+        # Get all flat ids
+        args = tuple(flats.keys())
+        cur = dbClient.execute(con, 'SELECT r."Code", id FROM "Resource"."Resource" r WHERE r."Code" IN %s ORDER BY r."Code"', (args, ))
+        flat_ids = cur.fetchall()
+        cur.close()
+
+        # Create payment
+        cur = dbClient.execute(con,
+          '''
+          INSERT INTO "Billing"."Payment"
+          ("Payment_method_id", "Pos", "Customer_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+          RETURNING id
+          ''',
+          (
+            PM_TRANSFER,
+            'default',
+            item['Payer_id'],
+            item['Booking_id'],
+            item['Amount'],
+            datetime.now(),
+            item['Concept'],
+            'servicios'
+          )
+        )
+        paymentid = cur.fetchone()[0]
+
+        # Create bill
+        cur = dbClient.execute(con, 
+          '''
+          INSERT INTO "Billing"."Invoice"
+          ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+          RETURNING id
+          ''',
+          (
+            'factura',
+            False,
+            False,
+            datetime.now(),
+            1,
+            item['Payer_id'],
+            item['Booking_id'],
+            PM_TRANSFER,
+            paymentid,
+            item['Concept'],
+            item['Comments']
+          )
+        )
+        billid = cur.fetchone()[0]
+
+        # Create invoice line
+        dbClient.execute(con, 
+          '''
+          INSERT INTO "Billing"."Invoice_line"
+          ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+          VALUES (%s, %s, %s, %s, %s, %s, %s)
+          ''',
+          (
+            billid,
+            flat_ids[0][1],
+            item['Amount'],
+            PR_RENT,
+            item['Tax_id'],
+            item['Concept'],
+            item['Comments']
+          )
+        )
+
+        # Update bill
+        #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+
+        # Update service
+        dbClient.execute(con, 'UPDATE "Booking"."Booking_group_service" SET "Invoice_services_id" = %s WHERE id = %s', (billid, item['id']))
+        q = 1
+
+        # Commit
+        con.commit()
+        num += q
+
+    # Process exception
+    except Exception as error:
+      err += 1
+      logger.error(error)
+      con.rollback()
+
+  # End
+  logger.info('{} service group bills generated'.format(num))
+  if err > 0:
+    logger.error('{} service group bills not ok'.format(err))
+  else:
+    logger.info('{} service group bills not ok'.format(err))
+  return
+
+
+# ###################################################
 # Generate payments for new bills
 # ###################################################
 
@@ -850,6 +989,7 @@ def main():
 
   # 3. Bill extra services
   bill_services(dbClient, con)
+  bill_group_services(dbClient, con)
 
   # 4. Generate payment for each manual bill
   pay_bills(dbClient, con)
