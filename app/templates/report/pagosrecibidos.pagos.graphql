@@ -11,7 +11,12 @@ query Payments ($fdesde:String, $fhasta:String) {
         id
         Amount
         Booking_group_id
-        Booking_id
+        Booking: BookingViaBooking_id {
+            id
+            Resource: ResourceViaResource_id {
+                Code
+            }
+        }
         Comments
         Concept
         Customer: CustomerViaCustomer_id {
