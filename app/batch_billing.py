@@ -728,7 +728,7 @@ def bill_services(dbClient, con):
           (
             billid,
             item['Amount'],
-            PR_RENT,
+            item['Product_id'],
             item['Tax_id'],
             item['Concept'],
             item['Comments']
@@ -867,7 +867,7 @@ def bill_group_services(dbClient, con):
             billid,
             flat_ids[0][1],
             item['Amount'],
-            PR_RENT,
+            item['Product_id'],
             item['Tax_id'],
             item['Concept'],
             item['Comments']
