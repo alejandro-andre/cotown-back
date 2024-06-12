@@ -274,6 +274,8 @@ BEGIN
   IF (NEW."Status" = 'descartadapagada') THEN
     -- Quita el recurso
     NEW."Resource_id" := NULL;
+    -- Desvincula
+    NEW."Destination_id" := NULL;
     -- EMail
     INSERT
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
@@ -286,6 +288,8 @@ BEGIN
   IF (NEW."Status" = 'descartada' OR NEW."Status" = 'descartadapagada') THEN
     -- Quita el recurso
     NEW."Resource_id" := NULL;
+    -- Desvincula
+    NEW."Destination_id" := NULL;
     -- Intentamos eliminar pagos no realizados
     BEGIN
       DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
@@ -332,8 +336,10 @@ BEGIN
 
 
   -- A CANCELADA
-  -- Intentamos eliminar pagos no realizados
   IF (NEW."Status" = 'cancelada') THEN
+    -- Desvincula
+    NEW."Destination_id" := NULL;
+    -- Intentamos eliminar pagos no realizados
     BEGIN
       DELETE FROM "Billing"."Payment" WHERE "Booking_id" = NEW.id AND "Payment_date" IS NULL;
       EXCEPTION WHEN OTHERS THEN NULL;
