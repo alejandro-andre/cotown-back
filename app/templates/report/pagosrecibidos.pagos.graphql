@@ -31,9 +31,13 @@ query Payments ($fdesde:String, $fhasta:String) {
         }
         Payment_order
         Pos
-        Invoices: InvoiceListViaPayment_id {
+        Invoices: InvoiceListViaPayment_id (
+            orderBy: [{ attribute: id }]
+        ) {
             Code
             Issued_date
+            Concept
+            Total
         }
     }
 }
