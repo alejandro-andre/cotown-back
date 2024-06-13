@@ -44,9 +44,9 @@ def occupancy(dbClient):
     return n
 
 
-  def beds(id, date):
+  def beds(resource, date):
     # All flat non availability rows
-    rows = df_avail[df_avail['Resource_id'] == id]
+    rows = df_avail[df_avail['Resource_id'] == resource]
 
     # Check if the date is in between any range
     for _, row in rows.iterrows():
@@ -205,7 +205,7 @@ def occupancy(dbClient):
   # To CSV
   df_cross['id'] = range(1, 1 + len(df_cross))
   df_cross['data_type'] = 'real'
-  df_cross.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'available', 'occupied', 'sold'])
+  df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'available', 'occupied', 'sold'])
 
   # Log
   logger.info('Done')

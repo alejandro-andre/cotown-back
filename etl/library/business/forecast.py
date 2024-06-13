@@ -20,7 +20,7 @@ def forecast(apiClient):
   # CSV header
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","income_type","data_type","stay_length","discount_type"\n' 
-  occupancy_result = '"id","resource","date","beds","available","occupied","sold"\n'
+  occupancy_result = '"id","data_type","resource","date","beds","available","occupied","sold"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -63,7 +63,7 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
-        line = ['OF' + str(c), row[1].value, month, row[3].value, days * row[8].value, days * row[8].value]
+        line = ['OF' + str(c), 'forecast', row[1].value, month, row[3].value, days * row[3].value, days * row[8].value, days * row[8].value]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
