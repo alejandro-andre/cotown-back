@@ -35,13 +35,13 @@ def occupancy(dbClient):
       dto = row['Date_to']
       if dto >= mfrom and dfrom <= mto:
         n = n + 1 + (min(mto, dto) - max(mfrom, dfrom)).days
-        if type == 'quincena':
+        if type == 'Monthly':
+          n = calendar.monthrange(date.year, date.month)[1]
+        if type == 'Fortnightly':
           if n < 15:
             n = 15
           else:
             n = calendar.monthrange(date.year, date.month)[1]
-        if type == 'mes':
-          n = calendar.monthrange(date.year, date.month)[1]
     return n
 
 
@@ -205,7 +205,8 @@ def occupancy(dbClient):
 
   # To CSV
   df_cross['id'] = range(1, 1 + len(df_cross))
-  df_cross.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'resource', 'date', 'beds', 'available', 'occupied', 'sold'])
+  df_cross['data_type'] = 'real'
+  df_cross.to_csv('csv/occupancy.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'available', 'occupied', 'sold'])
 
   # Log
   logger.info('Done')
