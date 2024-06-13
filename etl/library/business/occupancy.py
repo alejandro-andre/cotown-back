@@ -5,7 +5,6 @@
 # System includes
 import calendar
 import pandas as pd
-from itertools import product
 from dateutil.relativedelta import relativedelta
 
 # Logging

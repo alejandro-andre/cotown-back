@@ -66,7 +66,7 @@ CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.locatio
 -- Create occupancy table
 CREATE TABLE gold.occupancy (
   "id" varchar NOT NULL,
-  "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
+  "data_type" varchar NOT NULL,
   "resource" varchar NOT NULL,
   "date" date NOT NULL,
   "beds" int NOT NULL,
