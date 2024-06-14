@@ -44,7 +44,7 @@ def forecast(apiClient):
         month = str(row[0].value)[:10]
         days = calendar.monthrange(int(month[:4]), int(month[5:7]))[1]
 
-        # Income forecast
+        # Rent forecast
         line = ['FL' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[22].value, row[22].value, 'B2X', 'Forecast', 'LONG', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FM' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[23].value, row[23].value, 'B2X', 'Forecast', 'MEDIUM', '' ]
@@ -54,16 +54,38 @@ def forecast(apiClient):
         line = ['FG' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[25].value, row[25].value, 'B2X', 'Forecast', 'GROUP', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
-        # Income stabilised
-        line = ['ST' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[36].value, row[36].value, 'B2X', 'Stabilised', '', '' ]
+        # Services forecast
+        line = ['FX' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly services', row[27].value, row[27].value, 'B2X', 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
-        # Income UW
-        line = ['UW' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[39].value, row[39].value, 'B2X', 'UW', '', '' ]
+        # Rent stabilised
+        line = ['ST' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[37].value, row[37].value, 'B2X', 'Stabilised', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Services stabilised
+        line = ['SX' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly services', row[38].value, row[38].value, 'B2X', 'Stabilised', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Rent UW
+        line = ['UW' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', row[41].value, row[41].value, 'B2X', 'UW', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Services UW
+        line = ['UX' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly services', row[42].value, row[42].value, 'B2X', 'UW', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        #"id","data_type","resource","date","beds","available","occupied","sold"\n'''
 
         # Occupancy forecast
-        line = ['OF' + str(c), 'forecast', row[1].value, month, row[3].value, days * row[3].value, days * row[8].value, days * row[8].value]
+        line = ['OF' + str(c), 'Forecast', row[1].value, month, row[3].value, days * row[3].value, days * row[8].value, days * row[8].value]
+        occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Occupancy stabilised
+        line = ['OS' + str(c), 'Stabilised', row[1].value, month, row[3].value, days * row[3].value, days * row[3].value * row[35].value, days * row[3].value * row[35].value]
+        occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Occupancy UW
+        line = ['OU' + str(c), 'UW', row[1].value, month, row[6].value, days * row[6].value, days * row[6].value * row[40].value,  days * row[6].value * row[40].value]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
