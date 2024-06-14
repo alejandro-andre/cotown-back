@@ -763,7 +763,7 @@ def bill_services(dbClient, con):
         )
 
         # Update bill
-        #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+        dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
         dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_services_id" = %s WHERE id = %s', (billid, item['id']))
@@ -902,7 +902,7 @@ def bill_group_services(dbClient, con):
         )
 
         # Update bill
-        #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+        dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
         dbClient.execute(con, 'UPDATE "Booking"."Booking_group_service" SET "Invoice_services_id" = %s WHERE id = %s', (billid, item['id']))
