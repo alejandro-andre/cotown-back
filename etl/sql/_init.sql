@@ -86,6 +86,7 @@ CREATE TABLE gold.date (
   "week" int2 NOT NULL,
   "month" int2 NOT NULL,
   "monthname" varchar NOT NULL,
+  "monthshort" varchar NOT NULL,
   "year" int2 NOT NULL,
   "quarter" int2 NOT NULL,
   "quartername" varchar NOT NULL,
@@ -120,7 +121,7 @@ CONSTRAINT income_pk PRIMARY KEY ("id")
 
 -- Insert dates
 INSERT INTO gold."date" (
-  "date", "day", "dow", "downame", "week", "month", "monthname", "year", "quarter", "quartername", 
+  "date", "day", "dow", "downame", "week", "month", "monthname", "monthshort", "year", "quarter", "quartername", 
   "semester", "semestername", "yearsemester", "yearquarter", "yearmonth", "yearweek"
 )
 SELECT
@@ -131,6 +132,7 @@ SELECT
   EXTRACT(WEEK FROM d) AS "week",
   EXTRACT(MONTH FROM d) AS "month",
   (ARRAY['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'])[EXTRACT(MONTH FROM d)] AS "monthname",
+  (ARRAY['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])[EXTRACT(MONTH FROM d)] AS "monthshort",
   EXTRACT(YEAR FROM d) AS "year",
   EXTRACT(QUARTER FROM d) AS "quarter",
   'Q' || EXTRACT(QUARTER FROM d)::TEXT AS "quartername",
