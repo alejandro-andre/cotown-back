@@ -49,7 +49,8 @@ def forecast(apiClient):
         rent_m = row[23].value or 0
         rent_s = row[24].value or 0
         rent_g = row[25].value or 0
-        srvs = row[27].value or 0
+        srvs   = row[27].value or 0
+        bfee   = row[28].value or 0
         line = ['FL' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FM' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', rent_m, rent_m, 'B2X', 'Forecast', 'MEDIUM', '' ]
@@ -60,21 +61,17 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FX' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly services', srvs, srvs, 'B2X', 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        line = ['FF' + str(c), '-', '-', '', month, '', '', row[1].value, 'Enrollment fee', bfee, bfee, 'B2X', 'Forecast', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
         rent = row[37].value or 0
-        srvs = row[38].value or 0
         line = ['ST' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'Stabilised', '', '' ]
-        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SX' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly services', srvs, srvs, 'B2X', 'Stabilised', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # UW
-        rent = row[41].value or 0
-        srvs = row[42].value or 0
+        rent = row[40].value or 0
         line = ['UW' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'UW', '', '' ]
-        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['UX' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly services', srvs, srvs, 'B2X', 'UW', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         #"id","data_type","resource","date","beds","available","occupied","sold"\n'''
