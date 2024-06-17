@@ -125,7 +125,7 @@ def bill_payments(dbClient, con):
         RETURNING id
         ''',
         (
-          'recibo' if item['Payment_type'] == 'deposito' or item['Receipt'] else 'factura',
+          'recibo' if item['Payment_type'] not in ('booking','checkin') and (item['Payment_type'] == 'deposito' or item['Receipt']) else 'factura',
           False,
           False,
           datetime.now(),

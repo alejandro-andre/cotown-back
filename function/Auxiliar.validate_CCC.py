@@ -26,7 +26,7 @@ if swift is None:
   
 # Validate SWIFT
 swift = re.sub(r'[^a-zA-Z0-9]', '', swift or '')
-regex = '^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}([0-9]{3})?$'
+regex = '^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}([A-Z0-9]{3})?$'
 swift_ok = re.search(regex, swift) is not None
 if not swift_ok:
   plpy.error('!!!SWIFT code not valid!!!Codigo SWIFT no válido!!!')
