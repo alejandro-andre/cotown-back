@@ -132,6 +132,9 @@ def main():
     load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
     load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
     load(dbOrigin, dbDestination, 'income', 'income_forecast')
+    load(dbOrigin, dbDestination, 'income', 'mf_real')
+    load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
+    load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
 
