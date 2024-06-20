@@ -33,7 +33,6 @@ SELECT
   NULL AS "discount_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
-  INNER JOIN "Booking"."Booking_group_rooming" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Rooms" r on r.id = b.id 
 WHERE bp."Rent_date" >= '2024-01-01'
