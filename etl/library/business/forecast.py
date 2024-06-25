@@ -51,7 +51,7 @@ def forecast(apiClient):
         rent_g = row[25].value or 0
         srvs   = row[27].value or 0
         bfee   = row[28].value or 0
-        mfee   = round((row[26].value or 0 + (row[27].value or 0) / 1.21) * (row[26].value or 0), 2)
+        mfee   = round((float(row[26].value or 0) + float(row[27].value or 0) / 1.21) * float(row[2].value or 0), 2)
         line = ['FRL' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FRM' + str(c), '-', '-', '', month, '', '', row[1].value, 'Monthly rent', rent_m, rent_m, 'B2X', 'Forecast', 'MEDIUM', '' ]
