@@ -1,5 +1,5 @@
 SELECT 
-  CONCAT('COR-', bp.id) AS "id",
+  CONCAT('COR', bp.id) AS "id",
   b.id AS "doc_id",
   'otb' AS "doc_type",
   bp."Booking_id" AS "booking",
@@ -40,7 +40,7 @@ WHERE bp."Rent_date" >= '2024-01-01'
 UNION
 
 SELECT 
-  CONCAT('COS-', bp.id) AS "id",
+  CONCAT('COS', bp.id) AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
   bp."Booking_id" AS "booking",

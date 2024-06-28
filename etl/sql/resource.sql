@@ -31,7 +31,7 @@ SELECT DISTINCT
   b."Start_date" AS "start_date",
   s."Name" AS "segment",
   SUBSTRING(r."Code", 1, 6) AS "building", 
-  NULL AS "flat",
+  SUBSTRING(r."Code", 1, 6) AS "flat",
   NULL AS "flat_type",
   NULL AS "place_type",
   '' AS "billing_type"
