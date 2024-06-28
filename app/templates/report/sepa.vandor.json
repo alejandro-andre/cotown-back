@@ -10,5 +10,8 @@
 "Name",
 "IBAN",
 "Concept",
-"Sequence"
+"Sequence",
+"Address",
+"City",
+"Country"
 ]

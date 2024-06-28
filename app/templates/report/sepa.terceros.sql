@@ -3,7 +3,7 @@ SELECT
   TRIM(c."Name") AS "Name", 
   REPLACE(COALESCE(c."IBAN", ''), ' ', '') AS "IBAN",
   LPAD(p."Booking_id"::text, 6, '0') AS "Ref_mandate",
-  TO_CHAR(p."Issued_date", 'DD/MM/YYYY') AS "Date",
+  TO_CHAR(CURRENT_DATE, 'DD/MM/YYYY') AS "Date",
   'RCUR' AS "Sequence", 
   LPAD(p.id::text, 6, '0') AS "Ref_order",
   p."Amount",

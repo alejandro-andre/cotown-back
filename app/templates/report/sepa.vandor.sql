@@ -1,9 +1,11 @@
--- NetCash
 SELECT 
   TRIM(c."Name") AS "Name", 
+  "Address",
+  "City",
+  co."Name" AS "Country",
   REPLACE(COALESCE(c."IBAN", ''), ' ', '') AS "IBAN",
   LPAD(p."Booking_id"::text, 6, '0') AS "Ref_mandate",
-  TO_CHAR(p."Issued_date", 'DD/MM/YYYY') AS "Date",
+  TO_CHAR(CURRENT_DATE, 'DD/MM/YYYY') AS "Date",
   'RCUR' AS "Sequence", 
   LPAD(p.id::text, 6, '0') AS "Ref_order",
   p."Amount",
@@ -11,6 +13,7 @@ SELECT
 FROM "Billing"."Payment" p
   LEFT JOIN "Customer"."Customer" c ON c.id = p."Customer_id"
   LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
+  LEFT JOIN "Geo"."Country" co on co.id = c."Country_id"
 WHERE p."Payment_method_id" = 2
   AND p."Payment_date" IS NULL 
   AND p."Booking_id" IS NOT NULL
