@@ -104,7 +104,7 @@ CREATE TABLE gold.income (
   "id" varchar NOT NULL,                -- Record id
   "doc_id" varchar NOT NULL,            -- Id of the income document (invoice, ...)
   "doc_type" varchar NOT NULL,          -- Document type
-  "booking" int8 DEFAULT NULL,          -- Booking id
+  "booking" varchar DEFAULT NULL,       -- Booking id
   "date" date NOT NULL,                 -- Date of the income
   "provider" varchar DEFAULT NULL,
   "customer" int8 DEFAULT NULL,
