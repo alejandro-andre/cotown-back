@@ -180,7 +180,7 @@ BEGIN
   -- Base values
   NEW."Deposit"          := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
   IF NEW."Deposit" < rent + second_resident + services THEN
-    NEW."Deposit" = rent + second_resident + services
+    NEW."Deposit" = rent + second_resident + services;
   END IF;
   NEW."Final_cleaning"   := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
   NEW."Limit"            := COALESCE(NEW."Limit", "limit", 0);

@@ -577,7 +577,7 @@ def do_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if context['Owner_id'] != context['Service_id']:
+    if context['Owner_id'] != context['Service_id'] and context['Booking_services'] > 0:
       template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
       if template is not None:
         if context['Customer_lang'] == 'en':
