@@ -1,0 +1,1 @@
+TRUNCATE gold.occupancy CASCADE;

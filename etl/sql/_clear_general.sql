@@ -1,0 +1,8 @@
+-- Empty tables
+TRUNCATE gold.date CASCADE;
+TRUNCATE gold.flat_type CASCADE;
+TRUNCATE gold.place_type CASCADE;
+TRUNCATE gold.product CASCADE;
+TRUNCATE gold.owner CASCADE;
+TRUNCATE gold.location CASCADE;
+TRUNCATE gold.resource CASCADE;

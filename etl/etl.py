@@ -15,6 +15,7 @@ from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.occupancy import occupancy
 from library.business.forecast import forecast
+from library.business.gl import gl
 
 # Logging
 import logging
@@ -83,10 +84,9 @@ def dbConnect():
 # Main
 # ###################################################
 
-def main():
+def main(interfaces):
 
   # Logging
-
   logger.setLevel(settings.LOGLEVEL)
   formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)3d] [%(levelname)s] %(message)s')
   console_handler = logging.StreamHandler()
@@ -109,34 +109,62 @@ def main():
 
   # Process
   try:
+
+    # ------------------------------------
     # Init destination
-    execute(dbDestination, '_init')
+    # ------------------------------------
+
+    if 'init' in interfaces:
+      execute(dbDestination, '_init')
+    
+    # ------------------------------------
+    # General
+    # ------------------------------------
 
     # Load dimensions
-    load(dbOrigin, dbDestination, 'owner', 'owner')
-    load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
-    load(dbOrigin, dbDestination, 'place_type', 'place_type')
-    load(dbOrigin, dbDestination, 'location', 'location')
-    load(dbOrigin, dbDestination, 'product', 'product')
-    load(dbOrigin, dbDestination, 'resource', 'resource')
+    if 'general' in interfaces:
+      execute(dbDestination, '_clear_general')
+      load(dbOrigin, dbDestination, 'owner', 'owner')
+      load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
+      load(dbOrigin, dbDestination, 'place_type', 'place_type')
+      load(dbOrigin, dbDestination, 'location', 'location')
+      load(dbOrigin, dbDestination, 'product', 'product')
+      load(dbOrigin, dbDestination, 'resource', 'resource')
 
-    # Calc forecast
-    forecast(apiClient)
+    # ------------------------------------
+    # SAP
+    # ------------------------------------
 
-    # Calc availability
-    occupancy(dbOrigin)
+    # Load dimensions
+    if 'gl' in interfaces:
+      gl('csv/gl')
+      execute(dbDestination, '_clear_gl')
+      load(dbOrigin, dbDestination, 'gl', 'gl')
 
-    # Load facts
-    load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
-    load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
-    load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
-    load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
-    load(dbOrigin, dbDestination, 'income', 'income_forecast')
-    load(dbOrigin, dbDestination, 'income', 'mf_real')
-    load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
-    load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
-    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
-    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
+    # ------------------------------------
+    # Monthly
+    # ------------------------------------
+
+    # Income
+    if 'income' in interfaces:
+      forecast(apiClient)
+      execute(dbDestination, '_clear_income')
+      load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
+      load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
+      load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
+      load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
+      load(dbOrigin, dbDestination, 'income', 'income_forecast')
+      load(dbOrigin, dbDestination, 'income', 'mf_real')
+      load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
+      load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
+
+    # Occupancy
+    if 'occupancy' in interfaces:
+      forecast(apiClient)
+      occupancy(dbOrigin)
+      execute(dbDestination, '_clear_occupancy')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
 
   except Exception as e:
     # Error
@@ -147,9 +175,10 @@ def main():
     dbDestination.disconnect()
     dbOrigin.disconnect()
 
+
 # ###################################################
 # Startup
 # ###################################################
 
 if __name__ == '__main__':
-  main()
+  main(['init', 'general', 'gl', 'income', 'occupancy'])

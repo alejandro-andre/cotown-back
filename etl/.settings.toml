@@ -15,5 +15,4 @@ SSHUSER='partner'
 # Destination DB
 DWDBHOST='localhost'
 DWDBUSER='cotown'
-DWDBPASS='Ciber$2022'
 DWDBNAME='dw'

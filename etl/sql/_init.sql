@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS gold.location CASCADE;
 DROP TABLE IF EXISTS gold.resource CASCADE;
 DROP TABLE IF EXISTS gold.income CASCADE;
 DROP TABLE IF EXISTS gold.occupancy CASCADE;
+DROP TABLE IF EXISTS gold.gl CASCADE;
 
 -- Create owners table
 CREATE TABLE gold.owner (
@@ -117,6 +118,32 @@ CREATE TABLE gold.income (
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "discount_type" varchar NULL,
 CONSTRAINT income_pk PRIMARY KEY ("id")
+);
+
+-- Create general ledger
+CREATE TABLE gold.gl(
+  "id" varchar NOT NULL,
+  "general_ledger_account" varchar NOT NULL,
+  "general_ledger_account_name" varchar NOT NULL,
+  "date" date NOT NULL,
+  "journal_entry_number" varchar NOT NULL,
+  "journal_entry_position" int8 NOT NULL,
+  "journal_entry_type" varchar NOT NULL,
+  "profit_center" varchar NOT NULL,
+  "profit_center_name" varchar NOT NULL,
+  "cost_center" varchar NOT NULL,
+  "cost_center_name" varchar NOT NULL,
+  "original_date" varchar NOT NULL,
+  "product" varchar NOT NULL,
+  "product_name" varchar NOT NULL,
+  "ext_ref" varchar NOT NULL,
+  "commercial_partner" varchar NOT NULL,
+  "commercial_partner_name" varchar NOT NULL,
+  "journal_entry_header" varchar default NULL,
+  "journal_entry_position_text" varchar default NULL,
+  "debit" decimal NOT NULL,
+  "credit" decimal NOT null,
+CONSTRAINT gl_pk PRIMARY KEY ("id")
 );
 
 -- Insert dates
