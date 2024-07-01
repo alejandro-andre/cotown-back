@@ -10,7 +10,6 @@ SELECT
   (ARRAY['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'])[EXTRACT(MONTH FROM p."Issued_date")] AS "Concept"
 FROM "Billing"."Payment" p
   LEFT JOIN "Customer"."Customer" c ON c.id = p."Customer_id"
-  LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
 WHERE p."Payment_method_id" = 2
   AND p."Payment_date" IS NULL 
   AND p."Booking_id" IS NOT NULL
