@@ -6,3 +6,4 @@ TRUNCATE gold.product CASCADE;
 TRUNCATE gold.owner CASCADE;
 TRUNCATE gold.location CASCADE;
 TRUNCATE gold.resource CASCADE;
+TRUNCATE gold.mapping CASCADE;

@@ -15,7 +15,7 @@ from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.occupancy import occupancy
 from library.business.forecast import forecast
-from library.business.gl import gl
+from library.business.gl import gl, mapping
 
 # Logging
 import logging
@@ -123,6 +123,7 @@ def main(interfaces):
 
     # Load dimensions
     if 'general' in interfaces:
+      mapping('csv/mapping')
       execute(dbDestination, '_clear_general')
       load(dbOrigin, dbDestination, 'owner', 'owner')
       load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
@@ -130,6 +131,8 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'location', 'location')
       load(dbOrigin, dbDestination, 'product', 'product')
       load(dbOrigin, dbDestination, 'resource', 'resource')
+      load(dbOrigin, dbDestination, 'mapping', 'mapping')
+
 
     # ------------------------------------
     # SAP

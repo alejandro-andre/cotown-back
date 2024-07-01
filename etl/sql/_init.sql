@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS gold.resource CASCADE;
 DROP TABLE IF EXISTS gold.income CASCADE;
 DROP TABLE IF EXISTS gold.occupancy CASCADE;
 DROP TABLE IF EXISTS gold.gl CASCADE;
+DROP TABLE IF EXISTS gold.mapping CASCADE;
 
 -- Create owners table
 CREATE TABLE gold.owner (
@@ -144,6 +145,25 @@ CREATE TABLE gold.gl(
   "debit" decimal NOT NULL,
   "credit" decimal NOT null,
 CONSTRAINT gl_pk PRIMARY KEY ("id")
+);
+
+-- Create general ledger
+CREATE TABLE gold.mapping(
+  "id" varchar NOT NULL,
+  "account" varchar NOT NULL,
+  "description" varchar default NULL,
+  "catname" varchar NOT NULL,
+  "level1" varchar NOT NULL,
+  "level2" varchar NOT NULL,
+  "level3" varchar NOT NULL,
+  "level4" varchar NOT NULL,
+  "level5" varchar NOT NULL,
+  "level6" varchar NOT NULL,
+  "level7" varchar NOT NULL,
+  "level8" varchar NOT NULL,
+  "ccaa" varchar NOT NULL,
+  "ccaa2" varchar NOT NULL,
+CONSTRAINT mapping_pk PRIMARY KEY ("id")
 );
 
 -- Insert dates

@@ -18,6 +18,18 @@ def convert_date_format(date_str):
   return f'{parts[2]}/{parts[1]}/{parts[0]}'
 
 
+def mapping(file):
+
+  # Log
+  logger.info('Formatting mapping...')
+
+  # Read XLSX 
+  df = pd.read_excel(file + '.xlsx')
+
+  # Write CSV
+  df.to_csv(file + '.csv', index=False, quoting=csv.QUOTE_ALL)
+
+
 def gl(file):
 
   # Log
@@ -33,4 +45,4 @@ def gl(file):
   df['original_date'] = df['original_date'].apply(convert_date_format)
 
   # Write CSV
-  df.to_csv(file + '.csv', index=False, quoting=csv.QUOTE_ALL)
+  df.to_csv(file + '.csv', index=False, quoting=csv.QUOTE_ALL)  
