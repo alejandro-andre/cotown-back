@@ -7,7 +7,12 @@ SELECT
   'RCUR' AS "Sequence", 
   LPAD(p.id::text, 6, '0') AS "Ref_order",
   p."Amount",
-  (ARRAY['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'])[EXTRACT(MONTH FROM p."Issued_date")] AS "Concept"
+  CASE p."Payment_type"
+  	WHEN 'booking' THEN 'BOOKING FEE'
+  	WHEN 'deposito' THEN 'DEPOSITO'
+  	WHEN 'checkin' THEN 'CHECKIN'
+  	ELSE 'RENTA ' || (ARRAY['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'])[EXTRACT(MONTH FROM p."Issued_date")] 
+  END AS "Concept"
 FROM "Billing"."Payment" p
   LEFT JOIN "Customer"."Customer" c ON c.id = p."Customer_id"
 WHERE p."Payment_method_id" = 2
