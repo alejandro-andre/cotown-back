@@ -23,7 +23,8 @@ BEGIN
       "Service_id" = NEW."Service_id",
       "Billing_type" = NEW."Billing_type",
       "Sale_type" = NEW."Sale_type",
-      "Management_fee" = NEW."Management_fee"
+      "Management_fee" = NEW."Management_fee",
+      "SAP_code" = NEW."SAP_code"
     WHERE "Flat_id" = NEW.id 
       AND id <> NEW.id;
     EXECUTE 'SET ROLE "' || curr_user || '"';
