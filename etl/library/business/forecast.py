@@ -68,12 +68,12 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
-        rent = row[37].value or 0
+        rent = row[38].value or 0
         line = ['SIX' + str(c), '-', '-', '(stabilised)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'Stabilised', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # UW
-        rent = row[40].value or 0
+        rent = row[41].value or 0
         line = ['UIX' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'UW', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
@@ -83,7 +83,7 @@ def forecast(apiClient):
         beds     = row[3].value or 0 
         beds_uw  = row[6].value or 0
         sold     = row[8].value or 0
-        occ_stab = row[35].value or 0
+        occ_stab = row[36].value or 0
         occ_uw   = row[40].value or 0
         line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, days * beds, days * sold, days * sold]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
