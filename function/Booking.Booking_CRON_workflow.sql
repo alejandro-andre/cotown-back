@@ -62,4 +62,16 @@ BEGIN
     RAISE NOTICE 'Error en check-out: % %', SQLSTATE, SQLERRM;
   END; 
 
+  -- Borra cuestionarios no completados, siete dias despues
+  BEGIN
+    DELETE FROM "Booking"."Booking_questionnaire" bq
+    USING "Booking"."Booking" b
+    WHERE b.id = bq."Booking_id"
+    AND "Questionnaire_type" = 'checkin'
+    AND bq."Completed" IS NULL
+    AND COALESCE(b."Check_in", b."Date_from") < (CURRENT_DATE - INTERVAL '7 days')
+  EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Error borrando cuestionarios checkin: % %', SQLSTATE, SQLERRM;
+  END; 
+
 END;
