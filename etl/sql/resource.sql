@@ -8,7 +8,7 @@ SELECT
   SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
   CASE
-    WHEN rpt."Code" IS NULL 'FLAT'
+    WHEN rpt."Code" IS NULL THEN 'FLAT'
     ELSE rpt."Code" 
   END AS "place_type",
   CASE
