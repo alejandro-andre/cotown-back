@@ -184,5 +184,4 @@ def main(interfaces):
 # ###################################################
 
 if __name__ == '__main__':
-  #main(['init', 'general', 'gl', 'income', 'occupancy'])
-  main(['occupancy'])
+  main(['init', 'general', 'gl', 'income', 'occupancy'])
