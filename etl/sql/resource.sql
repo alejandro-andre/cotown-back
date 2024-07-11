@@ -7,7 +7,10 @@ SELECT
   SUBSTRING(r."Code", 1, 6) AS "building", 
   SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
-  rpt."Code" AS "place_type",
+  CASE
+    WHEN rpt."Code" IS NULL 'FLAT'
+    ELSE rpt."Code" 
+  END AS "place_type",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 

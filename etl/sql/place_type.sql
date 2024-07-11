@@ -1,4 +1,9 @@
 SELECT 
+  'FLAT' AS "id",
+  'Flat' AS "group",
+  'Private apartment' AS "name"
+UNION
+SELECT 
   "Code" AS "id",
   CASE 
 	  WHEN SUBSTRING("Code", 1, 1) = 'I' THEN 'Single'
