@@ -106,7 +106,7 @@ def download_contracts(apiClient, variables=None):
   clear('download')
  
   # Get records
-  query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
+  query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int, $bdesde:Int, $bhasta:Int) {
     data: Booking_BookingList (
       where: {
         AND: [
@@ -119,6 +119,17 @@ def download_contracts(apiClient, variables=None):
       Contract_rent { name }
       Contract_services { name }
       ResourceViaResource_id {
+        BuildingViaBuilding_id (
+          joinType: INNER
+          where: { 
+            AND: [
+              { id: { GE: $bdesde } }
+              { id: { LE: $bhasta } }
+            ]
+          }
+        ) {
+          id
+        }
         ProviderViaOwner_id (
           joinType: INNER
           where: { 
