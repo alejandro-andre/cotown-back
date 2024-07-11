@@ -44,6 +44,7 @@ CONSTRAINT flat_type_pk PRIMARY KEY ("id")
 -- Create place type table
 CREATE TABLE gold.place_type (
   "id" varchar NOT NULL,
+  "group" varchar NOT NULL,
   "name" varchar NOT NULL,
 CONSTRAINT place_type_pk PRIMARY KEY ("id")
 );
