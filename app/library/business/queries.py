@@ -109,8 +109,7 @@ def sql_dashboard(status, vars):
   # Check-ins
   if status == 'checkin':
     sql = select + '''
-    WHERE b."Status" =\'checkin\' 
-       OR (COALESCE(b."Check_in", b."Date_from") < CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')) '''
+    WHERE (b."Status" =\'checkin\' OR (COALESCE(b."Check_in", b."Date_from") < CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))) '''
 
   # Next check-ins
   elif status in ('next', 'nextin'):

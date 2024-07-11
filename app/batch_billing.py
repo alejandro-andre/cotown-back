@@ -89,8 +89,8 @@ def bill_payments(dbClient, con):
     INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
-    WHERE "Payment_date" IS NOT NULL
-    AND i.id IS NULL
+    WHERE i.id IS NULL
+    AND ("Payment_date" IS NOT NULL OR "Payment_type = 'checkin')
     ORDER BY p."Booking_id"
     ''')
   data = cur.fetchall()
