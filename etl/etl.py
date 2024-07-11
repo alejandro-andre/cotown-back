@@ -86,29 +86,29 @@ def dbConnect():
 
 def main(interfaces):
 
-  # Logging
-  logger.setLevel(settings.LOGLEVEL)
-  formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)3d] [%(levelname)s] %(message)s')
-  console_handler = logging.StreamHandler()
-  console_handler.setLevel(settings.LOGLEVEL)
-  console_handler.setFormatter(formatter)
-  file_handler = RotatingFileHandler('log/etl.log', maxBytes=1000000, backupCount=5)
-  file_handler.setLevel(settings.LOGLEVEL)
-  file_handler.setFormatter(formatter)
-  logger.addHandler(console_handler)
-  logger.addHandler(file_handler)
-  logger.info('Started')
+    # Logging
+    logger.setLevel(settings.LOGLEVEL)
+    formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)3d] [%(levelname)s] %(message)s')
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(settings.LOGLEVEL)
+    console_handler.setFormatter(formatter)
+    file_handler = RotatingFileHandler('log/etl.log', maxBytes=1000000, backupCount=5)
+    file_handler.setLevel(settings.LOGLEVEL)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+    logger.info('Started')
 
-  # Connect
-  try:
-    dbOrigin, dbDestination = dbConnect()
-    apiClient = apiConnect()
-  except Exception as e:
-    logger.error(e)
-    return
+    # Connect
+    try:
+      dbOrigin, dbDestination = dbConnect()
+      apiClient = apiConnect()
+    except Exception as e:
+      logger.error(e)
+      return
 
   # Process
-  try:
+  #try:
 
     # ------------------------------------
     # Init destination
@@ -169,11 +169,11 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
 
-  except Exception as e:
+  #except Exception as e:
     # Error
     logger.error(e)
   
-  finally:
+  #finally:
     # Disconnect
     dbDestination.disconnect()
     dbOrigin.disconnect()
@@ -184,4 +184,5 @@ def main(interfaces):
 # ###################################################
 
 if __name__ == '__main__':
-  main(['init', 'general', 'gl', 'income', 'occupancy'])
+  #main(['init', 'general', 'gl', 'income', 'occupancy'])
+  main(['occupancy'])

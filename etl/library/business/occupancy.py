@@ -16,16 +16,15 @@ logger = logging.getLogger('COTOWN')
 # Calculate availability
 # ###################################################
 
-
 def occupancy(dbClient):
 
-  def nights(resource, type, date):
+  def nights(resource, type, date, data_type):
     # First and last days of the month
     mfrom = date.replace(day=1)
     mto = date + relativedelta(months=1) - relativedelta(days=1)
    
     # All bookings for the resource
-    rows = df_books[df_books['resource'] == resource]
+    rows = df_books[(df_books['resource'] == resource) & (df_books['data_type'] == data_type)]
 
     # Sum booked nights
     n = 0
@@ -151,7 +150,14 @@ def occupancy(dbClient):
 
   # Bookings
   sql = '''
-  SELECT r."Code" AS "resource", b."Date_from", b."Date_to"
+  SELECT 
+    r."Code" AS "resource", 
+    b."Date_from", 
+    b."Date_to",
+    CASE
+      WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'tentative'
+      ELSE 'real'
+    END AS "data_type"
   FROM "Booking"."Booking_detail" b
   INNER JOIN (
     SELECT r."Code", r.id
@@ -160,7 +166,6 @@ def occupancy(dbClient):
     WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
     ) AS r ON r.id = b."Resource_id"
   WHERE b."Availability_id" IS NULL
-    AND b."Status" NOT IN ('pendientepago', 'grupobloqueado')
   ORDER BY 1, 2, 3
   '''
   try:
@@ -195,17 +200,19 @@ def occupancy(dbClient):
   logger.info('- Available nights calculated')
 
   # Ocuppied nights
-  df_cross['occupied'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date']), axis=1)
+  df_cross['occupied'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'real'), axis=1)
+  df_cross['occupied_t'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'tentative'), axis=1)
   logger.info('- Occupied nights calculated')
 
   # Sold nights
-  df_cross['sold'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date']), axis=1)
+  df_cross['sold'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'real'), axis=1)
+  df_cross['sold_t'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'tentative'), axis=1)
   logger.info('- Sold nights calculated')
 
   # To CSV
   df_cross['id'] = range(1, 1 + len(df_cross))
   df_cross['data_type'] = 'real'
-  df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'available', 'occupied', 'sold'])
+  df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'available', 'occupied', 'sold', 'occupied_t', 'sold_t'])
 
   # Log
   logger.info('Done')

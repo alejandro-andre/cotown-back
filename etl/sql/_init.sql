@@ -76,6 +76,8 @@ CREATE TABLE gold.occupancy (
   "available" int NOT NULL,
   "occupied" int NOT NULL,
   "sold" int NOT NULL,
+  "occupied_t" int NOT NULL,
+  "sold_t" int NOT NULL,
 CONSTRAINT occupancy_pk PRIMARY KEY ("id"),
 CONSTRAINT occupancy_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
 );
