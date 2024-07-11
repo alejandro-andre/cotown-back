@@ -106,20 +106,19 @@ def download_contracts(apiClient, variables=None):
   clear('download')
  
   # Get records
-  query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int, $bdesde:Int, $bhasta:Int) {
+  query = '''
+  query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int, $bdesde:Int, $bhasta:Int) {
     data: Booking_BookingList (
       where: {
         AND: [
           { Date_from: { GE: $fdesde } }
           { Date_from: { LT: $fhasta } }
+          { Resource_id: { IS_NULL: false } }
         ]
       }
     ) {
-      id
-      Contract_rent { name }
-      Contract_services { name }
-      ResourceViaResource_id {
-        BuildingViaBuilding_id (
+      resource: ResourceViaResource_id {
+        building: BuildingViaBuilding_id (
           joinType: INNER
           where: { 
             AND: [
@@ -128,8 +127,9 @@ def download_contracts(apiClient, variables=None):
             ]
           }
         ) {
-          id
+          Name
         }
+        Code
         ProviderViaOwner_id (
           joinType: INNER
           where: { 
@@ -139,9 +139,12 @@ def download_contracts(apiClient, variables=None):
             ]
           }
         ) {
-          id
+          Name
         }
       }
+      id
+      Contract_rent { name }
+      Contract_services { name }
     }
   }'''
   result = apiClient.call(query, variables)
@@ -151,8 +154,8 @@ def download_contracts(apiClient, variables=None):
   for item in result['data']:
 
     # Rent contract
-    if item['Contract_rent']:
-      name = 'Reserva_' + str(item['id']) + '_renta'
+    if item['resource'] and item['Contract_rent']:
+      name = 'Renta ' + str(item['resource']['building']['Name']) + ' ' + str(item['resource']['Code'][7:])
       file = apiClient.getFile(item['id'], 'Booking/Booking', 'Contract_rent')
       with open('download/' + name + '.pdf', 'wb') as pdf:
         logger.info(name)
@@ -160,15 +163,17 @@ def download_contracts(apiClient, variables=None):
         pdf.write(file.content)
         pdf.close()
 
-    # Rent services
-    if item['Contract_services']:
-      name = 'Reserva_' + str(item['id']) + '_servicios'
+    '''
+    # Services contract
+    if item['resource'] and item['Contract_services']:
+      name = 'Servicios ' + str(item['resource']['building']['Name']) + ' ' + str(item['resource']['Code'][7:])
       file = apiClient.getFile(item['id'], 'Booking/Booking', 'Contract_services')
       with open('download/' + name + '.pdf', 'wb') as pdf:
         logger.info(name)
         num += 1
         pdf.write(file.content)
         pdf.close()
+    '''
 
   # Info
   logger.info('Downloaded {} contracts'.format(num))
