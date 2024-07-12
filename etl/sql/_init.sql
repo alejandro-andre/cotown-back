@@ -46,6 +46,7 @@ CREATE TABLE gold.place_type (
   "id" varchar NOT NULL,
   "group" varchar NOT NULL,
   "name" varchar NOT NULL,
+  "order" int4 NOT NULL,
 CONSTRAINT place_type_pk PRIMARY KEY ("id")
 );
 
