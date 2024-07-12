@@ -20,7 +20,7 @@ def forecast(apiClient):
   # CSV header
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","income_type","data_type","stay_length","discount_type"\n' 
-  occupancy_result = '"id","data_type","resource","date","beds","available","occupied","sold"\n'
+  occupancy_result = '"id","data_type","resource","date","beds","available","occupied","sold","occupied_t","sold_t"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -85,11 +85,11 @@ def forecast(apiClient):
         sold     = row[8].value or 0
         occ_stab = row[36].value or 0
         occ_uw   = row[40].value or 0
-        line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, days * beds, days * sold, days * sold]
+        line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, days * beds, days * sold, days * sold, 0, 0]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, days * beds, days * beds * occ_stab, days * beds * occ_stab]
+        line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['UOC' + str(c), 'UW', row[1].value, month, beds_uw, days * beds_uw, days * beds_uw * occ_uw,  days * beds_uw * occ_uw]
+        line = ['UOC' + str(c), 'UW', row[1].value, month, beds_uw, days * beds_uw, days * beds_uw * occ_uw,  days * beds_uw * occ_uw, 0, 0]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
