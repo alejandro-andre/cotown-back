@@ -74,6 +74,7 @@ CREATE TABLE gold.occupancy (
   "resource" varchar NOT NULL,
   "date" date NOT NULL,
   "beds" int NOT NULL,
+  "beds_c" number(10,2) NOT NULL,
   "available" int NOT NULL,
   "occupied" int NOT NULL,
   "sold" int NOT NULL,
