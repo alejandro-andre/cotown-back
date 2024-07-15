@@ -49,9 +49,22 @@ def occupancy(dbClient):
 
     # Check if the date is in between any range
     for _, row in rows.iterrows():
+
+      # Not available
       if row['Date_from'] <= date <= row['Date_to']:
-        return 0
-    return 1
+        return [0.0, 0.0]
+      
+      # Consolidated date
+      c_date = date
+      if date.month >= 11: c_date = date.replace(month=10)
+      elif date.month >= 3: c_date = date.replace(month=2)
+
+      # Count half bed
+      if row['Date_from'] <= c_date <= row['Date_to']:
+        return [1.0, 0.5]
+      
+    # Beds = Consolidated beds
+    return [1.0, 1.0]
   
   
   def available(id, date, rooms=False):
@@ -191,8 +204,8 @@ def occupancy(dbClient):
   df_res['key'] = 1
   df_cross = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
-  # Beds
-  df_cross['beds'] = df_cross.apply(lambda row: beds(row['flat'], row['date']), axis=1)
+  # Beds and consolidated beds
+  df_cross[['beds', 'beds_c']] = df_cross.apply(lambda row: beds(row['flat'], row['date']), axis=1, result_type='expand')
   logger.info('- Beds calculated')
 
   # Available nights
@@ -212,7 +225,7 @@ def occupancy(dbClient):
   # To CSV
   df_cross['id'] = range(1, 1 + len(df_cross))
   df_cross['data_type'] = 'real'
-  df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'available', 'occupied', 'sold', 'occupied_t', 'sold_t'])
+  df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'available', 'occupied', 'sold', 'occupied_t', 'sold_t'])
 
   # Log
   logger.info('Done')
