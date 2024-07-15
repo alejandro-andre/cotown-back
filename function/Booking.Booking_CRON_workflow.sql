@@ -69,7 +69,7 @@ BEGIN
     WHERE b.id = bq."Booking_id"
     AND "Questionnaire_type" = 'checkin'
     AND bq."Completed" IS NULL
-    AND COALESCE(b."Check_in", b."Date_from") < (CURRENT_DATE - INTERVAL '7 days')
+    AND COALESCE(b."Check_in", b."Date_from") < (CURRENT_DATE - INTERVAL '7 days');
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error borrando cuestionarios checkin: % %', SQLSTATE, SQLERRM;
   END; 

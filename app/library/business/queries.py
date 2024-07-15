@@ -84,6 +84,7 @@ def sql_dashboard(status, vars):
       b."Destination_id",
       b."Eco_ext_change_ok",
       b."Eco_ext_keyless_ok",
+      b."Cha_ext",
       ct."Name" AS "Option",
       CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
       r."Code" as "Resource",
