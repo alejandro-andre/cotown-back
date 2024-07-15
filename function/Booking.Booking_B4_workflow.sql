@@ -72,7 +72,7 @@ BEGIN
     WHERE "Payment_type" = 'deposito'
       AND "Customer_id" = NEW."Customer_id" 
       AND "Booking_id" = NEW.id
-      AND "Payment_date" IS NOT NULL;
+      AND ("Payment_auth" IS NOT NULL OR "Payment_date" IS NOT NULL);
     IF num > 0 THEN
       RAISE WARNING '!!!Deposit already paid!!!La garantía ya ha sido pagada!!!';
 
