@@ -5,6 +5,7 @@ SELECT
   b."Start_date" AS "start_date",
   s."Name" AS "segment",
   SUBSTRING(r."Code", 1, 6) AS "building", 
+  b."Name" as "building_name",
   SUBSTRING(r."Code", 1, 12) AS "flat",
   rft."Code" AS "flat_type",
   CASE
@@ -34,6 +35,7 @@ SELECT DISTINCT
   b."Start_date" AS "start_date",
   s."Name" AS "segment",
   SUBSTRING(r."Code", 1, 6) AS "building", 
+  b."Name" as "building_name",
   SUBSTRING(r."Code", 1, 6) AS "flat",
   NULL AS "flat_type",
   NULL AS "place_type",

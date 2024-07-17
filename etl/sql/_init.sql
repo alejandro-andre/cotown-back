@@ -57,6 +57,7 @@ CREATE TABLE gold.resource (
   "location" varchar NOT NULL,
   "start_date" date DEFAULT NULL,
   "building" varchar NOT NULL,
+  "building_name" varchar NOT NULL,
   "segment" varchar NOT NULL,
   "flat" varchar DEFAULT NULL,
   "flat_type" varchar DEFAULT NULL,
