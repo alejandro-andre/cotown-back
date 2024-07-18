@@ -186,4 +186,5 @@ if __name__ == '__main__':
   logger.info('Started')
 
   #main(['init', 'general', 'gl', 'income', 'occupancy'])
-  gl('2024-06-01', 'VDS0000001', 'gl')
+  gl('2024-06-01','ES01', 'VDS0000001', 'gl')
+  gl('2024-06-01','ES02', 'CTS00', 'gl')
