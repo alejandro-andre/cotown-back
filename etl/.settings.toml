@@ -16,3 +16,7 @@ SSHUSER='partner'
 DWDBHOST='localhost'
 DWDBUSER='cotown'
 DWDBNAME='dw'
+
+# SAP URLs
+SAPUSER = 'lorumdesarrollo'
+SAPURL_GL='https://my429724.businessbydesign.cloud.sap/sap/byd/odata/ana_businessanalytics_analytics.svc/RPFINGLAU02_Q0001QueryResults'
