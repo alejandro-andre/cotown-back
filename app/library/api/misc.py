@@ -104,8 +104,11 @@ def req_cert_booking(booking):
 
   # Generate HTML
   tpl = env.get_template('cert.html')
-  file = tpl.render(context)
+  result = tpl.render(context)
 
   # Generate PDF
+  file = BytesIO()
+  html = HTML(string=result)
+  html.write_pdf(file)
   file.seek(0)
-  return send_file(file, mimetype='image/png')
+  return send_file(file, mimetype='application/pdf')
