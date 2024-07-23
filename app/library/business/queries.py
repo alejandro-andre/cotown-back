@@ -418,7 +418,18 @@ def q_get_payment(dbClient, id, generate_order=False):
   try:
     # Get payment
     con = dbClient.getconn()
-    cur = dbClient.execute(con, 'SELECT id, "Issued_date", "Concept", "Amount", "Payment_order", "Pos" FROM "Billing"."Payment" WHERE id=%s', (id,))
+    cur = dbClient.execute(con, '''
+      SELECT p.id, p."Issued_date", p."Concept", p."Amount", p."Payment_order", p."Pos"  
+      FROM "Billing"."Payment" p
+      INNER JOIN "Customer"."Customer" c ON c.id = p."Customer_id"
+      WHERE p.id = %s
+      AND c."Id_type_id" IS NOT NULL 
+      AND c."Document" IS NOT NULL
+      AND c."Address" IS NOT NULL
+      AND c."Zip" IS NOT NULL
+      AND c."City" IS NOT NULL
+      AND c."Country_id" IS NOT NULL
+    ''', (id,))
     result = cur.fetchone()
     cur.close()
     if result is None:
