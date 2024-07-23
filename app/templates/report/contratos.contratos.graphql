@@ -5,7 +5,6 @@ query Bookings ($fdesde: String, $fhasta:String) {
         ]
         where: { 
             AND: [
-                { Status: { IN: [ confirmada, firmacontrato, contrato, checkinconfirmado, checkin, inhouse ] } }
                 { Date_from: { LE: $fhasta } }
                 { Date_to:   { GE: $fdesde } }
                 {
