@@ -85,8 +85,6 @@ def gl(date, bks, company, file):
     df[['KCCREDIT_CURRCOMP', 'KCDEBIT_CURRCOMP']] = df[['KCCREDIT_CURRCOMP', 'KCDEBIT_CURRCOMP']].fillna(0)
     df['KCCREDIT_CURRCOMP'] = df['KCCREDIT_CURRCOMP'].astype(float)
     df['KCDEBIT_CURRCOMP'] = df['KCDEBIT_CURRCOMP'].astype(float)
-    print(df)
-    print(df.info())
 
     # Save CSV
     df.to_csv('csv/' + file + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)

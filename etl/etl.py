@@ -129,9 +129,10 @@ def main(interfaces):
 
     # Load dimensions
     if 'gl' in interfaces:
-      gl('csv/gl')
-      execute(dbDestination, '_clear_gl')
-      load(dbOrigin, dbDestination, 'gl', 'gl')
+      gl('2024-06-01','ES01', 'VDS0000001', 'gl')
+      gl('2024-06-01','ES02', 'CTS00', 'gl')
+      #execute(dbDestination, '_clear_gl')
+      #load(dbOrigin, dbDestination, 'gl', 'gl')
 
     # ------------------------------------
     # Monthly
