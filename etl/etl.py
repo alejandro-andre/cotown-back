@@ -8,6 +8,9 @@
 # Imports
 # ###################################################
 
+# System imports
+import argparse
+
 # Cotown includes
 from library.services.dbclient import DBClient
 from library.services.config import settings
@@ -110,7 +113,6 @@ def main(interfaces):
 
     # Load dimensions
     if 'general' in interfaces:
-      mapping('csv/mapping')
       execute(dbDestination, '_clear_general')
       load(dbOrigin, dbDestination, 'owner', 'owner')
       load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
@@ -172,6 +174,11 @@ def main(interfaces):
 
 if __name__ == '__main__':
 
+  # Argument parser
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--steps', nargs='+', help='ETL Steps tro execute', required=True)
+  args = parser.parse_args()
+
   # Logging
   logger.setLevel(settings.LOGLEVEL)
   formatter = logging.Formatter('[%(asctime)s] [%(name)s] [%(module)s] [%(funcName)s/%(lineno)3d] [%(levelname)s] %(message)s')
@@ -185,6 +192,9 @@ if __name__ == '__main__':
   logger.addHandler(file_handler)
   logger.info('Started')
 
-  #main(['init', 'general', 'gl', 'income', 'occupancy'])
+  logger.info(str(args.steps))
+  main(args.steps)
+
+  # Test GL
   #gl('2024-06-01','ES01', 'VDS0000001', 'gl')
-  gl('2024-06-01','ES02', 'CTS00', 'gl')
+  #gl('2024-06-01','ES02', 'CTS00', 'gl')
