@@ -18,7 +18,7 @@ from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.occupancy import occupancy
 from library.business.forecast import forecast
-from library.business.gl import gl, mapping
+from library.business.gl import gl
 
 # Logging
 import logging
@@ -120,7 +120,6 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'location', 'location')
       load(dbOrigin, dbDestination, 'product', 'product')
       load(dbOrigin, dbDestination, 'resource', 'resource')
-      load(dbOrigin, dbDestination, 'mapping', 'mapping')
 
 
     # ------------------------------------
@@ -129,10 +128,10 @@ def main(interfaces):
 
     # Load dimensions
     if 'gl' in interfaces:
-      gl('2024-06-01','ES01', 'VDS0000001', 'gl')
+      execute(dbDestination, '_clear_gl')
+      #gl('2024-06-01','ES01', 'VDS0000001', 'gl')
       gl('2024-06-01','ES02', 'CTS00', 'gl')
-      #execute(dbDestination, '_clear_gl')
-      #load(dbOrigin, dbDestination, 'gl', 'gl')
+      load(dbOrigin, dbDestination, 'gl', 'gl')
 
     # ------------------------------------
     # Monthly

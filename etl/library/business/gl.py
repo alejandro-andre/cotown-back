@@ -3,7 +3,6 @@
 # ###################################################
 
 import re
-import sys
 import requests
 from requests.auth import HTTPBasicAuth
 from datetime import datetime, timezone
@@ -65,10 +64,11 @@ def gl(date, bks, company, file):
     
     # Results
     results = data['d']['results']
-    logger.info('Loaded ' + str(len(results)) + ' records...')
+    logger.info('Retrieved ' + str(len(results)) + ' records...')
 
     # Dataframe
     df = pd.DataFrame(results)
+    df.columns = df.columns.str.lower()
 
     # Drop unused columns
     df = df.drop(['__metadata'], axis=1)
@@ -77,30 +77,14 @@ def gl(date, bks, company, file):
     df.replace('null', None, inplace=True)
 
     # Convert dates
-    df['CCREATION_DATE'] = df['CCREATION_DATE'].apply(lambda x: get_date(x))
-    df['CDOC_DATE'] = df['CDOC_DATE'].apply(lambda x: get_date(x))
-    df['CPOSTING_DATE'] = df['CPOSTING_DATE'].apply(lambda x: get_date(x))
+    df['ccreation_date'] = df['ccreation_date'].apply(lambda x: get_date(x))
+    df['cdoc_date'] = df['cdoc_date'].apply(lambda x: get_date(x))
+    df['cposting_date'] = df['cposting_date'].apply(lambda x: get_date(x))
 
     # Convert numbers
-    df[['KCCREDIT_CURRCOMP', 'KCDEBIT_CURRCOMP']] = df[['KCCREDIT_CURRCOMP', 'KCDEBIT_CURRCOMP']].fillna(0)
-    df['KCCREDIT_CURRCOMP'] = df['KCCREDIT_CURRCOMP'].astype(float)
-    df['KCDEBIT_CURRCOMP'] = df['KCDEBIT_CURRCOMP'].astype(float)
+    df[['kccredit_currcomp', 'kcdebit_currcomp']] = df[['kccredit_currcomp', 'kcdebit_currcomp']].fillna(0)
+    df['kccredit_currcomp'] = df['kccredit_currcomp'].astype(float)
+    df['kcdebit_currcomp'] = df['kcdebit_currcomp'].astype(float)
 
     # Save CSV
     df.to_csv('csv/' + file + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)
-
-
-# ###################################################
-# Get mapping data
-# ###################################################
-
-def mapping(file):
-
-  # Log
-  logger.info('Formatting mapping...')
-
-  # Read XLSX 
-  df = pd.read_excel(file + '.xlsx')
-
-  # Write CSV
-  df.to_csv(file + '.csv', index=False, quoting=csv.QUOTE_ALL)

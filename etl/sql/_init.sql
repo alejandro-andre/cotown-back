@@ -129,33 +129,34 @@ CONSTRAINT income_pk PRIMARY KEY ("id")
 
 -- Create general ledger
 CREATE TABLE gold.gl(
-  "id" varchar NOT NULL,
-  "general_ledger_account" varchar NOT NULL,
-  "general_ledger_account_name" varchar NOT NULL,
-  "date" date NOT NULL,
-  "journal_entry_number" varchar NOT NULL,
-  "journal_entry_position" int8 NOT NULL,
-  "journal_entry_type" varchar NOT NULL,
-  "profit_center" varchar NOT NULL,
-  "profit_center_name" varchar NOT NULL,
-  "cost_center" varchar NOT NULL,
-  "cost_center_name" varchar NOT NULL,
-  "original_date" varchar NOT NULL,
-  "product" varchar NOT NULL,
-  "product_name" varchar NOT NULL,
-  "ext_ref" varchar NOT NULL,
-  "commercial_partner" varchar NOT NULL,
-  "commercial_partner_name" varchar NOT NULL,
-  "journal_entry_header" varchar default NULL,
-  "journal_entry_position_text" varchar default NULL,
-  "debit" decimal NOT NULL,
-  "credit" decimal NOT null,
-CONSTRAINT gl_pk PRIMARY KEY ("id")
+  "cacc_doc_uuid" varchar NOT NULL,
+  "cacc_doc_it_uuid" varchar NOT NULL,
+  "cbus_part_uuid" varchar DEFAULT NULL,
+  "ccost_ctr_uuid" varchar DEFAULT NULL,
+  "ccreation_date" varchar NOT NULL,
+  "cdoc_date" varchar DEFAULT NULL,
+  "cglacct" varchar NOT NULL,
+  "cnote_hd" varchar DEFAULT NULL,
+  "cnote_it" varchar DEFAULT NULL,
+  "coedpartner" varchar DEFAULT NULL,
+  "cposting_date" varchar NOT NULL,
+  "cprofitctr_uuid" varchar DEFAULT NULL,
+  "kccredit_currcomp" numeric DEFAULT NULL,
+  "kcdebit_currcomp" numeric DEFAULT NULL,
+  "taccdoctype" varchar DEFAULT NULL,
+  "tbus_part_uuid" varchar DEFAULT NULL,
+  "tcost_ctr_uuid" varchar DEFAULT NULL,
+  "tglacct" varchar DEFAULT NULL,
+  "tproduct_type" varchar DEFAULT NULL,
+  "tproduct_uuid" varchar DEFAULT NULL,
+  "tprofitctr_uuid" varchar DEFAULT NULL,
+  CONSTRAINT gl_pk PRIMARY KEY ("cacc_doc_uuid", "cacc_doc_it_uuid")
 );
 
 -- Create general ledger
 CREATE TABLE gold.mapping(
-  "id" varchar NOT NULL,
+  ""id" varchar NOT NULL" varchar NOT NULL,
+  
   "account" varchar NOT NULL,
   "description" varchar default NULL,
   "catname" varchar NOT NULL,
