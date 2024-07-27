@@ -129,8 +129,8 @@ def main(interfaces):
     # Load dimensions
     if 'gl' in interfaces:
       execute(dbDestination, '_clear_gl')
-      glExcel('CTS-2023')
-      glExcel('CTS-2024')
+      glExcel('CTS-2023', 2023)
+      glExcel('CTS-2024', 2024)
       glSAP('2024-06-01','ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
       load(dbOrigin, dbDestination, 'gl', 'CTS-2023')
       load(dbOrigin, dbDestination, 'gl', 'CTS-2024')     

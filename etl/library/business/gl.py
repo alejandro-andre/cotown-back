@@ -52,7 +52,7 @@ def get_sap_datetime(value):
 # Get GL data from Excel
 # ###################################################
 
-def glExcel(file):
+def glExcel(file, year):
 
   # Log
   logger.info('Retrieving data from Excel (' + file + ')...')
@@ -64,6 +64,9 @@ def glExcel(file):
     skipfooter=1,
     names=['_','cglacct','tglacct','tproduct_uuid','tproduct_type','cacc_doc_uuid','cdoc_date','cposting_date','ccreation_date','cnote_hd','cnote_it','cprofitctr_uuid','tprofitctr_uuid','cbus_part_uuid','tbus_part_uuid','ccost_ctr_uuid','tcost_ctr_uuid','coedpartner','coedref_f_id','coff_glacct','toff_glacct','cfix_asset_uuid','tfix_asset_uuid','kcdebit_currcomp','kccredit_currcomp','kcbalance_currcomp']
   )
+
+  # Fiscal year
+  df['cfiscyear'] = str(year)
 
   # Dates
   df['ccreation_date'] = df['ccreation_date'].apply(lambda x: get_excel_datetime(x))
@@ -88,7 +91,7 @@ def glExcel(file):
 def glSAP(date, bks, company, file):
 
   params = {
-      '$select': 'CGLACCT,TGLACCT,TPRODUCT_UUID,TPRODUCT_TYPE,CACC_DOC_UUID,CACC_DOC_IT_UUID,CDOC_DATE,CPOSTING_DATE,CCREATION_DATE,CNOTE_HD,CNOTE_IT,CPROFITCTR_UUID,TPROFITCTR_UUID,CBUS_PART_UUID,TBUS_PART_UUID,CCOST_CTR_UUID,TCOST_CTR_UUID,COEDPARTNER,COEDREF_F_ID,COFF_GLACCT,TOFF_GLACCT,CFIX_ASSET_UUID,TFIX_ASSET_UUID,KCDEBIT_CURRCOMP,KCCREDIT_CURRCOMP,KCBALANCE_CURRCOMP',
+      '$select': 'CFISCYEAR,CGLACCT,TGLACCT,TPRODUCT_UUID,TPRODUCT_TYPE,CACC_DOC_UUID,CACC_DOC_IT_UUID,CDOC_DATE,CPOSTING_DATE,CCREATION_DATE,CNOTE_HD,CNOTE_IT,CPROFITCTR_UUID,TPROFITCTR_UUID,CBUS_PART_UUID,TBUS_PART_UUID,CCOST_CTR_UUID,TCOST_CTR_UUID,COEDPARTNER,COEDREF_F_ID,COFF_GLACCT,TOFF_GLACCT,CFIX_ASSET_UUID,TFIX_ASSET_UUID,KCDEBIT_CURRCOMP,KCCREDIT_CURRCOMP,KCBALANCE_CURRCOMP',
       '$filter': '(PARA_SETOFBKS eq \'' + bks + '\' and PARA_COMPANY eq \'' + company + '\' and CCREATION_DATE ge datetime\'' + date + 'T00:00:00\')',
       '$orderby': 'CACC_DOC_UUID,CACC_DOC_IT_UUID',
       '$format': 'json',

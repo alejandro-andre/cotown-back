@@ -136,6 +136,7 @@ CREATE TABLE gold.gl (
   "ccost_ctr_uuid" varchar NULL,
   "ccreation_date" timestamp NOT NULL,
   "cdoc_date" date NULL,
+  "cfiscyear" varchar NOT NULL,
   "cfix_asset_uuid" varchar NULL,
   "cglacct" varchar NOT NULL,
   "cnote_hd" varchar NULL,
