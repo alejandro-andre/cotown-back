@@ -6,4 +6,4 @@ app/download/
 migration/**
 upload/content/**
 
-etl/csv/*
+etl/csv/*.csv
