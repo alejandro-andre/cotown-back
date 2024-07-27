@@ -129,6 +129,7 @@ def main(interfaces):
     # Load dimensions
     if 'gl' in interfaces:
       execute(dbDestination, '_clear_gl')
+      load(dbOrigin, dbDestination, 'gl', 'oldgl')
       #gl('2024-06-01','ES01', 'VDS0000001', 'gl')
       gl('2024-06-01','ES02', 'CTS00', 'gl')
       load(dbOrigin, dbDestination, 'gl', 'gl')
