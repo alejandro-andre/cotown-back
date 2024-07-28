@@ -136,7 +136,8 @@ CREATE TABLE gold.gl (
   "ccost_ctr_uuid" varchar NULL,
   "ccreation_date" timestamp NOT NULL,
   "cdoc_date" date NULL,
-  "cfiscyear" varchar NOT NULL,
+  "cfiscyear" int4 NOT NULL,
+  "cfiscper" int4 NOT NULL,
   "cfix_asset_uuid" varchar NULL,
   "cglacct" varchar NOT NULL,
   "cnote_hd" varchar NULL,
@@ -158,27 +159,7 @@ CREATE TABLE gold.gl (
   "tproduct_type" varchar NULL,
   "tproduct_uuid" varchar NULL,
   "tprofitctr_uuid" varchar NULL,
-  CONSTRAINT gl_pk PRIMARY KEY ("cacc_doc_uuid", "cacc_doc_it_uuid")
-);
-
--- Create general ledger
-CREATE TABLE gold.mapping(
-  ""id" varchar NOT NULL" varchar NOT NULL,
-  
-  "account" varchar NOT NULL,
-  "description" varchar default NULL,
-  "catname" varchar NOT NULL,
-  "level1" varchar NOT NULL,
-  "level2" varchar NOT NULL,
-  "level3" varchar NOT NULL,
-  "level4" varchar NOT NULL,
-  "level5" varchar NOT NULL,
-  "level6" varchar NOT NULL,
-  "level7" varchar NOT NULL,
-  "level8" varchar NOT NULL,
-  "ccaa" varchar NOT NULL,
-  "ccaa2" varchar NOT NULL,
-CONSTRAINT mapping_pk PRIMARY KEY ("id")
+  CONSTRAINT gl_pk PRIMARY KEY ("cfiscyear","cacc_doc_uuid", "cacc_doc_it_uuid")
 );
 
 -- Insert dates

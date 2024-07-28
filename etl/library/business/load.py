@@ -24,6 +24,9 @@ BATCH = 1000
 
 def execute(dbDestination, script):
 
+  # Log
+  logger.info('Executing ' + script + '...')
+  
   # Get SQL
   file = 'sql/' + script + '.sql'
   fi = open(file, 'r')

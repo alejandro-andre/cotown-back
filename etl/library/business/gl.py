@@ -65,13 +65,17 @@ def glExcel(file, year):
     names=['_','cglacct','tglacct','tproduct_uuid','tproduct_type','cacc_doc_uuid','cdoc_date','cposting_date','ccreation_date','cnote_hd','cnote_it','cprofitctr_uuid','tprofitctr_uuid','cbus_part_uuid','tbus_part_uuid','ccost_ctr_uuid','tcost_ctr_uuid','coedpartner','coedref_f_id','coff_glacct','toff_glacct','cfix_asset_uuid','tfix_asset_uuid','kcdebit_currcomp','kccredit_currcomp','kcbalance_currcomp']
   )
 
-  # Fiscal year
-  df['cfiscyear'] = str(year)
-
   # Dates
   df['ccreation_date'] = df['ccreation_date'].apply(lambda x: get_excel_datetime(x))
-  df['cdoc_date'] = df['cdoc_date'].apply(lambda x: get_excel_date(x))
   df['cposting_date'] = df['cposting_date'].apply(lambda x: get_excel_date(x))
+  df['cdoc_date'] = df['cdoc_date'].apply(lambda x: get_excel_date(x))
+  df['ccreation_date'] = pd.to_datetime(df['ccreation_date'])
+  df['cposting_date'] = pd.to_datetime(df['cposting_date'])
+  df['cdoc_date'] = pd.to_datetime(df['cdoc_date'])
+
+  #? Fiscal year and period 
+  df['cfiscyear'] = df['cdoc_date'].dt.year
+  df['cfiscper'] = df['cdoc_date'].dt.month
 
   # Cleanup
   df = df.reset_index()
@@ -91,7 +95,7 @@ def glExcel(file, year):
 def glSAP(date, bks, company, file):
 
   params = {
-      '$select': 'CFISCYEAR,CGLACCT,TGLACCT,TPRODUCT_UUID,TPRODUCT_TYPE,CACC_DOC_UUID,CACC_DOC_IT_UUID,CDOC_DATE,CPOSTING_DATE,CCREATION_DATE,CNOTE_HD,CNOTE_IT,CPROFITCTR_UUID,TPROFITCTR_UUID,CBUS_PART_UUID,TBUS_PART_UUID,CCOST_CTR_UUID,TCOST_CTR_UUID,COEDPARTNER,COEDREF_F_ID,COFF_GLACCT,TOFF_GLACCT,CFIX_ASSET_UUID,TFIX_ASSET_UUID,KCDEBIT_CURRCOMP,KCCREDIT_CURRCOMP,KCBALANCE_CURRCOMP',
+      '$select': 'CFISCYEAR,CFISCPER,CGLACCT,TGLACCT,TPRODUCT_UUID,TPRODUCT_TYPE,CACC_DOC_UUID,CACC_DOC_IT_UUID,CDOC_DATE,CPOSTING_DATE,CCREATION_DATE,CNOTE_HD,CNOTE_IT,CPROFITCTR_UUID,TPROFITCTR_UUID,CBUS_PART_UUID,TBUS_PART_UUID,CCOST_CTR_UUID,TCOST_CTR_UUID,COEDPARTNER,COEDREF_F_ID,COFF_GLACCT,TOFF_GLACCT,CFIX_ASSET_UUID,TFIX_ASSET_UUID,KCDEBIT_CURRCOMP,KCCREDIT_CURRCOMP,KCBALANCE_CURRCOMP',
       '$filter': '(PARA_SETOFBKS eq \'' + bks + '\' and PARA_COMPANY eq \'' + company + '\' and CCREATION_DATE ge datetime\'' + date + 'T00:00:00\')',
       '$orderby': 'CACC_DOC_UUID,CACC_DOC_IT_UUID',
       '$format': 'json',
@@ -127,8 +131,11 @@ def glSAP(date, bks, company, file):
 
   # Convert dates
   df['ccreation_date'] = df['ccreation_date'].apply(lambda x: get_sap_datetime(x))
-  df['cdoc_date'] = df['cdoc_date'].apply(lambda x: get_sap_date(x))
   df['cposting_date'] = df['cposting_date'].apply(lambda x: get_sap_date(x))
+  df['cdoc_date'] = df['cdoc_date'].apply(lambda x: get_sap_date(x))
+  df['ccreation_date'] = pd.to_datetime(df['ccreation_date'])
+  df['cposting_date'] = pd.to_datetime(df['cposting_date'])
+  df['cdoc_date'] = pd.to_datetime(df['cdoc_date'])
 
   # Convert numbers
   df[['kccredit_currcomp', 'kcdebit_currcomp']] = df[['kccredit_currcomp', 'kcdebit_currcomp']].fillna(0)
@@ -136,4 +143,6 @@ def glSAP(date, bks, company, file):
   df['kcdebit_currcomp'] = df['kcdebit_currcomp'].astype(float)
 
   # Save CSV
-  df.to_csv('csv/' + file + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)
+  year = results[0]['CFISCYEAR']
+  period = results[0]['CFISCPER']
+  df.to_csv('csv/' + company + '-' + str(year) + '-' + str(period).zfill(2) + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)

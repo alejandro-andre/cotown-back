@@ -9,6 +9,7 @@
 # ###################################################
 
 # System imports
+import os
 import argparse
 
 # Cotown includes
@@ -128,13 +129,20 @@ def main(interfaces):
 
     # Load dimensions
     if 'gl' in interfaces:
+      # Clear
       execute(dbDestination, '_clear_gl')
-      glExcel('CTS-2023', 2023)
-      glExcel('CTS-2024', 2024)
-      glSAP('2024-06-01','ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
-      load(dbOrigin, dbDestination, 'gl', 'CTS-2023')
-      load(dbOrigin, dbDestination, 'gl', 'CTS-2024')     
-      load(dbOrigin, dbDestination, 'gl', 'gl')
+
+      # Convert historic data
+      glExcel('CTS00-2023-00', 2023)
+      glExcel('CTS00-2024-00', 2024)
+      
+      # Extract current period
+      glSAP('2000-01-01','ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
+
+      # Load CSV files
+      for file in os.listdir('csv'):
+        if file.endswith('.csv'):
+          load(dbOrigin, dbDestination, 'gl', file[:-4])
 
     # ------------------------------------
     # Monthly
