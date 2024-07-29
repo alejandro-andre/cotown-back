@@ -9,7 +9,7 @@ DECLARE
     SELECT b.id, b."Customer_id"
     FROM "Booking"."Booking" b
     WHERE b."Status" IN ('firmacontrato', 'contrato')
-    AND COALESCE(b."Check_in", b."Date_from") BETWEEN (CURRENT_DATE + INTERVAL '30 days') AND CURRENT_DATE
+    AND COALESCE(b."Check_in", b."Date_from") BETWEEN CURRENT_DATE AND (CURRENT_DATE + INTERVAL '30 days')
     AND b."Origin_id" IS NULL;
 
 BEGIN
