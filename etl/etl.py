@@ -205,7 +205,3 @@ if __name__ == '__main__':
 
   logger.info(str(args.steps))
   main(args.steps)
-
-  # Test GL
-  #gl('2024-06-01','ES01', 'VDS0000001', 'gl')
-  #gl('2024-06-01','ES02', 'CTS00', 'gl')
