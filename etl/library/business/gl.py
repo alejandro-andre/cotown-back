@@ -62,7 +62,7 @@ def glExcel(file, year):
     'csv/' + file + '.xlsx', 
     skiprows=13, 
     skipfooter=1,
-    names=['_','cglacct','tglacct','tproduct_uuid','tproduct_type','cacc_doc_uuid','cdoc_date','cposting_date','ccreation_date','cnote_hd','cnote_it','cprofitctr_uuid','tprofitctr_uuid','cbus_part_uuid','tbus_part_uuid','ccost_ctr_uuid','tcost_ctr_uuid','coedpartner','coedref_f_id','coff_glacct','toff_glacct','cfix_asset_uuid','tfix_asset_uuid','kcdebit_currcomp','kccredit_currcomp','kcbalance_currcomp']
+    names=['_','cglacct','tglacct','tproduct_uuid','tproduct_type','cacc_doc_uuid','cfiscper','cdoc_date','cposting_date','ccreation_date','cnote_hd','cnote_it','cprofitctr_uuid','tprofitctr_uuid','cbus_part_uuid','tbus_part_uuid','ccost_ctr_uuid','tcost_ctr_uuid','coedpartner','coedref_f_id','coff_glacct','toff_glacct','cfix_asset_uuid','tfix_asset_uuid','cfiscyear','cacc_doc_it_uuid','kcdebit_currcomp','kccredit_currcomp','kcbalance_currcomp']
   )
 
   # Dates
@@ -73,14 +73,10 @@ def glExcel(file, year):
   df['cposting_date'] = pd.to_datetime(df['cposting_date'])
   df['cdoc_date'] = pd.to_datetime(df['cdoc_date'])
 
-  #? Fiscal year and period 
-  df['cfiscyear'] = df['cdoc_date'].dt.year
-  df['cfiscper'] = df['cdoc_date'].dt.month
-
   # Cleanup
   df = df.reset_index()
   df = df.drop(columns=['_'])
-  df.rename(columns={'index': 'cacc_doc_it_uuid'}, inplace=True)
+  df = df.drop(columns=['index'])
 
   # Write CSV
   logger.info('Retrieved ' + str(len(df)) + ' records...')
