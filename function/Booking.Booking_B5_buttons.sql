@@ -13,16 +13,16 @@ BEGIN
   -- CHA
   IF COALESCE(OLD."Origin_id", 0) <> COALESCE(NEW."Origin_id", 0) THEN
     IF NEW."Origin_id" IS NULL THEN
-      UPDATE "Booking"."Booking" SET "Destination_id" = NULL WHERE id = OLD."Origin_id";
+      UPDATE "Booking"."Booking" SET "Destination_id" = NULL, "Cha_ext" = NULL WHERE id = OLD."Origin_id";
     ELSE
-      UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id WHERE id = NEW."Origin_id";
+      UPDATE "Booking"."Booking" SET "Destination_id" = NEW.id, "Cha_ext" = NEW."Cha_ext" WHERE id = NEW."Origin_id";
     END IF;
   END IF;
   IF COALESCE(OLD."Destination_id", 0) <> COALESCE(NEW."Destination_id", 0) THEN
     IF NEW."Destination_id" IS NULL THEN
-      UPDATE "Booking"."Booking" SET "Origin_id" = NULL WHERE id = OLD."Destination_id";
+      UPDATE "Booking"."Booking" SET "Origin_id" = NULL, "Cha_ext" = NULL WHERE id = OLD."Destination_id";
     ELSE
-      UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id WHERE id = NEW."Destination_id";
+      UPDATE "Booking"."Booking" SET "Origin_id" = NEW.id, "Cha_ext" = NEW."Cha_ext" WHERE id = NEW."Destination_id";
     END IF;
   END IF;
 
