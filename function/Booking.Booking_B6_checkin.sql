@@ -112,35 +112,16 @@ BEGIN
     RAISE EXCEPTION '!!!Check-in option not available!!!Opción de check-in no disponible!!!';
   END IF;
 
-  -- Check if payment of same price exists
+  -- Check if payment already exists
   SELECT COUNT(*) INTO num 
   FROM "Billing"."Payment" 
   WHERE "Payment_type" = 'checkin'
-    AND "Customer_id" = NEW."Customer_id" 
-    AND "Booking_id" = NEW.id
-    AND "Payment_date" IS NOT NULL
-    AND "Amount" = price;
+    AND "Booking_id" = NEW.id;
   IF num > 0 THEN
     RETURN NEW;
   END IF;
 
-  -- Already paid?
-  SELECT COUNT(*) INTO num 
-  FROM "Billing"."Payment" 
-  WHERE "Payment_type" = 'checkin'
-    AND "Customer_id" = NEW."Customer_id" 
-    AND "Booking_id" = NEW.id
-    AND "Payment_date" IS NOT NULL;
-  IF num > 0 THEN
-    RAISE EXCEPTION '!!!Check-in already paid!!!El check-in ya ha sido pagado!!!';
-  END IF;
-
-  -- Update fee (delete + update)
-  DELETE 
-  FROM "Billing"."Payment" 
-  WHERE "Payment_type" = 'checkin' 
-    AND "Customer_id" = NEW."Customer_id" 
-    AND "Booking_id" = NEW.id;
+  -- Insert fee
   IF price > 0 THEN
     SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
     INSERT
