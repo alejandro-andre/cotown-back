@@ -24,5 +24,6 @@
         Province
         Receipt_pattern
         Type
+        IBAN
     }
 }

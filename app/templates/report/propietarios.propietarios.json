@@ -11,6 +11,7 @@
 "Email",
 "Phones",
 "SAP_code",
+"IBAN",
 "Bill_pattern",
 "Credit_pattern",
 "Receipt_pattern",
