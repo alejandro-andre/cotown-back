@@ -34,7 +34,7 @@ BEGIN
       IF NOT EXISTS (
    		  SELECT id
   		  FROM "Customer"."Customer_email"
-  		  WHERE "Template" LIKE "completacheckin%"
+  		  WHERE "Template" LIKE 'completacheckin%'
   		  AND "Customer_id" = customer_id
   		  AND "Entity_id" = entity_id
   		  AND "Created_at" > (CURRENT_DATE - INTERVAL '5 days')
