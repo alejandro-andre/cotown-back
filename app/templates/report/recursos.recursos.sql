@@ -34,7 +34,8 @@ SELECT
 	r."Billing_type", r."Sale_type",
 	pr."Code" AS "Pricing_rate.Code",
 	r."Description", r."Description_en", 
-	r."Area", r."Baths", r."Places", r."Orientation", r."Wifi_ssid", r."Wifi_key", r."Gate_mac", r."Gate_phone", r."Notes", r."Management_fee"
+	r."Area", r."Baths", r."Places", r."Orientation", r."Interior", r."Wifi_ssid", r."Wifi_key", r."Gate_mac", r."Gate_phone", r."Notes", r."Management_fee",
+	r."Registry_code", ru."Name" AS "Resource_usage.Name", r."Contract_gas", r."Contract_electricity", r."Contract_water", r."Pre_capex", r."Post_capex"
 FROM "Resource"."Resource" r
 INNER JOIN "Provider"."Provider" o ON o.id = r."Owner_id" 
 INNER JOIN "Provider"."Provider" s ON s.id = r."Service_id"
@@ -42,6 +43,7 @@ INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
 LEFT JOIN "Resource"."Resource_flat_subtype" rfs ON rfs.id = r."Flat_subtype_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+LEFT JOIN "Resource"."Resource_usage" ru on ru.id = r."Usage_id"
 LEFT JOIN "extras" ex ON ex.id = r.id
 LEFT JOIN "locks" lck ON lck.id = r.id
 ORDER BY r."Code"

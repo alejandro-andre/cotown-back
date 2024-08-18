@@ -126,6 +126,20 @@ def load_resources(dbClient, con, data):
               id = aux['id']
           record['Rate_id'] = id
 
+        # Pricing_rate.Code
+        elif column == 'Resource_usage.Name':
+          id = None
+          if cell.value is not None and cell.value != '':
+            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_usage" WHERE "Name"=%s', [cell.value])
+            aux = cur.fetchone()
+            cur.close()
+            if aux is None:
+              log += 'Fila: ' + str(irow+3).zfill(4) + '. Uso "' + str(cell.value) + '" no encontrado\n'
+              ok = False
+            else: 
+              id = aux['id']
+          record['Usage_id'] = id
+
         # Extras
         elif column == '[extras]':
           if cell.value is not None:
