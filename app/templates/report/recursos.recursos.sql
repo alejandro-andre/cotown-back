@@ -39,8 +39,8 @@ SELECT
 FROM "Resource"."Resource" r
 INNER JOIN "Provider"."Provider" o ON o.id = r."Owner_id" 
 INNER JOIN "Provider"."Provider" s ON s.id = r."Service_id"
-INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+LEFT JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
 LEFT JOIN "Resource"."Resource_flat_subtype" rfs ON rfs.id = r."Flat_subtype_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
 LEFT JOIN "Resource"."Resource_usage" ru on ru.id = r."Usage_id"
