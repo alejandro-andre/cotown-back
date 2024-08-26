@@ -27,7 +27,9 @@ def load_resources(dbClient, con, data):
       # Empty record
       record = {}
       extras = []
-      unavail = {}
+      unavail_resources = []
+      unavail_from = []
+      unavail_to = []
 
       # Ok by default
       ok = True
@@ -146,9 +148,18 @@ def load_resources(dbClient, con, data):
             extras = [e.strip() for e in cell.value.split(',')]
 
         # Special cells
-        elif column[0] == '[':
+        elif column == '[unavailable]':
           if cell.value is not None:
-            unavail[column[1:-1]] = cell.value
+            unavail_resources = [e.strip() for e in cell.value.split(',')]
+            print(unavail_resources)
+        elif column == '[from]':
+          if cell.value is not None:
+            unavail_from = [e.strip() for e in cell.value.split(',')]
+            print(unavail_from)
+        elif column == '[to]':
+          if cell.value is not None:
+            unavail_to = [e.strip() for e in cell.value.split(',')]
+            print(unavail_to)
 
         # Copy cells
         else:
@@ -217,12 +228,12 @@ def load_resources(dbClient, con, data):
 
       # Extras
       dbClient.execute(con, 'DELETE FROM "Resource"."Resource_amenity" WHERE "Resource_id" = %s', (id,))
-      for item in extras:
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_amenity_type" WHERE "Code" = %s', (item,))
+      for u_res in extras:
+        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_amenity_type" WHERE "Code" = %s', (u_res,))
         aux = cur.fetchone()
         cur.close()
         if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Extra "' + item + '" no encontrado\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Extra "' + u_res + '" no encontrado\n'
           ok = False
         else: 
           dbClient.execute(con, 
@@ -235,12 +246,12 @@ def load_resources(dbClient, con, data):
 
       # Unavailability
       dbClient.execute(con, 'DELETE FROM "Resource"."Resource_availability" WHERE "Resource_id" = %s', (id,))
-      if unavail != {}:
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_status" WHERE "Name" = %s', (unavail['unavailable'],))
+      for u_res, u_from, u_to in zip(unavail_resources, unavail_from, unavail_to):
+        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_status" WHERE "Name" = %s', (u_res,))
         aux = cur.fetchone()
         cur.close()
         if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Código de no disponibilidad "' + unavail['unavailable'] + '" no encontrado\n'
+          log += 'Fila: ' + str(irow+3).zfill(4) + '. Estado "' + u_res + '" no encontrado\n'
           ok = False
         else: 
           dbClient.execute(con, 
@@ -249,7 +260,7 @@ def load_resources(dbClient, con, data):
           ("Resource_id", "Status_id", "Date_from", "Date_to")
           VALUES (%s, %s, %s, %s)
           ''', 
-          (id, aux[0], unavail['from'], unavail['to']))
+          (id, aux[0], u_from, u_to))
 
     # Error
     except Exception as error:
