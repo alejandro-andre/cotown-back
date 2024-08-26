@@ -17,6 +17,7 @@ DECLARE
   rent NUMERIC;
   services NUMERIC;
   deposit NUMERIC;
+  deposit_base NUMERIC;
   final_cleaning NUMERIC;
   second_resident NUMERIC;
   limit NUMERIC;
@@ -178,18 +179,19 @@ BEGIN
   LEFT JOIN "Extras" e ON p.id = e.id;
 
   -- Base values
-  NEW."Deposit"          := COALESCE(NEW."Deposit", deposit, rent + second_resident + services, 0);
-  IF NEW."Deposit" < rent + second_resident + services THEN
-    NEW."Deposit" = rent + second_resident + services;
+  deposit_base := ROUND((rent + second_resident + services) * 1.5);
+  NEW."Deposit" := COALESCE(NEW."Deposit", deposit, deposit_base);
+  IF NEW."Deposit" < deposit_base THEN
+    NEW."Deposit" = deposit_base;
   END IF;
-  NEW."Final_cleaning"   := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
-  NEW."Limit"            := COALESCE(NEW."Limit", "limit", 0);
+  NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
+  NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
   IF NEW."New_check_out" < NEW."Date_to" THEN
-    NEW."Rent"           := COALESCE(NEW."Rent", rent + second_resident, 0);
-    NEW."Services"       := COALESCE(NEW."Services", services, 0);
+    NEW."Rent"         := COALESCE(NEW."Rent", rent + second_resident, 0);
+    NEW."Services"     := COALESCE(NEW."Services", services, 0);
   ELSE
-    NEW."Rent"           := COALESCE(rent + second_resident, NEW."Rent", 0);
-    NEW."Services"       := COALESCE(services, NEW."Services", 0);
+    NEW."Rent"         := COALESCE(rent + second_resident, NEW."Rent", 0);
+    NEW."Services"     := COALESCE(services, NEW."Services", 0);
   END IF;
  
   -- Prices
