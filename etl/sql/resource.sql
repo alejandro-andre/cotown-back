@@ -25,6 +25,7 @@ INNER JOIN "Geo"."District" d ON d.id = b."District_id"
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
+WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza')
 
 UNION
 
@@ -48,4 +49,5 @@ INNER JOIN "Geo"."District" d ON d.id = b."District_id"
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
+WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza')
 ;

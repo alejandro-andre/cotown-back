@@ -81,6 +81,7 @@ def do_occupancy(dbClient, vars):
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
+      AND r."Resource_type" IN ('piso', 'habitacion', 'plaza')
     ORDER BY r."Code" ASC
     ''')
   columns = [desc[0] for desc in cur.description]
