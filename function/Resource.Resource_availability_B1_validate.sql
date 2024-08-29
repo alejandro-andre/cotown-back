@@ -6,6 +6,11 @@ DECLARE
 
 BEGIN
 
+  -- Cosharing is the default state, do not save
+  IF NEW."Status_id" = 1 THEN
+    RAISE EXCEPTION '!!!Cosharing is the default state!!!Cosharing es el estado por defecto!!!';
+  END IF;
+
   -- Valida las fechas
   IF NEW."Date_to" <= NEW."Date_from" THEN
     RAISE EXCEPTION '!!!End date must be greater than start date.!!!La fecha final debe ser mayor o igual que la fecha de inicio.!!!';

@@ -97,8 +97,8 @@ BEGIN
   IF NEW."Concept" IS NULL THEN
     RAISE EXCEPTION '!!!Concept field is mandatory!!!El campo concepto es obligatorio!!!';
   END IF;
-  IF NEW."Booking_id" IS NULL AND NEW."Booking_group_id" IS NULL THEN
-    RAISE EXCEPTION '!!!Booking or Group booking is missing!!!Falta indicar la reserva o la reserva de grupo!!!';
+  IF NEW."Booking_id" IS NULL AND NEW."Booking_group_id" IS NULL AND NEW."Booking_other_id" IS NULL THEN
+    RAISE EXCEPTION '!!!B2C, B2B or other booking is missing!!!Falta indicar la reserva B2C, B2B u otra!!!';
   END IF;
 
   -- Cliente
@@ -110,7 +110,12 @@ BEGIN
       SELECT "Payer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
       NEW."Customer_id" := customer_id;
     ELSE
-      RAISE EXCEPTION '!!!Client is missing!!!Falta indicar el cliente!!!';
+      IF NEW."Booking_other_id" IS NOT NULL THEN
+        SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_other" WHERE id = NEW."Booking_other_id";
+        NEW."Customer_id" := customer_id;
+      ELSE
+        RAISE EXCEPTION '!!!Client is missing!!!Falta indicar el cliente!!!';
+      END IF;
     END IF;
   END IF;
 

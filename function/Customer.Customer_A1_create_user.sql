@@ -7,6 +7,11 @@ DECLARE
 
 BEGIN
 
+  -- Do not create user
+  IF NEW."Create_user" IS NULL OR NEW."Create_user" = FALSE THEN
+    RETURN NEW;
+  END IF;
+
   -- Already created
   IF NEW."User_name" IS NOT NULL THEN
     RETURN NEW;

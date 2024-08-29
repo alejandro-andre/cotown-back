@@ -47,7 +47,7 @@ BEGIN
   RESET ROLE; 
 
   -- Documentos obligatorios
-  IF NEW.id IS NOT NULL THEN
+  IF TG_OP = 'UPDATE' THEN
     INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
       SELECT NEW.id, id
       FROM "Customer"."Customer_doc_type" cdt
