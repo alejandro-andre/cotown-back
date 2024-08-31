@@ -16,12 +16,12 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Borra viejos precios
+  -- Borra viejos fuera de los margenes del contrato
   DELETE FROM "Booking"."Booking_group_price"
   WHERE "Booking_id" = NEW.id
   AND ("Rent_date" < NEW."Date_from" OR "Rent_date" > NEW."Date_to");
 
-  -- Inserta precios
+  -- Inserta precios si no existen ya
   dt_curr = NEW."Date_from";
   dt_to = NEW."Date_to" + INTERVAL '1 day';
   WHILE dt_curr < dt_to LOOP

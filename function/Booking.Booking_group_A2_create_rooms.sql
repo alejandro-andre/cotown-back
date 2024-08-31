@@ -6,7 +6,8 @@ DECLARE
 
 BEGIN
 
-  -- Update status
+  -- Update rooming list if status changed
+  --?Remove
   IF OLD."Status" <> NEW."Status" THEN
     UPDATE "Booking"."Booking_group_rooming" SET id = id WHERE "Booking_id" = NEW.id;
   END IF;
@@ -16,13 +17,15 @@ BEGIN
     RETURN NEW;
   END IF;
 
-  -- Get place ids
+  -- Get place ids from codes
   SELECT array_agg(id) INTO room_ids FROM "Resource"."Resource" WHERE "Code" = ANY(NEW."Room_ids");
 
   -- Updates rooms in the list
   RESET ROLE;
   IF room_ids IS NOT NULL THEN
+    -- Delete removed rooms
     DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
+    -- Insert new rooms
     FOREACH room_id IN ARRAY(room_ids) LOOP
       INSERT
         INTO "Booking"."Booking_group_rooming" ("Booking_id", "Resource_id", "Check_in", "Check_out")
@@ -30,6 +33,7 @@ BEGIN
       ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING;
     END LOOP;
   ELSE
+    -- Delete all rooms
     DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id;
   END IF;
 

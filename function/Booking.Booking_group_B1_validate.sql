@@ -24,16 +24,6 @@ BEGIN
     RAISE exception '!!!Enter the number of places!!!Introduzca el número de plazas!!!';
   END IF;
 
-  -- Check the Rent is not null
-  IF (NEW."Rent" IS NULL ) THEN
-    RAISE exception '!!!Enter the amount of rent!!!Introduzca el importe de la renta!!!';
-  END IF;
-
-  -- Check the Services is not null
-  IF (NEW."Services" IS NULL ) THEN
-    RAISE exception '!!!Enter the services of rent!!!Introduzca el importe de los servicios!!!';
-  END IF;
-
   -- Request date
   IF NEW."Request_date" IS NULL THEN
     NEW."Request_date" := NOW();
