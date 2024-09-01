@@ -680,7 +680,7 @@ def bill_services(dbClient, con):
       INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
       LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
-      AND b."Date_from>" >= CURRENT_DATE
+      AND b."Date_from" >= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
       AND s."Billing_date_from" <= CURRENT_DATE 
