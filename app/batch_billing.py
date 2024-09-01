@@ -805,7 +805,7 @@ def bill_group_services(dbClient, con):
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
     WHERE b."Status" IN ('grupoconfirmado','inhouse')
-      AND b."Date_from>" >= CURRENT_DATE
+      AND b."Date_from" >= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
       AND s."Billing_date_from" <= CURRENT_DATE 
