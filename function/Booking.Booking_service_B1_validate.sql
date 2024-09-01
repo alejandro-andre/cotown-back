@@ -14,11 +14,11 @@ BEGIN
   -- Validate dates
   SELECT "Date_from", "Date_to", "Customer_id" INTO date_from, date_to, customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
   IF NEW."Billing_date_from" < date_from THEN
-    RAISE exception '!!!Billing date cannot be earlier than the start of the reservation!!!Fecha de factura no puede ser anterior al inicio de la reserva!!!';
+  --  RAISE exception '!!!Billing date cannot be earlier than the start of the reservation!!!Fecha de factura no puede ser anterior al inicio de la reserva!!!';
   END IF;
   IF NEW."Billing_date_to" IS NOT NULL THEN
     IF NEW."Billing_date_to" <= NEW."Billing_date_from" THEN
-      RAISE exception '!!!Billing end date cannot be earlier than the start of the billing!!!Facturación hasta no puede ser anterior al inicio de la facturación!!!';
+  --    RAISE exception '!!!Billing end date cannot be earlier than the start of the billing!!!Facturación hasta no puede ser anterior al inicio de la facturación!!!';
     END IF;
   END IF; 
 
