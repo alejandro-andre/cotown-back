@@ -39,8 +39,8 @@
       <div class="prices">
         <p>Deposit</p>
         <p>
-          [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
-          [[(data.summary.Rent + data.summary.Services) | number]] €
+          [% if data.summary.Deposit < 1.5 * (data.summary.Rent + data.summary.Services) %]
+          [[1.5 * (data.summary.Rent + data.summary.Services) | number]] €
           [% else %]
           [[data.summary.Deposit | number]] €
           [% endif %]
@@ -56,14 +56,14 @@
 
       <div class="type-summary">
         <div class="total">
-        <p>Total single payment</p>
-        <p>
-          [% if data.summary.Deposit < data.summary.Rent + data.summary.Services %]
-          [[(data.summary.Booking_fee + data.summary.Rent + data.summary.Services) | number]] €
-          [% else %]
-          [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
-          [% endif %]
-        </p>
+          <p>Total pago único</p>
+          <p>
+            [% if data.summary.Deposit < 1.5 * (data.summary.Rent + data.summary.Services) %]
+            [[(data.summary.Booking_fee + 1.5 * (data.summary.Rent + data.summary.Services)) | number]] €
+            [% else %]
+            [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
+            [% endif %]
+          </p>
         </div>
       </div>
 
