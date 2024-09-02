@@ -146,9 +146,11 @@ BEGIN
 
   -- Lee el formato de numeración del proveedor
   SELECT
-    CASE NEW."Bill_type"
-      WHEN 'factura' THEN "Bill_pattern"
-      WHEN 'rectificativa' THEN "Credit_pattern"
+    CASE
+      WHEN  NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NULL THEN "Bill_pattern"
+      WHEN  NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NOT NULL THEN "LAU_bill_pattern"
+      WHEN  NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NULL THEN "Credit_pattern"
+      WHEN  NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NOT NULL THEN "LAU_credit_pattern"
       ELSE "Receipt_pattern"
     END
   INTO format
@@ -162,10 +164,12 @@ BEGIN
   -- Calcula el siguiente número
   SELECT
     id,
-    CASE NEW."Bill_type"
-      WHEN 'factura' THEN "Bill_number"
-      WHEN 'rectificativa' THEN "Credit_number"
-      ELSE "Receipt_number"
+    CASE
+      WHEN  NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NULL THEN "Bill_number"
+      WHEN  NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NOT NULL THEN "LAU_bill_number"
+      WHEN  NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NULL THEN "Credit_number"
+      WHEN  NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NOT NULL THEN "LAU_credit_number"
+      ELSE "Receipt_pattern"
     END
   INTO n_id, num
   FROM "Provider"."Provider_bill" pb
@@ -177,26 +181,37 @@ BEGIN
 
   -- Actualiza el número
   IF n_id IS NULL THEN
-    IF NEW."Bill_type" = 'factura' THEN
-      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number") VALUES (NEW."Provider_id", yy, 1, 0, 0);
+    IF NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NULL THEN
+      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number", "LAU_bill_number", "LAU_credit_number") VALUES (NEW."Provider_id", yy, 1, 0, 0, 0, 0);
     END IF;
-    IF NEW."Bill_type" = 'rectificativa' THEN
-      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number") VALUES (NEW."Provider_id", yy, 0, 1, 0);
+    IF NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NULL THEN
+      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number", "LAU_bill_number", "LAU_credit_number") VALUES (NEW."Provider_id", yy, 0, 1, 0, 0, 0);
     END IF;
     IF NEW."Bill_type" = 'recibo' THEN
-      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number") VALUES (NEW."Provider_id", yy, 0, 0, 1);
+      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number", "LAU_bill_number", "LAU_credit_number") VALUES (NEW."Provider_id", yy, 0, 0, 1, 0, 0);
+    END IF;
+    IF NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NOT NULL THEN
+      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number", "LAU_bill_number", "LAU_credit_number") VALUES (NEW."Provider_id", yy, 0, 0, 0, 1, 0);
+    END IF;
+    IF NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NOT NULL THEN
+      INSERT INTO "Provider"."Provider_bill" ("Provider_id", "Year", "Bill_number", "Credit_number", "Receipt_number", "LAU_bill_number", "LAU_credit_number") VALUES (NEW."Provider_id", yy, 0, 0, 0, 0, 1);
     END IF;
   ELSE
-    IF NEW."Bill_type" = 'factura' THEN
+    IF NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NULL THEN
       UPDATE "Provider"."Provider_bill" SET "Bill_number" = num WHERE id = n_id;
     END IF;
-    IF NEW."Bill_type" = 'rectificativa' THEN
+    IF NEW."Bill_type" = 'rectificativa'AND NEW."Booking_other_id" IS NULL THEN
       UPDATE "Provider"."Provider_bill" SET "Credit_number" = num WHERE id = n_id;
     END IF;
     IF NEW."Bill_type" = 'recibo' THEN
       UPDATE "Provider"."Provider_bill" SET "Receipt_number" = num WHERE id = n_id;
     END IF;
-  END IF;
+    IF NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NOT NULL THEN
+      UPDATE "Provider"."Provider_bill" SET "LAU_bill_number" = num WHERE id = n_id;
+    END IF;
+    IF NEW."Bill_type" = 'rectificativa'AND NEW."Booking_other_id" IS NOT NULL THEN
+      UPDATE "Provider"."Provider_bill" SET "LAU_credit_number" = num WHERE id = n_id;
+    END IF;
 
   -- Return
   RETURN NEW;
