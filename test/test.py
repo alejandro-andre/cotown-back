@@ -1,36 +1,26 @@
-# System includes
-import json
+from library.services.dbclient import DBClient
+from library.services.config import settings
 
-# Cotown includes
-from library.services.apiclient import APIClient
-from library.services.utils import flatten
-from library.business.print_contract import BOOKING, generate_doc_file
+dbClient = DBClient(
+    host=settings.SERVER,
+    port=settings.get('DBPORT', 5432),
+    dbname=settings.DATABASE,
+    user=settings.DBUSER,
+    password=settings.DBPASS,
+    sshuser=settings.SSHUSER,
+    sshpassword=settings.get('SSHPASS', None),
+    sshprivatekey=settings.get('SSHPKEY', None)
+)
+dbClient.connect()
 
-def main(q, tpl, id):
+con = dbClient.getconn()
+cur = dbClient.execute(con,'SELECT * FROM "Booking"."Booking" LIMIT 1')
 
-  # graphQL API
-  apiClient = APIClient('core.cotown.com')
-  apiClient.auth(user='modelsadmin', password='Ciber$2022')
+columnas = cur.description
+for col in columnas:
+    cur.execute("SELECT typname FROM pg_type WHERE oid = %s;", (col.type_code,))
+    type_name = cur.fetchone()
+    print(f'{col.name}, {col.type_code}, {type_name[0]}')
 
-  # Get booking
-  booking = apiClient.call(q, { "id": id })
-  if booking is None:
-    return
-
-  # Prepare booking
-  context = flatten(booking['data'][0])
-
-  # Open template file
-  fi = open(tpl + '.md', 'r')
-  template = fi.read()
-  fi.close()
-
-  # Generate rent contract
-  file = generate_doc_file(context, template)
-  with open(tpl + '.pdf', 'wb') as pdf:
-    pdf.write(file.read())
-
-if __name__ == '__main__':
-
-  print('Testing...')
-  main(BOOKING, 'test', 5602)
+cur.close()
+dbClient.putconn(con)
