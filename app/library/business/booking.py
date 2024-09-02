@@ -370,6 +370,11 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       if dayt < 15:
         data['Rent_last'] = data['Rent'] / 2
 
+    # Convert and return data
+    data['Booking_fee'] = float(data['Booking_fee'])
+    data['Deposit'] = float(data['Deposit'])
+    data['Rent'] = float(data['Rent'])
+    data['Services'] = float(data['Services'])
     dbClient.putconn(con)
     return data
  

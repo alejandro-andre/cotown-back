@@ -40,7 +40,7 @@
         <p>Deposit</p>
         <p>
           [% if data.summary.Deposit < 1.5 * (data.summary.Rent + data.summary.Services) %]
-          [[1.5 * (data.summary.Rent + data.summary.Services) | number]] €
+          [[(1.5 * (data.summary.Rent + data.summary.Services)) | number]] €
           [% else %]
           [[data.summary.Deposit | number]] €
           [% endif %]
