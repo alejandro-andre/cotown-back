@@ -1,5 +1,0 @@
-0 * * * * cd /home/azureuser/cotown/app; sh ./dobatch.sh sendemail
-0 * * * * cd /home/azureuser/cotown/app; sh ./dobatch.sh processload
-0 * * * * cd /home/azureuser/cotown/app; sh ./dobatch.sh printbill
-0 * * * * cd /home/azureuser/cotown/app; sh ./dobatch.sh printcontract
-0 * * * * cd /home/azureuser/cotown/app; sh ./dobatch.sh billing
