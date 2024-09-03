@@ -28,11 +28,11 @@ CHECKOUTDAYS=30
 
 # Servers
 SSHUSER='partner'
-BACK='dev.cotown.ciber.es'
+BACK='back.cotown.oimbra.tech'
 SERVER='experis.flows.ninja'
 
 # Redsys
-REDSYS_MERCHANTURL='https://dev.cotown.ciber.es/api/v1/notify'
+REDSYS_MERCHANTURL='https://back.cotown.oimbra.tech/api/v1/notify'
 REDSYS_URL='https://sis-t.redsys.es:25443/sis/realizarPago'
 
 # TPVs
