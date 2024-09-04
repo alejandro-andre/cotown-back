@@ -212,6 +212,7 @@ BEGIN
     IF NEW."Bill_type" = 'rectificativa'AND NEW."Booking_other_id" IS NOT NULL THEN
       UPDATE "Provider"."Provider_bill" SET "LAU_credit_number" = num WHERE id = n_id;
     END IF;
+  END IF;
 
   -- Return
   RETURN NEW;
