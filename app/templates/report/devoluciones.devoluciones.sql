@@ -55,12 +55,12 @@ SELECT
   COALESCE(gc."Amount", 0) AS "Amount_from_deposit_cotown",
   b."Damages",
   CASE 
-  WHEN b."Status" = 'checkout' THEN 'Check-out'
-  WHEN b."Status" = 'revision' THEN 'Revision'
-  ELSE 'Devolucion fianza'
+    WHEN b."Status" = 'checkout' THEN 'Check-out'
+    WHEN b."Status" = 'revision' THEN 'Revision'
+    ELSE 'Devolucion fianza'
   END AS "Status",
   CASE 
-  WHEN b."Destination_id" IS NOT NULL THEN 'CHA'   
+    WHEN b."Destination_id" IS NOT NULL THEN 'CHA'   
   END AS "Substatus",
   c."Name",
   c."Email",
@@ -68,8 +68,8 @@ SELECT
   r."Code",
   c."Bank_account", c."Swift", c."Bank_holder", c."Bank_name", c."Bank_address", c."Bank_city", co."Name" AS "Bank_country",
   CASE 
-  WHEN co."Sepa" THEN 'SEPA'
-  ELSE ''
+    WHEN co."Sepa" THEN 'SEPA'
+    ELSE ''
   END AS "Sepa",
   p."Name" AS "Owner"
 FROM "Booking"."Booking" b

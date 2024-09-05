@@ -169,7 +169,7 @@ BEGIN
       WHEN  NEW."Bill_type" = 'factura' AND NEW."Booking_other_id" IS NOT NULL THEN "LAU_bill_number"
       WHEN  NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NULL THEN "Credit_number"
       WHEN  NEW."Bill_type" = 'rectificativa' AND NEW."Booking_other_id" IS NOT NULL THEN "LAU_credit_number"
-      ELSE "Receipt_pattern"
+      ELSE "Receipt_number"
     END
   INTO n_id, num
   FROM "Provider"."Provider_bill" pb
