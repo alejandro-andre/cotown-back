@@ -7,6 +7,9 @@ DECLARE
 
 BEGIN
 
+  -- Quita espacios y caracteres especiales
+  NEW."IBAN" = UPPER(TRIM(REGEXP_REPLACE(NEW."IBAN", '[^a-zA-Z0-9]', '', 'g')));
+  
   -- Obtiene la edad
   IF NEW."Birth_date" < '1910-01-01' THEN
     NEW."Birth_date" = NULL;

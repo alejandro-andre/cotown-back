@@ -29,7 +29,7 @@ p { margin: 0.3em; }
 </head>
 <body>
 
-{% for page in range(0, Lines|length, 15) %}
+{% for page in range(0, Lines|length, 10) %}
 <div class="container">
 
   <!-- Logo -->
@@ -54,7 +54,7 @@ p { margin: 0.3em; }
           <p>{{Customer_billing_address or Customer_address}}&nbsp;</p>
           <p>{{Customer_billing_zip or Customer_zip}} {{Customer_billing_city or Customer_city}}&nbsp;</p>
           <p>{{Customer_billing_country or Customer_country}}&nbsp;</p>
-          <p style="text-align:right">{% if Lines|length > 15 %}Página {{1 + (page // 15)}}/{{1 + (Lines|length // 15)}}{% endif %}</p>
+          <p style="text-align:right">{% if Lines|length > 10 %}Página {{1 + (page // 10)}}/{{1 + (Lines|length // 10)}}{% endif %}</p>
         </td>
       </tr>
     </tbody>
@@ -87,12 +87,12 @@ p { margin: 0.3em; }
       </tr>
     </thead>
     <tbody>
-      {% for line in Lines[page:page+15] %}
+      {% for line in Lines[page:page+10] %}
       <tr class="row">
         <td class="cell"><p>{{Bill_issued_date|ymd}}</p></td>
         <td class="cell">
           <p>{{line.Line_concept}}</p>
-          <p style="font-size: 11px;">{{line.Line_comments}}</p>
+          <p style="font-size: 10px;">{{line.Line_comments}}</p>
         </td>
         <td class="cell nowrap"><p>{{line.Line_tax_name}} {{'{0:0,.0f}'.format(line.Line_tax_value)}}%</p></td>
         <td class="cell nowrap right"><p>{{'{0:0,.2f}'.format(line.Line_amount)}} €</p></td>
@@ -101,7 +101,7 @@ p { margin: 0.3em; }
     </tbody>
   </table>
 
-  {% if Lines|length < (page + 1) * 15 %}
+  {% if Lines|length < (page + 1) * 10 %}
   <table class="footer">
     <tr>
       <td width="15%"></td>

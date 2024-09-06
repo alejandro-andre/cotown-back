@@ -53,6 +53,8 @@ SELECT
   COALESCE(g."Amount", 0) AS "Amount_from_deposit",
   COALESCE(dc."Amount", 0) AS "Amount_due_cotown",
   COALESCE(gc."Amount", 0) AS "Amount_from_deposit_cotown",
+  b."Deposit_required",
+  b."Date_deposit_required",
   b."Damages",
   CASE 
     WHEN b."Status" = 'checkout' THEN 'Check-out'

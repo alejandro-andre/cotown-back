@@ -8,6 +8,8 @@
 "Amount_due",
 "Amount_from_deposit",
 "",
+"Deposit_required",
+"Date_deposit_required",
 "Damages",
 "Status",
 "Substatus",
