@@ -96,7 +96,7 @@ BEGIN
 
   -- Calculate year
   SELECT EXTRACT(YEAR FROM NEW."Date_from") INTO year;
-  IF EXTRACT(MONTH FROM dt_curr) > 8 THEN
+  IF EXTRACT(MONTH FROM NEW."Date_from") > 8 THEN
     year := year + 1;
   END IF;
 
