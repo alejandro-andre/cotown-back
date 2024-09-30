@@ -680,10 +680,11 @@ def bill_services(dbClient, con):
       INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
       LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
-      AND b."Date_from" >= CURRENT_DATE
+      AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
-      AND s."Billing_date_from" <= CURRENT_DATE 
+      AND s."Billing_date_from" <= CURRENT_DATE
+      AND s."Billing_date_from" >= b."Date_from" 
     ''')
   data = cur.fetchall()
   cur.close()
@@ -805,10 +806,11 @@ def bill_group_services(dbClient, con):
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
     WHERE b."Status" IN ('grupoconfirmado','inhouse')
-      AND b."Date_from" >= CURRENT_DATE
+      AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
-      AND s."Billing_date_from" <= CURRENT_DATE 
+      AND s."Billing_date_from" <= CURRENT_DATE
+      AND s."Billing_date_from" >= b."Date_from" 
     ''')
   data = cur.fetchall()
   cur.close()
