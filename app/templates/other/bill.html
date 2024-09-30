@@ -29,7 +29,7 @@ p { margin: 0.3em; }
 </head>
 <body>
 
-{% for page in range(0, Lines|length, 9) %}
+{% for page in range(0, Lines|length, 10) %}
 <div class="container">
 
   <!-- Logo -->
@@ -54,7 +54,7 @@ p { margin: 0.3em; }
           <p>{{Customer_billing_address or Customer_address}}&nbsp;</p>
           <p>{{Customer_billing_zip or Customer_zip}} {{Customer_billing_city or Customer_city}}&nbsp;</p>
           <p>{{Customer_billing_country or Customer_country}}&nbsp;</p>
-          <p style="text-align:right">{% if Lines|length > 9 %}Página {{1 + (page // 9)}}/{{1 + (Lines|length // 9)}}{% endif %}</p>
+          <p style="text-align:right">{% if Lines|length > 10 %}Página {{1 + (page // 10)}}/{{1 + (Lines|length // 10)}}{% endif %}</p>
         </td>
       </tr>
     </tbody>
@@ -87,7 +87,7 @@ p { margin: 0.3em; }
       </tr>
     </thead>
     <tbody>
-      {% for line in Lines[page:page+9] %}
+      {% for line in Lines[page:page+10] %}
       <tr class="row">
         <td class="cell"><p>{{Bill_issued_date|ymd}}</p></td>
         <td class="cell">
@@ -101,7 +101,7 @@ p { margin: 0.3em; }
     </tbody>
   </table>
 
-  {% if Lines|length < (page + 1) * 9 %}
+  {% if Lines|length <= page + 10 %}
   <table class="footer">
     <tr>
       <td width="15%"></td>
