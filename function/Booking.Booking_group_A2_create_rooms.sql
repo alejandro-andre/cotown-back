@@ -60,20 +60,22 @@ BEGIN
     ON CONFLICT ("Booking_id", "Resource_id", "Check_in") DO NOTHING;
 
     -- Locks
-    OPEN res;
-    FETCH res INTO re;
-    WHILE (FOUND) LOOP
-      INSERT INTO "Booking"."Booking_detail" (
-        "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
-        "Status", "Date_from", "Date_to", "Lock", "Booked_resource_id"
-      )
-      VALUES (
-        NULL, NULL, NEW.id, NULL, re.id, re."Building_id",
-        NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN re.id = room_id THEN FALSE ELSE TRUE END), room_id
-      );
+    IF NEW."Status" NOT IN ('cancelada') THEN
+      OPEN res;
       FETCH res INTO re;
-    END LOOP;
-	CLOSE res;
+      WHILE (FOUND) LOOP
+        INSERT INTO "Booking"."Booking_detail" (
+          "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
+          "Status", "Date_from", "Date_to", "Lock", "Booked_resource_id"
+        )
+        VALUES (
+          NULL, NULL, NEW.id, NULL, re.id, re."Building_id",
+          NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN re.id = room_id THEN FALSE ELSE TRUE END), room_id
+        );
+        FETCH res INTO re;
+      END LOOP;
+      CLOSE res;
+    END IF;
 
   END LOOP;
 
