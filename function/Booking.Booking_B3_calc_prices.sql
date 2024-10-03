@@ -3,9 +3,10 @@ DECLARE
 
   curr_user VARCHAR;
 
-  days INTEGER;
+  dias INTEGER;
   months INTEGER;
-  year INTEGER;
+  ano INTEGER;
+  n_ano INTEGER;
  
   dt_to DATE;
   dt_curr DATE;
@@ -20,7 +21,7 @@ DECLARE
   deposit_base NUMERIC;
   final_cleaning NUMERIC;
   second_resident NUMERIC;
-  limit NUMERIC;
+  climit NUMERIC;
 
   n_rent NUMERIC;
   n_services NUMERIC;
@@ -95,9 +96,9 @@ BEGIN
   SELECT EXTRACT(MONTH FROM AGE(dt_to, NEW."Date_from")) INTO months;
 
   -- Calculate year
-  SELECT EXTRACT(YEAR FROM NEW."Date_from") INTO year;
+  SELECT EXTRACT(YEAR FROM NEW."Date_from") INTO ano;
   IF EXTRACT(MONTH FROM NEW."Date_from") > 8 THEN
-    year := year + 1;
+    ano := ano + 1;
   END IF;
 
   -- Get current year prices
@@ -129,7 +130,7 @@ BEGIN
           AND pd."Flat_type_id" = r."Flat_type_id" 
           AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
         INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
-      WHERE pd."Year" = YEAR
+      WHERE pd."Year" = ano
         AND r.id = NEW."Resource_id"
     )
   SELECT 
@@ -140,7 +141,7 @@ BEGIN
     p."Final_cleaning",
     p."Second_resident",
     p."Limit"
-  INTO billing_type, rent, services, deposit, final_cleaning, second_resident, limit
+  INTO billing_type, rent, services, deposit, final_cleaning, second_resident, climit
   FROM "Prices" p
   LEFT JOIN "Extras" e ON p.id = e.id;
   
@@ -168,7 +169,7 @@ BEGIN
           AND pd."Flat_type_id" = r."Flat_type_id" 
           AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
         INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
-      WHERE pd."Year" = YEAR + 1
+      WHERE pd."Year" = ano + 1
         AND r.id = NEW."Resource_id"
     )
   SELECT 
@@ -185,7 +186,7 @@ BEGIN
     NEW."Deposit" = deposit_base;
   END IF;
   NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
-  NEW."Limit"          := COALESCE(NEW."Limit", "limit", 0);
+  NEW."Limit"          := COALESCE(NEW."Limit", climit, 0);
   IF NEW."New_check_out" < NEW."Date_to" THEN
     NEW."Rent"         := COALESCE(NEW."Rent", rent + second_resident, 0);
     NEW."Services"     := COALESCE(NEW."Services", services, 0);
@@ -206,7 +207,11 @@ BEGIN
   WHILE dt_curr < dt_to LOOP
 
     -- Year change?
-    IF EXTRACT(MONTH FROM dt_curr) > 8 OR EXTRACT(YEAR FROM dt_curr) > EXTRACT(YEAR FROM NEW."Date_from") THEN
+    SELECT EXTRACT(YEAR FROM dt_curr) INTO n_ano;
+    IF EXTRACT(MONTH FROM dt_curr) > 8 THEN
+      n_ano := n_ano + 1;
+    END IF;
+    IF n_ano > ano THEN
       monthly_rent     := ROUND(n_rent, 0);
       monthly_services := ROUND(n_services, 0);
     END IF; 
@@ -230,9 +235,9 @@ BEGIN
       END IF;
    
       IF billing_type = 'proporcional' THEN
-        days := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
-        curr_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / days, 1);
-        curr_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / days, 1);
+        dias := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
+        curr_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / dias, 1);
+        curr_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / dias, 1);
       END IF;
 
     END IF;

@@ -6,7 +6,7 @@ WITH
   WHERE NOT i."Rectified"
     AND i."Total" > 0
     AND p."Payment_method_id" <> 43 
-    AND p."Payment_auth" IS NULL 
+    AND p."Payment_date" IS NULL 
     AND i."Booking_id" IS NOT NULL
     AND i."Provider_id" <> 1
   GROUP BY 1
@@ -29,7 +29,7 @@ WITH
   WHERE NOT i."Rectified"
     AND i."Total" > 0
     AND p."Payment_method_id" <> 43 
-    AND p."Payment_auth" IS NULL 
+    AND p."Payment_date" IS NULL 
     AND i."Booking_id" IS NOT NULL
     AND i."Provider_id" = 1
   GROUP BY 1
