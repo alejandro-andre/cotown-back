@@ -3,6 +3,7 @@
 "Building_type.Name",
 "Name",
 "Segment.Name",
+"Estabilised_date",
 "Address",
 "Zip",
 "Lat_lon",

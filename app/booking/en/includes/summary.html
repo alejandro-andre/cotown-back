@@ -56,12 +56,12 @@
 
       <div class="type-summary">
         <div class="total">
-          <p>Total pago único</p>
+          <p>Total initial payment</p>
           <p>
             [% if data.summary.Deposit < 1.5 * (data.summary.Rent + data.summary.Services) %]
-            [[(data.summary.Booking_fee + 1.5 * (data.summary.Rent + data.summary.Services)) | number]] €
+            [[(data.summary.Booking_fee + data.summary.Final_cleaning + 1.5 * (data.summary.Rent + data.summary.Services)) | number]] €
             [% else %]
-            [[(data.summary.Booking_fee + data.summary.Deposit) | number]] €
+            [[(data.summary.Booking_fee + data.summary.Final_cleaning + data.summary.Deposit) | number]] €
             [% endif %]
           </p>
         </div>

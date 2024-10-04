@@ -35,7 +35,7 @@ WITH
   SELECT 
     r.id, 
     d."Date", 
-    substring(r."Code", 1, 6) AS "Building",
+    substring(r."Code", 1, 12) AS "Resource",
     CASE
       WHEN EXISTS (
         SELECT ra.id 
@@ -73,7 +73,7 @@ WITH
 )
 SELECT
   p."Date",
-  p."Building",
+  p."Resource",
   SUM(p."Beds") AS "Beds",
   SUM(p."Consolidated_beds") + (SUM(p."Beds") - SUM(p."Consolidated_beds")) / 2.0 AS "Consolidated_beds",
   AVG(p."Rent_short" * e."Extra") AS "Short",

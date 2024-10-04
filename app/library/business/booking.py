@@ -325,7 +325,8 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         COALESCE(pd."Services", 0) AS "Services", 
         COALESCE(pd."Limit", 0) as "Limit",
         COALESCE(pd."Deposit", 0) AS "Deposit", 
-        COALESCE(pd."Booking_fee", 0) AS "Booking_fee"
+        COALESCE(pd."Booking_fee", 0) AS "Booking_fee",
+        COALESCE(pd."Final_cleaning", 0) AS "Final_cleaning"
       FROM "Resource"."Resource" r
         INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
         INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
@@ -375,6 +376,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     data['Deposit'] = float(data['Deposit'])
     data['Rent'] = float(data['Rent'])
     data['Services'] = float(data['Services'])
+    data['Final_cleaning'] = float(data['Final_cleaning'])
     dbClient.putconn(con)
     return data
  
