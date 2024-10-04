@@ -215,18 +215,35 @@ def bill_month(dbClient, con):
     # Capture exceptions
     try:
 
-      # Get all recurrent services
+      # Get all recurrent extra rent
       cur = dbClient.execute(con,
         '''
-        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id"
+        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
         FROM "Booking"."Booking_service" s
+          INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
         WHERE s."Booking_id" = %s
           AND s."Billing_date_to" >= CURRENT_DATE
           AND s."Billing_date_from" <= CURRENT_DATE 
+          AND p."Product_type_id" = 3
         ''', (item['Booking_id'], ))
-      extra = cur.fetchall()
+      extra_rent = cur.fetchall()
       cur.close()
-      total_extra_services = float(sum(r['Amount'] for r in extra) or 0.0)
+      total_extra_rent = float(sum(r['Amount'] for r in extra_rent) or 0.0)
+
+      # Get all recurrent extra services
+      cur = dbClient.execute(con,
+        '''
+        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
+        FROM "Booking"."Booking_service" s
+          INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
+        WHERE s."Booking_id" = %s
+          AND s."Billing_date_to" >= CURRENT_DATE
+          AND s."Billing_date_from" <= CURRENT_DATE 
+          AND p."Product_type_id" <> 3
+        ''', (item['Booking_id'], ))
+      extra_services = cur.fetchall()
+      cur.close()
+      total_extra_services = float(sum(r['Amount'] for r in extra_services) or 0.0)
 
       # Amounts
       total_rent = float(item['Rent'] or 0.0) + float(item['Rent_discount'] or 0.0)
@@ -235,15 +252,18 @@ def bill_month(dbClient, con):
       # Same issuer
       product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
-        total_rent = total_rent + total_services + total_extra_services
+        total_rent = total_rent + total_services
+        total_extra_rent = total_extra_rent + total_extra_services
+        extra_rent = extra_rent + extra_services
         total_services = 0
         total_extra_services = 0
+        extra_services = 0
       if total_services > 0:
         if item['Pos'] != item['Service_pos']:
           item['Pos'] = 'default'
        
       # Create payment
-      if total_rent + total_services + total_extra_services > 0:
+      if total_rent + total_services + total_extra_rent + total_extra_services > 0:
 
         cur = dbClient.execute(con,
           '''
@@ -257,7 +277,7 @@ def bill_month(dbClient, con):
             item['Pos'],
             item['Customer_id'],
             item['Booking_id'],
-            total_rent + total_services + total_extra_services,
+            total_rent + total_services + total_extra_rent + total_extra_services,
             datetime.now(),
             product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date']),
             'servicios'
@@ -266,7 +286,7 @@ def bill_month(dbClient, con):
         paymentid = cur.fetchone()[0]
 
         # Create rent invoice
-        if total_rent > 0:
+        if total_rent + total_extra_rent > 0:
 
           cur = dbClient.execute(con, 
           '''
@@ -290,7 +310,7 @@ def bill_month(dbClient, con):
           )
           rentid = cur.fetchone()[0]
 
-          # Create invoice line
+          # Monthñy rent
           dbClient.execute(con, 
             '''
             INSERT INTO "Billing"."Invoice_line"
@@ -306,6 +326,24 @@ def bill_month(dbClient, con):
               product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
+
+          # Extra rent
+          if total_extra_rent > 0:
+            for e in extra_rent:
+              dbClient.execute(con,
+                '''
+                INSERT INTO "Billing"."Invoice_line"
+                ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ''',
+                ( rentid,
+                  item['Resource_id'],
+                  e['Amount'],
+                  e['Product_id'],
+                  e['Tax_id'],
+                  e['Concept']
+                )
+              )
 
           # Update bill
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
@@ -359,7 +397,7 @@ def bill_month(dbClient, con):
 
           # Extra services
           if total_extra_services > 0:
-            for e in extra:
+            for e in extra_services:
               dbClient.execute(con,
                 '''
                 INSERT INTO "Billing"."Invoice_line"
@@ -413,18 +451,17 @@ def bill_group_month(dbClient, con):
   SELECT 
     bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id",
     pr."Pos", sv."Pos" as "Service_pos",
-    COUNT(r."Code") as num, 
-    MIN(bg."Room_ids") as "Room_ids", 
-    MIN(r."Owner_id") as "Owner_id", 
-    MIN(r."Service_id") as "Service_id"
+    array_length(bg."Room_ids", 1) as num, 
+    bg."Room_ids" as "Room_ids", 
+    r."Owner_id" as "Owner_id", 
+    r."Service_id" as "Service_id"
   FROM "Booking"."Booking_group_price" bgp
     INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
-    INNER JOIN "Booking"."Booking_group_rooming" br ON bg.id = br."Booking_id"
-    INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
-    INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
-    LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
+    INNER JOIN "Resource"."Resource" r ON r.id = bg."Rooms_id"[1]
     INNER JOIN "Building"."Building" bu ON bu.id = bg."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
+    INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
+    LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
@@ -460,7 +497,22 @@ def bill_group_month(dbClient, con):
       flat_ids = cur.fetchall()
       cur.close()
 
-      # Get all recurrent services
+      # Get all recurrent extra rent
+      cur = dbClient.execute(con,
+        '''
+        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
+        FROM "Booking"."Booking_group_service" s
+          INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
+        WHERE s."Booking_id" = %s
+          AND s."Billing_date_to" >= CURRENT_DATE
+          AND s."Billing_date_from" <= CURRENT_DATE 
+          AND p."Product_type_id" = 3
+        ''', (item['Booking_id'], ))
+      extra_rent = cur.fetchall()
+      cur.close()
+      total_extra_rent = float(sum(r['Amount'] for r in extra_rent) or 0.0)
+
+      # Get all recurrent extra services
       cur = dbClient.execute(con,
         '''
         SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id"
@@ -469,9 +521,9 @@ def bill_group_month(dbClient, con):
           AND s."Billing_date_to" >= CURRENT_DATE
           AND s."Billing_date_from" <= CURRENT_DATE 
         ''', (item['Booking_id'], ))
-      extra = cur.fetchall()
+      extra_services = cur.fetchall()
       cur.close()
-      total_extra_services = float(sum(r['Amount'] for r in extra) or 0.0)
+      total_extra_services = float(sum(r['Amount'] for r in extra_services) or 0.0)
 
       # Amounts
       total_rent = float(item['Rent'] or 0.0) * float(item['num'] or 0.0)
@@ -480,15 +532,18 @@ def bill_group_month(dbClient, con):
       # Same issuer
       product = PRODUCTS[PR_RENT]
       if item['Owner_id'] == item['Service_id']:
-        total_rent = total_rent + total_services + total_extra_services
+        total_rent = total_rent + total_services
+        total_extra_rent = total_extra_rent + total_extra_services
+        extra_rent = extra_rent + extra_services
         total_services = 0
         total_extra_services = 0
+        extra_services = 0
       if total_services > 0:
         if item['Pos'] != item['Service_pos']:
           item['Pos'] = 'default'
-       
+          
       # Create payment
-      if total_rent + total_services + total_extra_services > 0:
+      if total_rent + total_services + total_extra_rent + total_extra_services > 0:
 
         cur = dbClient.execute(con,
           '''
@@ -536,7 +591,7 @@ def bill_group_month(dbClient, con):
           )
           rentid = cur.fetchone()[0]
 
-          # Create invoice line
+          # Monthly rent
           for flat in flat_ids:
             places = len(flats[flat[0]])
             if item['Owner_id'] == item['Service_id']:
@@ -559,6 +614,25 @@ def bill_group_month(dbClient, con):
                 'Plazas: ' + flat[0] + ' ' + (', '.join(flats[flat[0]]))
               )
             )
+
+            # Extra rent
+            if total_extra_rent > 0:
+              for e in extra_rent:
+                rent = places * float(e['Amount'] or 0.0)
+                dbClient.execute(con,
+                  '''
+                  INSERT INTO "Billing"."Invoice_line"
+                  ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+                  VALUES (%s, %s, %s, %s, %s, %s)
+                  ''',
+                  ( rentid,
+                    flat[1],
+                    rent,
+                    e['Product_id'],
+                    e['Tax_id'],
+                    e['Concept']
+                  )
+                )
 
           # Update bill
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
@@ -616,7 +690,7 @@ def bill_group_month(dbClient, con):
 
             # Extra services
             if total_extra_services > 0:
-              for e in extra:
+              for e in extra_services:
                 services = places * float(e['Amount'] or 0.0)
                 dbClient.execute(con,
                   '''
@@ -670,21 +744,22 @@ def bill_services(dbClient, con):
     '''
     SELECT
       s.id, b.id as "Booking_id", b."Customer_id",
-      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",
-      s."Payment_method_id", 
-      r."Code", r."Service_id",
-      sv."Pos" as "Pos"
+      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", s."Payment_method_id", 
+      p."Product_type_id",
+      r."Code", r."Owner_id", r."Service_id",
+      pr."Pos", sv."Pos" as "Service_pos"
     FROM "Booking"."Booking" b
       INNER JOIN "Booking"."Booking_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
       INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+      INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
+      INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
       LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
-    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
-      AND b."Date_from" <= CURRENT_DATE
+    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato', 'checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
+      AND b."Date_from" >= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
-      AND s."Billing_date_from" <= CURRENT_DATE
-      AND s."Billing_date_from" >= b."Date_from" 
+      AND s."Billing_date_from" <= CURRENT_DATE 
     ''')
   data = cur.fetchall()
   cur.close()
@@ -712,7 +787,7 @@ def bill_services(dbClient, con):
           ''',
           (
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
-            item['Pos'],
+            item['Service_pos'],
             item['Customer_id'],
             item['Booking_id'],
             item['Amount'],
@@ -801,16 +876,16 @@ def bill_group_services(dbClient, con):
     '''
     SELECT
       s.id, b.id as "Booking_id", b."Payer_id", b."Room_ids",
-      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id"
+      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
     FROM "Booking"."Booking_group" b
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
+      INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
     WHERE b."Status" IN ('grupoconfirmado','inhouse')
-      AND b."Date_from" <= CURRENT_DATE
+      AND b."Date_from" >= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
-      AND s."Billing_date_from" <= CURRENT_DATE
-      AND s."Billing_date_from" >= b."Date_from" 
+      AND s."Billing_date_from" <= CURRENT_DATE 
     ''')
   data = cur.fetchall()
   cur.close()
