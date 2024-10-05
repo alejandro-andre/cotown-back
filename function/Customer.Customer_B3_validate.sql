@@ -47,6 +47,25 @@ BEGIN
     NEW."Same_account" = FALSE;
   END IF;
 
+  -- Bank account mandatory fields
+  IF NEW."Bank_account" IS NOT NULL THEN
+    IF NEW."Bank_holder" IS NULL THEN
+      RAISE EXCEPTION '!!!Bank holder is mandatory!!!Nombre del titular obligatorio!!!';
+    END IF;
+    IF NEW."Bank_name" IS NULL THEN
+      RAISE EXCEPTION '!!!Bank name is mandatory!!!Nombre del banco obligatorio!!!';
+    END IF;
+    IF NEW."Bank_address" IS NULL THEN
+      RAISE EXCEPTION '!!!Holder address is mandatory!!!Dirección del titular obligatoria!!!';
+    END IF;
+    IF NEW."Bank_city" IS NULL THEN
+      RAISE EXCEPTION '!!!Holder city is mandatory!!!Ciudad del titular obligatoria!!!';
+    END IF;
+    IF NEW."Bank_country_id" IS NULL THEN
+      RAISE EXCEPTION '!!!Holder country is mandatory!!!País del titular obligatorio!!!';
+    END IF;
+  END IF;
+
   -- Superuser ROLE
   curr_user := CURRENT_USER;
   RESET ROLE; 
