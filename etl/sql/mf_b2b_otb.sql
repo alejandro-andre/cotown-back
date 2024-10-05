@@ -16,7 +16,7 @@ SELECT
   b."Payer_id" AS "customer",
   r."Code" AS "resource",
   'GROUP' AS "stay_length",
-  'Monthly rent' AS "product",
+  'Management fee' AS "product",
   CASE 
   	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
   	ELSE b."Rooms" * bp."Rent"
