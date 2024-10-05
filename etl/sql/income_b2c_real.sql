@@ -12,10 +12,7 @@ SELECT
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
     ELSE 'LONG'
   END AS "stay_length",
-  CASE
-    WHEN pr."Product_type_id" <> 3 AND i."Provider_id" <> 1 THEN 'Monthly rent'
-    ELSE pr."Name_en"
-  END "product",
+  pr."Name_en" AS "product",
   il."Amount" / (1 + (t."Value" / 100)) AS "amount",
   CASE 
     WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN il."Amount" / (1 + (t."Value" / 100))

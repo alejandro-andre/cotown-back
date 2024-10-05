@@ -1,13 +1,12 @@
 WITH 
 "Rooms" AS (
-	SELECT bgr."Booking_id" AS "id", r."Owner_id", r."Service_id", p."Document", SUBSTRING(MIN(r."Code"), 1, 12) AS "Code", MIN(r."Management_fee") AS "Management_fee"
-	FROM "Booking"."Booking_group_rooming" bgr 
+	SELECT bgr."Booking_id" AS "id", r."Owner_id", r."Service_id", p."Document", (r."Code"), r."Management_fee", bgr.id AS "rid"
+	FROM "Booking"."Booking_group_rooms" bgr 
     INNER JOIN "Resource"."Resource" r ON r.id = bgr."Resource_id"
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
-    GROUP BY 1, 2, 3, 4
 )
 SELECT 
-  CONCAT('BOM', bp.id) AS "id",
+  CONCAT('BOM', bp.id, r.rid) AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
   bp."Booking_id" AS "booking",
@@ -18,12 +17,12 @@ SELECT
   'GROUP' AS "stay_length",
   'Management fee' AS "product",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
-  	ELSE b."Rooms" * bp."Rent"
+  	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
+  	ELSE bp."Rent"
   END * r."Management_fee" / 100 AS "amount",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
-  	ELSE b."Rooms" * bp."Rent"
+  	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
+  	ELSE bp."Rent"
   END * r."Management_fee" / 100 AS "rate",
   'B2B' AS "income_type",
   CASE
