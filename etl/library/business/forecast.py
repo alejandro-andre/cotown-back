@@ -19,8 +19,8 @@ def forecast(apiClient):
 
   # CSV header
   c = 0
-  forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","income_type","data_type","stay_length","discount_type"\n' 
-  occupancy_result = '"id","data_type","resource","date","beds","beds_c","available","occupied","sold","occupied_t","sold_t"\n'
+  forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","income_type","data_type","stay_length","discount_type","estabilised"\n' 
+  occupancy_result = '"id","data_type","resource","date","beds","beds_c","available","occupied","sold","occupied_t","sold_t","estabilised"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -52,29 +52,29 @@ def forecast(apiClient):
         srvs   = row[27].value or 0
         bfee   = row[28].value or 0
         mfee   = round((float(row[26].value or 0) + float(row[27].value or 0) / 1.21) * float(row[2].value or 0), 2)
-        line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '' ]
+        line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FRM' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_m, rent_m, 'B2X', 'Forecast', 'MEDIUM', '' ]
+        line = ['FRM' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_m, rent_m, 'B2X', 'Forecast', 'MEDIUM', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FRS' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_s, rent_s, 'B2X', 'Forecast', 'SHORT', '' ]
+        line = ['FRS' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_s, rent_s, 'B2X', 'Forecast', 'SHORT', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FRG' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_g, rent_g, 'B2X', 'Forecast', 'GROUP', '' ]
+        line = ['FRG' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_g, rent_g, 'B2X', 'Forecast', 'GROUP', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FSV' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly services', srvs, srvs, 'B2X', 'Forecast', '', '' ]
+        line = ['FSV' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly services', srvs, srvs, 'B2X', 'Forecast', '', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, bfee, 'B2X', 'Forecast', '', '' ]
+        line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, bfee, 'B2X', 'Forecast', '', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FMF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Management fee', mfee, mfee, 'B2X', 'Forecast', '', '' ]
+        line = ['FMF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Management fee', mfee, mfee, 'B2X', 'Forecast', '', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
         rent = row[38].value or 0
-        line = ['SIX' + str(c), '-', '-', '(stabilised)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'Stabilised', '', '' ]
+        line = ['SIX' + str(c), '-', '-', '(stabilised)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'Stabilised', '', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # UW
         rent = row[41].value or 0
-        line = ['UIX' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'UW', '', '' ]
+        line = ['UIX' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'UW', '', '', 'TRUE' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
@@ -84,11 +84,11 @@ def forecast(apiClient):
         sold     = row[8].value or 0
         occ_stab = row[36].value or 0
         occ_uw   = row[40].value or 0
-        line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0]
+        line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0, 'TRUE']
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
+        line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0, 'TRUE']
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['UOC' + str(c), 'UW', row[1].value, month, beds_uw, beds_c, days * beds_uw, days * beds_uw * occ_uw,  days * beds_uw * occ_uw, 0, 0]
+        line = ['UOC' + str(c), 'UW', row[1].value, month, beds_uw, beds_c, days * beds_uw, days * beds_uw * occ_uw,  days * beds_uw * occ_uw, 0, 0, 'TRUE']
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet

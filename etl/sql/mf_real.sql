@@ -17,13 +17,18 @@ SELECT
   END AS "stay_length",
   'B2C' AS "income_type",
   'Real' AS "data_type",
-  NULL AS "discount_type"
+  NULL AS "discount_type",
+  CASE
+    WHEN bu."Estabilised_date" > i."Issued_date" THEN TRUE
+    ELSE FALSE
+  END AS "estabilised"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
   INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 
   INNER JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id"
+  INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id" 
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'
@@ -46,13 +51,18 @@ SELECT
   'GROUP' AS "stay_length",
   'B2B' AS "income_type",
   'Real' AS "data_type",
-  NULL AS "discount_type"
+  NULL AS "discount_type",
+  CASE
+    WHEN bu."Estabilised_date" > i."Issued_date" THEN TRUE
+    ELSE FALSE
+  END AS "estabilised"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
   INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 
   INNER JOIN "Booking"."Booking_group" b on b.id = i."Booking_group_id" 
   INNER JOIN "Resource"."Resource" r on r.id = il."Resource_id"
+  INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id" 
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'

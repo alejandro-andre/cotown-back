@@ -18,7 +18,11 @@ SELECT
   END AS "rate",
   'B2B' AS "income_type",
   'Real' AS "data_type",
-  NULL AS "discount_type"
+  NULL AS "discount_type",
+  CASE
+    WHEN bu."Estabilised_date" > i."Issued_date" THEN TRUE
+    ELSE FALSE
+  END AS "estabilised"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i ON i.id = il."Invoice_id" 
@@ -27,6 +31,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Product_type" pt ON pt.id = pr."Product_type_id" 
   INNER JOIN "Booking"."Booking_group" b ON b.id = i."Booking_group_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
+  INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id" 
   LEFT JOIN "Booking"."Booking_price" bp ON bp."Invoice_rent_id" = i.id 
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'

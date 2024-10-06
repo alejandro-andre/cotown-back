@@ -74,6 +74,7 @@ CREATE TABLE gold.occupancy (
   "data_type" varchar NOT NULL,
   "resource" varchar NOT NULL,
   "date" date NOT NULL,
+  "estabilised" boolean NOT NULL,
   "beds" int NOT NULL,
   "beds_c" numeric NOT NULL,
   "available" int NOT NULL,
@@ -114,6 +115,7 @@ CREATE TABLE gold.income (
   "doc_type" varchar NOT NULL,          -- Document type
   "booking" varchar DEFAULT NULL,       -- Booking id
   "date" date NOT NULL,                 -- Date of the income
+  "estabilised" boolean NOT NULL,       -- Estabilised income
   "provider" varchar DEFAULT NULL,
   "customer" int8 DEFAULT NULL,
   "resource" varchar NOT NULL,

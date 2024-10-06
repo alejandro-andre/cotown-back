@@ -29,7 +29,11 @@ SELECT
     WHEN b."Status" IN ('grupobloqueado') THEN 'Tentative'
     ELSE 'OTB' 
   END AS "data_type",
-  NULL AS "discount_type"
+  NULL AS "discount_type",
+  CASE
+    WHEN bu."Estabilised_date" > bp."Rent_date" THEN TRUE
+    ELSE FALSE
+  END AS "estabilised"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
