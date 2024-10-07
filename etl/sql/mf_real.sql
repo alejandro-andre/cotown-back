@@ -17,11 +17,7 @@ SELECT
   END AS "stay_length",
   'B2C' AS "income_type",
   'Real' AS "data_type",
-  NULL AS "discount_type",
-  CASE
-    WHEN bu."Estabilised_date" > i."Issued_date" THEN TRUE
-    ELSE FALSE
-  END AS "estabilised"
+  NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
@@ -51,11 +47,7 @@ SELECT
   'GROUP' AS "stay_length",
   'B2B' AS "income_type",
   'Real' AS "data_type",
-  NULL AS "discount_type",
-  CASE
-    WHEN bu."Estabilised_date" > i."Issued_date" THEN TRUE
-    ELSE FALSE
-  END AS "estabilised"
+  NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  

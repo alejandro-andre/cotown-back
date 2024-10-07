@@ -16,7 +16,8 @@ SELECT
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
     WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
-  END AS "billing_type"
+  END AS "billing_type",
+  b."Estabilised_date"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
@@ -40,7 +41,8 @@ SELECT DISTINCT
   SUBSTRING(r."Code", 1, 6) AS "flat",
   NULL AS "flat_type",
   NULL AS "place_type",
-  '' AS "billing_type"
+  '' AS "billing_type",
+  b."Estabilised_date"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 

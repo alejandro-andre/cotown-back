@@ -25,11 +25,7 @@ SELECT
   CASE 
     WHEN pr."Product_type_id" = 1 THEN dtb."Name_en"
     ELSE dtp."Name_en"
-   END AS "discount_type",
-  CASE
-    WHEN bu."Estabilised_date" > i."Issued_date" THEN TRUE
-    ELSE FALSE
-  END AS "estabilised"
+   END AS "discount_type"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i ON i.id = il."Invoice_id" 

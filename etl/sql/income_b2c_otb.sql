@@ -26,11 +26,7 @@ SELECT
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
     ELSE 'OTB' 
   END AS "data_type",
-  dtp."Name_en" AS "discount_type",
-  CASE
-    WHEN bu."Estabilised_date" > bp."Rent_date" THEN TRUE
-    ELSE FALSE
-  END AS "estabilised"
+  dtp."Name_en" AS "discount_type"
 FROM "Booking"."Booking_price" bp 
   INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
@@ -74,11 +70,7 @@ SELECT
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
     ELSE 'OTB' 
   END AS "data_type",
-  dtp."Name_en" AS "discount_type",
-  CASE
-    WHEN bu."Estabilised_date" > bp."Rent_date" THEN TRUE
-    ELSE FALSE
-  END AS "estabilised"
+  dtp."Name_en" AS "discount_type"
 FROM "Booking"."Booking_price" bp 
   INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
