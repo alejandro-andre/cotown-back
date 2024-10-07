@@ -45,13 +45,13 @@ def forecast(apiClient):
         days = calendar.monthrange(int(month[:4]), int(month[5:7]))[1]
 
         # Forecast
-        rent_l = row[22].value or 0
-        rent_m = row[23].value or 0
-        rent_s = row[24].value or 0
-        rent_g = row[25].value or 0
-        srvs   = row[27].value or 0
-        bfee   = row[28].value or 0
-        mfee   = round((float(row[26].value or 0) + float(row[27].value or 0) / 1.21) * float(row[2].value or 0), 2)
+        rent_l = row[23].value or 0
+        rent_m = row[24].value or 0
+        rent_s = row[25].value or 0
+        rent_g = row[26].value or 0
+        srvs   = row[28].value or 0
+        bfee   = row[29].value or 0
+        mfee   = round((float(row[27].value or 0) + float(row[28].value or 0) / 1.21) * float(row[2].value or 0), 2)
         line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FRM' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_m, rent_m, 'B2X', 'Forecast', 'MEDIUM', '' ]
@@ -68,22 +68,22 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
-        rent = row[38].value or 0
+        rent = row[39].value or 0
         line = ['SIX' + str(c), '-', '-', '(stabilised)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'Stabilised', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # UW
-        rent = row[41].value or 0
+        rent = row[42].value or 0
         line = ['UIX' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'UW', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
         beds     = row[3].value or 0 
         beds_c   = row[4].value or 0 
-        beds_uw  = row[6].value or 0
-        sold     = row[8].value or 0
-        occ_stab = row[36].value or 0
-        occ_uw   = row[40].value or 0
+        beds_uw  = row[7].value or 0
+        sold     = row[9].value or 0
+        occ_stab = row[37].value or 0
+        occ_uw   = row[41].value or 0
         line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
