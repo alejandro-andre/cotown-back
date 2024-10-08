@@ -1,5 +1,10 @@
 {
-    data: Resource_Resource_availabilityList {
+    data: Resource_Resource_availabilityList (
+      orderBy: [
+		{ attribute: Code }
+		{ attribute: Date_from }
+	  ]
+    ){
         Resource: ResourceViaResource_id {
             Code
         }
