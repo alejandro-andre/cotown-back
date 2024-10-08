@@ -141,7 +141,7 @@ def main(interfaces):
 
       # Load CSV files
       for file in os.listdir('csv'):
-        if file.endswith('.csv'):
+        if file.startswith('CTS00-') and file.endswith('.csv'):
           load(dbOrigin, dbDestination, 'gl', file[:-4])
 
     # ------------------------------------
