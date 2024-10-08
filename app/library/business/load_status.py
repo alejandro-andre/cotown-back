@@ -77,7 +77,7 @@ def load_status(dbClient, con, data):
       update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
       values = [record[field] for field in record.keys()]
       markers = ['%s'] * len(record.keys())
-      sql = 'INSERT INTO "Resource"."Resource_availability" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
+      sql = 'INSERT INTO "Resource"."Resource_availability" ({}) VALUES ({}) ON CONFLICT ("Resource_id", "Date_from") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
       cur = dbClient.execute(con, sql, values)
       id = cur.fetchone()[0]
 
