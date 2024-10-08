@@ -27,9 +27,6 @@ def load_resources(dbClient, con, data):
       # Empty record
       record = {}
       extras = []
-      unavail_resources = []
-      unavail_from = []
-      unavail_to = []
 
       # Ok by default
       ok = True
@@ -48,7 +45,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Owner.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -62,7 +59,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Service.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -76,7 +73,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Flat_type.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -90,7 +87,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Flat_subtype.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_flat_subtype" WHERE "Code"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_flat_subtype" WHERE "Code"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -104,7 +101,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Place_type.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_place_type" WHERE "Code"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_place_type" WHERE "Code"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -118,7 +115,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Pricing_rate.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Billing"."Pricing_rate" WHERE "Code"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Billing"."Pricing_rate" WHERE "Code"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -132,7 +129,7 @@ def load_resources(dbClient, con, data):
         elif column == 'Resource_usage.Name':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Name" FROM "Resource"."Resource_usage" WHERE "Name"=%s', [cell.value])
+            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_usage" WHERE "Name"=%s', [cell.value])
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -146,20 +143,6 @@ def load_resources(dbClient, con, data):
         elif column == '[extras]':
           if cell.value is not None:
             extras = [e.strip() for e in cell.value.split(',')]
-
-        # Special cells
-        elif column == '[unavailable]':
-          if cell.value is not None:
-            unavail_resources = [e.strip() for e in cell.value.split(',')]
-            print(unavail_resources)
-        elif column == '[from]':
-          if cell.value is not None:
-            unavail_from = [e.strip() for e in cell.value.split(',')]
-            print(unavail_from)
-        elif column == '[to]':
-          if cell.value is not None:
-            unavail_to = [e.strip() for e in cell.value.split(',')]
-            print(unavail_to)
 
         # Copy cells
         else:
@@ -244,23 +227,8 @@ def load_resources(dbClient, con, data):
           ''', 
           (id, aux[0]))
 
-      # Unavailability
+      # Reset unavailabilities
       dbClient.execute(con, 'DELETE FROM "Resource"."Resource_availability" WHERE "Resource_id" = %s', (id,))
-      for u_res, u_from, u_to in zip(unavail_resources, unavail_from, unavail_to):
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_status" WHERE "Name" = %s', (u_res,))
-        aux = cur.fetchone()
-        cur.close()
-        if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Estado "' + u_res + '" no encontrado\n'
-          ok = False
-        else: 
-          dbClient.execute(con, 
-          '''
-          INSERT INTO "Resource"."Resource_availability"
-          ("Resource_id", "Status_id", "Date_from", "Date_to")
-          VALUES (%s, %s, %s, %s)
-          ''', 
-          (id, aux[0], u_from, u_to))
 
     # Error
     except Exception as error:
@@ -279,10 +247,6 @@ def load_resources(dbClient, con, data):
       n_ok += 1
     else:
       n_ko += 1
-
-  # Update availabilities
-  if n_ko == 0:
-    dbClient.execute(con, 'UPDATE "Resource"."Resource_availability" SET id=id')
 
   # Rollback?
   if n_ko > 0:

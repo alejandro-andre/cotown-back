@@ -141,9 +141,12 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=N
   wb = load_workbook(filename=BytesIO(template.read()))
   for sheet in wb.sheetnames:
 
+    # Title
+    title = sheet.lower().replace('_', '')
+
     # Get graphQL query
     query = None
-    file = 'templates/report/' + name + '.' + sheet.lower() + '.graphql'
+    file = 'templates/report/' + name + '.' + title + '.graphql'
     if os.path.exists(file):   
       fi = open(file, 'r')
       query = fi.read()
@@ -152,7 +155,7 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=N
     # Get SQL query
     sql = None
     if external_sql is None:
-      file = 'templates/report/' + name + '.' + sheet.lower() + '.sql'
+      file = 'templates/report/' + name + '.' + title + '.sql'
       if os.path.exists(file):
         fi = open(file, 'r')
         sql = fi.read()
@@ -162,7 +165,7 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=N
 
     # Get columns
     if external_sql is None:
-      file = 'templates/report/' + name + '.' + sheet.lower() + '.json'
+      file = 'templates/report/' + name + '.' + title + '.json'
     else:
       file = 'templates/report/' + name + '.json'
     if os.path.exists(file):

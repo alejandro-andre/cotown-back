@@ -18,6 +18,7 @@ from library.services.dbclient import DBClient
 from library.services.apiclient import APIClient
 from library.business.load_prices import load_prices
 from library.business.load_resources import load_resources
+from library.business.load_status import load_status
 from library.business.load_rooming import load_rooming
 from library.business.load_inventory import load_inventory
 
@@ -107,40 +108,49 @@ def main():
     dbClient.execute(con, sql, ('Procesando...', '', id))
     con.commit()        
 
-    # Process first sheet
-    sheet = workbook.sheetnames[0]
+    # Process sheets
+    for sheet in workbook.sheetnames:
 
-    # Resources
-    if sheet == 'Recursos':
-      log += sheet + '\n'
-      ok, l = load_resources(dbClient, con, workbook[sheet])
+      # Skip
+      if sheet[0] == '_':
+        continue
+      
+      # Resources
+      elif sheet == 'Recursos':
+        log += sheet + '\n'
+        ok, l = load_resources(dbClient, con, workbook[sheet])
 
-    # Prices
-    elif sheet == 'Precios':
-      log += sheet + '\n'
-      ok, l = load_prices(dbClient, con, workbook[sheet])
+      # Status
+      elif sheet == 'Estados':
+        log += sheet + '\n'
+        ok, l = load_status(dbClient, con, workbook[sheet])
 
-    # Inventory
-    elif sheet == 'Inventario':
-      log += sheet + '\n'
-      ok, l = load_inventory(dbClient, con, workbook[sheet])
+      # Prices
+      elif sheet == 'Precios':
+        log += sheet + '\n'
+        ok, l = load_prices(dbClient, con, workbook[sheet])
 
-    # Rooming list
-    elif sheet == 'Rooming':
-      log += sheet + '\n'
-      ok, l = load_rooming(dbClient, con, workbook[sheet])
+      # Inventory
+      elif sheet == 'Inventario':
+        log += sheet + '\n'
+        ok, l = load_inventory(dbClient, con, workbook[sheet])
 
-    # Ignore list
-    elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
-      ok, l = True, ''
+      # Rooming list
+      elif sheet == 'Rooming':
+        log += sheet + '\n'
+        ok, l = load_rooming(dbClient, con, workbook[sheet])
 
-    # Other
-    else:
-      log += sheet + '\n'
-      ok, l = False, 'Error: Tipo de carga desconcida.'
+      # Ignore list
+      elif sheet in ('Tarifas', 'Id_type', 'Gender', 'Country', 'Language'):
+        ok, l = True, ''
 
-    # Append log
-    log += l + '\n'
+      # Other
+      else:
+        log += sheet + '\n'
+        ok, l = False, 'Error: Tipo de carga desconcida.'
+
+      # Append log
+      log += l + '\n'
 
     # Save result
     sql = 'UPDATE "Batch"."Upload" SET "Result"=%s, "Log"=%s WHERE id=%s'

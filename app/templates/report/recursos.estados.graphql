@@ -1,0 +1,12 @@
+{
+    data: Resource_Resource_availabilityList {
+        Resource: ResourceViaResource_id {
+            Code
+        }
+        Date_from
+        Date_to
+        Status: Resource_statusViaStatus_id {
+            Name
+        }
+    }
+}
