@@ -20,6 +20,7 @@ locks AS (
 	GROUP BY 1
 )
 SELECT 
+	r."Resource_type",
 	o."Name" AS "Owner.Name", s."Name" AS "Service.Name",
 	ex.extras AS "extras",
 	(ex.increment - 1) * 100 AS "increment",

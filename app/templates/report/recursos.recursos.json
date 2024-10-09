@@ -1,6 +1,7 @@
 [
 "Owner.Name",
 "Service.Name",
+"Resource_type",
 "Code",
 "SAP_code",
 "Street",
