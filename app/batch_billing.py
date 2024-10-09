@@ -756,7 +756,7 @@ def bill_services(dbClient, con):
       INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
       LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato', 'checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
-      AND b."Date_from" >= CURRENT_DATE
+      AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
       AND s."Billing_date_from" <= CURRENT_DATE 
@@ -882,7 +882,7 @@ def bill_group_services(dbClient, con):
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
       INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
     WHERE b."Status" IN ('grupoconfirmado','inhouse')
-      AND b."Date_from" >= CURRENT_DATE
+      AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
       AND s."Billing_date_from" <= CURRENT_DATE 
