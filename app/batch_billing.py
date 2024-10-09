@@ -440,7 +440,7 @@ def bill_month(dbClient, con):
 
 
 # ###################################################
-# Generate monthly bills for group bookints
+# Generate monthly bills for group bookings
 # ###################################################
 
 def bill_group_month(dbClient, con):
@@ -451,17 +451,18 @@ def bill_group_month(dbClient, con):
   SELECT 
     bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id",
     pr."Pos", sv."Pos" as "Service_pos",
-    array_length(bg."Room_ids", 1) as num, 
-    bg."Room_ids" as "Room_ids", 
-    r."Owner_id" as "Owner_id", 
-    r."Service_id" as "Service_id"
+    COUNT(r."Code") as num, 
+    MIN(bg."Room_ids") as "Room_ids", 
+    MIN(r."Owner_id") as "Owner_id", 
+    MIN(r."Service_id") as "Service_id"
   FROM "Booking"."Booking_group_price" bgp
     INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgp."Booking_id"
-    INNER JOIN "Resource"."Resource" r ON r.id = bg."Rooms_id"[1]
-    INNER JOIN "Building"."Building" bu ON bu.id = bg."Building_id"
-    INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
+    INNER JOIN "Booking"."Booking_group_rooms" br ON bg.id = br."Booking_id"
+    INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
+    INNER JOIN "Building"."Building" bu ON bu.id = bg."Building_id"
+    INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
   WHERE bg."Status" IN ('grupoconfirmado','inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
