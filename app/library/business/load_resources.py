@@ -161,12 +161,9 @@ def load_resources(dbClient, con, data):
       # Flat
       record['Flat_id'] = None
       record['Room_id'] = None
-      if len(record['Code']) == 12:
-        record['Resource_type'] = 'piso'
 
       # Room
-      elif len(record['Code']) == 16:
-        record['Resource_type'] = 'habitacion'
+      if record['Resource_type'] == 'habitacion':
         cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
         aux = cur.fetchone()
         cur.close()
@@ -177,8 +174,7 @@ def load_resources(dbClient, con, data):
           record['Flat_id'] = aux['id']
 
       # Place
-      else:
-        record['Resource_type'] = 'plaza'
+      if record['Resource_type'] == 'plaza':
         cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
         aux = cur.fetchone()
         cur.close()
@@ -196,10 +192,6 @@ def load_resources(dbClient, con, data):
         else: 
           record['Room_id'] = aux['id']
 
-      # Resource address
-      record['Street']  = record['Street']
-      record['Address'] = record['Address']
-    
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
       update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
