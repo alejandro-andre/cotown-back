@@ -155,7 +155,7 @@ def bill_payments(dbClient, con):
         )
       )
 
-      # Update bill
+      # Update invoice
       cur = dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
       con.commit()
       num += 1
@@ -167,11 +167,11 @@ def bill_payments(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} payment bills generated'.format(num))
+  logger.info('{} payment invoices generated'.format(num))
   if err > 0:
-    logger.error('{} payment bills not ok'.format(err))
+    logger.error('{} payment invoices not ok'.format(err))
   else:    
-    logger.info('{} payment bills not ok'.format(err))
+    logger.info('{} payment invoices ok'.format(err))
   return
 
 # ###################################################
@@ -310,7 +310,7 @@ def bill_month(dbClient, con):
           )
           rentid = cur.fetchone()[0]
 
-          # Monthñy rent
+          # Monthly rent
           dbClient.execute(con, 
             '''
             INSERT INTO "Billing"."Invoice_line"
@@ -345,7 +345,7 @@ def bill_month(dbClient, con):
                 )
               )
 
-          # Update bill
+          # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
           # Update price
@@ -413,7 +413,7 @@ def bill_month(dbClient, con):
                 )
               )
 
-          # Update bill
+          # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
           # Update price
@@ -431,11 +431,11 @@ def bill_month(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} rent bills generated'.format(num))
+  logger.info('{} rent invoices generated'.format(num))
   if err > 0:
-    logger.error('{} rent bills not ok'.format(err))
+    logger.error('{} rent invoices not ok'.format(err))
   else:
-    logger.info('{} rent bills not ok'.format(err))
+    logger.info('{} rent invoices ok'.format(err))
   return
 
 
@@ -635,7 +635,7 @@ def bill_group_month(dbClient, con):
                   )
                 )
 
-          # Update bill
+          # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
           # Update price
@@ -708,7 +708,7 @@ def bill_group_month(dbClient, con):
                   )
                 )
 
-          # Update bill
+          # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
           # Update price
@@ -726,11 +726,11 @@ def bill_group_month(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} rent group bills generated'.format(num))
+  logger.info('{} rent group invoices generated'.format(num))
   if err > 0: 
-    logger.error('{} rent group bills not ok'.format(err))
+    logger.error('{} rent group invoices not ok'.format(err))
   else: 
-    logger.info('{} rent group bills not ok'.format(err))
+    logger.info('{} rent group invoices ok'.format(err))
   return
 
 
@@ -799,7 +799,7 @@ def bill_services(dbClient, con):
         )
         paymentid = cur.fetchone()[0]
 
-        # Create bill
+        # Create invoice
         cur = dbClient.execute(con, 
           '''
           INSERT INTO "Billing"."Invoice"
@@ -840,7 +840,7 @@ def bill_services(dbClient, con):
           )
         )
 
-        # Update bill
+        # Update invoice
         dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
@@ -858,11 +858,11 @@ def bill_services(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} service bills generated'.format(num))
+  logger.info('{} service invoices generated'.format(num))
   if err > 0:
-    logger.error('{} service bills not ok'.format(err))
+    logger.error('{} service invoices not ok'.format(err))
   else:
-    logger.info('{} service bills not ok'.format(err))
+    logger.info('{} service invoices ok'.format(err))
   return
 
 
@@ -939,7 +939,7 @@ def bill_group_services(dbClient, con):
         )
         paymentid = cur.fetchone()[0]
 
-        # Create bill
+        # Create invoice
         cur = dbClient.execute(con, 
           '''
           INSERT INTO "Billing"."Invoice"
@@ -981,7 +981,7 @@ def bill_group_services(dbClient, con):
           )
         )
 
-        # Update bill
+        # Update invoice
         dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
         # Update service
@@ -999,11 +999,11 @@ def bill_group_services(dbClient, con):
       con.rollback()
 
   # End
-  logger.info('{} service group bills generated'.format(num))
+  logger.info('{} service group invoices generated'.format(num))
   if err > 0:
-    logger.error('{} service group bills not ok'.format(err))
+    logger.error('{} service group invoices not ok'.format(err))
   else:
-    logger.info('{} service group bills not ok'.format(err))
+    logger.info('{} service group invoices ok'.format(err))
   return
 
 
@@ -1059,7 +1059,7 @@ def pay_bills(dbClient, con):
       )
       payid = cur.fetchone()[0]
        
-      # Update bill
+      # Update invoice
       dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Payment_id" = %s WHERE id = %s', (payid, item['id']))
       con.commit()
       num += 1
@@ -1075,7 +1075,127 @@ def pay_bills(dbClient, con):
   if err > 0:
     logger.error('{} payments not ok'.format(err))
   else:
-    logger.info('{} payments not ok'.format(err))
+    logger.info('{} payments ok'.format(err))
+  return
+
+
+# ###################################################
+# Generate payments for new bills
+# ###################################################
+
+def bill_lau(dbClient, con):
+
+  # Get all prices not already billed
+  cur = dbClient.execute(con,
+    '''
+    SELECT 
+      bo.id, bo."Customer_id", bo."Resource_id",
+      bo."Rent", COALESCE(bo."Extras", 0) AS "Extras", bo."Extras_concept", bo."Payment_method_id", bo."LAU",
+      r."Code", r."Owner_id" 
+    FROM "Booking"."Booking_other" bo
+      INNER JOIN "Resource"."Resource" r ON r.id = bo."Resource_id" 
+      LEFT JOIN "Billing"."Invoice" i 
+        ON i."Booking_other_id" = bo.id 
+        AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE) 
+        AND i."Issued_date" < (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month')WHERE i.id IS NULL
+    ;
+    ''')
+  data = cur.fetchall()
+  cur.close()
+
+  # Loop thru contracts
+  num = 0
+  err = 0
+  for item in data:
+
+    # Debug
+    logger.debug(item)
+
+    # Capture exceptions
+    try:
+
+      # Create payment
+      cur = dbClient.execute(con,
+        '''
+        INSERT INTO "Billing"."Payment"
+        ("Payment_method_id", "Pos", "Customer_id", "Booking_other_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
+        ''',
+        (
+          item['Payment_method_id'],
+          'vandor',
+          item['Customer_id'],
+          item['id'],
+          item['Rent'] + item['Extras'],
+          datetime.now(),
+          'Renta mensual',
+          'servicios'
+        )
+      )
+      paymentid = cur.fetchone()[0]
+      
+      # Create invoice
+      cur = dbClient.execute(con, 
+        '''
+        INSERT INTO "Billing"."Invoice"
+        ("Bill_type", "Issued", "Rectified", "Issued_date", "Provider_id", "Customer_id", "Booking_other_id", "Payment_method_id", "Payment_id", "Concept", "Comments")
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id
+        ''',
+        (
+          'factura',
+          False,
+          False,
+          datetime.now(),
+          item['Owner_id'],
+          item['Customer_id'],
+          item['id'],
+          item['Payment_method_id'],
+          paymentid,
+          'Renta mensual',
+          None
+        )
+      )
+      billid = cur.fetchone()[0]
+
+      # Create invoice line
+      dbClient.execute(con, 
+        '''
+        INSERT INTO "Billing"."Invoice_line"
+        ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ''',
+        (
+          billid,
+          item['Resource_id'],
+          item['Rent'] + item['Extras'],
+          PR_RENT,
+          VAT_0 if item['LAU'] else VAT_21,
+          'Renta mensual',
+          None
+        )
+      )
+
+      # Update invoice
+      #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+
+      # Commit
+      con.commit()
+      num += 1
+
+    # Process exception
+    except Exception as error:
+      err += 1
+      logger.error(error)
+      con.rollback()
+
+  # End
+  logger.info('{} LAU invoices generated'.format(num))
+  if err > 0:
+    logger.error('{} LAU invoices not ok'.format(err))
+  else:
+    logger.info('{} LAU inloices ok'.format(err))
   return
 
 
@@ -1141,6 +1261,9 @@ def main():
 
   # 4. Generate payment for each manual bill
   pay_bills(dbClient, con)
+
+  # 5. Bill LAU/Others
+  #?bill_lau(dbClient, con)
 
   # Disconnect
   dbClient.putconn(con)
