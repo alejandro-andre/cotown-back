@@ -1114,6 +1114,18 @@ def bill_lau(dbClient, con):
     # Capture exceptions
     try:
 
+      # Get all non-invoiced extra concepts
+      cur = dbClient.execute(con,
+        '''
+        SELECT s.id, s."Concept", s."Amount"
+        FROM "Booking"."Booking_other_service" s
+        WHERE s."Booking_id" = %s
+          AND s."Billing_date" <= CURRENT_DATE
+          AND s."Invoice_id" IS NULL
+        ''', (item['Booking_id'], ))
+      extras = cur.fetchall()
+      cur.close()
+
       # Create payment
       cur = dbClient.execute(con,
         '''
@@ -1159,7 +1171,7 @@ def bill_lau(dbClient, con):
       )
       billid = cur.fetchone()[0]
 
-      # Create invoice line
+      # Create invoice lines
       dbClient.execute(con, 
         '''
         INSERT INTO "Billing"."Invoice_line"
@@ -1172,10 +1184,28 @@ def bill_lau(dbClient, con):
           item['Rent'] + item['Extras'],
           PR_RENT,
           VAT_0 if item['LAU'] else VAT_21,
-          'Renta mensual',
-          None
+            'Renta mensual',
+            None
+          )
         )
-      )
+      for extra in extras:
+        dbClient.execute(con, 
+          '''
+          INSERT INTO "Billing"."Invoice_line"
+          ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+          VALUES (%s, %s, %s, %s, %s, %s, %s)
+          ''',
+          (
+            billid,
+            item['Resource_id'],
+            extra['Amount'],
+            PR_RENT,
+            VAT_0 if item['LAU'] else VAT_21,
+            extra['Concept'],
+            None
+          )
+        )
+        dbClient.execute(con, 'UPDATE "Booking"."Booking_other_service" SET "Invoice_id" = %s WHERE id = %s', (billid ,extra['id']))
 
       # Update invoice
       #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
