@@ -1127,6 +1127,7 @@ def bill_lau(dbClient, con):
         ''', (item['Booking_id'], ))
       extras = cur.fetchall()
       cur.close()
+      total_extras = float(sum(r['Amount'] for r in extras) or 0.0)
 
       # Create payment
       cur = dbClient.execute(con,
@@ -1141,7 +1142,7 @@ def bill_lau(dbClient, con):
           'vandor',
           item['Customer_id'],
           item['id'],
-          item['Rent'] + item['Extras'],
+          item['Rent'] + item['Extras'] + total_extras,
           datetime.now(),
           'Renta mensual',
           'servicios'
