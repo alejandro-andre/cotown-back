@@ -137,6 +137,7 @@ def runapp():
   def internal_error(error):
       return "Lo sentimos, ha ocurrido un error interno.", 500 
  
+ 
   # -------------------------------------------------
   # Before each request
   # -------------------------------------------------
