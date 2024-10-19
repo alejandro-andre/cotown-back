@@ -375,6 +375,8 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     data['Booking_fee'] = float(data['Booking_fee'])
     data['Deposit'] = float(data['Deposit'])
     data['Rent'] = float(data['Rent'])
+    data['Rent_first'] = float(data['Rent_first'])
+    data['Rent_last'] = float(data['Rent_last'])
     data['Services'] = float(data['Services'])
     data['Final_cleaning'] = float(data['Final_cleaning'])
     dbClient.putconn(con)
