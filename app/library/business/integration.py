@@ -19,7 +19,7 @@ logger = logging.getLogger('COTOWN')
 # Client query
 # ------------------------------------------------------
 
-def q_int_customers(dbClient, date):
+def q_int_customers(dbClient, date, codes):
 
   sql = f'''
     SELECT DISTINCT * FROM (
@@ -108,6 +108,8 @@ def q_int_customers(dbClient, date):
           b."Created_at" >= '{date}' OR 
           b."Updated_at" >= '{date}'
         )
+        AND r."Owner" >= {codes[0]}
+        AND r."Owner" <= {codes[1]}
     ) AS customers
     ORDER BY 1
   '''
@@ -129,7 +131,7 @@ def q_int_customers(dbClient, date):
 # Invoices query
 # ------------------------------------------------------
 
-def q_int_invoices(dbClient, date):
+def q_int_invoices(dbClient, date, codes):
 
   sql = f'''
     SELECT
@@ -169,6 +171,8 @@ def q_int_invoices(dbClient, date):
     WHERE i."Issued"
       AND p."SAP_code" IS NOT NULL
       AND i."Issued_date" >= '{date}'
+      AND p.id >= {codes[0]}
+      AND p.id <= {codes[1]}
     ORDER BY 2, 3
   '''
   try:
@@ -211,7 +215,7 @@ def q_int_invoices(dbClient, date):
 # Management fees query
 # ------------------------------------------------------
 
-def q_int_management_fees(dbClient, fdesde):
+def q_int_management_fees(dbClient, fdesde, codes):
 
   # Next month
   fhasta = datetime.strftime(datetime.strptime(fdesde, '%Y-%m-%d') + relativedelta(months=1), '%Y-%m-%d')
@@ -255,6 +259,8 @@ def q_int_management_fees(dbClient, fdesde):
         LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id"  
       WHERE i."Issued" AND p.id <> 1 AND i."Booking_id" IS NULL 
         AND i."Issued_date" >= '{fdesde}' AND i."Issued_date" < '{fhasta}'
+        AND p.id >= {codes[0]}
+        AND p.id <= {codes[1]}
     ) AS "data"
     GROUP BY 1, 2, 3
   '''

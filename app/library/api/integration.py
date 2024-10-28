@@ -150,9 +150,11 @@ def req_pub_int_customers():
 
   # Get API key
   key = request.headers.get('Api-Key', None)
-  if key != settings.SAP_API_KEY:
+  client_data = settings.get(key)
+  if not client_data:
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
+  print(client_data)
 
   # Validate date
   date = '2023-01-01'
@@ -165,7 +167,7 @@ def req_pub_int_customers():
       abort(400, 'Invalid date')
 
   # Customers
-  customers = q_int_customers(g.dbClient, date + ' 00:00:00')
+  customers = q_int_customers(g.dbClient, date + ' 00:00:00', client_data.split(':'))
 
   # IBAN bank code
   for c in customers:
@@ -290,7 +292,8 @@ def req_pub_int_invoices():
 
   # Get API key
   key = request.headers.get('Api-Key', None)
-  if key != settings.SAP_API_KEY:
+  client_data = settings.get(key)
+  if not client_data:
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
 
@@ -305,7 +308,7 @@ def req_pub_int_invoices():
       abort(400, 'Invalid date')
 
   # Return
-  return q_int_invoices(g.dbClient, date + ' 00:00:00')
+  return q_int_invoices(g.dbClient, date + ' 00:00:00', client_data.split(':'))
 
 
 # ---------------------------------------------------
@@ -372,9 +375,11 @@ def req_pub_int_management_fees():
 
   # Get API key
   key = request.headers.get('Api-Key', None)
-  if key != settings.SAP_API_KEY:
+  client_data = settings.get(key)
+  if not client_data:
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
+  print(client_data)
 
   # Validate date
   d = request.args.get('month')
@@ -388,4 +393,4 @@ def req_pub_int_management_fees():
     abort(400, 'Invalid month')
 
   # Fees
-  return q_int_management_fees(g.dbClient, date)
+  return q_int_management_fees(g.dbClient, date, client_data.split(':'))
