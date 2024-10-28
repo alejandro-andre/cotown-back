@@ -59,11 +59,14 @@ def q_int_customers(dbClient, date, codes):
         LEFT JOIN "Geo"."Country" na ON na.id = c."Nationality_id" 
         LEFT JOIN "Geo"."Country" cc ON cc.id = c."Bank_country_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = br."Resource_id" 
-      WHERE 
+      WHERE r."Owner_id" >= {codes[0]}
+        AND r."Owner_id" <= {codes[1]}
+        AND (
           c."Created_at" >= '{date}' OR 
           c."Updated_at" >= '{date}' OR
           b."Created_at" >= '{date}' OR 
           b."Updated_at" >= '{date}'
+          )
       UNION ALL
       SELECT
         c.id,
@@ -101,15 +104,15 @@ def q_int_customers(dbClient, date, codes):
         LEFT JOIN "Geo"."Country" cc ON cc.id = c."Bank_country_id" 
         LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
       WHERE 
-        b."Status" NOT IN ('solicitud', 'alternativas', 'finalizada', 'descartada', 'cancelada', 'caducada')  AND
-        (
+        b."Status" NOT IN ('solicitud', 'alternativas', 'finalizada', 'descartada', 'cancelada', 'caducada')
+        AND r."Owner_id" >= {codes[0]}
+        AND r."Owner_id" <= {codes[1]}
+        AND (
           c."Created_at" >= '{date}' OR 
           c."Updated_at" >= '{date}' OR
           b."Created_at" >= '{date}' OR 
           b."Updated_at" >= '{date}'
         )
-        AND r."Owner" >= {codes[0]}
-        AND r."Owner" <= {codes[1]}
     ) AS customers
     ORDER BY 1
   '''
