@@ -7,6 +7,11 @@ DECLARE
 
 BEGIN
 
+  -- Valida el email
+  IF EXISTS (SELECT 1 FROM "Customer"."Customer" WHERE lower("Email") = lower(NEW."Email") AND id <> NEW.id) THEN
+    RAISE EXCEPTION '!!!Email already exists!!!Ya existe ese email!!!';
+  END IF;
+
   -- Quita espacios y caracteres especiales
   NEW."IBAN" = UPPER(TRIM(REGEXP_REPLACE(NEW."IBAN", '[^a-zA-Z0-9]', '', 'g')));
   NEW."Bank_account" = UPPER(TRIM(REGEXP_REPLACE(NEW."Bank_account", '[^a-zA-Z0-9]', '', 'g')));
