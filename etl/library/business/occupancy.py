@@ -168,8 +168,8 @@ def occupancy(dbClient):
     b."Date_from", 
     b."Date_to",
     CASE
-      WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'tentative'
-      ELSE 'real'
+      WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'Tentative'
+      ELSE 'Real'
     END AS "data_type"
   FROM "Booking"."Booking_detail" b
   INNER JOIN (
@@ -213,18 +213,18 @@ def occupancy(dbClient):
   logger.info('- Available nights calculated')
 
   # Ocuppied nights
-  df_cross['occupied'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'real'), axis=1)
-  df_cross['occupied_t'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'tentative'), axis=1)
+  df_cross['occupied'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'Real'), axis=1)
+  df_cross['occupied_t'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'Tentative'), axis=1)
   logger.info('- Occupied nights calculated')
 
   # Sold nights
-  df_cross['sold'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'real'), axis=1)
-  df_cross['sold_t'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'tentative'), axis=1)
+  df_cross['sold'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'Real'), axis=1)
+  df_cross['sold_t'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'Tentative'), axis=1)
   logger.info('- Sold nights calculated')
 
   # To CSV
   df_cross['id'] = range(1, 1 + len(df_cross))
-  df_cross['data_type'] = 'real'
+  df_cross['data_type'] = 'Real'
   df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'available', 'occupied', 'sold', 'occupied_t', 'sold_t'])
 
   # Log
