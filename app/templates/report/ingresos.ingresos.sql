@@ -1,5 +1,5 @@
 (
--- Rentas B2C facturadas
+-- Facturas B2C
 SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
   i."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   il."Amount" AS "Amount",
@@ -24,12 +24,12 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
   LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id"  
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_group_id" IS NULL 
+WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
 
--- Rentas B2B facturadas
+-- Facturas B2B
 SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
   i."Booking_group_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   il."Amount" AS "Amount",
@@ -54,7 +54,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   LEFT JOIN "Resource"."Resource" r ON r.id = il."Resource_id"
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND pd."Product_type_id" <> 2  AND i."Booking_group_id" IS NOT NULL 
+WHERE i."Issued" AND i."Bill_type" <> 'recibo' AND i."Booking_group_id" IS NOT NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
