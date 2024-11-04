@@ -1,4 +1,8 @@
 -- Actualizacion planificada de status
+DECLARE
+
+  rec RECORD;
+
 BEGIN
 
   RESET ROLE;
@@ -44,13 +48,20 @@ BEGIN
 
   -- Actualiza el estado a 'check_in' de todas las reservas que tienen que entrar en el dia en curso
   BEGIN
-    UPDATE "Booking"."Booking"
-    SET "Status"='checkin'
-    WHERE CURRENT_DATE >= COALESCE("Booking"."Check_in", "Booking"."Date_from")
-    AND ("Booking"."Status"='checkinconfirmado' OR "Booking"."Status"='contrato');
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error en check-in: % %', SQLSTATE, SQLERRM;
-  END; 
+    FOR rec IN
+      SELECT * FROM "Booking"."Booking"
+      WHERE CURRENT_DATE >= COALESCE("Check_in", "Date_from")
+      AND ("Status" = 'checkinconfirmado' OR "Status" = 'contrato')
+    LOOP
+      BEGIN
+        UPDATE "Booking"."Booking"
+        SET "Status" = 'checkin'
+        WHERE "ID" = rec.ID;
+      EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE 'Error en check-in %: % %', rec.ID, SQLSTATE, SQLERRM;
+      END;
+    END LOOP;
+  END;  
 
   -- Actualiza el estado a 'check_out' de todas las reservas que tienen que salir en el dia en curso
   BEGIN
