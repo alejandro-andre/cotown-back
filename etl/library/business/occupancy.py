@@ -47,19 +47,16 @@ def occupancy(dbClient):
     # All flat non availability rows
     rows = df_avail[df_avail['Resource_id'] == resource]
 
-    # Check if the date is in between any range
+    # Not available
     for _, row in rows.iterrows():
-
-      # Not available
       if row['Date_from'] <= date <= row['Date_to']:
         return [0.0, 0.0]
       
-      # Consolidated date
-      c_date = date
-      if date.month >= 11: c_date = date.replace(month=10)
-      elif date.month >= 3: c_date = date.replace(month=2)
-
-      # Count half bed
+    # Consolidated date
+    c_date = date
+    if date.month >= 11: c_date = date.replace(month=10)
+    elif date.month >= 3: c_date = date.replace(month=2)
+    for _, row in rows.iterrows():
       if row['Date_from'] <= c_date <= row['Date_to']:
         return [1.0, 0.5]
       
