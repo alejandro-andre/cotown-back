@@ -85,7 +85,8 @@ def sql_dashboard(status, vars):
       b."Eco_ext_change_ok",
       b."Eco_ext_keyless_ok",
       b."Cha_ext",
-      ct."Name" AS "Option",
+      ct."Name" AS "Option_in",
+      cto."Name" AS "Option_out",
       CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
       r."Code" as "Resource",
       c."Name",
@@ -100,7 +101,8 @@ def sql_dashboard(status, vars):
       LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
       LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
       LEFT JOIN "Billing"."Payment" p ON p."Booking_id" = b.id AND p."Payment_type" = 'checkin' AND p."Amount" > 0
-      LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id" '''
+      LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
+      LEFT JOIN "Booking"."Checkin_type" cto ON cto.id = b."Check_out_option_id" '''
 
   # All confirmed
   if status == 'ok':

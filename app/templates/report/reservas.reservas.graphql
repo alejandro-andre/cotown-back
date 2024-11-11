@@ -48,7 +48,11 @@ query Bookings ($fdesde: String, $fhasta:String) {
         Lock
         Arrival
         Flight
+        Flight_out
         Checkin_option: Checkin_typeViaCheck_in_option_id {
+            Name
+        }
+        Checkout_option: Checkout_typeViaCheck_out_option_id {
             Name
         }
         Building: BuildingViaBuilding_id {
