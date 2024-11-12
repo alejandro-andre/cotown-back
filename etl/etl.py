@@ -11,6 +11,7 @@
 # System imports
 import os
 import argparse
+from datetime import datetime, timedelta
 
 # Cotown includes
 from library.services.dbclient import DBClient
@@ -133,11 +134,19 @@ def main(interfaces):
       execute(dbDestination, '_clear_gl')
 
       # Convert historic data
-      glExcel('CTS00-2023-00', 2023)
-      glExcel('CTS00-2024-00', 2024)
+      #glExcel('CTS00-2023-00', 2023)
+      #glExcel('CTS00-2024-00', 2024)
       
-      # Extract current period
-      glSAP('2000-01-01','ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
+      # Extract current periods
+      periods = []
+      today = datetime.today()
+      if today.day < 15:
+        periods.append((today.replace(day=1) - timedelta(days=1)).strftime("%Y-%m-01"))
+      periods.append(today.strftime("%Y-%m-01"))
+
+      # Get periods data
+      for period in periods:
+        glSAP(period,'ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
 
       # Load CSV files
       for file in os.listdir('csv'):

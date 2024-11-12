@@ -90,16 +90,18 @@ def glExcel(file, year):
 
 def glSAP(date, bks, company, file):
 
+  year = date[0:4]
+  month = date[5:7]
   params = {
       '$select': 'CFISCYEAR,CFISCPER,CGLACCT,TGLACCT,TPRODUCT_UUID,TPRODUCT_TYPE,CACC_DOC_UUID,CACC_DOC_IT_UUID,CDOC_DATE,CPOSTING_DATE,CCREATION_DATE,CNOTE_HD,CNOTE_IT,CPROFITCTR_UUID,TPROFITCTR_UUID,CBUS_PART_UUID,TBUS_PART_UUID,CCOST_CTR_UUID,TCOST_CTR_UUID,COEDPARTNER,COEDREF_F_ID,COFF_GLACCT,TOFF_GLACCT,CFIX_ASSET_UUID,TFIX_ASSET_UUID,KCDEBIT_CURRCOMP,KCCREDIT_CURRCOMP,KCBALANCE_CURRCOMP',
-      '$filter': '(PARA_SETOFBKS eq \'' + bks + '\' and PARA_COMPANY eq \'' + company + '\' and CCREATION_DATE ge datetime\'' + date + 'T00:00:00\')',
+      '$filter': '(PARA_SETOFBKS eq \'' + bks + '\' and PARA_COMPANY eq \'' + company + '\' and CFISCPER eq ' + month + ' and CFISCYEAR eq ' + year + ')',
       '$orderby': 'CACC_DOC_UUID,CACC_DOC_IT_UUID',
       '$format': 'json',
       '$top': 999999
   }
 
   # Request
-  logger.info('Retrieving data from SAP...')
+  logger.info('Retrieving data from SAP (' + date + ')...')
   response = requests.get(settings.SAPURL_GL, params=params, auth=HTTPBasicAuth(settings.SAPUSER, settings.SAPPASS))
   if response.status_code != 200:
       logger.error(response.status_code)
@@ -139,6 +141,4 @@ def glSAP(date, bks, company, file):
   df['kcdebit_currcomp'] = df['kcdebit_currcomp'].astype(float)
 
   # Save CSV
-  year = results[0]['CFISCYEAR']
-  period = results[0]['CFISCPER']
-  df.to_csv('csv/' + company + '-' + str(year) + '-' + str(period).zfill(2) + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)
+  df.to_csv('csv/' + company + '-' + str(year) + '-' + str(month).zfill(2) + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)
