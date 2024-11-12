@@ -376,7 +376,7 @@ def req_pub_int_management_fees():
   # Get API key
   key = request.headers.get('Api-Key', None)
   client_data = settings.get(key)
-  if not client_data:
+  if client_data != '0:9999':
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
   print(client_data)
