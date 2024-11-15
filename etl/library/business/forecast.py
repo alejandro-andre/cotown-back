@@ -45,24 +45,24 @@ def forecast(apiClient):
         days = calendar.monthrange(int(month[:4]), int(month[5:7]))[1]
 
         # Data
+        mgmt_fee  = row[ 2].value or 0 
         beds      = row[ 3].value or 0 
         beds_c    = row[ 4].value or 0 
         beds_ad   = row[ 5].value or 0 
-        beds_uw   = row[ 7].value or 0
-        sold      = row[ 9].value or 0
-        rent_l    = row[23].value or 0
-        rent_m    = row[24].value or 0
-        rent_s    = row[25].value or 0
-        rent_g    = row[26].value or 0
-        srvs      = row[28].value or 0
+        sold      = row[ 8].value or 0
+        rent_l    = row[22].value or 0
+        rent_m    = row[23].value or 0
+        rent_s    = row[24].value or 0
+        rent_g    = row[25].value or 0
+        rent_tot  = row[26].value or 0
+        srvs      = int(row[27].value or 0) + int(row[28].value or 0)
         bfee      = row[29].value or 0
         occ_stab  = row[37].value or 0
-        occ_uw    = row[41].value or 0
         rent_l_ad = rent_l * beds_ad / beds_c if beds_c else 0
         rent_m_ad = rent_m * beds_ad / beds_c if beds_c else 0
         rent_s_ad = rent_s * beds_ad / beds_c if beds_c else 0
         rent_g_ad = rent_g * beds_ad / beds_c if beds_c else 0
-        mfee      = round((float(row[27].value or 0) + float(row[28].value or 0) / 1.21) * float(row[2].value or 0), 2)
+        mfee      = round((float(rent_tot) + float(srvs) / 1.21) * float(mgmt_fee), 2)
 
         # Forecast
         line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '' ]
@@ -91,21 +91,14 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
-        rent = row[39].value or 0
+        rent = row[38].value or 0
         line = ['SIX' + str(c), '-', '-', '(stabilised)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'Stabilised', '', '' ]
-        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-
-        # UW
-        rent = row[42].value or 0
-        line = ['UIX' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'B2X', 'UW', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
         line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
-        occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['UOC' + str(c), 'UW', row[1].value, month, beds_uw, beds_c, days * beds_uw, days * beds_uw * occ_uw,  days * beds_uw * occ_uw, 0, 0]
         occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
