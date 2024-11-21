@@ -164,6 +164,7 @@ def occupancy(dbClient):
     r."Code" AS "resource", 
     b."Date_from", 
     b."Date_to",
+    b."Billing_type",
     CASE
       WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'Tentative'
       ELSE 'Real'

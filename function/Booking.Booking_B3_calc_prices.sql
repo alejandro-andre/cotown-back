@@ -38,6 +38,11 @@ BEGIN
   -- Date to
   dt_to = NEW."Date_to";
 
+  -- Status
+  IF NEW."Status" IN ('descartada','descartadapagada','cancelada','caducada','finalizada') THEN
+    RETURN NEW;
+  END IF;
+
   -- No resource, ignore
   IF NEW."Resource_id" IS NULL THEN
     NEW."Deposit"        := NULL;

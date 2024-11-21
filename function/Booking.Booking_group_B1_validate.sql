@@ -5,6 +5,7 @@ DECLARE
   months INTEGER;
   years INTEGER;
   duration INTERVAL;
+  billing_type VARCHAR;
 
 BEGIN
 
@@ -27,6 +28,15 @@ BEGIN
   -- Request date
   IF NEW."Request_date" IS NULL THEN
     NEW."Request_date" := NOW();
+  END IF;
+
+  -- Billing type
+  IF NEW."Building_id" IS NOT NULL AND NEW."Billing_type" IS NULL THEN
+    SELECT "Billing_type" INTO billing_type 
+    FROM "Resource"."Resource" 
+    WHERE "Building_id" = NEW."Building_id" AND "Billing_type" <> 'na' 
+    ORDER BY id LIMIT 1;
+    NEW."Billing_type" = billing_type;
   END IF;
 
   -- Return record
