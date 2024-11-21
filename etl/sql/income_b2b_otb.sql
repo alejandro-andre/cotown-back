@@ -18,11 +18,11 @@ SELECT
   'GROUP' AS "stay_length",
   'Monthly rent' AS "product",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
+  	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
   	ELSE bp."Rent"
   END AS "amount",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Rent") / 1.1
+  	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
   	ELSE bp."Rent"
   END AS "rate",
   'B2B' AS "income_type",
@@ -64,11 +64,11 @@ SELECT
     ELSE 'Monthly services'
   END "product",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Services") / 1.1
+  	WHEN bu."Building_type_id" = 3 THEN bp."Services" / 1.1
   	ELSE bp."Services"
   END AS "amount",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN (b."Rooms" * bp."Services") / 1.1
+  	WHEN bu."Building_type_id" = 3 THEN bp."Services" / 1.1
   	ELSE bp."Services"
   END AS "rate",
   'B2B' AS "income_type",
