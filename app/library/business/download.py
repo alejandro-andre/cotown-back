@@ -155,7 +155,7 @@ def download_contracts(apiClient, variables=None):
 
     # Rent contract
     if item['resource'] and item['Contract_rent']:
-      name = 'Renta ' + str(item['resource']['building']['Name']) + ' ' + str(item['resource']['Code'][7:])
+      name = 'Renta (' + str(item['id']) + ') ' + str(item['resource']['building']['Name']) + ' ' + str(item['resource']['Code'][7:])
       file = apiClient.getFile(item['id'], 'Booking/Booking', 'Contract_rent')
       with open('download/' + name + '.pdf', 'wb') as pdf:
         logger.info(name)

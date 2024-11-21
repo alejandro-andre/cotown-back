@@ -49,6 +49,7 @@ def forecast(apiClient):
         beds      = row[ 3].value or 0 
         beds_c    = row[ 4].value or 0 
         beds_ad   = row[ 5].value or 0 
+        beds_st   = row[ 6].value or 0 
         sold      = row[ 8].value or 0
         rent_l    = row[22].value or 0
         rent_m    = row[23].value or 0
