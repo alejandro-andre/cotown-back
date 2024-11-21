@@ -13,8 +13,6 @@ DECLARE
   dt_next DATE;
   dt_intr INTERVAL;
 
-  billing_type VARCHAR;
-
   rent NUMERIC;
   services NUMERIC;
   deposit NUMERIC;
@@ -113,7 +111,6 @@ BEGIN
     ),
     "Prices" AS (
       SELECT r.id,
-        r."Billing_type",
         CASE
           WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
           WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
@@ -134,14 +131,13 @@ BEGIN
         AND r.id = NEW."Resource_id"
     )
   SELECT 
-    p."Billing_type",
     ROUND(p."Rent" * e."Extra") AS "Rent",
     p."Services",
     p."Deposit",
     p."Final_cleaning",
     p."Second_resident",
     p."Limit"
-  INTO billing_type, rent, services, deposit, final_cleaning, second_resident, climit
+  INTO rent, services, deposit, final_cleaning, second_resident, climit
   FROM "Prices" p
   LEFT JOIN "Extras" e ON p.id = e.id;
   
@@ -227,14 +223,14 @@ BEGIN
     dt_intr := AGE(dt_next, dt_curr);
     IF dt_intr < INTERVAL '1 month' THEN
      
-      IF billing_type = 'quincena' THEN
+      IF NEW."Billing_type" = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
           curr_rent := ROUND(monthly_rent / 2, 1);
           curr_services := ROUND(monthly_services / 2, 1);
         END IF;
       END IF;
    
-      IF billing_type = 'proporcional' THEN
+      IF NEW."Billing_type" = 'proporcional' THEN
         dias := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
         curr_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / dias, 1);
         curr_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / dias, 1);

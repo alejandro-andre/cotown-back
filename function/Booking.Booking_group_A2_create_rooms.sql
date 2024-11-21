@@ -66,11 +66,12 @@ BEGIN
       WHILE (FOUND) LOOP
         INSERT INTO "Booking"."Booking_detail" (
           "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
-          "Status", "Date_from", "Date_to", "Lock", "Booked_resource_id"
+          "Status", "Date_from", "Date_to", "Lock", "Booked_resource_id", "Billing_type"
         )
         VALUES (
           NULL, NULL, NEW.id, NULL, re.id, re."Building_id",
-          NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN re.id = room_id THEN FALSE ELSE TRUE END), room_id
+          NEW."Status", NEW."Date_from", NEW."Date_to", (CASE WHEN re.id = room_id THEN FALSE ELSE TRUE END), room_id,
+          NEW."Billing_type"
         );
         FETCH res INTO re;
       END LOOP;

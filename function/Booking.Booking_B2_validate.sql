@@ -11,6 +11,7 @@ DECLARE
   reg RECORD;
   num INTEGER;
   curr_user VARCHAR;
+  billing_type VARCHAR;
 
 BEGIN
 
@@ -129,6 +130,12 @@ BEGIN
     )
   ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
  
+  -- Billing type
+  IF NEW."Resource_id" IS NOT NULL AND NEW."Billing_type" IS NULL THEN
+    SELECT "Billing_type" INTO billing_type FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
+    NEW."Billing_type" = billing_type;
+  END IF;
+
   -- Return record
   EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
