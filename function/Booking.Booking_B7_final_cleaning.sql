@@ -21,8 +21,8 @@ BEGIN
       SELECT "Payment_method_id" into payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
       IF NOT EXISTS (SELECT id FROM "Booking"."Booking_service" WHERE "Booking_id" = NEW.id AND "Product_id" = product_id) THEN
         INSERT INTO "Booking"."Booking_service" 
-        ("Booking_id", "Billing_date_from", "Product_id", "Provider_id", "Concept", "Amount", "Tax_id", "Payment_method_id")
-        VALUES (NEW.id, NEW."Date_from", product_id, 1, 'Limpieza final', NEW."Final_cleaning", tax_id, payment_method_id);
+        ("Booking_id", "Extra_type", "Billing_date_from", "Product_id", "Provider_id", "Concept", "Amount", "Tax_id", "Payment_method_id")
+        VALUES (NEW.id, 'puntual', NEW."Date_from", product_id, 1, 'Limpieza final', NEW."Final_cleaning", tax_id, payment_method_id);
       END IF;
 
       -- Fin

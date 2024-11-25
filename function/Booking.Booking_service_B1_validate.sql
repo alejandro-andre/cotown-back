@@ -22,8 +22,34 @@ BEGIN
     END IF;
   END IF; 
 
+  -- Next month
+  IF NEW."Extra_type" = 'asap' THEN
+    NEW."Billing_date_from" := NULL;
+    NEW."Billing_date_to" := NULL;
+  END IF;
+
+  -- Fixed date
+  IF NEW."Extra_type" = 'puntual' THEN
+    IF NEW."Billing_date_from" IS NULL THEN
+      RAISE exception '!!!Billing date is missing!!!Falta la fecha de facturación!!!';
+    END IF;
+    NEW."Billing_date_to" := NULL;
+  END IF;
+
+  -- Recurrent
+  IF NEW."Extra_type" = 'recurrente' THEN
+    IF NEW."Billing_date_from" IS NULL THEN
+      RAISE exception '!!!Billing start date is missing!!!Falta la fecha de inicio facturación!!!';
+    END IF;
+    IF NEW."Billing_date_to" IS NULL THEN
+      RAISE exception '!!!Billing end date is missing!!!Falta la fecha de fin facturación!!!';
+    END IF;
+  END IF;
+
   -- Provider: Cotown
-  NEW."Provider_id" := 1;
+  IF NEW."Provider_id" IS NULL THEN
+    NEW."Provider_id" := 1;
+  END IF;
 
   -- Tax
   IF NEW."Tax_id" IS NULL THEN
