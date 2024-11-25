@@ -41,12 +41,11 @@ BEGIN
     -- Inserta los bloqueos de la no disponibilidad
     INSERT INTO "Booking"."Booking_detail" (
       "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
-      "Status", "Date_from", "Date_to", "Lock", "Billing_type"
+      "Status", "Date_from", "Date_to", "Lock"
     )
     VALUES (
       NEW.id, NULL, NULL, NULL, reg.id, reg."Building_id",
-      status, NEW."Date_from", NEW."Date_to", TRUE,
-      NEW."Billing_type"
+      status, NEW."Date_from", NEW."Date_to", TRUE
     );
 
      FETCH cur INTO reg;
