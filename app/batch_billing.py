@@ -209,22 +209,22 @@ def bill_month(dbClient, con):
   err = 0
   for item in data:
 
-    # Debug
-    logger.debug(item)
-
     # Capture exceptions
     try:
 
-      # Get all recurrent extra rent
+      # Get all asap and recurrent extra rent
       cur = dbClient.execute(con,
         '''
-        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
+        SELECT s.id, s."Concept", s."Amount", s."Tax_id", s."Product_id", s."Provider_id", s."Extra_type", p."Product_type_id"
         FROM "Booking"."Booking_service" s
           INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
         WHERE s."Booking_id" = %s
-          AND s."Billing_date_to" >= CURRENT_DATE
-          AND s."Billing_date_from" <= CURRENT_DATE 
           AND p."Product_type_id" = 3
+          AND (
+            (s."Extra_type" = 'asap' AND s."Invoice_services_id" IS NULL)
+            OR 
+            (s."Billing_date_to" >= CURRENT_DATE AND s."Billing_date_from" <= CURRENT_DATE)
+          )
         ''', (item['Booking_id'], ))
       extra_rent = cur.fetchall()
       cur.close()
@@ -233,13 +233,16 @@ def bill_month(dbClient, con):
       # Get all recurrent extra services
       cur = dbClient.execute(con,
         '''
-        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
+        SELECT s.id, s."Concept", s."Amount", s."Tax_id", s."Product_id", s."Provider_id", s."Extra_type", p."Product_type_id"
         FROM "Booking"."Booking_service" s
           INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
         WHERE s."Booking_id" = %s
-          AND s."Billing_date_to" >= CURRENT_DATE
-          AND s."Billing_date_from" <= CURRENT_DATE 
           AND p."Product_type_id" <> 3
+          AND (
+            (s."Extra_type" = 'asap' AND s."Invoice_services_id" IS NULL)
+            OR 
+            (s."Billing_date_to" >= CURRENT_DATE AND s."Billing_date_from" <= CURRENT_DATE)
+          )
         ''', (item['Booking_id'], ))
       extra_services = cur.fetchall()
       cur.close()
@@ -248,6 +251,8 @@ def bill_month(dbClient, con):
       # Amounts
       total_rent = float(item['Rent'] or 0.0) + float(item['Rent_discount'] or 0.0)
       total_services = float(item['Services'] or 0.0) + float(item['Services_discount'] or 0.0)
+      if total_rent + total_services != 0:
+        logger.debug(item)
 
       # Same issuer
       product = PRODUCTS[PR_RENT]
@@ -257,7 +262,7 @@ def bill_month(dbClient, con):
         extra_rent = extra_rent + extra_services
         total_services = 0
         total_extra_services = 0
-        extra_services = 0
+        extra_services = []
       if total_services > 0:
         if item['Pos'] != item['Service_pos']:
           item['Pos'] = 'default'
@@ -348,6 +353,10 @@ def bill_month(dbClient, con):
           # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
+          # Update extra rent
+          for e in extra_rent:
+            dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_services_id" = %s WHERE id = %s', (rentid, e['id']))
+
           # Update price
           dbClient.execute(con, 'UPDATE "Booking"."Booking_price" SET "Invoice_rent_id" = %s WHERE id = %s', (rentid, item['id']))
           q = 1
@@ -416,6 +425,10 @@ def bill_month(dbClient, con):
           # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
 
+          # Update extra services
+          for e in extra_services:
+            dbClient.execute(con, 'UPDATE "Booking"."Booking_service" SET "Invoice_services_id" = %s WHERE id = %s', (servid, e['id']))
+
           # Update price
           dbClient.execute(con, 'UPDATE "Booking"."Booking_price" SET "Invoice_services_id" = %s WHERE id = %s', (servid, item['id']))
           q = 2
@@ -478,9 +491,6 @@ def bill_group_month(dbClient, con):
   err = 0
   for item in data:
 
-    # Debug
-    logger.debug(item)
-
     # Capture exceptions
     try:
 
@@ -501,7 +511,7 @@ def bill_group_month(dbClient, con):
       # Get all recurrent extra rent
       cur = dbClient.execute(con,
         '''
-        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
+        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", s."Provider_id", p."Product_type_id"
         FROM "Booking"."Booking_group_service" s
           INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
         WHERE s."Booking_id" = %s
@@ -516,8 +526,9 @@ def bill_group_month(dbClient, con):
       # Get all recurrent extra services
       cur = dbClient.execute(con,
         '''
-        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id"
+        SELECT s."Concept", s."Amount", s."Tax_id", s."Product_id", s."Provider_id", p."Product_type_id"
         FROM "Booking"."Booking_group_service" s
+          INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
         WHERE s."Booking_id" = %s
           AND s."Billing_date_to" >= CURRENT_DATE
           AND s."Billing_date_from" <= CURRENT_DATE 
@@ -529,6 +540,8 @@ def bill_group_month(dbClient, con):
       # Amounts
       total_rent = float(item['Rent'] or 0.0) * float(item['num'] or 0.0)
       total_services = float(item['Services'] or 0.0) * float(item['num'] or 0.0)
+      if total_rent + total_services != 0:
+        logger.debug(item)
 
       # Same issuer
       product = PRODUCTS[PR_RENT]
@@ -745,7 +758,7 @@ def bill_services(dbClient, con):
     '''
     SELECT
       s.id, b.id as "Booking_id", b."Customer_id",
-      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", s."Payment_method_id", 
+      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", s."Payment_method_id", s."Provider_id",
       p."Product_type_id",
       r."Code", r."Owner_id", r."Service_id",
       pr."Pos", sv."Pos" as "Service_pos"
@@ -759,6 +772,7 @@ def bill_services(dbClient, con):
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato', 'checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
       AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
+      AND s."Extra_type" = 'puntual'
       AND s."Billing_date_to" IS NULL
       AND s."Billing_date_from" <= CURRENT_DATE 
     ''')
@@ -812,7 +826,7 @@ def bill_services(dbClient, con):
             False,
             False,
             datetime.now(),
-            item['Service_id'],
+            item['Provider_id'],
             item['Customer_id'],
             item['Booking_id'],
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
@@ -877,7 +891,8 @@ def bill_group_services(dbClient, con):
     '''
     SELECT
       s.id, b.id as "Booking_id", b."Payer_id", b."Room_ids",
-      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", p."Product_type_id"
+      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",  s."Provider_id",
+      p."Product_type_id"
     FROM "Booking"."Booking_group" b
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
@@ -952,7 +967,7 @@ def bill_group_services(dbClient, con):
             False,
             False,
             datetime.now(),
-            1,
+            item['Provider_id'],
             item['Payer_id'],
             item['Booking_id'],
             PM_TRANSFER,
