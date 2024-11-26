@@ -29,7 +29,7 @@ class DBClient:
 
     self.tunnel = None
     self.pool = None
-    self.autocommit = True
+    self.autocommit = False
 
     
   # Is closed?

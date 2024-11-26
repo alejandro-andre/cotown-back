@@ -1139,7 +1139,7 @@ def bill_lau(dbClient, con):
         WHERE s."Booking_id" = %s
           AND s."Billing_date" <= CURRENT_DATE
           AND s."Invoice_id" IS NULL
-        ''', (item['Booking_id'], ))
+        ''', (item['id'], ))
       extras = cur.fetchall()
       cur.close()
       total_extras = float(sum(r['Amount'] for r in extras) or 0.0)
@@ -1157,7 +1157,7 @@ def bill_lau(dbClient, con):
           'vandor',
           item['Customer_id'],
           item['id'],
-          item['Rent'] + item['Extras'] + total_extras,
+          float(item['Rent']) + float(item['Extras']) + total_extras,
           datetime.now(),
           'Renta mensual',
           'servicios'
@@ -1311,7 +1311,7 @@ def main():
   pay_bills(dbClient, con)
 
   # 5. Bill LAU/Others
-  bill_lau(dbClient, con)
+  #?bill_lau(dbClient, con)
 
   # Disconnect
   dbClient.putconn(con)
