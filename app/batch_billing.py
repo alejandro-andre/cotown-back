@@ -1311,7 +1311,7 @@ def main():
   pay_bills(dbClient, con)
 
   # 5. Bill LAU/Others
-  #?bill_lau(dbClient, con)
+  bill_lau(dbClient, con)
 
   # Disconnect
   dbClient.putconn(con)
