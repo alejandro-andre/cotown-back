@@ -41,6 +41,7 @@ SCOPES               = ['signature', 'impersonation']
 CLIENT_ID            = '4e7d683a-a230-4db9-a323-f7d87c9a5e7f'
 ACCOUNT_ID           = '0129c0cb-c9a4-4c0e-a070-f07c8f75559c'
 IMPERSONATED_USER_ID = '981ef32c-432a-41d2-8d67-70cf68131afd'
+BODY                 = 'Cuerpo del email'
 
 def main():
 
@@ -89,8 +90,13 @@ def main():
   custom_fields = CustomFields(
     text_custom_fields=[
       TextCustomField(
-        name="Booking ID",
-        value="B2C 12345",
+        name="Booking Id",
+        value="1234",
+        show=True
+      ),
+      TextCustomField(
+        name="Booking Type",
+        value="B2C",
         show=True
       )
     ]
@@ -101,7 +107,7 @@ def main():
     documents=[document],
     recipients={'signers': [signer]},
     email_subject='Contrato de arrendamiento',
-    email_blurb='Cuerpo del email',
+    email_blurb=BODY,
     custom_fields=custom_fields,
     status='sent'
   )
