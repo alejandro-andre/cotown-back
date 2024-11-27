@@ -140,7 +140,7 @@ def main(interfaces):
       # Extract current periods
       periods = []
       today = datetime.today()
-      if today.day < 15:
+      if today.day < 20:
         periods.append((today.replace(day=1) - timedelta(days=1)).strftime("%Y-%m-01"))
       periods.append(today.strftime("%Y-%m-01"))
 
