@@ -9,13 +9,14 @@
 # ###################################################
  
 # System includes
-from flask import send_file, abort
+from flask import send_file, abort, request
 from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
 from datetime import datetime
 from io import BytesIO
 import re
+import json
 
 # Cotown includes
 from library.services.config import settings
@@ -37,6 +38,13 @@ def req_pub_hello():
 
   logger.debug('Hi')
   return 'Hi!'
+
+
+# Post
+def req_pub_post():
+
+  logger.debug(json.dumps(request.json, indent=4))
+  return 'OK'
 
 
 # Validate IBAN format and content
