@@ -19,6 +19,13 @@ def to_int(x):
     return 0
   
 
+def to_float(x):
+  try:
+    return float(x)
+  except:
+    return 0.0
+
+
 def forecast(apiClient):
 
   # Log
@@ -52,25 +59,25 @@ def forecast(apiClient):
         days = calendar.monthrange(int(month[:4]), int(month[5:7]))[1]
 
         # Data
-        mgmt_fee  = row[ 2].value or 0 
-        beds      = row[ 3].value or 0 
-        beds_c    = row[ 4].value or 0 
-        beds_ad   = row[ 5].value or 0 
-        beds_st   = row[ 6].value or 0 
-        sold      = row[ 8].value or 0
-        rent_l    = row[22].value or 0
-        rent_m    = row[23].value or 0
-        rent_s    = row[24].value or 0
-        rent_g    = row[25].value or 0
-        rent_tot  = row[26].value or 0
-        srvs      = to_int(row[27].value) + to_int(row[28].value)
-        bfee      = row[29].value or 0
-        occ_stab  = row[37].value or 0
+        mgmt_fee  = to_float(row[ 2].value)
+        beds      = to_float(row[ 3].value)
+        beds_c    = to_float(row[ 4].value)
+        beds_ad   = to_float(row[ 5].value)
+        beds_st   = to_float(row[ 6].value)
+        sold      = to_float(row[ 8].value)
+        rent_l    = to_float(row[22].value)
+        rent_m    = to_float(row[23].value)
+        rent_s    = to_float(row[24].value)
+        rent_g    = to_float(row[25].value)
+        rent_tot  = to_float(row[26].value)
+        srvs      = to_float(row[27].value) + to_float(row[28].value)
+        bfee      = to_float(row[29].value)
+        occ_stab  = to_float(row[37].value)
         rent_l_ad = rent_l * beds_ad / beds_c if beds_c else 0
         rent_m_ad = rent_m * beds_ad / beds_c if beds_c else 0
         rent_s_ad = rent_s * beds_ad / beds_c if beds_c else 0
         rent_g_ad = rent_g * beds_ad / beds_c if beds_c else 0
-        mfee      = round((float(rent_tot) + float(srvs) / 1.21) * float(mgmt_fee), 2)
+        mfee      = round((rent_tot + srvs / 1.21) * mgmt_fee, 2)
 
         # Forecast
         line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, 'B2X', 'Forecast', 'LONG', '' ]
@@ -83,7 +90,7 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FSV' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly services', srvs, srvs, 'B2X', 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, bfee, 'B2X', 'Forecast', '', '' ]
+        line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, '1Gship fee', bfee, bfee, 'B2X', 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FMF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Management fee', mfee, mfee, 'B2X', 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'

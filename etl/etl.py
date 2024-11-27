@@ -161,11 +161,11 @@ def main(interfaces):
     if 'income' in interfaces:
       forecast(apiClient)
       execute(dbDestination, '_clear_income')
+      load(dbOrigin, dbDestination, 'income', 'income_forecast')
       load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
       load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
       load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
       load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
-      load(dbOrigin, dbDestination, 'income', 'income_forecast')
       load(dbOrigin, dbDestination, 'income', 'mf_real')
       load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
       load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
