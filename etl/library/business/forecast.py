@@ -12,6 +12,13 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 
+def to_int(x):
+  try:
+    return int(x)
+  except:
+    return 0
+  
+
 def forecast(apiClient):
 
   # Log
@@ -56,7 +63,7 @@ def forecast(apiClient):
         rent_s    = row[24].value or 0
         rent_g    = row[25].value or 0
         rent_tot  = row[26].value or 0
-        srvs      = int(row[27].value or 0) + int(row[28].value or 0)
+        srvs      = to_int(row[27].value) + to_int(row[28].value)
         bfee      = row[29].value or 0
         occ_stab  = row[37].value or 0
         rent_l_ad = rent_l * beds_ad / beds_c if beds_c else 0
