@@ -220,9 +220,6 @@ def occupancy(dbClient):
   df_cross['sold_t'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'Tentative'), axis=1)
   logger.info('- Sold nights calculated')
 
-  # Clean
-  df_cross = df_cross[df_cross['beds'] != 0]
-
   # To CSV
   df_cross['id'] = range(1, 1 + len(df_cross))
   df_cross['data_type'] = 'Real'

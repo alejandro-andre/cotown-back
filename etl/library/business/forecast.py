@@ -111,10 +111,11 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
-        line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0]
-        occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
-        occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        if beds > 0:
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0]
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
     workbook.close()
