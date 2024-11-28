@@ -25,10 +25,7 @@ BEGIN
   END IF;
 
   -- Check field values
-  IF NEW."Check_out" IS NULL THEN
-    RAISE EXCEPTION '!!!Must fill check-out date!!!Debes indicar la fecha de check-out!!!';
-  END IF;
-  IF NEW."Check_out_time" IS NULL THEN
+  IF NEW."Check_out" IS NOT NULL AND NEW."Check_out_time" IS NULL THEN
     RAISE EXCEPTION '!!!Must fill pick up time!!!Debes indicar la hora de recogida!!!';
   END IF;
 
