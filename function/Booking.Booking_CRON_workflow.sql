@@ -56,9 +56,9 @@ BEGIN
       BEGIN
         UPDATE "Booking"."Booking"
         SET "Status" = 'checkin'
-        WHERE "ID" = rec.ID;
+        WHERE id = rec.id;
       EXCEPTION WHEN OTHERS THEN
-        RAISE NOTICE 'Error en check-in %: % %', rec.ID, SQLSTATE, SQLERRM;
+        RAISE NOTICE 'Error en check-in %: % %', rec.id, SQLSTATE, SQLERRM;
       END;
     END LOOP;
   END;  
