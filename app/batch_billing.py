@@ -1105,10 +1105,12 @@ def bill_lau(dbClient, con):
     '''
     SELECT 
       bo.id, bo."Customer_id", bo."Resource_id",
-      bo."Rent", COALESCE(bo."Extras", 0) AS "Extras", bo."Extras_concept", bo."Payment_method_id", bo."LAU",
-      r."Code", r."Owner_id" 
+      bo."Rent", COALESCE(bo."Extras", 0) AS "Extras", bo."Extras_concept", bo."Payment_method_id", bo."Product_id",
+      r."Code", r."Owner_id",
+      p."Tax_id"
     FROM "Booking"."Booking_other" bo
       INNER JOIN "Resource"."Resource" r ON r.id = bo."Resource_id" 
+      INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id"
       LEFT JOIN "Billing"."Invoice" i 
         ON i."Booking_other_id" = bo.id 
         AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE) 
@@ -1200,12 +1202,12 @@ def bill_lau(dbClient, con):
           billid,
           item['Resource_id'],
           item['Rent'] + item['Extras'],
-          PR_RENT,
-          VAT_0 if item['LAU'] else VAT_21,
-            'Renta mensual',
-            None
-          )
+          item['Product_id'],
+          item['Tax_id'],
+          'Renta mensual',
+          None
         )
+      )
       for extra in extras:
         dbClient.execute(con, 
           '''
@@ -1217,8 +1219,8 @@ def bill_lau(dbClient, con):
             billid,
             item['Resource_id'],
             extra['Amount'],
-            PR_RENT,
-            VAT_0 if item['LAU'] else VAT_21,
+            item['Product_id'],
+            item['Tax_id'],
             extra['Concept'],
             None
           )
