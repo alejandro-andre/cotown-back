@@ -108,7 +108,7 @@ def load(dbOrigin, dbDestination, table, query):
   # Get table columns
   sql = 'SELECT * FROM gold.' + table + ' LIMIT 0;'
   cur = dbDestination.execute(con, sql)
-  columns = [desc[0] for desc in cur.description]
+  columns = [desc[0] for desc in cur.description if desc[0] != 'ts']
   cur.close()
 
   # Get data columns

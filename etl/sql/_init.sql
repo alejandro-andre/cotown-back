@@ -16,7 +16,7 @@ CREATE TABLE gold.owner (
   "id" varchar NOT NULL,
   "type" varchar NOT NULL,
   "name" varchar NOT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT owner_pk PRIMARY KEY ("id")
 );
 
@@ -24,7 +24,7 @@ CONSTRAINT owner_pk PRIMARY KEY ("id")
 CREATE TABLE gold.product (
   "id" varchar NOT NULL,
   "type" varchar NOT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT product_pk PRIMARY KEY ("id")
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE gold.location (
   "id" varchar NOT NULL,
   "province" varchar NOT NULL,
   "country" varchar NOT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT location_pk PRIMARY KEY ("id")
 );
 
@@ -41,7 +41,7 @@ CONSTRAINT location_pk PRIMARY KEY ("id")
 CREATE TABLE gold.flat_type (
   "id" varchar NOT NULL,
   "name" varchar NOT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT flat_type_pk PRIMARY KEY ("id")
 );
 
@@ -51,7 +51,7 @@ CREATE TABLE gold.place_type (
   "group" varchar NOT NULL,
   "name" varchar NOT NULL,
   "order" int4 NOT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT place_type_pk PRIMARY KEY ("id")
 );
 
@@ -69,7 +69,7 @@ CREATE TABLE gold.resource (
   "flat_type" varchar DEFAULT NULL,
   "place_type" varchar DEFAULT NULL,
   "billing_type" varchar DEFAULT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
 CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
 CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.location("id")
@@ -88,7 +88,7 @@ CREATE TABLE gold.occupancy (
   "sold" int NOT NULL,
   "occupied_t" int NOT NULL,
   "sold_t" int NOT NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT occupancy_pk PRIMARY KEY ("id"),
 CONSTRAINT occupancy_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
 );
@@ -132,7 +132,7 @@ CREATE TABLE gold.income (
   "income_type" varchar NOT NULL,       -- B2B, B2C, ...
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "discount_type" varchar NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT income_pk PRIMARY KEY ("id")
 );
 
@@ -168,7 +168,7 @@ CREATE TABLE gold.gl (
   "tproduct_type" varchar NULL,
   "tproduct_uuid" varchar NULL,
   "tprofitctr_uuid" varchar NULL,
-  "ts" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT gl_pk PRIMARY KEY ("cfiscyear","cacc_doc_uuid", "cacc_doc_it_uuid")
 );
 
