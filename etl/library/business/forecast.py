@@ -114,7 +114,7 @@ def forecast(apiClient):
         if beds > 0:
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0]
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds, beds_c, days * beds, days * beds * occ_stab, days * beds * occ_stab, 0, 0]
+          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, days * beds_st, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0]
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
