@@ -1,0 +1,277 @@
+{
+    "event": "envelope-sent",
+    "apiVersion": "v2.1",
+    "uri": "/restapi/v2.1/accounts/0129c0cb-c9a4-4c0e-a070-f07c8f75559c/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58",
+    "retryCount": 0,
+    "configurationId": 10677919,
+    "generatedDateTime": "2024-12-15T19:49:36.6213170Z",
+    "data": {
+        "accountId": "0129c0cb-c9a4-4c0e-a070-f07c8f75559c",
+        "userId": "981ef32c-432a-41d2-8d67-70cf68131afd",
+        "envelopeId": "564a7fa0-58d3-4e62-a8f6-e50ce2282a58",
+        "envelopeSummary": {
+            "status": "sent",
+            "documentsUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/documents",
+            "recipientsUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/recipients",
+            "attachmentsUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/attachments",
+            "envelopeUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58",
+            "emailSubject": "Contrato de arrendamiento",
+            "emailBlurb": "Cuerpo del email",
+            "envelopeId": "564a7fa0-58d3-4e62-a8f6-e50ce2282a58",
+            "signingLocation": "online",
+            "customFieldsUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/custom_fields",
+            "notificationUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/notification",
+            "enableWetSign": "false",
+            "allowMarkup": "false",
+            "allowReassign": "false",
+            "createdDateTime": "2024-12-15T19:49:34.653Z",
+            "lastModifiedDateTime": "2024-12-15T19:49:34.653Z",
+            "initialSentDateTime": "2024-12-15T19:49:36.513Z",
+            "sentDateTime": "2024-12-15T19:49:36.513Z",
+            "statusChangedDateTime": "2024-12-15T19:49:36.513Z",
+            "documentsCombinedUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/documents/combined",
+            "certificateUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/documents/certificate",
+            "templatesUri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/templates",
+            "brandId": "b782cb5f-ff60-4c84-92c7-6c1642aeff4c",
+            "expireEnabled": "true",
+            "expireDateTime": "2025-04-14T19:49:36.513Z",
+            "expireAfter": "120",
+            "sender": {
+                "userName": "Alejandro Andre",
+                "userId": "981ef32c-432a-41d2-8d67-70cf68131afd",
+                "accountId": "0129c0cb-c9a4-4c0e-a070-f07c8f75559c",
+                "email": "alejandro.andre@arkittai.com",
+                "ipAddress": "2.138.198.191"
+            },
+            "customFields": {
+                "textCustomFields": [
+                    {
+                        "fieldId": "11152073733",
+                        "name": "Booking Id",
+                        "show": "true",
+                        "required": "false",
+                        "value": "1234"
+                    },
+                    {
+                        "fieldId": "11152073734",
+                        "name": "Booking Type",
+                        "show": "true",
+                        "required": "false",
+                        "value": "B2C"
+                    }
+                ],
+                "listCustomFields": []
+            },
+            "envelopeDocuments": [
+                {
+                    "documentId": "1",
+                    "documentIdGuid": "826131d2-86a9-4de8-bf62-cd86c0a9e3c7",
+                    "name": "Contrato de arrendamiento",
+                    "type": "content",
+                    "uri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/documents/1",
+                    "order": "1",
+                    "pages": [
+                        {
+                            "pageId": "16d56d81-e59e-4365-b948-2527dce4e163",
+                            "sequence": "1",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "437ce274-ca16-498f-b3ef-5e3abcb6d5c1",
+                            "sequence": "2",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "a7134d5c-4f2d-48a3-9ed3-4ad1eeeb3f76",
+                            "sequence": "3",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "5f20ec6a-ccbf-46a9-a7a5-07352f65667c",
+                            "sequence": "4",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "a97dd245-1458-407f-8fe8-1275008ecabe",
+                            "sequence": "5",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "c154263b-d246-4875-b3a4-a3701a956700",
+                            "sequence": "6",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "3a05f766-6cb5-444f-af52-5ed321f7fb1e",
+                            "sequence": "7",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "eacd9686-3f5b-4344-a743-502ffcf74a26",
+                            "sequence": "8",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "1fe26315-ccd0-4cc3-a7ff-3c19794c38ff",
+                            "sequence": "9",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "6023b057-f636-48d6-aa1a-0a4c7f43ebeb",
+                            "sequence": "10",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "169216fd-e1b4-4cfa-9781-03de6b3b9034",
+                            "sequence": "11",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "62b09007-543f-4f01-9559-a336e6cbe51a",
+                            "sequence": "12",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "5252dc00-a038-4119-b942-5a6be2513dd4",
+                            "sequence": "13",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "32956f0c-aef1-4c4c-910b-1246acfdc142",
+                            "sequence": "14",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "5ff7f313-7801-446f-8410-a724c3e622d5",
+                            "sequence": "15",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "d0328358-531b-4c97-87ad-937631c1f42f",
+                            "sequence": "16",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "0ff5f889-3eb6-439f-b7ff-4a958da6a4a7",
+                            "sequence": "17",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "e5e21d73-59f2-4a12-9ece-79a7911adc50",
+                            "sequence": "18",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "89e2f401-a93f-4c32-adb2-75ca1bae4cbd",
+                            "sequence": "19",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "616f6d2b-7479-4998-9edd-a24bda1a9214",
+                            "sequence": "20",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "b8b60e0e-70cd-4bf4-b2d7-1e4708b47012",
+                            "sequence": "21",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "5be0a2af-9ec9-43d3-8a51-a73dbea7c5ce",
+                            "sequence": "22",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        },
+                        {
+                            "pageId": "b0c25d45-60ae-41c2-9017-8293b34b4fce",
+                            "sequence": "23",
+                            "height": "842",
+                            "width": "595",
+                            "dpi": "72"
+                        }
+                    ],
+                    "display": "inline",
+                    "includeInDownload": "true",
+                    "signerMustAcknowledge": "no_interaction",
+                    "templateRequired": "false",
+                    "authoritativeCopy": "false"
+                },
+                {
+                    "documentId": "certificate",
+                    "documentIdGuid": "f9519e0a-7200-45d9-8d8e-e2530b50daba",
+                    "name": "Summary",
+                    "type": "summary",
+                    "uri": "/envelopes/564a7fa0-58d3-4e62-a8f6-e50ce2282a58/documents/certificate",
+                    "order": "999",
+                    "display": "inline",
+                    "includeInDownload": "true",
+                    "signerMustAcknowledge": "no_interaction",
+                    "templateRequired": "false",
+                    "authoritativeCopy": "false"
+                }
+            ],
+            "purgeState": "unpurged",
+            "envelopeIdStamping": "true",
+            "is21CFRPart11": "false",
+            "signerCanSignOnMobile": "true",
+            "autoNavigation": "true",
+            "isSignatureProviderEnvelope": "false",
+            "hasFormDataChanged": "false",
+            "allowComments": "true",
+            "hasComments": "false",
+            "allowViewHistory": "true",
+            "envelopeMetadata": {
+                "allowAdvancedCorrect": "true",
+                "enableSignWithNotary": "true",
+                "allowCorrect": "true"
+            },
+            "anySigner": null,
+            "envelopeLocation": "current_site",
+            "isDynamicEnvelope": "false",
+            "burnDefaultTabData": "false"
+        }
+    }
+}
