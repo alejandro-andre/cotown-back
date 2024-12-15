@@ -1,4 +1,5 @@
-# https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature%20impersonation&client_id=4e7d683a-a230-4db9-a323-f7d87c9a5e7f&redirect_uri=http://localhost:8080/ds/callback
+# https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature%20impersonation&INTEGRATION_KEY=4c35b85f-70e7-455d-a695-01d83cac1c1e&redirect_uri=http://localhost:8080/ds/callback
+
 
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, CustomFields, TextCustomField 
 from os import path
@@ -38,9 +39,9 @@ def get_private_key(private_key_path):
 AUTHORIZATION_SERVER = 'account-d.docusign.com'
 ACCOUNT_BASE_URI     = 'https://demo.docusign.net/restapi'
 SCOPES               = ['signature', 'impersonation']
-CLIENT_ID            = '4e7d683a-a230-4db9-a323-f7d87c9a5e7f'
-ACCOUNT_ID           = '0129c0cb-c9a4-4c0e-a070-f07c8f75559c'
-IMPERSONATED_USER_ID = '981ef32c-432a-41d2-8d67-70cf68131afd'
+INTEGRATION_KEY      = '4c35b85f-70e7-455d-a695-01d83cac1c1e'#'4e7d683a-a230-4db9-a323-f7d87c9a5e7f'
+API_ACCOUNT_ID       = '1f0de81c-2fbd-4e4c-82d5-25d87c51dc6b'#'0129c0cb-c9a4-4c0e-a070-f07c8f75559c'
+IMPERSONATED_USER_ID = '750c0137-f81e-49a7-bbfb-c8850d1a5d7e'#'981ef32c-432a-41d2-8d67-70cf68131afd'
 BODY                 = 'Cuerpo del email'
 
 def main():
@@ -54,7 +55,7 @@ def main():
   private_key = get_private_key('private.key').encode('ascii').decode('utf-8')
 
   # Get JWT token
-  token_response = get_jwt_token(private_key, SCOPES, AUTHORIZATION_SERVER, CLIENT_ID, IMPERSONATED_USER_ID)
+  token_response = get_jwt_token(private_key, SCOPES, AUTHORIZATION_SERVER, INTEGRATION_KEY, IMPERSONATED_USER_ID)
   auth=f'Bearer {token_response.access_token}'
 
   # Document
@@ -70,7 +71,7 @@ def main():
 
   # Signer
   signer = Signer(
-    email='alejandroandref@gmail.com',
+    email='alejandro.andre@experis.es',
     name='Alejandro André',
     language='es',
     recipient_id='1',
@@ -117,7 +118,7 @@ def main():
   api_client.set_base_path(ACCOUNT_BASE_URI)
   api_client.set_default_header(header_name='Authorization', header_value=auth)
   envelopes_api = EnvelopesApi(api_client)
-  results = envelopes_api.create_envelope(account_id=ACCOUNT_ID, envelope_definition=envelope_definition)
+  results = envelopes_api.create_envelope(account_id=API_ACCOUNT_ID, envelope_definition=envelope_definition)
   print(results)
 
 
