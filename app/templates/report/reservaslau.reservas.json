@@ -27,10 +27,11 @@
   "Include_gas",
   "Include_electricity",
   "Include_water",
-  "Contribution_rent",
-  "Contribution_deposit",
-  "Contribution_incentive",
-  "Contribution_other",
+  "Contribution_percent", 
+  "Contribution_recommended",
+  "Contribution_asking", 
+  "Contribution_proposal", 
+  "Contribution_proposed_date",
   "Contribution_comments",
   "Comments"
 ]

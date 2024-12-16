@@ -63,7 +63,7 @@ def main():
     document_base64 = base64.b64encode(pdf_file.read()).decode('utf-8')
     document = Document(
       document_base64=document_base64,
-      name='Contrato de arrendamiento',
+      name='Contrato de arrendamiento 1234 - B2B',
       file_extension='pdf',
       document_id='1',
 
@@ -71,8 +71,8 @@ def main():
 
   # Signer
   signer = Signer(
-    email='alejandro.andre@experis.es',
-    name='Alejandro André',
+    email='dalarcon@cotown.com',
+    name='Daniel Alarcón',
     language='es',
     recipient_id='1',
     tabs=Tabs(
@@ -107,7 +107,7 @@ def main():
   envelope_definition = EnvelopeDefinition(
     documents=[document],
     recipients={'signers': [signer]},
-    email_subject='Contrato de arrendamiento',
+    email_subject='Contrato de arrendamiento de prueba',
     email_blurb=BODY,
     custom_fields=custom_fields,
     status='sent'
