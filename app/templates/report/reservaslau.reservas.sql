@@ -1,6 +1,6 @@
 SELECT 
   bo.id, bo."Date_from", bo."Date_to", bo."Date_estimated", 
-  bo."LAU", bo."Unlawful", bo."Rent", m."Name" AS "Month", bo."IPC_updated",
+  p."Name" as "Product_name", bo."Unlawful", bo."Rent", m."Name" AS "Month", bo."IPC_updated",
   bo."Deposit", bo."Deposit_required", bo."Deposit_returned", bo."Deposit_return_date",
   bo."Compensation", bo."Compensation_date",
   bo."Extras", bo."Extras_concept", bo."Debts", bo."Warrants", 
@@ -15,5 +15,6 @@ FROM "Booking"."Booking_other" bo
   INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id" 
   INNER JOIN "Customer"."Customer" c ON c.id = bo."Customer_id" 
   INNER JOIN "Booking"."Booking_subtype" bs ON bs.id = bo."Substatus_id" 
+  INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id"
   INNER JOIN "Auxiliar"."Monthname" m on m.id = bo."IPC_month"
 ;

@@ -1,6 +1,6 @@
 SELECT 
   bu."Code" AS "Building", 
-  r."Code" AS "Resource", rs."Name" AS "Status_name", l."Name" AS "City", r."Area", r. "Places, 
+  r."Code" AS "Resource", rs."Name" AS "Status_name", l."Name" AS "City", r."Area", r. "Places", 
   COALESCE(bo."Rent", 0) + COALESCE(bo."Extras", 0) AS "Current_rent",
   r."Pre_capex_long_term", r."Pre_capex_vacant", r."Post_capex", r."Capex",
   g."Name_en" AS "Gender", 
