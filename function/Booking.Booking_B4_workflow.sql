@@ -131,15 +131,17 @@ BEGIN
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
-  -- Actualiza el estado a "contrato" desde 'firmacontrato' cuando firma el contrado (Fecha contract_signed rellena)
-  IF (NEW."Status" = 'firmacontrato' AND NEW."Contract_signed" IS NOT NULL) THEN
+  -- Actualiza el estado a "contrato" desde 'firmacontrato' cuando firma el contrado (status = completed)
+  IF (NEW."Status" = 'firmacontrato' AND NEW."Contract_status" = 'completed') THEN
     NEW."Status" := 'contrato';
   END IF;
 
   -- CONTRATO a FIRMACONTRATO
   -- Actualiza el estado a "firmacontrato" cuando se quita la firma, tiene que firmarse el contrato nuevamente
-  IF (NEW."Status" = 'contrato' AND (NEW."Contract_signed" IS NULL OR NEW."Contract_rent" IS NULL)) THEN
-    NEW."Status" := 'firmacontrato';
+  IF (NEW."Status" = 'contrato' AND (NEW."Contract_status" <> 'completed' OR NEW."Contract_rent" IS NULL)) THEN
+    NEW."Status"          := 'firmacontrato';
+    NEW."Contract_id"     := NULL; 
+    NEW."Contract_status" := NULL; 
     NEW."Contract_signed" := NULL;
   END IF;
  

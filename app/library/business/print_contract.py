@@ -589,10 +589,12 @@ def do_contracts(apiClient, id):
 
     # Update query
     query = '''
-    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $contractid: String $contractstatus: String $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
       Booking_BookingUpdate (
         where:  { id: {EQ: $id} }
         entity: {
+          Contract_id: $contractid
+          Contract_status: $contractstatus
           Contract_rent: $rent
           Contract_services: $svcs
         }
@@ -602,7 +604,7 @@ def do_contracts(apiClient, id):
 
     # Call graphQL endpoint
     if json_rent is not None or json_svcs is not None:
-      apiClient.call(query, { 'id': id, 'rent': json_rent, 'svcs': json_svcs })
+      apiClient.call(query, { 'id': id, 'contractid': 'n/a', 'contractstatus': 'sent', 'rent': json_rent, 'svcs': json_svcs })
       return True
     return False
  
@@ -654,10 +656,12 @@ def do_group_contracts(apiClient, id):
 
     # Update query
     query = '''
-    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $contractid: String $contractstatus: String $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
       Booking_Booking_groupUpdate (
         where:  { id: {EQ: $id} }
         entity: {
+          Contract_id: $contractid
+          Contract_status: $contractstatus
           Contract_rent: $rent
           Contract_services: $svcs
         }
@@ -667,7 +671,7 @@ def do_group_contracts(apiClient, id):
 
     # Call graphQL endpoint
     if json_rent != '{}' or json_svcs != '{}':
-      apiClient.call(query, { 'id': id, 'rent': json_rent, 'svcs': json_svcs })
+      apiClient.call(query, { 'id': id, 'contractid': 'n/a', 'contractstatus': 'sent', 'rent': json_rent, 'svcs': json_svcs })
       return True
     return False
  

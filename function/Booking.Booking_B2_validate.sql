@@ -46,9 +46,6 @@ BEGIN
   IF NEW."Check_out" < '2000-01-01' THEN
     NEW."Check_out" = NULL;
   END IF;
-  IF NEW."Contract_signed" < '2000-01-01' THEN
-    NEW."Contract_signed" = NULL;
-  END IF;
   IF NEW."Expiry_date" < '2000-01-01' THEN
     NEW."Expiry_date" = NULL;
   END IF;

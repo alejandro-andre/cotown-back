@@ -143,6 +143,9 @@ def download_contracts(apiClient, variables=None):
         }
       }
       id
+      Contract_id
+      Contract_status
+      Contract_signed
       Contract_rent { name }
       Contract_services { name }
     }

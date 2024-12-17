@@ -13,7 +13,7 @@ DECLARE
       AND ce."Entity_id" = b.id
       AND ce."Template" LIKE 'firmacontrato'
     WHERE b."Status" = 'firmacontrato'
-    AND b."Contract_signed" IS NULL
+    AND b."Contract_status" <> 'completed'
     AND ce."Created_at" < (CURRENT_DATE - INTERVAL '3 days');
 
 BEGIN

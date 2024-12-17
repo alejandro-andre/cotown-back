@@ -20,9 +20,11 @@ query Bookings ($fdesde: String, $fhasta:String) {
         Status
         Date_from
         Date_to
+        Contract_id
+        Contract_status
+        Contract_signed
         Contract_rent { name }
         Contract_services { name }
-        Contract_signed
         Resource: ResourceViaResource_id { Code }
         Customer: CustomerViaCustomer_id { id Name Email }
     }
