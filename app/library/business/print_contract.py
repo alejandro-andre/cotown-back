@@ -589,7 +589,7 @@ def do_contracts(apiClient, id):
 
     # Update query
     query = '''
-    mutation ($id: Int! $contractid: String $contractstatus: String $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
       Booking_BookingUpdate (
         where:  { id: {EQ: $id} }
         entity: {
@@ -656,7 +656,7 @@ def do_group_contracts(apiClient, id):
 
     # Update query
     query = '''
-    mutation ($id: Int! $contractid: String $contractstatus: String $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
       Booking_Booking_groupUpdate (
         where:  { id: {EQ: $id} }
         entity: {
