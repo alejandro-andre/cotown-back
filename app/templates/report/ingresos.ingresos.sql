@@ -1,7 +1,7 @@
 (
 -- Facturas B2C
 SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
-  i."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
+  i."Issued_date" AS "Income_date", i."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   il."Amount" AS "Amount",
   t."Value" / 100 AS "Tax",
   CASE 
@@ -31,7 +31,7 @@ UNION ALL
 
 -- Facturas B2B
 SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
-  i."Booking_group_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
+  i."Issued_date" AS "Income_date", i."Booking_group_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   il."Amount" AS "Amount",
   t."Value" / 100 AS "Tax",
   CASE 
@@ -62,7 +62,7 @@ UNION ALL
 -- Rentas B2C no facturadas
 SELECT 
   pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
-  bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
+  NULL AS "Income_date", bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN bp."Rent" + COALESCE(bp."Rent_discount", 0) + bp."Services" + COALESCE(bp."Services_discount", 0)
     ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
@@ -96,7 +96,7 @@ UNION ALL
 -- Rentas B2B no facturadas
 SELECT DISTINCT ON (bp.id)
   pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
-  bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
+  NULL AS "Income_date", bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN b."Rooms" * (bp."Rent" + bp."Services")
     ELSE b."Rooms" * bp."Rent"
@@ -131,7 +131,7 @@ UNION ALL
 -- Servicios B2C no facturados
 SELECT 
   pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
-  bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
+  NULL AS "Income_date", bp."Booking_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN 0
     ELSE bp."Services" + COALESCE(bp."Services_discount", 0)
@@ -159,7 +159,7 @@ UNION ALL
 -- Servicios B2B no facturados
 SELECT DISTINCT ON (bp.id)
   pr."Name" AS "Owner", EXTRACT(MONTH from bp."Rent_date") AS "Month",EXTRACT(YEAR from bp."Rent_date") AS "Year",
-  bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
+  NULL AS "Income_date", bp."Booking_id", b."Date_from", b."Date_to", bu."Code"||' ('||b."Rooms"||' plazas)' AS "Code", c."Name", c."Email",
   CASE 
     WHEN r."Owner_id" = r."Service_id" THEN 0
     ELSE b."Rooms" * bp."Services"

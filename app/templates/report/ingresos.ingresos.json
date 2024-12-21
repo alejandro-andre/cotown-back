@@ -17,6 +17,7 @@
 "",
 "Amount_type",
 "Invoice",
+"Income_date",
 "Payment_status",
 "Payment_method", 
 "Payment_date" 
