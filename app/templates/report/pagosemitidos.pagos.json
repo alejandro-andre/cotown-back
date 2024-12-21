@@ -8,6 +8,8 @@
 "Invoice.Booking.Resource.Place_type.Code",
 "Invoice.Booking.Resource.Place_type.Name",
 "Amount",
+"Invoice.Payment.Amount_payed",
+"",
 "Invoice.Payment.Payment_date",
 "Invoice.Payment.Payment_order",
 "Invoice.Payment.Payment_auth",
