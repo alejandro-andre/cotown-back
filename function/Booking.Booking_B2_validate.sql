@@ -12,7 +12,9 @@ DECLARE
   num INTEGER;
   curr_user VARCHAR;
   billing_type VARCHAR;
-
+  black_list BOOLEAN;
+  black_reason VARCHAR;
+  
 BEGIN
 
   -- Superuser ROLE 
@@ -112,8 +114,15 @@ BEGIN
     END IF;
   END IF;
 
-  -- Get customer id type
-  SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
+  -- Valida cliente no en lista negra
+  SELECT c."Id_type_id", c."Black_list", c."Black_reason" INTO id_type_id, black_list, black_reason FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
+  IF black_list = TRUE THEN
+    IF NEW."Ignore_black_list" = TRUE 
+    THEN
+    ELSE
+      RAISE exception '!!!Customer on black list: "%"!!!Cliente en lista negra: "%"!!!', black_reason, black_reason;
+    END IF;
+  END IF;
 
   -- Documentos obligatorios
   INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
