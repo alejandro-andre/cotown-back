@@ -198,6 +198,7 @@ def bill_month(dbClient, con):
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
       AND "Invoice_rent_id" IS NULL
       AND "Invoice_services_id" IS NULL
+      AND "Invoice_external" = FALSE
       AND "Rent_date" <= CURRENT_DATE
       AND "Rent_date" >= %s
     ''', (settings.BILLDATE, ))
