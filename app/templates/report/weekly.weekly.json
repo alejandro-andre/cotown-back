@@ -5,6 +5,7 @@
 "Booking_who.Name",
 "Booking_referral.Name",
 "Booking_channel.Name",
+"Agent.Name",
 "Customer.Email",
 "Customer.Phones",
 "",

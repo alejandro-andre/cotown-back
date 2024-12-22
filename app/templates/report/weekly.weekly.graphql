@@ -67,6 +67,9 @@ query Bookings {
         Booking_channel: Booking_channelViaBooking_channel_id {
             Name
         }
+        Agent: AgentViaAgent_id {
+            Name
+        }
         Prices: Booking_priceListViaBooking_id {
             Rent: Rent_sum
         }
