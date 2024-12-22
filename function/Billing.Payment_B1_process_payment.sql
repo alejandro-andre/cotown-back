@@ -24,6 +24,11 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  -- Importe pagado
+  IF NEW."Amount_payed" IS NULL THEN
+    NEW."Amount_payed" := NEW."Amount";
+  END IF;
+
   -- Ya pagado?
   IF OLD."Payment_date" IS NOT NULL THEN
     RETURN NEW;
