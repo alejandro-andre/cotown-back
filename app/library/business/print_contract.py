@@ -481,7 +481,7 @@ def generate_doc_file(context, template):
   env.filters['age'] = age
 
   # Render contract
-  text = template.replace('\n\n\n\n', '\n\n&nbsp;\n\n')
+  text = template.replace('\n\n\n\n', '\n\n  \n\n')
   md = env.from_string(text).render(context)
 
   # Convert markdown to HTML
@@ -569,8 +569,8 @@ def do_contracts(apiClient, id):
     # Generate rent contract
     template, annex, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
     if template is not None:
-      if context['Customer_lang'] == 'en':
-        template += ('<div style="page-break-before: always;"></div>' + annex if annex else '')
+      if context['Customer_lang'] == 'en' and annex:
+        template = template + '<div style="page-break-after: always;"></div>\n' + annex
       file = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
       response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
@@ -580,8 +580,8 @@ def do_contracts(apiClient, id):
     if context['Owner_id'] != context['Service_id'] and context['Booking_services'] > 0:
       template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
       if template is not None:
-        if context['Customer_lang'] == 'en':
-          template += ('<div style="page-break-before: always;"></div>' + annex if annex else '')
+        if context['Customer_lang'] == 'en' and annex:
+          template = template + '<div style="page-break-after: always;"></div>\n' + annex
         file = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
         response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
@@ -656,12 +656,10 @@ def do_group_contracts(apiClient, id):
 
     # Update query
     query = '''
-    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
       Booking_Booking_groupUpdate (
         where:  { id: {EQ: $id} }
         entity: {
-          Contract_id: $contractid
-          Contract_status: $contractstatus
           Contract_rent: $rent
           Contract_services: $svcs
         }
@@ -671,7 +669,7 @@ def do_group_contracts(apiClient, id):
 
     # Call graphQL endpoint
     if json_rent != '{}' or json_svcs != '{}':
-      apiClient.call(query, { 'id': id, 'contractid': 'n/a', 'contractstatus': 'sent', 'rent': json_rent, 'svcs': json_svcs })
+      apiClient.call(query, { 'id': id, 'rent': json_rent, 'svcs': json_svcs })
       return True
     return False
  
