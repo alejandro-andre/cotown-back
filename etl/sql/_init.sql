@@ -138,6 +138,27 @@ CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.locatio
 -- Facts
 -- -------------------------------------
 
+-- Create beds table
+CREATE TABLE gold.beds (
+  "id" varchar NOT NULL,
+  "date" date NOT NULL,
+
+  "available" int NOT NULL,
+  "beds" int NOT NULL,
+  "beds_c" numeric NOT NULL,
+  "booking" varchar DEFAULT NULL,
+  "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
+  "occupied" int NOT NULL,
+  "occupied_t" int NOT NULL,
+  "resource" varchar NOT NULL,          -- Dimension resource
+  "sold" int NOT NULL,
+  "sold_t" int NOT NULL,
+  "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT beds_pk PRIMARY KEY ("id"),
+CONSTRAINT beds_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
+);
+
 -- Create occupancy table
 CREATE TABLE gold.occupancy (
   "id" varchar NOT NULL,
