@@ -21,7 +21,7 @@ SELECT
   	WHEN bu."Building_type_id" = 3 THEN bp."Rent"/ 1.1
   	ELSE bp."Rent"
   END AS "rate",
-  'B2C' AS "income_type",
+  --'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
     ELSE 'OTB' 
@@ -65,7 +65,7 @@ SELECT
   	WHEN bu."Building_type_id" = 3 THEN bp."Services"/ 1.1
   	ELSE bp."Services"
   END AS "rate",
-  'B2C' AS "income_type",
+  --'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
     ELSE 'OTB' 

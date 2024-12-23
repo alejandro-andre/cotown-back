@@ -15,7 +15,7 @@ SELECT
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
     ELSE 'LONG'
   END AS "stay_length",
-  'B2C' AS "income_type",
+  --'B2C' AS "income_type",
   'Real' AS "data_type",
   NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il
@@ -45,7 +45,7 @@ SELECT
   il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "amount",
   il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "rate",
   'GROUP' AS "stay_length",
-  'B2B' AS "income_type",
+  --'B2B' AS "income_type",
   'Real' AS "data_type",
   NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il

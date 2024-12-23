@@ -16,7 +16,7 @@ SELECT
     WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") / (1 + (t."Value" / 100))
     WHEN pr."Product_type_id" <> 3 THEN COALESCE(bp."Services", il."Amount") / (1 + (t."Value" / 100))
   END AS "rate",
-  'B2B' AS "income_type",
+  --'B2B' AS "income_type",
   'Real' AS "data_type",
   NULL AS "discount_type"
 FROM "Billing"."Invoice_line" il 
