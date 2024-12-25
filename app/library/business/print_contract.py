@@ -6,11 +6,15 @@
 import markdown
 import requests
 import locale
+import base64
+import json
+from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, DateSigned, CustomFields, TextCustomField 
 from num2words import num2words
 from datetime import datetime
 from jinja2 import Environment
 from weasyprint import HTML
 from io import BytesIO
+from os import path
 
 # Logging
 import logging
@@ -398,6 +402,7 @@ query Booking_groupById ($id: Int!) {
 # Additional functions
 # ######################################################
 
+# Convert number to words
 def words(number):
 
   try:
@@ -406,6 +411,7 @@ def words(number):
     return ''
 
 
+# Calc current age
 def age(birthdate):
 
   if birthdate is None or birthdate == '':
@@ -417,12 +423,16 @@ def age(birthdate):
       age -= 1
   return age 
 
+
+# Convert to number to words
 def decimal (value, decimals=0):
 
   if value == '':
     value = 0
   return locale.format_string('%.'+str(decimals)+'f', value, grouping=True)
 
+
+# Get month name
 def month(m, lang='es'):
 
   try:
@@ -433,6 +443,8 @@ def month(m, lang='es'):
   except:
     return '--'
 
+
+# Get part in words
 def part(p):
 
   if p is None:
@@ -449,6 +461,130 @@ def part(p):
     logger.error(p)
     logger.error(error)
     return p
+
+
+# Get Docusign JWT token
+def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user_id):
+  '''Get the jwt token'''
+  api_client = ApiClient()
+  api_client.set_base_path(auth_server)
+  response = api_client.request_jwt_user_token(
+    client_id=client_id,
+    user_id=impersonated_user_id,
+    oauth_host_name=auth_server,
+    private_key_bytes=private_key,
+    expires_in=4000,
+    scopes=scopes
+  )
+  return response
+
+
+# Get Docusign private key
+def get_private_key(private_key_path):
+  private_key_file = path.abspath(private_key_path)
+  if path.isfile(private_key_file):
+    with open(private_key_file) as private_key_file:
+      private_key = private_key_file.read()
+  else:
+    private_key = private_key_path
+  return private_key
+
+
+# ######################################################
+# Send documents to sign
+# ######################################################
+
+def do_send_contract(file_rent, file_svcs, booking, type, code):
+
+  # API Client setup
+  api_client = ApiClient()
+  api_client.set_base_path(settings.AUTHORIZATION_SERVER)
+  api_client.set_oauth_host_name(settings.AUTHORIZATION_SERVER)
+  
+  # Private key
+  private_key = get_private_key('test.private.key').encode('ascii').decode('utf-8')
+
+  # Get JWT token
+  token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
+  auth=f'Bearer {token_response.access_token}'
+
+  # Rent contract
+  documents = []
+  file_rent.seek(0)
+  document_base64 = base64.b64encode(file_rent.read()).decode('utf-8')
+  documents.append(
+    Document(
+      document_base64=document_base64,
+      name='Contrato de arrendamiento ' + str(booking) + ' - ' + type + ' - ' + code,
+      file_extension='pdf',
+      document_id='1',
+    )
+  )
+
+  # Services contract
+  if file_svcs:
+    file_svcs.seek(0)
+    document_base64 = base64.b64encode(file_svcs.read()).decode('utf-8')
+    documents.append(
+      Document(
+        document_base64=document_base64,
+        name='Contrato de servicios ' + str(booking) + ' - ' + type + ' - ' + code,
+        file_extension='pdf',
+        document_id='1',
+      )
+    )
+
+  # Signer
+  signer = Signer(
+    email='alejandroandref@gmail.com',
+    name='Alejandro André',
+    language='es',
+    recipient_id='1',
+    tabs=Tabs(
+      sign_here_tabs=[
+        SignHere(anchor_string='/FIRMA/')
+      ],
+      date_signed_tabs=[
+        DateSigned(anchor_string='/FECHA/')
+      ]
+    )
+  )
+
+  # Custom fields - Create first in Admin
+  custom_fields = CustomFields(
+    text_custom_fields=[
+      TextCustomField(
+        name="Booking Id",
+        value="1234",
+        show=True
+      ),
+      TextCustomField(
+        name="Booking Type",
+        value="B2C",
+        show=True
+      )
+    ]
+  )
+
+  # Envelope
+  envelope_definition = EnvelopeDefinition(
+    documents=documents,
+    recipients={'signers': [signer]},
+    email_subject='Contrato(s)  ' + str(booking) + ' - ' + type + ' - ' + code,
+    email_blurb='BODY',
+    custom_fields=custom_fields,
+    status='sent'
+  )
+
+  # Send
+  api_client.host = settings.ACCOUNT_BASE_URI
+  api_client.set_base_path(settings.ACCOUNT_BASE_URI)
+  api_client.set_default_header(header_name='Authorization', header_value=auth)
+  api = EnvelopesApi(api_client)
+  summary = api.create_envelope(account_id=settings.API_ACCOUNT_ID, envelope_definition=envelope_definition)
+
+  # Result
+  return summary.envelope_id, summary.status
 
 
 # ######################################################
@@ -549,6 +685,8 @@ def do_contracts(apiClient, id):
   try:
    
     # Empty files
+    file_rent = None
+    file_svcs = None
     json_rent = None
     json_svcs = None
 
@@ -571,9 +709,9 @@ def do_contracts(apiClient, id):
     if template is not None:
       if context['Customer_lang'] == 'en' and annex:
         template = template + '<div style="page-break-after: always;"></div>\n' + annex
-      file = generate_doc_file(context, template)
+      file_rent = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
-      response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
+      response = requests.post(url, data=file_rent.read(), headers={ 'Content-Type': 'application/pdf' })      
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
@@ -582,10 +720,13 @@ def do_contracts(apiClient, id):
       if template is not None:
         if context['Customer_lang'] == 'en' and annex:
           template = template + '<div style="page-break-after: always;"></div>\n' + annex
-        file = generate_doc_file(context, template)
+        file_svcs = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
-        response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
+        response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+
+    # Send contract
+    eid, status = do_send_contract(file_rent, file_svcs, id, 'B2C', context['Resource_code'])
 
     # Update query
     query = '''
@@ -604,7 +745,7 @@ def do_contracts(apiClient, id):
 
     # Call graphQL endpoint
     if json_rent is not None or json_svcs is not None:
-      apiClient.call(query, { 'id': id, 'contractid': 'n/a', 'contractstatus': 'sent', 'rent': json_rent, 'svcs': json_svcs })
+      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs })
       return True
     return False
  
