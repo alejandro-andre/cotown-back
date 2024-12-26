@@ -530,7 +530,7 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
         document_base64=document_base64,
         name='Contrato de servicios ' + str(booking) + ' - ' + type + ' - ' + code,
         file_extension='pdf',
-        document_id='1',
+        document_id='2',
       )
     )
 

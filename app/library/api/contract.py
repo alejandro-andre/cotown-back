@@ -37,7 +37,7 @@ def req_pub_contract():
   id     = data['envelopeId']
   dt     = data['envelopeSummary']['statusChangedDateTime']
   if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
-     status = 'other'
+    status = 'other'
 
   # Debug
   logger.info(id)
