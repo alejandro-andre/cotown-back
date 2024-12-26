@@ -52,7 +52,7 @@ def req_pay(id):
     return payment | params
  
 # Notification
-def req_pub_notification(pos='default'):
+def req_pub_notification(pos='delegado'):
 
     # Validate response
     response = validate(pos, request.values)

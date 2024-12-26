@@ -37,7 +37,7 @@ def validate_token(token):
     if token in cache:
         return cache[token]
 
-    # Forbidden by default
+    # Forbidden
     result = 403
 
     # Call API to check if token is valid

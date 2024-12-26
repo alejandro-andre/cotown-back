@@ -350,7 +350,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       dbClient.putconn(con)
       return None
     
-    # Default first and last month prices
+    # Preset first and last month prices
     data = results[0]
     data['Rent_first'] = data['Rent']
     data['Rent_last'] = data['Rent']

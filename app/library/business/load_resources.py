@@ -28,7 +28,7 @@ def load_resources(dbClient, con, data):
       record = {}
       extras = []
 
-      # Ok by default
+      # Ok
       ok = True
 
       # Loop thru each column

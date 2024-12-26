@@ -18,6 +18,6 @@ FROM "Billing"."Payment" p
 WHERE p."Payment_method_id" = 2
   AND p."Payment_date" IS NULL 
   AND p."Booking_id" IS NOT NULL
-  AND p."Pos" = 'default'
+  AND p."Pos" = 'delegado'
 ORDER BY 1
 ;

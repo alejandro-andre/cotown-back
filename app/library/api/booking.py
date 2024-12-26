@@ -68,7 +68,7 @@ def process_error(msg):
 # Get variable from form, request or session
 # ---------------------------------------------------
 
-def get_var(name, default=None, save=True):
+def get_var(name, preset=None, save=True):
 
     # Get var from querystring
     aux = request.args.get(name)
@@ -85,9 +85,9 @@ def get_var(name, default=None, save=True):
     if aux is not None:
       session[name] = aux
 
-    # Or store default value in session
+    # Or store preset value in session
     if name not in session:
-      session[name] = default
+      session[name] = preset
 
     # Get value from session
     return session[name]

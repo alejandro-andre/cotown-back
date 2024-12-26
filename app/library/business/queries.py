@@ -442,7 +442,7 @@ def q_get_payment(dbClient, id, generate_order=False):
     aux = dict(result)
     aux['Issued_date'] = aux['Issued_date'].strftime("%Y-%m-%d")
     if aux['Pos'] is None:
-      aux['Pos'] = 'default'
+      aux['Pos'] = 'delegado'
 
     if generate_order:
 

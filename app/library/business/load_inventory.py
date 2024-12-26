@@ -30,7 +30,7 @@ def load_inventory(dbClient, con, data):
       # Empty record
       record = {}
 
-      # Ok by default
+      # Ok
       ok = True
 
       # Loop thru each column

@@ -266,7 +266,7 @@ def bill_month(dbClient, con):
         extra_services = []
       if total_services > 0:
         if item['Pos'] != item['Service_pos']:
-          item['Pos'] = 'default'
+          item['Pos'] = 'delegado'
        
       # Create payment
       if total_rent + total_services + total_extra_rent + total_extra_services > 0:
@@ -555,7 +555,7 @@ def bill_group_month(dbClient, con):
         extra_services = 0
       if total_services > 0:
         if item['Pos'] != item['Service_pos']:
-          item['Pos'] = 'default'
+          item['Pos'] = 'delegado'
           
       # Create payment
       if total_rent + total_services + total_extra_rent + total_extra_services > 0:
@@ -944,7 +944,7 @@ def bill_group_services(dbClient, con):
           ''',
           (
             PM_TRANSFER,
-            'default',
+            'delegado',
             item['Payer_id'],
             item['Booking_id'],
             item['Amount'],

@@ -6,9 +6,9 @@ DECLARE
 
 BEGIN
 
-  -- Cosharing is the default state, do not save
+  -- Cosharing is the preset state, do not save
   IF NEW."Status_id" = 1 THEN
-    RAISE EXCEPTION '!!!Cosharing is the default state!!!Cosharing es el estado por defecto!!!';
+    RAISE EXCEPTION '!!!Cosharing is the preset state!!!Cosharing es el estado por defecto!!!';
   END IF;
 
   -- Valida las fechas
