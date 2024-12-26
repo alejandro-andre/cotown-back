@@ -9,7 +9,7 @@
 # ###################################################
  
 # System includes
-from flask import send_file, abort, request
+from flask import g, send_file, abort, request
 from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
@@ -23,6 +23,7 @@ from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.services.utils import flatten
 from library.business.print_contract import BOOKING, month, decimal
+from library.business.queries import q_change_contract
 
 # Logging
 import logging
@@ -38,32 +39,6 @@ def req_pub_hello():
 
   logger.debug('Hi')
   return 'Hi!'
-
-
-# Post
-def req_pub_post():
-
-  # Get data
-  data = request.json.get('data')
-  if not data:
-    return 'KO'
-
-  # Get event info
-  event  = request.json['event']
-  status = data['envelopeSummary']['status']
-  id     = data['envelopeId']
-  dt     = data['envelopeSummary']['statusChangedDateTime']
-  if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
-     status = 'other'
-
-  # Debug
-  logger.info(id)
-  logger.info(dt)
-  logger.info(event)
-  logger.info(status)
-
-  # Return
-  return 'OK'
 
 
 # Validate IBAN format and content

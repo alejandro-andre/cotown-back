@@ -4,9 +4,13 @@
 06,21,36,51 * * * * cd /home/cotown/app; sh ./dobatch.sh printcontract
 09,24,39,54 * * * * cd /home/cotown/app; sh ./dobatch.sh processload
 12,27,42,57 * * * * cd /home/cotown/app; sh ./dobatch.sh sendemail
+0 1 * * * rm /tmp/batch*.lock
 
 # Procesos Web
 0 8-20/2 * * * sh /home/cotown/www/webs/gen.sh publish vanguard
 0 9-21/2 * * * sh /home/cotown/www/webs/gen.sh publish cotown
-#0 8-21/2 * * * sh /home/cotown/www/webs/gen.sh draft vanguard  develop
+#0 8-21/2 * * * sh /home/cotown/www/webs/gen.sh draft vanguard develop
 #0 9-21/2 * * * sh /home/cotown/www/webs/gen.sh draft cotown develop
+
+# Renovación certificados, parando nginx primero (con sudo)
+0 3 * * 0 certbot renew --pre-hook "docker stop nginx" --post-hook "docker start nginx"

@@ -737,3 +737,22 @@ def q_prev_next(dbClient):
     logger.error(error)
     con.rollback()
     return None
+
+
+# ######################################################
+# Change contract
+# ######################################################
+
+def q_change_contract(dbClient, id, dt, status):
+
+  try:
+    con = dbClient.getconn()
+    dbClient.execute(con, 'UPDATE "Booking"."Booking" SET "Contract_signed" = %s, "Contract_status" = %s WHERE "Contract_id"=%s', (dt, status, id))
+    con.commit()
+    dbClient.putconn(con)
+    return True
+
+  except Exception as error:
+    logger.error(error)
+    con.rollback()
+    return False

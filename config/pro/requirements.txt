@@ -1,5 +1,6 @@
 aiohttp==3.9.5
 cachetools==5.3.3
+docusign-esign==4.0.0
 dynaconf==3.2.5
 flasgger==0.9.7.1
 Flask==3.0.3
