@@ -9,20 +9,19 @@
 # ###################################################
  
 # System includes
-from flask import g, send_file, abort, request
+from flask import send_file, abort
 from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
 from datetime import datetime
 from io import BytesIO
 import re
-import json
 
 # Cotown includes
 from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.services.utils import flatten
-from library.business.print_contract import BOOKING, month, decimal
+from app.library.business.contract import BOOKING, month, decimal
 from library.business.queries import q_change_contract
 
 # Logging

@@ -1,7 +1,7 @@
 # ###################################################
 # Batch process
 # ---------------------------------------------------
-# Generates PDF files from contracts
+# Check contracts status
 # ###################################################
 
 # ###################################################
@@ -11,7 +11,7 @@
 # Cotown includes
 from library.services.config import settings
 from library.services.apiclient import APIClient
-from library.business.contract import do_contracts, do_group_contracts
+from library.business.contract import check_contracts
 
 # Logging
 import logging
@@ -57,7 +57,6 @@ def main():
 
     # Contracts
     num = 0
-    date = settings.CONTRACTDATE
 
     # Get pending individual booking contracts
     bookings = apiClient.call('''
@@ -65,49 +64,24 @@ def main():
       data: Booking_BookingList (
         where: {
           AND: [
-            { Status: { IN: [firmacontrato, contrato, checkinconfirmado, checkin, inhouse] } },
-            { Date_from: { GE: "''' + date + '''"} }
-            { Contract_rent: { IS_NULL: true } }
+            { Contract_id: { NE: "n/a" } }
+            { Contract_status: { NE: completed } }
+            { Contract_rent: { IS_NULL: false } }
           ]
         }
-      ) { id }
+      ) { id Contract_id Contract_status}
     }
     ''')
 
     # Loop thru contracts
     if bookings is not None:
       for booking in bookings.get('data'):
-          id = booking['id']
-          logger.debug(id)
-          if do_contracts(apiClient, id):
-            num += 1
-
-    # Get pending group booking contracts
-    bookings = apiClient.call('''
-    {
-      data: Booking_Booking_groupList (
-        orderBy: [{ attribute: id }]
-        where: {
-          AND: [
-            { Status: { IN: [grupoconfirmado, inhouse] } },
-            { Date_from: { GE: "''' + date + '''"} }
-            { Contract_rent: { IS_NULL: true } }
-          ]
-        }
-      ) { id }
-    }
-    ''')
-
-    # Loop thru contracts
-    if bookings is not None:
-      for booking in bookings.get('data'):
-          id = booking['id']
-          logger.debug(id)
-          if do_group_contracts(apiClient, id):
+          logger.debug(booking['id'])
+          if check_contracts(apiClient, booking['Contract_id'], booking['Contract_status']):
             num += 1
 
     # Debug
-    logger.info('{} contracts printed'.format(num))
+    logger.info('{} contracts updated'.format(num))
 
 
 # #####################################

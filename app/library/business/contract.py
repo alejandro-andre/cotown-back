@@ -7,7 +7,7 @@ import markdown
 import requests
 import locale
 import base64
-import json
+from flask import g
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, DateSigned, CustomFields, TextCustomField 
 from num2words import num2words
 from datetime import datetime
@@ -23,6 +23,7 @@ logger = logging.getLogger('COTOWN')
 # Cotown includes
 from library.services.config import settings
 from library.services.utils import flatten
+from library.business.queries import q_change_contract
 
 
 # ######################################################
@@ -585,6 +586,70 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
 
   # Result
   return summary.envelope_id, summary.status
+
+
+# ######################################################
+# Send documents to sign
+# ######################################################
+
+def check_contracts(apiClient, id, current_status):
+
+  try:
+    # API Client setup
+    api_client = ApiClient()
+    api_client.set_base_path(settings.AUTHORIZATION_SERVER)
+    api_client.set_oauth_host_name(settings.AUTHORIZATION_SERVER)
+    
+    # Private key
+    private_key = get_private_key('test.private.key').encode('ascii').decode('utf-8')
+
+    # Get JWT token
+    token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
+    auth=f'Bearer {token_response.access_token}'
+
+    # Get
+    api_client.host = settings.ACCOUNT_BASE_URI
+    api_client.set_base_path(settings.ACCOUNT_BASE_URI)
+    api_client.set_default_header(header_name='Authorization', header_value=auth)
+    api = EnvelopesApi(api_client)
+    envelope = api.get_envelope(account_id=settings.API_ACCOUNT_ID, envelope_id=id)
+
+    # Status changed
+    status = envelope.status
+    if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
+      status = 'other'
+    if status == current_status:
+      return False
+    
+    # Datetime
+    dt = str(envelope._status_changed_date_time)[:19]
+
+    # Debug
+    logger.info("Envelope: " + envelope.envelope_id)
+    logger.info("Status..: " + current_status + ' -> ' + status)
+    logger.info("Date....: " + dt)
+
+    # Update query
+    query = '''
+    mutation ($contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $dt: String) {
+      Booking_BookingUpdate (
+        where:  { Contract_id: {EQ: $contractid} }
+        entity: {
+          Contract_status: $contractstatus
+          Contract_signed: $dt
+        }
+      ) { id }
+    }
+    '''
+
+    # Call graphQL endpoint
+    apiClient.call(query, { 'contractid': id, 'contractstatus': status, 'dt': dt })
+    return True
+
+  # Error
+  except Exception as error:
+    logger.error(error)
+    return False
 
 
 # ######################################################
