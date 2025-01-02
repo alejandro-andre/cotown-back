@@ -181,7 +181,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
   # Query parameters
   l = '_en' if lang == 'en' else ''
   year, field = rent_info(date_from, date_to)
-  place_type = 'I_%' if room_type == 'ind' else 'D\_%'
+  place_type = 'I_%' if room_type == 'ind' else 'D_%'
   building_type = (3,) if acom_type == 'rs' else (1, 2)
 
   # Rooms

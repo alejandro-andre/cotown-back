@@ -21,7 +21,7 @@ import re
 from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.services.utils import flatten
-from app.library.business.contract import BOOKING, month, decimal
+from library.business.contract import BOOKING, month, decimal
 from library.business.queries import q_change_contract
 
 # Logging
