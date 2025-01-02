@@ -35,7 +35,7 @@ BASE = '''
 <head>
 <style>
 @page {{ size: A4; margin: 1.4cm; }}
-body {{ font-size: 14px; font-weight: 400; font-family:"Calibri", Arial, Helvetica, sans-serif;
+body {{ font-size: 14px; font-weight: 400; font-family: Arial, Helvetica, sans-serif;
 }}
 table {{ width: 100%; }}
 p {{ margin-top: 18px; margin-bottom: 18px; text-align: justify; text-justify: inter-word; }}
@@ -46,6 +46,7 @@ h2 {{ font-size: 1em; font-weight: 600; }}
 h3 {{ font-size: 1em; font-weight: 600; }}
 hr {{ border-top: 0px; page-break-after: always; }}
 img[alt=firma] {{ width: 200px; }}
+.signature {{ padding: 20px 0px; color: white; }}
 </style>
 </head>
 <body>{}</body>
@@ -495,7 +496,7 @@ def get_private_key(private_key_path):
 # Send documents to sign
 # ######################################################
 
-def do_send_contract(file_rent, file_svcs, booking, type, code):
+def do_send_contract(file_rent, file_svcs, context):
 
   # API Client setup
   api_client = ApiClient()
@@ -516,7 +517,8 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
   documents.append(
     Document(
       document_base64=document_base64,
-      name='Contrato de arrendamiento ' + str(booking) + ' - ' + type + ' - ' + code,
+      # TO DO: Nombre del documento
+      name='Contrato de arrendamiento ' + str(context['Booking_id']) + ' - B2C - ' + context['Resource_code'],
       file_extension='pdf',
       document_id='1',
     )
@@ -529,7 +531,8 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
     documents.append(
       Document(
         document_base64=document_base64,
-        name='Contrato de servicios ' + str(booking) + ' - ' + type + ' - ' + code,
+        # TO DO: Nombre del documento
+        name='Contrato de servicios ' + str(context['Booking_id']) + ' - B2C - ' + context['Resource_code'],
         file_extension='pdf',
         document_id='2',
       )
@@ -537,16 +540,17 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
 
   # Signer
   signer = Signer(
-    email='alejandroandref@gmail.com',
-    name='Alejandro André',
+    #email=context['Customer_email'],
+    email='alejandro.andre@experis.es',
+    name=context['Customer_name'],
     language='es',
     recipient_id='1',
     tabs=Tabs(
       sign_here_tabs=[
-        SignHere(anchor_string='/FIRMA/')
+        SignHere(anchor_string='/FIRMACLIENTE/')
       ],
       date_signed_tabs=[
-        DateSigned(anchor_string='/FECHA/')
+        DateSigned(anchor_string='/FECHACLIENTE/')
       ]
     )
   )
@@ -555,13 +559,13 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
   custom_fields = CustomFields(
     text_custom_fields=[
       TextCustomField(
-        name="Booking Id",
-        value="1234",
+        name='Booking Id',
+        value=context['Booking_id'],
         show=True
       ),
       TextCustomField(
-        name="Booking Type",
-        value="B2C",
+        name='Booking Type',
+        value='B2C',
         show=True
       )
     ]
@@ -571,7 +575,7 @@ def do_send_contract(file_rent, file_svcs, booking, type, code):
   envelope_definition = EnvelopeDefinition(
     documents=documents,
     recipients={'signers': [signer]},
-    email_subject='Contrato(s)  ' + str(booking) + ' - ' + type + ' - ' + code,
+    email_subject='Contrato(s)  ' + str(context['Booking_id']) + ' - B2C - ' + context['Resource_code'],
     email_blurb='BODY',
     custom_fields=custom_fields,
     status='sent'
@@ -791,7 +795,7 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    #?eid, status = do_send_contract(file_rent, file_svcs, id, 'B2C', context['Resource_code'])
+    #?eid, status = do_send_contract(file_rent, file_svcs, context)
     eid, status = 'n/a', 'sent'
 
     # Update query
