@@ -518,7 +518,7 @@ def do_send_contract(file_rent, file_svcs, context):
     Document(
       document_base64=document_base64,
       # TO DO: Nombre del documento
-      name='Contrato de arrendamiento ' + str(context['Booking_id']) + ' - B2C - ' + context['Resource_code'],
+      name='Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
       file_extension='pdf',
       document_id='1',
     )
@@ -532,7 +532,7 @@ def do_send_contract(file_rent, file_svcs, context):
       Document(
         document_base64=document_base64,
         # TO DO: Nombre del documento
-        name='Contrato de servicios ' + str(context['Booking_id']) + ' - B2C - ' + context['Resource_code'],
+        name='Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
         file_extension='pdf',
         document_id='2',
       )
@@ -575,7 +575,7 @@ def do_send_contract(file_rent, file_svcs, context):
   envelope_definition = EnvelopeDefinition(
     documents=documents,
     recipients={'signers': [signer]},
-    email_subject='Contrato(s)  ' + str(context['Booking_id']) + ' - B2C - ' + context['Resource_code'],
+    email_subject='Contrato(s)  ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
     email_blurb='BODY',
     custom_fields=custom_fields,
     status='sent'
@@ -795,8 +795,8 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    #?eid, status = do_send_contract(file_rent, file_svcs, context)
-    eid, status = 'n/a', 'sent'
+    eid, status = do_send_contract(file_rent, file_svcs, context)
+    #?eid, status = 'n/a', 'sent'
 
     # Update query
     query = '''
@@ -829,6 +829,12 @@ def do_group_contracts(apiClient, id):
   logger.info('Contrato para la reserva G' + str(id))
 
   try:
+
+    # Empty files
+    file_rent = None
+    file_svcs = None
+    json_rent = None
+    json_svcs = None
     
     # Empty files
     json_rent = None
@@ -851,18 +857,18 @@ def do_group_contracts(apiClient, id):
     # Generate rent contract
     template, annex, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
     if template is not None:
-      file = generate_doc_file(context, template)
+      file_rent = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
-      response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
+      response = requests.post(url, data=file_rent.read(), headers={ 'Content-Type': 'application/pdf' })      
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
     if room['Owner_id'] != room['Service_id']:
       template, annex, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
       if template is not None:
-        file = generate_doc_file(context, template)
+        file_svcs = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
-        response = requests.post(url, data=file.read(), headers={ 'Content-Type': 'application/pdf' })      
+        response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Update query
