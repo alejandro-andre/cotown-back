@@ -1114,8 +1114,8 @@ def bill_lau(dbClient, con):
       INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id"
       LEFT JOIN "Billing"."Invoice" i 
         ON i."Booking_other_id" = bo.id 
-        AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE) 
-        AND i."Issued_date" < (DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month')
+        AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') 
+        AND i."Issued_date" < (DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') + INTERVAL '1 month')
     WHERE i.id IS NULL
       AND bo."Unlawful" <> TRUE
     ;
