@@ -13,10 +13,12 @@ BEGIN
 
   -- Long term
   IF NEW."Date_estimated" IS NULL THEN
+	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
+  	VALUES (NEW."Resource_id", 2, NEW."Date_from", '2099/12/31');
     RETURN NEW;
   END IF;
 
-  -- Add LAU lock
+  -- Fixed term
   INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
   VALUES (NEW."Resource_id", 2, NEW."Date_from", NEW."Date_estimated");
   date_from = NEW."Date_estimated" + INTERVAL '1 day';
