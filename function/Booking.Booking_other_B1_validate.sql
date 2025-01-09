@@ -5,6 +5,14 @@ DECLARE
 
 BEGIN
 
+  -- Dates
+  IF NEW."Date_to" <= "Date_from" THEN
+    RAISE EXCEPTION '!!!Wrong dates!!!Fechas incorrectas!!!';
+  END IF;
+  IF NEW."Date_to" IS NOT NULL AND "Date_estimated" IS NULL THEN
+    NEW."Date_estimated" = NEW."Date_to";
+  END IF;
+
   -- Get pre-capex values
   SELECT COALESCE(r."Pre_capex_vacant", 0) - COALESCE(r."Pre_capex_long_term", 0)
   INTO pre_capex_diff

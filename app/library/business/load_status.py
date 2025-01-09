@@ -20,7 +20,33 @@ def load_status(dbClient, con, data):
   # Header
   header = list(map(lambda cell: cell.value, data[2]))
 
-  # Loop thru all rows skipping two first rows
+  # Get all resources
+  resources = set()
+  for irow, row in enumerate(data.iter_rows(min_row=3)):
+    for icol, cell in enumerate(row):
+      column = header[icol]
+      if column == 'Resource.Code':
+        resources.add(cell.value)
+  resources = tuple(sorted(resources))
+
+  # Delete all locks, except LAU, Pre capex and Capex 
+  try:
+    sql = '''
+    DELETE FROM "Resource"."Resource_availability" 
+    WHERE "Status_id" NOT IN (2, 3, 4) 
+    AND "Resource_id" IN (
+      SELECT "Resource_id" 
+      FROM "Resource"."Resource" 
+      WHERE "Code" IN %s
+    )'''
+    cur = dbClient.execute(con, sql, (resources, ))
+    logger.info('Availabilities deleted')
+  except:
+    logger.error(error)
+    con.rollback()
+    return False, error
+
+  # Get all locks
   for irow, row in enumerate(data.iter_rows(min_row=3)):
     try:
 
@@ -72,14 +98,15 @@ def load_status(dbClient, con, data):
         else:
           record[column] = cell.value
 
-      # Insert record
-      fields = list(map(lambda key: '"' + key + '"', record.keys()))
-      update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
-      values = [record[field] for field in record.keys()]
-      markers = ['%s'] * len(record.keys())
-      sql = 'INSERT INTO "Resource"."Resource_availability" ({}) VALUES ({}) ON CONFLICT ("Resource_id", "Date_from") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
-      cur = dbClient.execute(con, sql, values)
-      id = cur.fetchone()[0]
+      # Insert record, except LAU, Pre capex and Capex
+      if record['Status_id'] not in (2, 3, 4):
+        fields = list(map(lambda key: '"' + key + '"', record.keys()))
+        update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
+        values = [record[field] for field in record.keys()]
+        markers = ['%s'] * len(record.keys())
+        sql = 'INSERT INTO "Resource"."Resource_availability" ({}) VALUES ({}) ON CONFLICT ("Resource_id", "Date_from") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
+        cur = dbClient.execute(con, sql, values)
+        id = cur.fetchone()[0]
 
     # Error
     except Exception as error:

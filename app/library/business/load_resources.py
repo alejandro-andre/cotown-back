@@ -219,9 +219,6 @@ def load_resources(dbClient, con, data):
           ''', 
           (id, aux[0]))
 
-      # Reset unavailabilities
-      dbClient.execute(con, 'DELETE FROM "Resource"."Resource_availability" WHERE "Resource_id" = %s', (id,))
-
     # Error
     except Exception as error:
       logger.error(error)
