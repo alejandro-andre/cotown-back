@@ -99,7 +99,9 @@ def load_status(dbClient, con, data):
           record[column] = cell.value
 
       # Insert record, except LAU, Pre capex and Capex
+      count = 0
       if record['Status_id'] not in (2, 3, 4):
+        count = 1
         fields = list(map(lambda key: '"' + key + '"', record.keys()))
         update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
         values = [record[field] for field in record.keys()]
@@ -122,9 +124,9 @@ def load_status(dbClient, con, data):
 
     # Count oks and errors
     if ok:
-      n_ok += 1
+      n_ok += count
     else:
-      n_ko += 1
+      n_ko += count
 
   # Rollback?
   if n_ko > 0:
