@@ -52,8 +52,8 @@ FROM "Booking"."Booking" b
   	  SUM(bp."Services") AS "Total_services"
   	FROM "Booking"."Booking_price" bp
   	  LEFT JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
-  	  LEFT  JOIN "Building"."Building" bu ON bu.id = b."Building_id"
-  	  LEFT  JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
+  	  LEFT JOIN "Building"."Building" bu ON bu.id = b."Building_id"
+  	  LEFT JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
   	  LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
   	WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
   	GROUP BY 1
