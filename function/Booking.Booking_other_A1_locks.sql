@@ -1,9 +1,14 @@
 -- Crea/Actualiza los bloqueos
 DECLARE
 
+  curr_user VARCHAR;
   date_from DATE;
 
 BEGIN
+
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE; 
 
   -- Delete pre capex & capex locks
   DELETE 
@@ -13,8 +18,9 @@ BEGIN
 
   -- Long term
   IF NEW."Date_estimated" IS NULL THEN
-	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
-  	VALUES (NEW."Resource_id", 2, NEW."Date_from", '2099/12/31');
+  	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
+    	VALUES (NEW."Resource_id", 2, NEW."Date_from", '2099/12/31');
+    EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
 
@@ -43,6 +49,7 @@ BEGIN
   END IF;
 
   -- Return record
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;
