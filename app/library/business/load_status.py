@@ -29,11 +29,10 @@ def load_status(dbClient, con, data):
         resources.add(cell.value)
   resources = tuple(sorted(resources))
 
-  # Delete all locks, except LAU, Pre capex and Capex 
+  # Delete all locks
   try:
     sql = '''
     DELETE FROM "Resource"."Resource_availability" 
-    WHERE "Status_id" NOT IN (2, 3, 4) 
     AND "Resource_id" IN (
       SELECT "Resource_id" 
       FROM "Resource"."Resource" 
@@ -98,17 +97,14 @@ def load_status(dbClient, con, data):
         else:
           record[column] = cell.value
 
-      # Insert record, except LAU, Pre capex and Capex
-      count = 0
-      if record['Status_id'] not in (2, 3, 4):
-        count = 1
-        fields = list(map(lambda key: '"' + key + '"', record.keys()))
-        update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
-        values = [record[field] for field in record.keys()]
-        markers = ['%s'] * len(record.keys())
-        sql = 'INSERT INTO "Resource"."Resource_availability" ({}) VALUES ({}) ON CONFLICT ("Resource_id", "Date_from") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
-        cur = dbClient.execute(con, sql, values)
-        id = cur.fetchone()[0]
+      # Insert record
+      fields = list(map(lambda key: '"' + key + '"', record.keys()))
+      update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
+      values = [record[field] for field in record.keys()]
+      markers = ['%s'] * len(record.keys())
+      sql = 'INSERT INTO "Resource"."Resource_availability" ({}) VALUES ({}) ON CONFLICT ("Resource_id", "Date_from") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
+      cur = dbClient.execute(con, sql, values)
+      id = cur.fetchone()[0]
 
     # Error
     except Exception as error:
@@ -124,9 +120,9 @@ def load_status(dbClient, con, data):
 
     # Count oks and errors
     if ok:
-      n_ok += count
+      n_ok += 1
     else:
-      n_ko += count
+      n_ko += 1
 
   # Rollback?
   if n_ko > 0:
