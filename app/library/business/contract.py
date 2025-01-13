@@ -817,6 +817,7 @@ def do_contracts(apiClient, id):
     # Call graphQL endpoint
     if json_rent is not None or json_svcs is not None:
       dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+      logger.info(eid + ' - ' + status + ' - ' + dt)
       apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
       return True
     return False
