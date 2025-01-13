@@ -504,7 +504,7 @@ def do_send_contract(file_rent, file_svcs, context):
   api_client.set_oauth_host_name(settings.AUTHORIZATION_SERVER)
   
   # Private key
-  private_key = get_private_key('test.private.key').encode('ascii').decode('utf-8')
+  private_key = get_private_key('docusign.private.key').encode('ascii').decode('utf-8')
 
   # Get JWT token
   token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
@@ -540,8 +540,8 @@ def do_send_contract(file_rent, file_svcs, context):
 
   # Signer
   signer = Signer(
-    #email=context['Customer_email'],
-    email='alejandro.andre@experis.es',
+    #?email=context['Customer_email'],
+    email='dalarcon@cotown.com',
     name=context['Customer_name'],
     language='es',
     recipient_id='1',
@@ -800,7 +800,7 @@ def do_contracts(apiClient, id):
 
     # Update query
     query = '''
-    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType) {
+    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType $dt: String) {
       Booking_BookingUpdate (
         where:  { id: {EQ: $id} }
         entity: {
@@ -808,6 +808,7 @@ def do_contracts(apiClient, id):
           Contract_status: $contractstatus
           Contract_rent: $rent
           Contract_services: $svcs
+          Contract_signed: $dt
         }
       ) { id }
     }
@@ -815,7 +816,8 @@ def do_contracts(apiClient, id):
 
     # Call graphQL endpoint
     if json_rent is not None or json_svcs is not None:
-      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs })
+      dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
       return True
     return False
  
