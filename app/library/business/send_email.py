@@ -117,18 +117,24 @@ def generate_email(apiClient, email):
 # Send email thru SMTP
 # ###################################################
 
-def smtp_mail(to, subject, body, file=None):
+def smtp_mail(to, subject, body, cc=None, bcc=None, file=None):
 
   # Receivers
   if settings.SMTPSEND != 1:
     return
   receivers = [to,]
+  if cc:
+    receivers.extend(cc)
+  if bcc:
+    receivers.extend(bcc)
 
   # Prepare mail
   msg = MIMEMultipart()
   msg['From']    = settings.SMTPFROM
   msg['To']      = to
   msg['Subject'] = subject
+  if cc:
+    msg['Cc'] = ', '.join(cc)
   msg.attach(MIMEText(body, 'html'))
 
   # Attach file
@@ -181,7 +187,7 @@ def do_email(apiClient, email):
     logger.debug(subject)
 
     # ¡¡¡ Send email !!!
-    smtp_mail(email['Customer']['Email'], subject, body)
+    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'], bcc=email['Cco'])
 
     # Update query
     query = '''
