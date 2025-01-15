@@ -32,14 +32,16 @@ def req_pub_contract():
     return 'KO'
 
   # Get event info
-  event  = request.json['event']
-  status = data['envelopeSummary']['status']
-  id     = data['envelopeId']
-  dt     = data['envelopeSummary']['statusChangedDateTime']
+  event   = request.json['event']
+  status  = data['envelopeSummary']['status']
+  id      = data['envelopeId']
+  dt      = data['envelopeSummary']['statusChangedDateTime']
+  subject = data['envelopeSummary']['emailSubject']
   if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
     status = 'other'
 
   # Debug
+  logger.info(subject)
   logger.info(id)
   logger.info(dt)
   logger.info(event)
