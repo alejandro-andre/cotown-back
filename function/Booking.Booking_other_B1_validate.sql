@@ -6,10 +6,10 @@ DECLARE
 BEGIN
 
   -- Dates
-  IF NEW."Date_to" <= "Date_from" THEN
+  IF NEW."Date_to" <= NEW."Date_from" THEN
     RAISE EXCEPTION '!!!Wrong dates!!!Fechas incorrectas!!!';
   END IF;
-  IF NEW."Date_to" IS NOT NULL AND "Date_estimated" IS NULL THEN
+  IF NEW."Date_to" IS NOT NULL AND NEW."Date_estimated" IS NULL THEN
     NEW."Date_estimated" = NEW."Date_to";
   END IF;
 
