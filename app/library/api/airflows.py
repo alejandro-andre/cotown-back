@@ -158,7 +158,15 @@ def req_availability():
 # Change booking status (booking button)
 # ---------------------------------------------------
 
-def req_booking_status(id, status):
+def req_booking_status(id, status, oldstatus=None):
+
+  if status == 'descartada':
+    if oldstatus in ('solicitud','alternativas','pendientepago'):
+      pass
+    elif oldstatus in ('solicitudpagada', 'alternativaspagada'):
+      status = 'descartadapagada'
+    else:
+      return 'ok'
 
   if q_booking_status(g.dbClient, id, status):
     return 'ok'

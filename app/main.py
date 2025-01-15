@@ -185,6 +185,7 @@ def runapp():
 
   # Airflows plugins - Change booking status
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=req_booking_status, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>/<string:oldstatus>', view_func=req_booking_status, methods=['GET'])
 
   # Airflows plugins - Dashboard
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=req_dashboard, methods=['GET'])
