@@ -101,7 +101,7 @@ SELECT
     ELSE 0.21
   END AS "Tax",
   r."Management_fee" / 100 AS "Management_fee",
-  '' AS b."Commision_bill_status"
+  '' AS "Commision_bill_status"
 FROM "Booking"."Booking_group" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Payer_id" 
   INNER JOIN "Building"."Building" r ON r.id = b."Building_id" 
