@@ -39,7 +39,8 @@ SELECT
   pc."Amount",
   (SELECT SUM(bp."Rent_total")+SUM(bp."Services_total") AS "Rent" FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "Rent",
   COALESCE(t."Value", 0) / 100 AS "Tax",
-  r."Management_fee" / 100 AS "Management_fee"
+  r."Management_fee" / 100 AS "Management_fee",
+  b."Commision_bill_status"
 FROM "Booking"."Booking" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
@@ -99,7 +100,8 @@ SELECT
     WHEN b."Tax" THEN 0
     ELSE 0.21
   END AS "Tax",
-  r."Management_fee" / 100 AS "Management_fee"
+  r."Management_fee" / 100 AS "Management_fee",
+  '' AS b."Commision_bill_status"
 FROM "Booking"."Booking_group" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Payer_id" 
   INNER JOIN "Building"."Building" r ON r.id = b."Building_id" 
