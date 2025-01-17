@@ -124,9 +124,9 @@ def smtp_mail(to, subject, body, cc=None, bcc=None, file=None):
     return
   receivers = [to,]
   if cc:
-    receivers.extend(cc)
+    receivers.append(cc)
   if bcc:
-    receivers.extend(bcc)
+    receivers.append(bcc)
 
   # Prepare mail
   msg = MIMEMultipart()
@@ -187,7 +187,7 @@ def do_email(apiClient, email):
     logger.debug(subject)
 
     # ¡¡¡ Send email !!!
-    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'].split(','), bcc=[email['Cco']].split(','))
+    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'], bcc=email['Cco'])
 
     # Update query
     query = '''
