@@ -187,7 +187,7 @@ def do_email(apiClient, email):
     logger.debug(subject)
 
     # ¡¡¡ Send email !!!
-    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'], bcc=email['Cco'])
+    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'].split(','), bcc=[email['Cco']].split(','))
 
     # Update query
     query = '''
