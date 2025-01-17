@@ -13,7 +13,8 @@ SELECT
     ELSE 'No'
   END AS "Contribution_chance", 
   bo."Contribution_percent", bo."Contribution_recommended", bo."Contribution_asking", 
-  bo."Contribution_proposal", bo."Contribution_proposed_date", bo."Contribution_comments" 
+  bo."Contribution_proposal", bo."Contribution_proposed_date", bo."Contribution_comments",
+  bo."Comments" 
 FROM "Resource"."Resource" r
   INNER JOIN "Booking"."Booking_other" bo ON bo."Resource_id" = r.id
   LEFT JOIN "Resource"."Resource_status" rs ON rs.id = r."Status_id"
