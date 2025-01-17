@@ -13,6 +13,17 @@ BEGIN
     NEW."Date_estimated" = NEW."Date_to";
   END IF;
 
+  -- Auto Pre capex and Capes
+  IF NEW."Date_estimated" IS NOT NULL AND NEW."Date_precapex" IS NULL AND NEW."Date_capex" IS NULL THEN
+    NEW."Date_precapex" := (DATE_TRUNC('month', NEW."Date_estimated" + INTERVAL '2 months') + INTERVAL '1 month' - INTERVAL '1 day')::date;
+    NEW."Date_capex" := (DATE_TRUNC('month', NEW."Date_precapex" + INTERVAL '4 months') + INTERVAL '1 month' - INTERVAL '1 day')::date;
+  END IF;
+
+  -- ITP Date
+  IF NEW."Compensation_date" IS NOT NULL AND NEW."ITP_required_date" IS NULL THEN
+    NEW."ITP_required_date" := NEW."Compensation_date" + INTERVAL '1 months';
+  END IF;
+
   -- Get pre-capex values
   SELECT COALESCE(r."Pre_capex_vacant", 0) - COALESCE(r."Pre_capex_long_term", 0)
   INTO pre_capex_diff
