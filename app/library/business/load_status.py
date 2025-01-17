@@ -33,7 +33,7 @@ def load_status(dbClient, con, data):
   try:
     sql = '''
     DELETE FROM "Resource"."Resource_availability" 
-    AND "Resource_id" IN (
+    WHERE "Resource_id" IN (
       SELECT "Resource_id" 
       FROM "Resource"."Resource" 
       WHERE "Code" IN %s
