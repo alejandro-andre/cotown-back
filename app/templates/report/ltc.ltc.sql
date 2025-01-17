@@ -17,12 +17,13 @@ SELECT
   bo."Comments" 
 FROM "Resource"."Resource" r
   INNER JOIN "Booking"."Booking_other" bo ON bo."Resource_id" = r.id
+  INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id" 
   LEFT JOIN "Resource"."Resource_status" rs ON rs.id = r."Status_id"
   LEFT JOIN "Building"."Building" bu ON bu.id = r."Building_id" 
   LEFT JOIN "Geo"."District" d ON d.id = bu."District_id" 
   LEFT JOIN "Geo"."Location" l ON l.id = d."Location_id" 
   LEFT JOIN "Customer"."Customer" c ON c.id = bo."Customer_id" 
   LEFT JOIN "Auxiliar"."Gender" g ON g.id = c."Gender_id" 
-WHERE r."Resource_type" = 'piso'
-  AND r."Status_id" IN (2, 3)
+WHERE p."Name" LIKE 'Renta (LAU)%'
+AND r."Status_id" IN (2, 3)
 ORDER BY 1
