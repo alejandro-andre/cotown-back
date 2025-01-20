@@ -184,7 +184,10 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=N
     if sql:
       try:
         con = dbClient.getconn()
-        cur = dbClient.execute(con, sql, variables)
+        if variables == {}:
+          cur = dbClient.execute(con, sql)
+        else:
+          cur = dbClient.execute(con, sql, variables)
         desc = [desc[0] for desc in cur.description]
         data = cur.fetchall()
         cur.close()

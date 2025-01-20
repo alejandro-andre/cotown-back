@@ -5,7 +5,7 @@ SELECT
   r."Pre_capex_long_term", r."Pre_capex_vacant", r."Post_capex", r."Capex",
   g."Name_en" AS "Gender", 
   c."Birth_date",
-  bo."Pending_subrogation",
+  etl.labels[array_position(et.values, bo."Pending_subrogation"::text)]::text AS "Pending_subrogation",
   bo."Date_to",
   bo."Date_estimated",
   CASE
@@ -14,7 +14,7 @@ SELECT
   END AS "Contribution_chance", 
   bo."Contribution_percent", bo."Contribution_recommended", bo."Contribution_asking", 
   bo."Contribution_proposal", bo."Contribution_proposed_date", bo."Contribution_comments",
-  bo."Comments" 
+  bo."Comments"
 FROM "Resource"."Resource" r
   INNER JOIN "Booking"."Booking_other" bo ON bo."Resource_id" = r.id
   INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id" 
@@ -23,7 +23,9 @@ FROM "Resource"."Resource" r
   LEFT JOIN "Geo"."District" d ON d.id = bu."District_id" 
   LEFT JOIN "Geo"."Location" l ON l.id = d."Location_id" 
   LEFT JOIN "Customer"."Customer" c ON c.id = bo."Customer_id" 
-  LEFT JOIN "Auxiliar"."Gender" g ON g.id = c."Gender_id" 
+  LEFT JOIN "Auxiliar"."Gender" g ON g.id = c."Gender_id"
+  INNER JOIN "Models"."EnumType" et ON et.id = 24
+  INNER JOIN "Models"."EnumTypeLabel" etl ON etl.container = et.id AND etl.locale = 'en_US'
 WHERE p."Name" LIKE 'Renta (LAU)%'
 AND r."Status_id" IN (2, 3)
 ORDER BY 1
