@@ -16,6 +16,11 @@ BEGIN
   WHERE "Resource_id" = NEW."Resource_id"
     AND "Status_id" IN (2, 3, 4);
 
+  -- Return
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  END IF;
+
   -- Long term
   IF NEW."Date_estimated" IS NULL THEN
   	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
