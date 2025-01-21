@@ -38,10 +38,10 @@ def q_labels(dbClient, id, locale):
 
 
 # ######################################################
-# Dashboard
+# Dashboard operaciones
 # ######################################################
 
-def sql_dashboard(status, vars):
+def sql_dashboard_operaciones(status, vars):
 
   # Params
   date_from       = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
@@ -157,7 +157,7 @@ def sql_dashboard(status, vars):
   return sql
 
 
-def q_dashboard(dbClient, status=None, vars=None):
+def q_dashboard_operaciones(dbClient, status=None, vars=None):
 
   # Connect
   con = dbClient.getconn()
@@ -194,7 +194,80 @@ def q_dashboard(dbClient, status=None, vars=None):
     return result
 
   # Get bookings
-  cur = dbClient.execute(con, sql_dashboard(status, vars), vars)
+  cur = dbClient.execute(con, sql_dashboard_operaciones(status, vars), vars)
+  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+  cur.close()
+  dbClient.putconn(con)
+  return result
+
+
+# ######################################################
+# Dashboard LAU
+# ######################################################
+
+def sql_dashboard_lau(status, vars):
+
+  # Params
+  date_from  = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
+  date_to    = (datetime.now() + timedelta(days=settings.LAUDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  building   = vars.get('building')
+  buildings  = vars.getlist('building[]')
+  location   = vars.get('location')
+
+  # Get bookings
+  select = '''
+    SELECT 
+      b.id, 
+      b."Date_from", b."Date_to", b."Date_estimated",
+      b."Deposit", b."Deposit_required", b."Deposit_return_date",
+      b."Compensation", b."Compensation_date",
+      b."ITP_required_date",
+      r."Code" AS "Resource", 
+      bu."Name" AS "Building",
+      c."Name", c."Email", c."Phones"
+    FROM "Booking"."Booking_other" b
+      INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+      INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
+      LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
+  '''
+
+  # Devolutions
+  if status == 'dev':
+    sql = select + f'''
+    WHERE b."Deposit_return_date" BETWEEN '{date_from}' AND '{date_to}' '''   
+
+  # ITP
+  elif status == 'itp':
+    sql = select + f'''
+    WHERE b."ITP_required_date" BETWEEN '{date_from}' AND '{date_to}' '''   
+
+  # End of contract
+  elif status == 'end':
+    sql = select + f'''
+    WHERE b."Date_to" BETWEEN '{date_from}' AND '{date_to}' '''   
+
+  sql = select + 'WHERE 1=1 '
+
+  # Result
+  if buildings:
+    sql += f'''AND bu.id IN ({','.join(buildings)}) '''
+  elif building:
+    sql += f'''AND bu.id={building} '''
+  if location:
+    sql += f'''AND d."Location_id"={location} '''
+
+  # SQL
+  return sql
+
+
+def q_dashboard_lau(dbClient, status=None, vars=None):
+
+  # Connect
+  con = dbClient.getconn()
+ 
+  # Get bookings
+  cur = dbClient.execute(con, sql_dashboard_lau(status, vars), vars)
   result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
   cur.close()
   dbClient.putconn(con)

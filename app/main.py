@@ -23,7 +23,7 @@ from library.api.token import validate_token
 from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift, req_cert_booking
 from library.api.contract import req_pub_contract
 from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
-from library.api.airflows import req_signature, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard, req_report, req_prev_next, req_availability, req_questionnaire
+from library.api.airflows import req_signature, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard_operaciones, req_dashboard_lau, req_report_operaciones, req_prev_next_operaciones, req_availability, req_questionnaire
 from library.api.web import req_flats, req_rooms, req_amenities
 from library.api.payment import req_pay, req_pub_notification
 from library.api.integration import req_pub_int_customers, req_pub_int_invoices, req_pub_int_management_fees
@@ -166,6 +166,21 @@ def runapp():
       logger.debug(value)
       abort(value)
 
+# --------------------------------------------------------------
+# After each request
+# --------------------------------------------------------------
+
+  @app.after_request
+  def after_request(response):
+    # CORS headers
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    header['Access-Control-Allow-Headers'] = '*'
+    header['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS,HEAD'
+    header['Access-Control-Allow-Credentials'] = 'true'
+    return response
+
+
   # -------------------------------------------------
   # Requests mapping
   # -------------------------------------------------
@@ -187,11 +202,12 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=req_booking_status, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>/<string:oldstatus>', view_func=req_booking_status, methods=['GET'])
 
-  # Airflows plugins - Dashboard
-  app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=req_dashboard, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=req_dashboard, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/dashboard/prevnext', view_func=req_prev_next, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/report/<string:status>', view_func=req_report, methods=['GET'])
+  # Airflows plugins - Dashboards
+  app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=req_dashboard_operaciones, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/dashboard/<string:status>', view_func=req_dashboard_operaciones, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/dashboard/prevnext', view_func=req_prev_next_operaciones, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/dashboardlau/<string:type>', view_func=req_dashboard_lau, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/report/<string:status>', view_func=req_report_operaciones, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=req_labels, methods=['GET'])
 
   # Payment functions

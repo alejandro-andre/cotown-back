@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard, q_prev_next, q_labels, q_questionnaire, sql_dashboard
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones
 
 # Logging
 import logging
@@ -177,17 +177,22 @@ def req_booking_status(id, status, oldstatus=None):
 # Gets dashboard information
 # ---------------------------------------------------
 
-def req_dashboard(status=None):
+def req_dashboard_lau(type=None):
 
-  return q_dashboard(g.dbClient, status=status, vars=request.args)
+  return q_dashboard_lau(g.dbClient, status=type, vars=request.args)
 
 
-def req_prev_next():
+def req_dashboard_operaciones(status=None):
+
+  return q_dashboard_operaciones(g.dbClient, status=status, vars=request.args)
+
+
+def req_prev_next_operaciones():
 
   return q_prev_next(g.dbClient)
 
 
-def req_report(status=None):
+def req_report_operaciones(status=None):
 
   # Querystring variables
   vars = {}
@@ -198,7 +203,7 @@ def req_report(status=None):
       vars[item] = request.args[item]
 
   # Export
-  external_sql = sql_dashboard(status, request.args)
+  external_sql = sql_dashboard_operaciones(status, request.args)
   result = do_export_to_excel(g.apiClient, g.dbClient, 'operaciones.' + status, vars, external_sql)
   if result is None:
     abort(404)

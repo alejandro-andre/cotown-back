@@ -24,7 +24,7 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Booking"."Booking" b on b.id = i."Booking_id" 
   LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id"  
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_group_id" IS NULL 
+WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_id" IS NOT NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
@@ -54,7 +54,37 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   LEFT JOIN "Resource"."Resource" r ON r.id = il."Resource_id"
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_id" IS NULL 
+WHERE i."Issued" AND pd."Product_type_id" <> 2 AND i."Booking_group_id" IS NOT NULL 
+  AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
+
+UNION ALL
+
+-- Facturas LAU
+SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXTRACT(YEAR from i."Issued_date") AS "Year",
+  i."Issued_date" AS "Income_date", i."Booking_other_id", b."Date_from", b."Date_to", r."Code", c."Name", c."Email",
+  il."Amount" AS "Amount",
+  t."Value" / 100 AS "Tax",
+  CASE 
+    WHEN p."Payment_date" IS NULL THEN il."Amount"
+    ELSE 0.0
+  END AS "Amount_due",
+  CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
+  pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
+  CASE WHEN b."Booking_type" = 'lau' THEN 'LAU' ELSE 'Retail' END AS "Type",
+  pdt."Name" AS "Amount_type",
+  0 AS "Management_fee"
+FROM "Billing"."Invoice_line" il
+  INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
+  INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
+  INNER JOIN "Billing"."Product" pd on pd.id = il."Product_id" 
+  INNER JOIN "Billing"."Product_type" pdt on pdt.id = pd."Product_type_id" 
+  INNER JOIN "Provider"."Provider" pr on pr.id = i."Provider_id" 
+  INNER JOIN "Customer"."Customer" c on c.id = i."Customer_id"
+  LEFT JOIN "Billing"."Payment" p on p.id = i."Payment_id"
+  LEFT JOIN "Booking"."Booking_other" b on b.id = i."Booking_other_id" 
+  LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id"  
+  LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
+WHERE i."Issued" AND i."Booking_other_id" IS NOT NULL 
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
