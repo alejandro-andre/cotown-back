@@ -14,7 +14,12 @@ SELECT
   END AS "Contribution_chance", 
   bo."Contribution_percent", bo."Contribution_recommended", bo."Contribution_asking", 
   bo."Contribution_proposal", bo."Contribution_proposed_date", bo."Contribution_comments",
-  bo."Comments"
+  bo."Comments",
+  CASE
+    WHEN bo."Date_estimated" IS NULL AND bo."Date_to" IS NULL THEN 'LTNC'
+    WHEN bo."Date_estimated" IS NOT NULL AND bo."Date_to" IS NULL THEN 'LTC'
+    ELSE 'FTC'
+  END AS "Tenancy_type"
 FROM "Resource"."Resource" r
   INNER JOIN "Booking"."Booking_other" bo ON bo."Resource_id" = r.id
   INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id" 
@@ -28,4 +33,4 @@ FROM "Resource"."Resource" r
   INNER JOIN "Models"."EnumTypeLabel" etl ON etl.container = et.id AND etl.locale = 'en_US'
 WHERE p."Name" LIKE 'Renta (LAU)%'
 AND r."Status_id" IN (2, 3)
-ORDER BY 1
+ORDER BY "Tenancy_type" DESC, 1

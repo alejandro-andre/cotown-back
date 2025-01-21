@@ -68,7 +68,11 @@ SELECT
   c."Email",
   c."Phones",
   r."Code",
-  c."Bank_account", c."Swift", c."Bank_holder", c."Bank_name", c."Bank_address", c."Bank_city", co."Name" AS "Bank_country",
+  c."Bank_account", c."Swift", c."Bank_holder", c."Bank_name", c."Bank_address", c."Bank_city", 
+  CASE 
+    WHEN co."Sepa" THEN co."Name" 
+    ELSE cb."Name"
+  END AS "Bank_country",
   CASE 
     WHEN co."Sepa" THEN 'SEPA'
     ELSE ''
@@ -79,6 +83,7 @@ FROM "Booking"."Booking" b
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
   LEFT JOIN "Geo"."Country" co ON co."Code" = substring(c."Bank_account", 1, 2) 
+  LEFT JOIN "Geo"."Country" cb ON cb.id = c."Bank_country_id"
   LEFT JOIN "Invoices_due" d ON d."Booking_id" = b.id
   LEFT JOIN "Invoices_from_deposit" g ON g."Booking_id" = b.id
   LEFT JOIN "Invoices_due_cotown" dc ON dc."Booking_id" = b.id
