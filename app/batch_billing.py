@@ -1117,6 +1117,7 @@ def bill_lau(dbClient, con):
         AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') 
         AND i."Issued_date" < (DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') + INTERVAL '1 month')
     WHERE i.id IS NULL
+      AND bo."Date_bill_from" > CURRENT_DATE
       AND bo."Rent" IS NOT NULL
       AND bo."Unlawful" <> TRUE
     ;
@@ -1235,7 +1236,6 @@ def bill_lau(dbClient, con):
       # Commit
       con.commit()
       num += 1
-      break
 
     # Process exception
     except Exception as error:
