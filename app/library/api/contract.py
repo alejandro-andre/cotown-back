@@ -31,10 +31,16 @@ def req_pub_contract():
   if not data:
     return 'KO'
 
-  # Get event info
-  event   = request.json['event']
-  status  = data['envelopeSummary']['status']
+  # Get event
+  event = request.json['event']
   id      = data['envelopeId']
+  logger.info(event)
+  logger.info(id)
+  if event == 'envelope-removed':
+    return 'ok'
+  
+  # Get data
+  status  = data['envelopeSummary']['status']
   dt      = data['envelopeSummary']['statusChangedDateTime']
   subject = data['envelopeSummary']['emailSubject']
   if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
@@ -42,10 +48,8 @@ def req_pub_contract():
 
   # Debug
   logger.info(subject)
-  logger.info(id)
-  logger.info(dt)
-  logger.info(event)
   logger.info(status)
+  logger.info(dt)
   #?q_change_contract(g.dbClient, id, dt, status)
 
   # Return
