@@ -247,8 +247,6 @@ def sql_dashboard_lau(status, vars):
     sql = select + f'''
     WHERE b."Date_to" BETWEEN '{date_from}' AND '{date_to}' '''   
 
-  sql = select + 'WHERE 1=1 '
-
   # Result
   if buildings:
     sql += f'''AND bu.id IN ({','.join(buildings)}) '''
