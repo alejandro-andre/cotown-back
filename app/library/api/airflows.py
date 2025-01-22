@@ -165,8 +165,6 @@ def req_booking_status(id, status, oldstatus=None):
       pass
     elif oldstatus in ('solicitudpagada', 'alternativaspagada'):
       status = 'descartadapagada'
-    else:
-      return 'ok'
 
   if q_booking_status(g.dbClient, id, status):
     return 'ok'
