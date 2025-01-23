@@ -12,8 +12,12 @@ SELECT
     WHEN bo."Contribution_chance" THEN 'Yes'
     ELSE 'No'
   END AS "Contribution_chance", 
-  bo."Contribution_percent", bo."Contribution_recommended", bo."Contribution_asking", 
-  bo."Contribution_proposal", bo."Contribution_proposed_date", bo."Contribution_comments",
+  bo."Contribution_percent" / 100.0 AS "Contribution_percent", 
+  bo."Contribution_recommended", 
+  bo."Contribution_asking", 
+  bo."Contribution_proposal", 
+  bo."Contribution_proposed_date", 
+  bo."Contribution_comments",
   bo."Comments",
   CASE
     WHEN bo."Date_estimated" IS NULL AND bo."Date_to" IS NULL THEN 'LTNC'
