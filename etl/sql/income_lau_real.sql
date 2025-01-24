@@ -7,7 +7,10 @@ SELECT
   p."Document" AS "provider", 
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
-  'LAU'AS "stay_length",
+  CASE 
+	  WHEN b."Booking_type" = 'lau' THEN 'LAU'
+	  ELSE 'RETAIL'
+  END AS "stay_length",
   pr."Name_en" AS "product",
   il."Amount" / (1 + (t."Value" / 100)) AS "amount",
   il."Amount" / (1 + (t."Value" / 100)) AS "rate",
@@ -24,3 +27,4 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id" 
 WHERE i."Issued_date" >= '2024-01-01'
 ;
+
