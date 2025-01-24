@@ -1117,8 +1117,8 @@ def bill_lau(dbClient, con):
         AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') 
         AND i."Issued_date" < (DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') + INTERVAL '1 month')
     WHERE i.id IS NULL
-      AND (bo."Date_estimated" > CURRENT_DATE OR bo."Date_estimated" IS NULL)
-      AND (bo."Date_bill_from" > CURRENT_DATE OR bo."Date_bill_from" IS NULL)
+      AND (bo."Date_estimated" > CURRENT_DATE + INTERVAL '3 days' OR bo."Date_estimated" IS NULL)
+      AND (bo."Date_bill_from" > CURRENT_DATE + INTERVAL '3 days' OR bo."Date_bill_from" IS NULL)
       AND bo."Rent" IS NOT NULL
       AND bo."Unlawful" <> TRUE
     ;
