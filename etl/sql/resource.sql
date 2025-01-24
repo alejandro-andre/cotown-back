@@ -1,5 +1,6 @@
 SELECT 
   r."Code" AS "id",
+  r."Resource_type"::text AS "type",
   p."Document" AS "owner", 
   l."Name_en" AS "location", 
   b."Start_date" AS "start_date",
@@ -7,8 +8,16 @@ SELECT
   SUBSTRING(r."Code", 1, 6) AS "building", 
   b."Name" as "building_name",
   SUBSTRING(r."Code", 1, 12) AS "flat",
-  rft."Code" AS "flat_type",
   CASE
+    WHEN r."Resource_type" = 'local' THEN 'RETAIL'
+    WHEN r."Resource_type" = 'parking' THEN 'PARKING'
+    WHEN r."Resource_type" = 'trastero' THEN 'STORAGE'
+    ELSE rft."Code"
+  END AS "flat_type",
+  CASE
+    WHEN r."Resource_type" = 'local' THEN 'RETAIL'
+    WHEN r."Resource_type" = 'parking' THEN 'PARKING'
+    WHEN r."Resource_type" = 'trastero' THEN 'STORAGE'
     WHEN rpt."Code" IS NULL THEN 'FLAT'
     ELSE rpt."Code" 
   END AS "place_type",
@@ -26,12 +35,13 @@ INNER JOIN "Geo"."District" d ON d.id = b."District_id"
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza')
+WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza', 'local', 'parking', 'trastero')
 
 UNION
 
 SELECT DISTINCT
   SUBSTRING(r."Code", 1, 6) AS "id",
+  'edificio' AS "type",
   p."Document" AS "owner", 
   l."Name_en" AS "location", 
   b."Start_date" AS "start_date",
@@ -51,5 +61,5 @@ INNER JOIN "Geo"."District" d ON d.id = b."District_id"
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza')
+WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza', 'local', 'parking', 'trastero')
 ;

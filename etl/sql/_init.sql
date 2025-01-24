@@ -117,6 +117,7 @@ CONSTRAINT place_type_pk PRIMARY KEY ("id")
 -- Create resources table
 CREATE TABLE gold.resource (
   "id" varchar NOT NULL,
+  "type" varchar NOT NULL,
   "owner" varchar NOT NULL,
   "location" varchar NOT NULL,
   "start_date" date DEFAULT NULL,
