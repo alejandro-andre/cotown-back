@@ -2,7 +2,7 @@ SELECT
   CONCAT('BRX', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
-  b.id AS "booking",
+  'G' || b.id AS "booking",
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
   r."Code" AS "resource",

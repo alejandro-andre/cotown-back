@@ -10,7 +10,7 @@ SELECT
   CONCAT('BOR', bp.id, r."rid") AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
-  bp."Booking_id" AS "booking",
+  'G' || bp."Booking_id" AS "booking",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
   b."Payer_id" AS "customer",
