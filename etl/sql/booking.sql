@@ -1,0 +1,43 @@
+SELECT 
+  b.id, 
+  b."Status" AS "status",
+  bw."Name" AS "who",
+  br."Name" AS "referral",
+  bc."Name" AS "channel",
+  a."Name" AS "agent",
+  c."Name" AS "customer",
+  c."Email" AS "email",
+  c."Phones" AS "phones",
+  c."Birth_date" AS "birth_date",
+  g."Code" AS "gender",
+  cn."Name" AS "nationality",
+  cn."Continent" AS "continent",
+  l."Name" AS "language",
+  s."Name" AS "school",
+  c."Created_at" AS "first_contact",
+  b."Request_date" AS "request_date",
+  b."Confirmation_date" AS "confirmation_date",
+  r."Code" as "resource",
+  b."Rent" AS "rate",
+  b."Services" AS "services",
+  (SELECT SUM(bp."Rent") FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "total_rent",
+  (SELECT SUM(bp."Services") FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "total_services",
+  b."Limit" AS "limit",
+  b."Commision" AS "commision",
+  b."Date_from" AS "date_from",
+  b."Date_to" AS "date_to",
+  b."Check_in" AS "check_in",
+  b."Check_out" AS "check_out"
+FROM "Booking"."Booking" b
+  INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+  LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+  LEFT JOIN "Geo"."Country" cn ON cn.id = c."Nationality_id"
+  LEFT JOIN "Auxiliar"."Gender" g ON g.id = c."Gender_id"
+  LEFT JOIN "Auxiliar"."Language" l ON l.id = c."Language_id"
+  LEFT JOIN "Auxiliar"."School" s ON s.id = b."School_id" 
+  LEFT JOIN "Booking"."Booking_who" bw ON bw.id = b."Booking_who_id"
+  LEFT JOIN "Booking"."Booking_referral" br ON br.id = b."Booking_referral_id"
+  LEFT JOIN "Booking"."Booking_channel" bc ON bc.id = b."Booking_channel_id"
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
+ORDER BY 1
+;

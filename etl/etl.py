@@ -154,8 +154,13 @@ def main(interfaces):
           load(dbOrigin, dbDestination, 'gl', file[:-4])
 
     # ------------------------------------
-    # Monthly
+    # Core
     # ------------------------------------
+
+    # booking
+    if 'booking' in interfaces:
+      execute(dbDestination, '_clear_booking')
+      load(dbOrigin, dbDestination, 'booking', 'booking')
 
     # Income
     if 'income' in interfaces:

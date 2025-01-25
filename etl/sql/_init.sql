@@ -238,3 +238,37 @@ CREATE TABLE gold.gl (
   CONSTRAINT gl_pk PRIMARY KEY ("cfiscyear","cacc_doc_uuid", "cacc_doc_it_uuid")
 );
 
+-- Create booking
+CREATE TABLE gold.booking (
+  "id" int8 NOT NULL,
+  "status" varchar NULL,
+  "who" varchar NULL,
+  "referral" varchar NULL,
+  "channel" varchar NULL,
+  "agent" varchar NULL,
+  "customer" varchar NULL,
+  "email" varchar NULL,
+  "phones" varchar NULL,
+  "birth_date" date NULL,
+  "gender" varchar NULL,
+  "nationality" varchar NULL,
+  "continent" varchar NULL,
+  "language" varchar NULL,
+  "school" varchar NULL,
+  "first_contact" date NULL,
+  "request_date" date NULL,
+  "confirmation_date" date NULL,
+  "resource" varchar NULL,
+  "rate" numeric NULL,
+  "services" numeric NULL,
+  "total_rent" numeric NULL,
+  "total_services" numeric NULL,
+  "limit" numeric NULL,
+  "commision" numeric NULL,
+  "date_from" date NULL,
+  "date_to" date NULL,
+  "check_in" date NULL,
+  "check_out" date NULL,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT booking_pk PRIMARY KEY ("id")
+);
