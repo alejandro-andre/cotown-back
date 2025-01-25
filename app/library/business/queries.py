@@ -235,17 +235,17 @@ def sql_dashboard_lau(status, vars):
   # Devolutions
   if status == 'dev':
     sql = select + f'''
-    WHERE b."Deposit_return_date" BETWEEN '{date_from}' AND '{date_to}' '''   
+    WHERE b."Deposit_return_date" IS NULL AND b."Deposit_required_date" BETWEEN '{date_from}' AND '{date_to}' '''   
 
   # ITP
   elif status == 'itp':
     sql = select + f'''
-    WHERE b."ITP_required_date" BETWEEN '{date_from}' AND '{date_to}' '''   
+    WHERE b."ITP_date" IS NULL AND b."ITP_required_date" BETWEEN '{date_from}' AND '{date_to}' '''   
 
   # End of contract
   elif status == 'end':
     sql = select + f'''
-    WHERE b."Date_to" BETWEEN '{date_from}' AND '{date_to}' '''   
+    WHERE b."Burofax_date" IS NULL AND b."Date_to" BETWEEN '{date_from}' AND '{date_to}' '''   
 
   # Result
   if buildings:
