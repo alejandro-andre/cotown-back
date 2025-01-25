@@ -1,4 +1,4 @@
--- Drop tables
+-- Drop Core tables
 DROP TABLE IF EXISTS gold.date CASCADE;
 DROP TABLE IF EXISTS gold.flat_type CASCADE;
 DROP TABLE IF EXISTS gold.place_type CASCADE;
@@ -9,6 +9,9 @@ DROP TABLE IF EXISTS gold.resource CASCADE;
 DROP TABLE IF EXISTS gold.income CASCADE;
 DROP TABLE IF EXISTS gold.occupancy CASCADE;
 DROP TABLE IF EXISTS gold.beds CASCADE;
+DROP TABLE IF EXISTS gold.booking CASCADE;
+
+-- Drop SAP tables
 DROP TABLE IF EXISTS gold.gl CASCADE;
 DROP TABLE IF EXISTS gold.mapping CASCADE;
 
