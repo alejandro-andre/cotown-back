@@ -258,6 +258,7 @@ CREATE TABLE gold.booking (
   "continent" varchar NULL,
   "language" varchar NULL,
   "school" varchar NULL,
+  "school_type" varchar NULL,
   "first_contact" date NULL,
   "request_date" date NULL,
   "confirmation_date" date NULL,

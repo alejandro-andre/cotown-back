@@ -14,6 +14,7 @@ SELECT
   cn."Continent" AS "continent",
   l."Name" AS "language",
   s."Name" AS "school",
+  s."Type" AS "school_type",
   c."Created_at" AS "first_contact",
   b."Request_date" AS "request_date",
   b."Confirmation_date" AS "confirmation_date",
@@ -27,7 +28,12 @@ SELECT
   b."Date_from" AS "date_from",
   b."Date_to" AS "date_to",
   b."Check_in" AS "check_in",
-  b."Check_out" AS "check_out"
+  b."Check_out" AS "check_out",
+  CASE
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
+    WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
+    ELSE 'LONG'
+  END AS "stay_length"
 FROM "Booking"."Booking" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
   LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
