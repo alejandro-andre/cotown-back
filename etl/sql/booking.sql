@@ -19,7 +19,7 @@ SELECT
   b."Request_date" AS "request_date",
   b."Confirmation_date" AS "confirmation_date",
   r."Code" as "resource",
-  b."Rent" AS "rate",
+  b."Rent" AS "rent",
   b."Services" AS "services",
   (SELECT SUM(bp."Rent") FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "total_rent",
   (SELECT SUM(bp."Services") FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "total_services",

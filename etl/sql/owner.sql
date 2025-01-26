@@ -1,5 +1,6 @@
-SELECT 
+SELECT DISTINCT 
   p."Document" AS "id", 
   CASE WHEN p."Document" = 'A88445762' THEN 'Vandor' ELSE 'Third party' END AS "type",  
   p."Name" AS "name" 
-FROM "Provider"."Provider" p;
+FROM "Provider"."Provider" p
+  INNER JOIN "Resource"."Resource" r ON r."Owner_id" = p.id;
