@@ -270,11 +270,13 @@ CREATE TABLE gold.booking (
   "total_rent" numeric NULL,
   "total_services" numeric NULL,
   "limit" numeric NULL,
-  "commision" numeric NULL,
+  "direct_cost" numeric NULL,
   "date_from" date NULL,
   "date_to" date NULL,
   "check_in" date NULL,
   "check_out" date NULL,
+  "tax" numeric NULL,
+  "management_fee" numeric NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT booking_pk PRIMARY KEY ("id")
 );
