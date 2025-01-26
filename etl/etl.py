@@ -161,6 +161,7 @@ def main(interfaces):
     if 'booking' in interfaces:
       execute(dbDestination, '_clear_booking')
       load(dbOrigin, dbDestination, 'booking', 'booking')
+      load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
 
     # Income
     if 'income' in interfaces:

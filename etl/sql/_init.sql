@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS gold.income CASCADE;
 DROP TABLE IF EXISTS gold.occupancy CASCADE;
 DROP TABLE IF EXISTS gold.beds CASCADE;
 DROP TABLE IF EXISTS gold.booking CASCADE;
+DROP TABLE IF EXISTS gold.marketplace CASCADE;
 
 -- Drop SAP tables
 DROP TABLE IF EXISTS gold.gl CASCADE;
@@ -276,4 +277,16 @@ CREATE TABLE gold.booking (
   "check_out" date NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT booking_pk PRIMARY KEY ("id")
+);
+
+-- Create marketplace costs
+CREATE TABLE gold.marketplace (
+  "id" int8 NOT NULL,
+  "marketplace" varchar NULL,
+  "amount" numeric NULL,
+  "date_from" date NULL,
+  "date_to" date NULL,
+  "count" int8 NOT NULL,
+  "cost" numeric NULL,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP
 );
