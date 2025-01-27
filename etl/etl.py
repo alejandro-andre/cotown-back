@@ -184,8 +184,8 @@ def main(interfaces):
       execute(dbDestination, '_clear_occupancy')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
-      load(dbOrigin, dbDestination, 'beds', 'occupancy_forecast')
-      load(dbOrigin, dbDestination, 'beds', 'occupancy_real')
+      load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
+      load(dbOrigin, dbDestination, 'beds', 'beds_real')
 
   except Exception as e:
     # Error

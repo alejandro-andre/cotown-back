@@ -152,14 +152,8 @@ CREATE TABLE gold.beds (
   "available" int NOT NULL,
   "beds" int NOT NULL,
   "beds_c" numeric NOT NULL,
-  "booking" varchar DEFAULT NULL,
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
-  "occupied" int NOT NULL,
-  "occupied_t" int NOT NULL,
   "resource" varchar NOT NULL,          -- Dimension resource
-  "sold" int NOT NULL,
-  "sold_t" int NOT NULL,
-  "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT beds_pk PRIMARY KEY ("id"),
 CONSTRAINT beds_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
@@ -276,6 +270,7 @@ CREATE TABLE gold.booking (
   "check_in" date NULL,
   "check_out" date NULL,
   "tax" numeric NULL,
+  "booking_fee" numeric NULL,
   "management_fee" numeric NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT booking_pk PRIMARY KEY ("id")

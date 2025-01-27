@@ -35,6 +35,7 @@ def forecast(apiClient):
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","data_type","stay_length","discount_type"\n' 
   occupancy_result = '"id","data_type","resource","date","beds","beds_c","available","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
+  beds_result = '"id","data_type","resource","date","beds","beds_c","available"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -116,6 +117,10 @@ def forecast(apiClient):
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, days * beds_st, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds]
+          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, days * beds_st]
+          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
     workbook.close()
@@ -127,6 +132,8 @@ def forecast(apiClient):
   # Save all results to CSV
   with open('csv/occupancy_forecast.csv', 'w') as f:
     f.write(occupancy_result)
+  with open('csv/beds_forecast.csv', 'w') as f:
+    f.write(beds_result)
 
   # Log
   logger.info('Done')
