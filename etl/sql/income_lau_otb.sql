@@ -35,6 +35,5 @@ FROM "Booking"."Booking_other" b
   INNER JOIN "Billing"."Product_type" pt ON pt.id = pr."Product_type_id" 
   INNER JOIN "Billing"."Tax" t ON t.id = pr."Tax_id" 
   INNER JOIN "Dates" d ON d."Date" BETWEEN b."Date_from" AND COALESCE(b."Date_to", b."Date_estimated", '2030-01-01'::date)
-WHERE r."Code" LIKE 'BLM335.04%'
 ORDER BY 2
 ;
