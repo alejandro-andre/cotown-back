@@ -1,5 +1,6 @@
 SELECT 
-  b.id,
+  b.id::text || '-' || ab.id::text as "id",
+  b.id AS "booking",
   a."Name" AS "marketplace",
   ab."Amount" AS "amount",
   ab."Date_from" AS "date_from", 

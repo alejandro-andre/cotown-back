@@ -34,7 +34,7 @@ def forecast(apiClient):
   # CSV header
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","data_type","stay_length","discount_type"\n' 
-  occupancy_result = '"id","data_type","resource","date","beds","beds_c","available","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
+  occupancy_result = '"id","data_type","resource","date","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
   beds_result = '"id","data_type","resource","date","beds","beds_c","available"\n'
 
   # Get files
@@ -113,9 +113,9 @@ def forecast(apiClient):
 
         # Occupancy forecast
         if beds > 0:
-          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds, days * sold, days * sold, 0, 0, '', '']
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, days * sold, days * sold, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, days * beds_st, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
+          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, days * beds]
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'

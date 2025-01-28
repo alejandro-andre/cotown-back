@@ -99,6 +99,10 @@ def main(interfaces):
     logger.error(e)
     return
 
+  # Test
+  if 'test' in interfaces:
+    occupancy(dbOrigin)
+
   # Process
   try:
 

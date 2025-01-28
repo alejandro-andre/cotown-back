@@ -164,9 +164,6 @@ CREATE TABLE gold.occupancy (
   "id" varchar NOT NULL,
   "date" date NOT NULL,
 
-  "available" int NOT NULL,
-  "beds" int NOT NULL,
-  "beds_c" numeric NOT NULL,
   "booking" varchar DEFAULT NULL,
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "occupied" int NOT NULL,
@@ -278,7 +275,8 @@ CREATE TABLE gold.booking (
 
 -- Create marketplace costs
 CREATE TABLE gold.marketplace (
-  "id" int8 NOT NULL,
+  "id" varchar NOT NULL,
+  "booking" int8 NOT NULL,
   "marketplace" varchar NULL,
   "amount" numeric NULL,
   "date_from" date NULL,

@@ -18,29 +18,32 @@ logger = logging.getLogger('COTOWN')
 
 def occupancy(dbClient):
 
-  def nights(resource, type, date, data_type):
+  def nights(row):
     # First and last days of the month
+    date = row['date']
     mfrom = date.replace(day=1)
     mto = date + relativedelta(months=1) - relativedelta(days=1)
    
-    # All bookings for the resource
-    rows = df_books[(df_books['resource'] == resource) & (df_books['data_type'] == data_type)]
-
     # Sum booked nights
-    n = 0
-    for _, row in rows.iterrows():
-      dfrom = row['Date_from']
-      dto = row['Date_to']
-      if dto >= mfrom and dfrom <= mto:
-        n = n + 1 + (min(mto, dto) - max(mfrom, dfrom)).days
-        if type == 'Monthly':
-          n = calendar.monthrange(date.year, date.month)[1]
-        if type == 'Fortnightly':
-          if n < 15:
-            n = 15
-          else:
-            n = calendar.monthrange(date.year, date.month)[1]
-    return n
+    occu = 1 + (min(mto, row['Date_to']) - max(mfrom, row['Date_from'])).days
+    type = row['Billing_type']
+    if type == 'proporcional':
+      sold = occu
+    elif type == 'quincena':
+      if occu < 15:
+        sold = 15
+      else:
+        sold = calendar.monthrange(date.year, date.month)[1]
+    else:
+      sold = calendar.monthrange(date.year, date.month)[1]
+
+    # Update
+    return [
+      occu if row['data_type'] == 'Real' else 0, 
+      occu if row['data_type'] == 'Tentative' else 0, 
+      sold if row['data_type'] == 'Real' else 0, 
+      sold if row['data_type'] == 'Tentative' else 0
+    ]
 
 
   def beds(resource, date):
@@ -76,7 +79,7 @@ def occupancy(dbClient):
   
 
   # Log
-  logger.info('Calculating occupancy...')
+  logger.info('Calculating beds...')
 
   # Connection
   con = dbClient.getconn()
@@ -158,26 +161,66 @@ def occupancy(dbClient):
     cur.close()
   logger.info('- Unavailabilities retrieved')
 
+  # Dates
+  start_date = '2024-01-01'
+  end_date   = '2028-12-31'
+  df_dates = pd.DataFrame({'date': [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')]})
+
+  # Resources x dates Cross table
+  df_dates['key'] = 1
+  df_res['key'] = 1
+  df_beds = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
+
+  # Beds and consolidated beds
+  df_beds[['beds', 'beds_c']] = df_beds.apply(lambda row: beds(row['flat'], row['date']), axis=1, result_type='expand')
+  logger.info('- Beds calculated')
+
+  # Available nights
+  df_beds['available'] = df_beds.apply(lambda row: available(row['flat'], row['date']), axis=1)
+  logger.info('- Available nights calculated')
+
+  # To CSV
+  df_beds['id'] = range(1, 1 + len(df_beds))
+  df_beds['data_type'] = 'Real'
+  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'available'])
+  logger.info('- Beds saved')
+
+  # Log
+  logger.info('Calculating occupancy...')
+
   # Bookings
-  sql = '''
-  SELECT 
-    r."Code" AS "resource", 
-    b."Date_from", 
-    b."Date_to",
-    b."Billing_type",
-    CASE
-      WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'Tentative'
-      ELSE 'Real'
-    END AS "data_type"
-  FROM "Booking"."Booking_detail" b
-  INNER JOIN (
-    SELECT r."Code", r.id
-    FROM "Resource"."Resource" r
-    INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-    WHERE NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%'))
+  sql = f'''
+    WITH date_range AS (
+      SELECT generate_series('{start_date}', '{end_date}', interval '1 month')::date AS "date"
+    )
+    SELECT
+        b.id AS "booking",
+        r."Code" AS "resource",
+        dr.date,
+        b."Date_from",
+        b."Date_to",
+        b."Billing_type",
+        CASE 
+          WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'Tentative' 
+          ELSE 'Real' 
+        END AS "data_type",
+        CASE
+          WHEN b."Booking_group_id" IS NOT NULL THEN 'GROUP'
+          WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
+          WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
+          ELSE 'LONG'
+        END AS "stay_length"
+    FROM "Booking"."Booking_detail" b
+    INNER JOIN (
+        SELECT r."Code", r.id
+        FROM "Resource"."Resource" r
+        WHERE NOT EXISTS ( SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%') )
     ) AS r ON r.id = b."Resource_id"
-  WHERE b."Availability_id" IS NULL
-  ORDER BY 1, 2, 3
+    INNER JOIN date_range dr ON dr.date BETWEEN DATE_TRUNC('month', b."Date_from") AND b."Date_to"
+    WHERE b."Availability_id" IS NULL
+      AND b."Date_from" <= '{end_date}'
+      AND b."Date_to" >= '{start_date}'
+    ORDER BY 1 DESC, 3
   '''
   try:
     cur = dbClient.execute(con, sql)
@@ -190,45 +233,18 @@ def occupancy(dbClient):
     return None
   finally:
     cur.close()
-  logger.info('- Bookings retrieved')
+  logger.info('- Bookings x month retrieved')
 
-  # Dates
-  start_date = '2024-01-01'
-  end_date   = '2026-12-31'
-  df_dates = pd.DataFrame({'date': [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')]})
-
-  # Resources x dates Cross table
-  df_dates['key'] = 1
-  df_res['key'] = 1
-  df_cross = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
-
-  # Beds and consolidated beds
-  df_cross[['beds', 'beds_c']] = df_cross.apply(lambda row: beds(row['flat'], row['date']), axis=1, result_type='expand')
-  logger.info('- Beds calculated')
-
-  # Available nights
-  df_cross['available'] = df_cross.apply(lambda row: available(row['flat'], row['date']), axis=1)
-  logger.info('- Available nights calculated')
-
-  # Ocuppied nights
-  df_cross['occupied'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'Real'), axis=1)
-  df_cross['occupied_t'] = df_cross.apply(lambda row: nights(row['resource'], None, row['date'], 'Tentative'), axis=1)
-  logger.info('- Occupied nights calculated')
-
-  # Sold nights
-  df_cross['sold'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'Real'), axis=1)
-  df_cross['sold_t'] = df_cross.apply(lambda row: nights(row['resource'], row['type'], row['date'], 'Tentative'), axis=1)
-  logger.info('- Sold nights calculated')
+  # Ocuppied and sold nights
+  df_books[['occupied','occupied_t','sold','sold_t']] = df_books.apply(nights, axis=1, result_type='expand')
+  logger.info('- Occupied and sold nights calculated')
 
   # Additional columns
-  df_cross['booking'] = ''
-  df_cross['stay_length'] = ''
-  
-  # To CSV
-  df_cross['id'] = range(1, 1 + len(df_cross))
-  df_cross['data_type'] = 'Real'
-  df_cross.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'available', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
-  df_cross.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'available'])
+  df_books = df_books.reset_index(drop=True)
+  df_books['id'] = (df_books.index + 1).astype(str).str.zfill(7)
+  df_books['stay_length'] = ''
+  df_books['data_type'] = 'Real'
 
-  # Log
-  logger.info('Done')
+  # To CSV
+  df_books.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  logger.info('- Occupancy saved')
