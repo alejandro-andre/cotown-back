@@ -8,7 +8,14 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   CASE 
-	  WHEN b."Booking_type" = 'lau' THEN 'LAU'
+	  WHEN b."Booking_type" = 'lau' THEN
+      CASE
+        WHEN b."Date_estimated" IS NULL AND b."Date_to" IS NULL THEN 'LTNC'
+        WHEN b."Date_estimated" IS NOT NULL AND b."Date_to" IS NULL THEN 'LTC'
+        ELSE 'FTC'
+      END
+	  WHEN b."Booking_type" = 'parking' THEN 'PARKING'
+	  WHEN b."Booking_type" = 'coworking' THEN 'COWORKING'
 	  ELSE 'RETAIL'
   END AS "stay_length",
   pr."Name_en" AS "product",
@@ -27,4 +34,3 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id" 
 WHERE i."Issued_date" >= '2024-01-01'
 ;
-
