@@ -242,7 +242,6 @@ def occupancy(dbClient):
   # Additional columns
   df_books = df_books.reset_index(drop=True)
   df_books['id'] = (df_books.index + 1).astype(str).str.zfill(7)
-  df_books['stay_length'] = ''
   df_books['data_type'] = 'Real'
 
   # To CSV
