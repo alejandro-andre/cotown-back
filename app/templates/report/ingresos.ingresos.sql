@@ -70,7 +70,7 @@ SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXT
   END AS "Amount_due",
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
   pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
-  CASE WHEN b."Booking_type" = 'lau' THEN 'LAU' ELSE 'Retail' END AS "Type",
+  UPPER(b."Booking_type"::text) AS "Type",
   pdt."Name" AS "Amount_type",
   0 AS "Management_fee"
 FROM "Billing"."Invoice_line" il
