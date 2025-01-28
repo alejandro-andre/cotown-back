@@ -1,12 +1,12 @@
 WITH
 "Dates" AS (
-  SELECT generate_series(DATE_TRUNC('month', CURRENT_DATE + INTERVAL '1 month'), '2028-01-01'::date - interval '1 day', interval '1 month')::date AS "Date"
+  SELECT generate_series(DATE_TRUNC('month', CURRENT_DATE + INTERVAL '1 month'), '2030-01-01'::date - interval '1 day', interval '1 month')::date AS "Date"
 )
 SELECT 
   'LOX' || b.id::TEXT || '.' || d."Date" AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
-  'L' || b.id::text AS "booking",
+  b.id AS "booking",
   d."Date" AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
@@ -34,6 +34,7 @@ FROM "Booking"."Booking_other" b
   INNER JOIN "Billing"."Product" pr ON pr.id = b."Product_id"
   INNER JOIN "Billing"."Product_type" pt ON pt.id = pr."Product_type_id" 
   INNER JOIN "Billing"."Tax" t ON t.id = pr."Tax_id" 
-  INNER JOIN "Dates" d ON d."Date" BETWEEN b."Date_from" AND b."Date_to"
-  ORDER BY 2
+  INNER JOIN "Dates" d ON d."Date" BETWEEN b."Date_from" AND COALESCE(b."Date_to", b."Date_estimated", '2030-01-01'::date)
+WHERE r."Code" LIKE 'BLM335.04%'
+ORDER BY 2
 ;

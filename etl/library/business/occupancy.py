@@ -163,7 +163,7 @@ def occupancy(dbClient):
 
   # Dates
   start_date = '2024-01-01'
-  end_date   = '2028-12-31'
+  end_date   = '2029-12-31'
   df_dates = pd.DataFrame({'date': [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')]})
 
   # Resources x dates Cross table
