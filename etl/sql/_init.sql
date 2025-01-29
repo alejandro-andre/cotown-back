@@ -152,6 +152,8 @@ CREATE TABLE gold.beds (
   "available" int NOT NULL,
   "beds" int NOT NULL,
   "beds_c" numeric NOT NULL,
+  "beds_p" numeric NOT NULL,
+  "beds_x" numeric NOT NULL,
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "resource" varchar NOT NULL,          -- Dimension resource
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,

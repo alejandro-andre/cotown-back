@@ -18,7 +18,7 @@ from library.services.dbclient import DBClient
 from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.business.load import load, execute
-from library.business.occupancy import occupancy
+from library.business.occupancy import occupancy, beds
 from library.business.forecast import forecast
 from library.business.gl import glSAP, glExcel
 
@@ -101,6 +101,7 @@ def main(interfaces):
 
   # Test
   if 'test' in interfaces:
+    beds(dbOrigin)
     occupancy(dbOrigin)
 
   # Process
@@ -185,6 +186,7 @@ def main(interfaces):
     # Occupancy
     if 'occupancy' in interfaces:
       forecast(apiClient)
+      beds(dbOrigin)
       occupancy(dbOrigin)
       execute(dbDestination, '_clear_occupancy')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')

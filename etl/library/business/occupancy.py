@@ -13,42 +13,25 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
-# Calculate availability
+# Constants
 # ###################################################
 
-def occupancy(dbClient):
-
-  def nights(row):
-    # First and last days of the month
-    date = row['date']
-    mfrom = date.replace(day=1)
-    mto = date + relativedelta(months=1) - relativedelta(days=1)
-   
-    # Sum booked nights
-    occu = 1 + (min(mto, row['Date_to']) - max(mfrom, row['Date_from'])).days
-    type = row['Billing_type']
-    if type == 'proporcional':
-      sold = occu
-    elif type == 'quincena':
-      if occu < 15:
-        sold = 15
-      else:
-        sold = calendar.monthrange(date.year, date.month)[1]
-    else:
-      sold = calendar.monthrange(date.year, date.month)[1]
-
-    # Update
-    return [
-      occu if row['data_type'] == 'Real' else 0, 
-      occu if row['data_type'] == 'Tentative' else 0, 
-      sold if row['data_type'] == 'Real' else 0, 
-      sold if row['data_type'] == 'Tentative' else 0
-    ]
+START_DATE = '2024-01-01'
+END_DATE   = '2029-12-31'
 
 
-  def beds(resource, date):
+# ###################################################
+# Calculate total and available beds
+# ###################################################
+
+def beds(dbClient):
+
+  def beds(row):
+    # Date
+    date = row['Date']
+
     # All flat non availability rows
-    rows = df_avail[df_avail['Resource_id'] == resource]
+    rows = df_avail[df_avail['Resource_id'] == row['id']]
 
     # Not available
     for _, row in rows.iterrows():
@@ -67,15 +50,50 @@ def occupancy(dbClient):
     return [1.0, 1.0]
   
   
-  def available(id, date, rooms=False):
-    # All flat non availability rows
-    rows = df_avail[df_avail['Resource_id'] == id]
+  def count(row):
+    # Counters
+    beds   = 0.0 # Total beds
+    beds_c = 0.0 # Consolidated beds
+    beds_p = 0.0 # Potential beds
+    beds_x = 0.0 # Capex beds
+    avail  = 0.0 # Available room nights
 
-    # Check if the date is in between any range
-    for _, row in rows.iterrows():
-      if row['Date_from'] <= date <= row['Date_to']:
-        return 0
-    return calendar.monthrange(date.year, date.month)[1]
+    # Date
+    date = row['date']
+
+    # All flat non availability rows
+    availability = df_avail[df_avail['Resource_id'] == row['id']]
+
+    # Bed is not available?
+    for _, r in availability.iterrows():
+      if r['Date_from'] <= date <= r['Date_to']:
+        # Potential
+        if r['Status_id'] == 2:
+          beds_p = 1.0
+        # Precapex + Capex
+        if r['Status_id'] in (3, 4):
+          beds_x = 1.0
+        return [beds, beds_c, beds_p, beds_x, avail]
+
+    # Bed is available
+    beds = 1.0
+    beds_c = 1.0
+    avail = calendar.monthrange(date.year, date.month)[1]
+
+    # Consolidated date
+    c_date = date
+    if date.month >= 11: 
+      c_date = date.replace(month=10)
+    elif date.month >= 3: 
+      c_date = date.replace(month=2)
+
+    # Not available on consolidated date?
+    for _, r in availability.iterrows():
+      if r['Date_from'] <= c_date <= r['Date_to']:
+        beds_c = 0.5
+    
+    # Return values
+    return [beds, beds_c, beds_p, beds_x, avail]
   
 
   # Log
@@ -142,7 +160,7 @@ def occupancy(dbClient):
 
   # Availability each month
   sql = '''
-  SELECT "Resource_id", "Date_from", "Date_to"
+  SELECT "Resource_id", "Date_from", "Date_to", "Status_id"
   FROM "Resource"."Resource_availability" ra
   INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
   WHERE NOT rs."Available"
@@ -162,36 +180,68 @@ def occupancy(dbClient):
   logger.info('- Unavailabilities retrieved')
 
   # Dates
-  start_date = '2024-01-01'
-  end_date   = '2029-12-31'
-  df_dates = pd.DataFrame({'date': [date.date() for date in pd.date_range(start=start_date, end=end_date, freq='MS')]})
+  df_dates = pd.DataFrame({'date': [date.date() for date in pd.date_range(start=START_DATE, end=END_DATE, freq='MS')]})
 
   # Resources x dates Cross table
   df_dates['key'] = 1
   df_res['key'] = 1
   df_beds = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
-  # Beds and consolidated beds
-  df_beds[['beds', 'beds_c']] = df_beds.apply(lambda row: beds(row['flat'], row['date']), axis=1, result_type='expand')
-  logger.info('- Beds calculated')
-
   # Available nights
-  df_beds['available'] = df_beds.apply(lambda row: available(row['flat'], row['date']), axis=1)
-  logger.info('- Available nights calculated')
+  df_beds[['beds','beds_c','beds_p','beds_x','available',]] = df_beds.apply(count, axis=1, result_type='expand')
+  logger.info('- Beds and available nights calculated')
 
   # To CSV
   df_beds['id'] = range(1, 1 + len(df_beds))
   df_beds['data_type'] = 'Real'
-  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'available'])
+  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'beds_p', 'beds_x', 'available'])
   logger.info('- Beds saved')
+
+
+# ###################################################
+# Calculate occupancy
+# ###################################################
+
+def occupancy(dbClient):
+
+  def nights(row):
+    # First and last days of the month
+    date = row['date']
+    mfrom = date.replace(day=1)
+    mto = date + relativedelta(months=1) - relativedelta(days=1)
+   
+    # Sum booked nights
+    occu = 1 + (min(mto, row['Date_to']) - max(mfrom, row['Date_from'])).days
+    type = row['Billing_type']
+    if type == 'proporcional':
+      sold = occu
+    elif type == 'quincena':
+      if occu < 15:
+        sold = 15
+      else:
+        sold = calendar.monthrange(date.year, date.month)[1]
+    else:
+      sold = calendar.monthrange(date.year, date.month)[1]
+
+    # Update
+    return [
+      occu if row['data_type'] == 'Real' else 0, 
+      occu if row['data_type'] == 'Tentative' else 0, 
+      sold if row['data_type'] == 'Real' else 0, 
+      sold if row['data_type'] == 'Tentative' else 0
+    ]
+
 
   # Log
   logger.info('Calculating occupancy...')
 
+  # Connection
+  con = dbClient.getconn()
+
   # Bookings
   sql = f'''
     WITH date_range AS (
-      SELECT generate_series('{start_date}', '{end_date}', interval '1 month')::date AS "date"
+      SELECT generate_series('{START_DATE}', '{END_DATE}', interval '1 month')::date AS "date"
     )
     SELECT
         b.id AS "booking",
@@ -218,8 +268,8 @@ def occupancy(dbClient):
     ) AS r ON r.id = b."Resource_id"
     INNER JOIN date_range dr ON dr.date BETWEEN DATE_TRUNC('month', b."Date_from") AND b."Date_to"
     WHERE b."Availability_id" IS NULL
-      AND b."Date_from" <= '{end_date}'
-      AND b."Date_to" >= '{start_date}'
+      AND b."Date_from" <= '{END_DATE}'
+      AND b."Date_to" >= '{START_DATE}'
     ORDER BY 1 DESC, 3
   '''
   try:
