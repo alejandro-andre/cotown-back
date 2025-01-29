@@ -1101,9 +1101,12 @@ def pay_bills(dbClient, con):
 
 def bill_lau(dbClient, con):
 
+  # Current date
+  now = datetime.now().strftime('%Y-%m-%d')
+
   # Get all prices not already billed
   cur = dbClient.execute(con,
-    '''
+    f'''
     SELECT 
       bo.id, bo."Customer_id", bo."Resource_id",
       bo."Rent", COALESCE(bo."Extras", 0) AS "Extras", bo."Extras_concept", bo."Payment_method_id", bo."Product_id",
@@ -1114,11 +1117,11 @@ def bill_lau(dbClient, con):
       INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id"
       LEFT JOIN "Billing"."Invoice" i 
         ON i."Booking_other_id" = bo.id 
-        AND i."Issued_date" >= DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') 
-        AND i."Issued_date" < (DATE_TRUNC('month', CURRENT_DATE + INTERVAL '3 days') + INTERVAL '1 month')
+        AND i."Issued_date" >= DATE_TRUNC('month', '{now}'::date) 
+        AND i."Issued_date" < (DATE_TRUNC('month', '{now}'::date) + INTERVAL '1 month')
     WHERE i.id IS NULL
-      AND (bo."Date_estimated" > CURRENT_DATE OR bo."Date_estimated" IS NULL)
-      AND (bo."Date_bill_from" < CURRENT_DATE OR bo."Date_bill_from" IS NULL)
+      AND (bo."Date_estimated" > '{now}'::date OR bo."Date_estimated" IS NULL)
+      AND (bo."Date_bill_from" < '{now}'::date OR bo."Date_bill_from" IS NULL)
       AND bo."Rent" IS NOT NULL
       AND bo."Unlawful" <> TRUE
     ''')
@@ -1316,7 +1319,7 @@ def main():
   pay_bills(dbClient, con)
 
   # 5. Bill LAU/Others
-  bill_lau(dbClient, con)
+  #bill_lau(dbClient, con)
 
   # Disconnect
   dbClient.putconn(con)
