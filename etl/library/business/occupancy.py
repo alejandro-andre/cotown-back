@@ -26,30 +26,6 @@ END_DATE   = '2029-12-31'
 
 def beds(dbClient):
 
-  def beds(row):
-    # Date
-    date = row['Date']
-
-    # All flat non availability rows
-    rows = df_avail[df_avail['Resource_id'] == row['id']]
-
-    # Not available
-    for _, row in rows.iterrows():
-      if row['Date_from'] <= date <= row['Date_to']:
-        return [0.0, 0.0]
-      
-    # Consolidated date
-    c_date = date
-    if date.month >= 11: c_date = date.replace(month=10)
-    elif date.month >= 3: c_date = date.replace(month=2)
-    for _, row in rows.iterrows():
-      if row['Date_from'] <= c_date <= row['Date_to']:
-        return [1.0, 0.5]
-      
-    # Beds = Consolidated beds
-    return [1.0, 1.0]
-  
-  
   def count(row):
     # Counters
     beds   = 0.0 # Total beds
@@ -60,6 +36,10 @@ def beds(dbClient):
 
     # Date
     date = row['date']
+
+    # Building started?
+    if date < row['Start_date']:
+      return [beds, beds_c, beds_p, beds_x, avail]
 
     # All flat non availability rows
     availability = df_avail[df_avail['Resource_id'] == row['id']]
@@ -105,7 +85,7 @@ def beds(dbClient):
   # Existing resources
   sql = '''
   -- All places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", 
+  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -118,7 +98,7 @@ def beds(dbClient):
   UNION
   
   -- All rooms without places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", 
+  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date", 
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -132,7 +112,7 @@ def beds(dbClient):
   UNION
   
   -- All Flats without rooms
-  SELECT r.id, r."Code" AS "resource", r.id AS "flat", 
+  SELECT r.id, r."Code" AS "resource", r.id AS "flat", b."Start_date",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -187,8 +167,9 @@ def beds(dbClient):
   df_res['key'] = 1
   df_beds = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
-  # Available nights
+  # Beds and available nights
   df_beds[['beds','beds_c','beds_p','beds_x','available',]] = df_beds.apply(count, axis=1, result_type='expand')
+  df_beds = df_beds.query("not (beds == 0.0 and beds_c == 0.0 and beds_p == 0.0 and beds_x == 0.0)")
   logger.info('- Beds and available nights calculated')
 
   # To CSV

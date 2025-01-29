@@ -183,10 +183,17 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
       load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
 
+    # Beds
+    if 'beds' in interfaces:
+      forecast(apiClient)
+      beds(dbOrigin)
+      execute(dbDestination, '_clear_beds')
+      load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
+      load(dbOrigin, dbDestination, 'beds', 'beds_real')
+
     # Occupancy
     if 'occupancy' in interfaces:
       forecast(apiClient)
-      beds(dbOrigin)
       occupancy(dbOrigin)
       execute(dbDestination, '_clear_occupancy')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
@@ -212,7 +219,7 @@ if __name__ == '__main__':
 
   # Argument parser
   parser = argparse.ArgumentParser()
-  parser.add_argument('--steps', nargs='+', help='ETL Steps tro execute', required=True)
+  parser.add_argument('--steps', nargs='+', help='ETL Steps to execute', required=True)
   args = parser.parse_args()
 
   # Logging
