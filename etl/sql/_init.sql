@@ -79,6 +79,7 @@ CREATE TABLE gold.owner (
   "id" varchar NOT NULL,
   "type" varchar NOT NULL,
   "name" varchar NOT NULL,
+  "order" int8 NOT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT owner_pk PRIMARY KEY ("id")
 );
