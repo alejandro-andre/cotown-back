@@ -51,18 +51,23 @@ def beds(dbClient):
       if r['Date_from'] <= date <= r['Date_to']:
         # Potential
         if r['Status_id'] == 2:
-          beds_cnv = 1.0
           beds_pot = 1.0
-        # Precapex + Capex
+          # Convertible
+          if r['Convertible']:
+            beds_cnv = 1.0
+        # Pre capex
         if r['Status_id'] == 3:
           beds_pre = 1.0
+        # Capex
         if r['Status_id'] == 4:
           beds_cap = 1.0
         return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail]
 
-    # Bed is available
-    beds = 1.0
-    beds_c = 1.0
+    # Bed is available (and convertible, and potential)
+    beds     = 1.0
+    beds_c   = 1.0
+    beds_cnv = 1.0
+    beds_pot = 1.0
     avail = calendar.monthrange(date.year, date.month)[1]
 
     # Consolidated date
@@ -145,7 +150,7 @@ def beds(dbClient):
 
   # Availability each month
   sql = '''
-  SELECT "Resource_id", "Date_from", "Date_to", "Status_id"
+  SELECT "Resource_id", "Date_from", "Date_to", "Status_id", "Convertible"
   FROM "Resource"."Resource_availability" ra
   INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
   WHERE NOT rs."Available"
@@ -174,7 +179,6 @@ def beds(dbClient):
 
   # Beds and available nights
   df_beds[['beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available',]] = df_beds.apply(count, axis=1, result_type='expand')
-  df_beds = df_beds.query("not (beds == 0.0 and beds_c == 0.0 and beds_p == 0.0 and beds_x == 0.0)")
   logger.info('- Beds and available nights calculated')
 
   # To CSV
