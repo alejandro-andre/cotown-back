@@ -42,7 +42,7 @@ def beds(dbClient):
       return [beds, beds_c, beds_p, beds_x, avail]
 
     # All flat non availability rows
-    availability = df_avail[df_avail['Resource_id'] == row['id']]
+    availability = df_avail[df_avail['Resource_id'] == row['flat']]
 
     # Bed is not available?
     for _, r in availability.iterrows():
