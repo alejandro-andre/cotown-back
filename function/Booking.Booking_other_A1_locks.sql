@@ -23,15 +23,15 @@ BEGIN
 
   -- Long term
   IF NEW."Date_estimated" IS NULL THEN
-  	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
-    	VALUES (NEW."Resource_id", 2, NEW."Date_from", '2099/12/31');
+  	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    	VALUES (NEW."Resource_id", 2, NEW."Date_from", '2099/12/31', FALSE);
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
 
   -- Fixed term
-  INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
-  VALUES (NEW."Resource_id", 2, NEW."Date_from", NEW."Date_estimated");
+  INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
+  VALUES (NEW."Resource_id", 2, NEW."Date_from", NEW."Date_estimated", TRUE);
   date_from = NEW."Date_estimated" + INTERVAL '1 day';
 
   -- Add pre capex lock
@@ -39,8 +39,8 @@ BEGIN
     IF NEW."Date_precapex" <= date_from THEN
       RAISE EXCEPTION '!!!Pre capex end date is wrong!!!La fecha fin de pre capex es incorrecta!!!';
     END IF;
-    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to")
-    VALUES (NEW."Resource_id", 3, date_from, NEW."Date_precapex");
+    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    VALUES (NEW."Resource_id", 3, date_from, NEW."Date_precapex", TRUE);
     date_from = NEW."Date_precapex" + INTERVAL '1 day';
   END IF;
 

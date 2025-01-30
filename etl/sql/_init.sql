@@ -151,10 +151,12 @@ CREATE TABLE gold.beds (
   "date" date NOT NULL,
 
   "available" int NOT NULL,
-  "beds" int NOT NULL,
-  "beds_c" numeric NOT NULL,
-  "beds_p" numeric NOT NULL,
-  "beds_x" numeric NOT NULL,
+  "beds" int NOT NULL,                  -- Converted beds
+  "beds_c" numeric NOT NULL,            -- Consolidated beds
+  "beds_cnv" numeric NOT NULL,          -- Convertible beds
+  "beds_pot" numeric NOT NULL,          -- Potential beds
+  "beds_cap" numeric NOT NULL,          -- Capex beds
+  "beds_pre" numeric NOT NULL,          -- Pre capex beds
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "resource" varchar NOT NULL,          -- Dimension resource
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
