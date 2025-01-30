@@ -1038,7 +1038,7 @@ def pay_bills(dbClient, con):
     WHERE "Issued" 
       AND NOT "Rectified"
       AND "Total" > 0
-      AND ("Booking_id" IS NOT NULL OR "Booking_group_id" IS NOT NULL)
+      AND ("Booking_id" IS NOT NULL OR "Booking_group_id" IS NOT NULL OR "Booking_other_id" IS NOT NULL)
       AND "Payment_id" IS NULL
     ''')
   data = cur.fetchall()
@@ -1099,10 +1099,7 @@ def pay_bills(dbClient, con):
 # Generate payments for new bills
 # ###################################################
 
-def bill_lau(dbClient, con):
-
-  # Current date
-  now = datetime.now().strftime('%Y-%m-%d')
+def bill_lau(dbClient, con, now):
 
   # Get all prices not already billed
   cur = dbClient.execute(con,
@@ -1166,7 +1163,7 @@ def bill_lau(dbClient, con):
           item['Customer_id'],
           item['id'],
           float(item['Rent']) + float(item['Extras']) + total_extras,
-          datetime.now(),
+          now,
           'Renta mensual',
           'servicios'
         )
@@ -1185,7 +1182,7 @@ def bill_lau(dbClient, con):
           'factura',
           False,
           False,
-          datetime.now(),
+          now,
           item['Owner_id'],
           item['Customer_id'],
           item['id'],
@@ -1301,6 +1298,9 @@ def main():
   # Main
   # ###################################################
 
+  # Today
+  now = datetime.now().strftime('%Y-%m-%d')
+
   # 0. Get structure data (products)
   get_data(dbClient, con)
 
@@ -1315,11 +1315,11 @@ def main():
   bill_services(dbClient, con)
   bill_group_services(dbClient, con)
 
-  # 4. Generate payment for each manual bill
-  pay_bills(dbClient, con)
+  # 4. Bill LAU/Others
+  bill_lau(dbClient, con, now)
 
-  # 5. Bill LAU/Others
-  #bill_lau(dbClient, con)
+  # 5. Generate payment for each manual bill
+  pay_bills(dbClient, con)
 
   # Disconnect
   dbClient.putconn(con)

@@ -84,7 +84,8 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Booking"."Booking_other" b on b.id = i."Booking_other_id" 
   LEFT JOIN "Resource"."Resource" r on r.id = b."Resource_id"  
   LEFT JOIN "Billing"."Payment_method" pm on pm.id = p."Payment_method_id"
-WHERE i."Issued" AND i."Booking_other_id" IS NOT NULL 
+WHERE i."Booking_other_id" IS NOT NULL 
+  --AND i."Issued"
   AND i."Issued_date" >= %(fdesde)s AND i."Issued_date" < %(fhasta)s AND i."Provider_id" BETWEEN %(pdesde)s AND %(phasta)s
 
 UNION ALL
