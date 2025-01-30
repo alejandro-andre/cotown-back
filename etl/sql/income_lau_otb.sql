@@ -25,7 +25,10 @@ SELECT
   pr."Name_en" AS "product",
   (COALESCE(b."Rent", 0) + COALESCE(b."Extras", 0)) / (1 + (t."Value" / 100)) AS "amount",
   (COALESCE(b."Rent", 0) + COALESCE(b."Extras", 0)) / (1 + (t."Value" / 100)) AS "rate",
-  'OTB' AS "data_type",
+  CASE
+    WHEN b."Unlawful" THEN 'Tentative'
+    ELSE 'OTB'
+  END AS "data_type",
   '' AS "discount_type"
 FROM "Booking"."Booking_other" b
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
