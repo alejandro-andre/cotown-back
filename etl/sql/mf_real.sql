@@ -30,7 +30,7 @@ WHERE i."Issued"
   AND i."Issued_date" >= '2024-01-01'
   AND i."Provider_id" <> 1 
   AND i."Booking_id" IS NOT NULL
-  AND pr."Product_type_id" <> 2  
+  AND i."Bill_type" <> 'recibo'
 UNION ALL
 SELECT 
   CONCAT('BRM', il.id) AS "id",
@@ -60,5 +60,5 @@ WHERE i."Issued"
   AND i."Issued_date" >= '2024-01-01'
   AND i."Provider_id" <> 1 
   AND i."Booking_group_id" IS NOT NULL
-  AND pr."Product_type_id" <> 2  
+  AND i."Bill_type" <> 'recibo'
 ORDER BY 4, 2

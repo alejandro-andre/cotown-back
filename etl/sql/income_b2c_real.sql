@@ -40,5 +40,5 @@ FROM "Billing"."Invoice_line" il
   LEFT JOIN "Booking"."Booking_discount_type" dtb ON dtb.id = b."Booking_discount_type_id"
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'
-  AND pr."Product_type_id" <> 2
+  AND i."Bill_type" <> 'recibo'
 ;

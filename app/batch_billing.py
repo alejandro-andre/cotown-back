@@ -1316,7 +1316,7 @@ def main():
   bill_group_services(dbClient, con)
 
   # 4. Bill LAU/Others
-  bill_lau(dbClient, con, now)
+  #bill_lau(dbClient, con, now)
 
   # 5. Generate payment for each manual bill
   pay_bills(dbClient, con)
