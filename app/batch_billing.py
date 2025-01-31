@@ -1121,6 +1121,7 @@ def bill_lau(dbClient, con, now):
       AND (bo."Date_bill_from" < '{now}'::date OR bo."Date_bill_from" IS NULL)
       AND bo."Rent" IS NOT NULL
       AND bo."Unlawful" <> TRUE
+    ORDER BY 1
     ''')
   data = cur.fetchall()
   cur.close()
