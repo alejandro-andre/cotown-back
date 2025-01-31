@@ -51,7 +51,7 @@ def beds(dbClient):
       # Bed is not available?
       if r['Date_from'] <= date <= r['Date_to']:
         # Convertible
-        convert = r['Convertible']
+        convert = r['Convertible'] or 'N/D'
 
         # Potential
         if r['Status_id'] == 2:
