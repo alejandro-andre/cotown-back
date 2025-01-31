@@ -159,6 +159,7 @@ CREATE TABLE gold.beds (
   "beds_pre" numeric NOT NULL,          -- Pre capex beds
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "resource" varchar NOT NULL,          -- Dimension resource
+  "type" varchar NOT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT beds_pk PRIMARY KEY ("id"),
 CONSTRAINT beds_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
