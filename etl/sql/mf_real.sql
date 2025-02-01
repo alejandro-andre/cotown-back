@@ -26,11 +26,12 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id"
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id" 
+  INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'
   AND i."Provider_id" <> 1 
   AND i."Booking_id" IS NOT NULL
-  AND i."Bill_type" <> 'recibo'
+  AND (pr."Product_type_id" <> 2 OR i."Bill_type" <> 'recibo')
 UNION ALL
 SELECT 
   CONCAT('BRM', il.id) AS "id",
@@ -56,9 +57,10 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Resource"."Resource" r on r.id = il."Resource_id"
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = i."Provider_id" 
+  INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'
   AND i."Provider_id" <> 1 
   AND i."Booking_group_id" IS NOT NULL
-  AND i."Bill_type" <> 'recibo'
+  AND (pr."Product_type_id" <> 2 OR i."Bill_type" <> 'recibo')
 ORDER BY 4, 2
