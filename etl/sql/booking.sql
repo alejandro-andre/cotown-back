@@ -14,7 +14,7 @@ SELECT
   cn."Continent" AS "continent",
   l."Name" AS "language",
   s."Name" AS "school",
-  s."Type" AS "school_type",
+  etl.labels[array_position(et.values, s."Type"::text)]::text AS "school_type",
   c."Created_at" AS "first_contact",
   b."Request_date" AS "request_date",
   b."Confirmation_date" AS "confirmation_date",
@@ -51,5 +51,7 @@ FROM "Booking"."Booking" b
   LEFT JOIN "Booking"."Booking_referral" br ON br.id = b."Booking_referral_id"
   LEFT JOIN "Booking"."Booking_channel" bc ON bc.id = b."Booking_channel_id"
   LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
+  INNER JOIN "Models"."EnumType" et ON et.id = 27
+  INNER JOIN "Models"."EnumTypeLabel" etl ON etl.container = et.id AND etl.locale = 'en_US'
 ORDER BY 1
 ;
