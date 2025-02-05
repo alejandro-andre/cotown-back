@@ -214,16 +214,19 @@ def occupancy(dbClient):
    
     # Sum booked nights
     occu = 1 + (min(mto, row['Date_to']) - max(mfrom, row['Date_from'])).days
+    days_in_month = calendar.monthrange(date.year, date.month)[1]
     type = row['Billing_type']
     if type == 'proporcional':
       sold = occu
     elif type == 'quincena':
-      if occu < 15:
+      if occu <= 15:
         sold = 15
       else:
-        sold = calendar.monthrange(date.year, date.month)[1]
+        sold = days_in_month
+      if days_in_month == 31 and row['Date_from'].day == 16:
+        sold = 15
     else:
-      sold = calendar.monthrange(date.year, date.month)[1]
+      sold = days_in_month    
 
     # Update
     return [
