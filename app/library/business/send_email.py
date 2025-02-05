@@ -38,6 +38,8 @@ query EmailByCode ($code: String!) {
       Subject_en
       Body
       Body_en
+      Rich_body
+      Rich_body_en
       Query
     }
 }'''
@@ -54,7 +56,7 @@ BASE = '''
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{}</title>
 </head>
-<body  style="font-family: Arial, sans-serif; font-size: 16px;">{}</body>
+<body style="font-family: Arial, sans-serif; font-size: 16px;">{}</body>
 </html>
 '''
 
@@ -104,10 +106,19 @@ def generate_email(apiClient, email):
   text = template['Subject'] if email['Customer']['Lang'] == 'es' else template['Subject_en']
   subject = env.from_string(text).render(context)
 
-  # Generate body
+  # Generate body from MD
   text = template['Body'] if email['Customer']['Lang'] == 'es' else template['Body_en']
   md = env.from_string(text).render(context)
   body = BASE.format(subject, markdown.markdown(md, extensions=['tables', 'attr_list']))
+
+  # Generate body from HTML
+  rich_text = template['Rich_body'] if email['Customer']['Lang'] == 'es' else template['Rich_body_en']
+  rich_text = rich_text.replace('<pre class="ql-syntax" spellcheck="false">', '').replace('\n</pre>', '')
+  rich_html = env.from_string(rich_text).render(context)
+  rich_body = BASE.format(subject, rich_html)
+
+  logger.info(body)
+  logger.info(rich_body)
 
   # Return
   return subject, body

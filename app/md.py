@@ -1,4 +1,5 @@
 # System includes
+import re
 import markdown
 
 # Cotown includes
@@ -53,7 +54,7 @@ def main():
   # ###################################################
 
   # Get posts
-  cur = dbClient.execute(con, 'SELECT id, "Content", "Content_en" FROM "Marketing"."Post" ORDER BY id')
+  cur = dbClient.execute(con, '''SELECT id, "Rich_body", "Rich_body_en" FROM "Admin"."Email" WHERE "Name" = 'alternativas' ORDER BY id''')
   data = cur.fetchall()
   cur.close()
 
@@ -63,11 +64,15 @@ def main():
 
     # Convert
     id = post['id']
-    rich = markdown.markdown(post['Content'])
-    rich_en = markdown.markdown(post['Content_en'])
+    rich = markdown.markdown(post['Rich_body'])
+    rich_en = markdown.markdown(post['Rich_body_en'])
+
+    html = rich.replace('<pre class="ql-syntax" spellcheck="false">', '').replace('\n</pre>', '')
+    print(html)
+    break
 
     # Update
-    sql = 'UPDATE "Marketing"."Post" SET "Rich_content"=%s, "Rich_content_en"=%s WHERE id=%s'
+    sql = 'UPDATE "Admin"."Email" SET "Rich_body"=%s, "Rich_body_en"=%s WHERE id=%s'
     dbClient.execute(con, sql, (rich, rich_en, id))
     num += 1
 
