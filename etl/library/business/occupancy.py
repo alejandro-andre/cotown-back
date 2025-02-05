@@ -208,25 +208,28 @@ def occupancy(dbClient):
 
   def nights(row):
     # First and last days of the month
-    date = row['date']
+    date  = row['date']
+    days  = calendar.monthrange(date.year, date.month)[1]
     mfrom = date.replace(day=1)
-    mto = date + relativedelta(months=1) - relativedelta(days=1)
+    mto   = date + relativedelta(days=days-1)
    
-    # Sum booked nights
-    occu = 1 + (min(mto, row['Date_to']) - max(mfrom, row['Date_from'])).days
-    days_in_month = calendar.monthrange(date.year, date.month)[1]
+    # Calc booked nights
+    xfrom = max(mfrom, row['Date_from'])
+    xto   = min(mto, row['Date_to'])
+    occu  = 1 + (xto - xfrom).days
+
+    # Type
     type = row['Billing_type']
     if type == 'proporcional':
       sold = occu
     elif type == 'quincena':
-      if occu <= 15:
+      if xto.day < 16 or xfrom.day > 15:
         sold = 15
+        #logger.info(str(mfrom) + ":" + str(mto) + " " + str(xfrom) + ":" + str(xto) + " " + str(days) + " " + str(occu))
       else:
-        sold = days_in_month
-      if days_in_month == 31 and row['Date_from'].day == 16:
-        sold = 15
+        sold = days
     else:
-      sold = days_in_month    
+      sold = days    
 
     # Update
     return [
