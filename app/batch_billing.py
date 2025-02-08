@@ -186,7 +186,7 @@ def bill_month(dbClient, con):
     SELECT 
       p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
       b."Customer_id", c."Payment_method_id", r.id as "Resource_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt", 
-      pr."Pos", sv."Pos" as "Service_pos"
+      pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos"
     FROM "Booking"."Booking_price" p
       INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
@@ -265,8 +265,8 @@ def bill_month(dbClient, con):
         total_extra_services = 0
         extra_services = []
       if total_services > 0:
-        if item['Pos'] != item['Service_pos']:
-          item['Pos'] = 'delegado'
+        if item['Rent_pos'] != item['Service_pos']:
+          item['Rent_pos'] = 'delegado'
        
       # Create payment
       if total_rent + total_services + total_extra_rent + total_extra_services > 0:
@@ -280,7 +280,7 @@ def bill_month(dbClient, con):
           ''',
           (
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
-            item['Pos'],
+            item['Rent_pos'],
             item['Customer_id'],
             item['Booking_id'],
             total_rent + total_services + total_extra_rent + total_extra_services,
@@ -464,7 +464,7 @@ def bill_group_month(dbClient, con):
   '''
   SELECT 
     bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id",
-    pr."Pos", sv."Pos" as "Service_pos",
+    pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos",
     COUNT(r."Code") as num, 
     MIN(bg."Room_ids") as "Room_ids", 
     MIN(r."Owner_id") as "Owner_id", 
@@ -554,8 +554,8 @@ def bill_group_month(dbClient, con):
         total_extra_services = 0
         extra_services = 0
       if total_services > 0:
-        if item['Pos'] != item['Service_pos']:
-          item['Pos'] = 'delegado'
+        if item['Rent_pos'] != item['Service_pos']:
+          item['Rent_pos'] = 'delegado'
           
       # Create payment
       if total_rent + total_services + total_extra_rent + total_extra_services > 0:
@@ -569,7 +569,7 @@ def bill_group_month(dbClient, con):
           ''',
           (
             PM_TRANSFER,
-            item['Pos'],
+            item['Rent_pos'],
             item['Payer_id'],
             item['Booking_id'],
             total_rent + total_services + total_extra_services,
@@ -752,7 +752,7 @@ def bill_group_month(dbClient, con):
 # Generate service bills
 # ###################################################
 
-def bill_services(dbClient, con):
+def bill_concepts(dbClient, con):
 
   # Get all non recurrent services not already billed
   cur = dbClient.execute(con,
@@ -762,14 +762,13 @@ def bill_services(dbClient, con):
       s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", s."Payment_method_id", s."Provider_id",
       p."Product_type_id",
       r."Code", r."Owner_id", r."Service_id",
-      pr."Pos", sv."Pos" as "Service_pos"
+      pr."Pos"
     FROM "Booking"."Booking" b
       INNER JOIN "Booking"."Booking_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
       INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
       INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
-      INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
-      LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
+      INNER JOIN "Provider"."Provider" pr ON pr.id = s."Provider_id"
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato', 'checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
       AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
@@ -803,7 +802,7 @@ def bill_services(dbClient, con):
           ''',
           (
             item['Payment_method_id'] if item['Payment_method_id'] is not None else PM_CARD,
-            item['Service_pos'],
+            item['Pos'],
             item['Customer_id'],
             item['Booking_id'],
             item['Amount'],
@@ -885,7 +884,7 @@ def bill_services(dbClient, con):
 # Generate service bills for group bookints
 # ###################################################
 
-def bill_group_services(dbClient, con):
+def bill_group_concepts(dbClient, con):
 
   # Get all non recurrent services not already billed
   cur = dbClient.execute(con,
@@ -893,8 +892,9 @@ def bill_group_services(dbClient, con):
     SELECT
       s.id, b.id as "Booking_id", b."Payer_id", b."Room_ids",
       s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",  s."Provider_id",
-      p."Product_type_id"
+      p."Product_type_id", pr."Pos"
     FROM "Booking"."Booking_group" b
+      INNER JOIN "Provider"."Provider" pr ON pr.id = s."Provider_id"
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
       INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
@@ -944,7 +944,7 @@ def bill_group_services(dbClient, con):
           ''',
           (
             PM_TRANSFER,
-            'delegado',
+            item['Pos']
             item['Payer_id'],
             item['Booking_id'],
             item['Amount'],
@@ -1120,7 +1120,7 @@ def bill_lau(dbClient, con, now):
       AND (bo."Date_estimated" > '{now}'::date OR bo."Date_estimated" IS NULL)
       AND (bo."Date_bill_from" < '{now}'::date OR bo."Date_bill_from" IS NULL)
       AND bo."Rent" IS NOT NULL
-      AND bo."Unlawful" <> TRUE
+      AND (bo."Unlawful" <> TRUE OR bo."Bill_unlawful" = TRUE)
     ORDER BY 1
     ''')
   data = cur.fetchall()
@@ -1165,7 +1165,7 @@ def bill_lau(dbClient, con, now):
           item['id'],
           float(item['Rent']) + float(item['Extras']) + total_extras,
           now,
-          'Renta mensual',
+          'Renta mensual' if not item['Unlawful'] else 'Indemnización por ocupación inconsentida',
           'servicios'
         )
       )
@@ -1189,7 +1189,7 @@ def bill_lau(dbClient, con, now):
           item['id'],
           item['Payment_method_id'],
           paymentid,
-          'Renta mensual',
+          'Renta mensual' if not item['Unlawful'] else 'Indemnización por ocupación inconsentida',
           None
         )
       )
@@ -1208,7 +1208,7 @@ def bill_lau(dbClient, con, now):
           item['Rent'] + item['Extras'],
           item['Product_id'],
           item['Tax_id'],
-          'Renta mensual',
+          'Renta mensual' if not item['Unlawful'] else 'Indemnización por ocupación inconsentida',
           None
         )
       )
@@ -1312,9 +1312,9 @@ def main():
   bill_month(dbClient, con)
   bill_group_month(dbClient, con)
 
-  # 3. Bill extra services
-  bill_services(dbClient, con)
-  bill_group_services(dbClient, con)
+  # 3. Bill extra concepts
+  bill_concepts(dbClient, con)
+  bill_group_concepts(dbClient, con)
 
   # 4. Bill LAU/Others
   #bill_lau(dbClient, con, now)
