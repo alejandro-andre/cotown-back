@@ -220,12 +220,13 @@ def occupancy(dbClient):
 
     # Type
     type = row['Billing_type']
+    if xto < mto:
+      type = row['Billing_type_last']
     if type == 'proporcional':
       sold = occu
     elif type == 'quincena':
       if xto.day < 16 or xfrom.day > 15:
         sold = 15
-        #logger.info(str(mfrom) + ":" + str(mto) + " " + str(xfrom) + ":" + str(xto) + " " + str(days) + " " + str(occu))
       else:
         sold = days
     else:
@@ -258,6 +259,7 @@ def occupancy(dbClient):
         b."Date_from",
         b."Date_to",
         b."Billing_type",
+        b."Billing_type_last",
         CASE 
           WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'Tentative' 
           ELSE 'Real' 

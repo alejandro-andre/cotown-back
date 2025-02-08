@@ -31,12 +31,17 @@ BEGIN
   END IF;
 
   -- Billing type
-  IF NEW."Building_id" IS NOT NULL AND NEW."Billing_type" IS NULL THEN
+  IF NEW."Building_id" IS NOT NULL AND (NEW."Billing_type" IS NULL OR NEW."Billing_type_last" IS NULL ) THEN
     SELECT "Billing_type" INTO billing_type 
     FROM "Resource"."Resource" 
     WHERE "Building_id" = NEW."Building_id" AND "Billing_type" <> 'na' 
     ORDER BY id LIMIT 1;
-    NEW."Billing_type" = billing_type;
+    IF NEW."Billing_type" IS NULL THEN
+      NEW."Billing_type" = billing_type;
+    END IF;
+    IF NEW."Billing_type_last" IS NULL THEN
+      NEW."Billing_type_last" = billing_type;
+    END IF;
   END IF;
 
   -- Return record
