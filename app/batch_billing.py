@@ -894,8 +894,8 @@ def bill_group_concepts(dbClient, con):
       s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",  s."Provider_id",
       p."Product_type_id", pr."Pos"
     FROM "Booking"."Booking_group" b
-      INNER JOIN "Provider"."Provider" pr ON pr.id = s."Provider_id"
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
+      INNER JOIN "Provider"."Provider" pr ON pr.id = s."Provider_id"
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
       INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
     WHERE b."Status" IN ('grupoconfirmado','inhouse')
@@ -944,7 +944,7 @@ def bill_group_concepts(dbClient, con):
           ''',
           (
             PM_TRANSFER,
-            item['Pos']
+            item['Pos'],
             item['Payer_id'],
             item['Booking_id'],
             item['Amount'],
