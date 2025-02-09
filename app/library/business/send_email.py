@@ -117,11 +117,9 @@ def generate_email(apiClient, email):
   rich_html = env.from_string(rich_text).render(context)
   rich_body = BASE.format(subject, rich_html)
 
-  logger.info(body)
-  logger.info(rich_body)
-
   # Return
-  return subject, body
+  #return subject, body
+  return subject, rich_body
 
 
 # ###################################################
