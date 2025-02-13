@@ -131,6 +131,7 @@ def sql_dashboard_operaciones(status, vars):
     sql = select + f'''
     WHERE b."Status" IN (\'inhouse\')
       AND b."Issues" IS NOT NULL
+      AND b."Issues_ok" <> TRUE
       AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
 
   # ECO/EXT
