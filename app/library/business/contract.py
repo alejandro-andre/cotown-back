@@ -53,6 +53,41 @@ img[alt=firma] {{ width: 200px; }}
 </html>
 '''
 
+BODY = '''
+<p>Hey!</p>
+<p>
+Somos <strong>Cotown Group</strong> y queremos informarte que el <strong>contrato digital</strong> de tu reserva ya está disponible. 
+<strong>Lee detenidamente</strong> las normas y condiciones de estancia antes de firmarlo. Una vez firmado, podremos facilitarte las llaves durante el check-in.
+</p>
+<p><strong>Importante:</strong></p>
+<li>
+Si tu llegada es <strong>fuera del horario laboral</strong>, en <strong>festivos</strong> o <strong>fin de semana</strong>, aplican condiciones especiales para el check-in. 
+Te recomendamos coordinarlo con anticipación.
+</li>
+<p><strong>¿Necesitas servicios adicionales?</strong> Explora opciones como traslados o limpiezas extra aquí:</p>
+<a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a>
+<p>¡Quedamos atentos para resolver cualquier duda! Estamos emocionados de que disfrutes pronto de tu estancia.</p>
+<p>Atentamente,</p>
+<p><strong>Equipo Cotown Group</strong></p>
+'''
+
+BODY_EN = '''
+<p>Hey!</p>
+<p>
+We’re <strong>Cotown Group</strong>, and we’re excited to let you know that the <strong>digital contract</strong> for your reservation is now ready to sign.
+Please take a moment to <strong>carefully review the stay rules and conditions</strong>. Once signed, we’ll be all set to hand over your keys during check-in.
+</p>
+<p><strong>Important Notes:</strong></p>
+<li>
+If you’re arriving <strong>outside business hours</strong>, on <strong>holidays</strong>, or during the <strong>weekend</strong>, special check-in conditions apply. 
+We recommend coordinating this with us in advance.
+</li>
+<p><strong>Need extra services?</strong> Explore options like transfers or additional cleanings here:</p>
+<a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a>
+<p>Let us know if you have any questions—we’re here to help! Your amazing stay is just around the corner.</p>
+<p>Best,</p>
+<p><strong>The Cotown Group Team</strong></p>
+'''
 
 # ######################################################
 # Querys to retrieve the bookings
@@ -543,7 +578,7 @@ def do_send_contract(file_rent, file_svcs, context):
     #?email=context['Customer_email'],
     email='dalarcon@cotown.com',
     name=context['Customer_name'],
-    language='es',
+    language=context['Lang'] or 'es',
     recipient_id='1',
     tabs=Tabs(
       sign_here_tabs=[
@@ -576,7 +611,7 @@ def do_send_contract(file_rent, file_svcs, context):
     documents=documents,
     recipients={'signers': [signer]},
     email_subject='Contrato(s)  ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
-    email_blurb='BODY',
+    email_blurb=BODY if context['Lang'] == 'es' else BODY_EN,
     custom_fields=custom_fields,
     status='sent'
   )
