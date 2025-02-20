@@ -325,7 +325,7 @@ BEGIN
   END IF;
 
   -- A CHECK IN CONFIRMADO
-  IF (NEW."Status" = 'checkinconfirmado' OR (NEW."Status" = 'checkin' AND OLD."Status" = 'contrato')) THEN
+  IF (NEW."Status" = 'checkinconfirmado' THEN -- OR (NEW."Status" = 'checkin' AND OLD."Status" = 'contrato')) THEN
     -- Email
     IF NEW."Origin_id" IS NULL THEN
       INSERT
