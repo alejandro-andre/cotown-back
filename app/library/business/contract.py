@@ -547,7 +547,7 @@ def do_send_contract(file_rent, file_svcs, context):
     #?email=context['Customer_email'],
     email='alejandro.andre@experis.es',
     name=context['Customer_name'],
-    language=context['Lang'] or 'es',
+    language=context['Customer_lang'] or 'es',
     recipient_id='1',
     tabs=Tabs(
       sign_here_tabs=[
@@ -579,8 +579,8 @@ def do_send_contract(file_rent, file_svcs, context):
   envelope_definition = EnvelopeDefinition(
     documents=documents,
     recipients={'signers': [signer]},
-    email_subject=(SUBJECT if context['Lang'] == 'es' else SUBJECT_EN) + ' (' + str(context['Booking_id']) + '-' + context['Resource_code'] + ')',
-    email_blurb=BODY if context['Lang'] == 'es' else BODY_EN,
+    email_subject=(SUBJECT if context['Customer_lang'] == 'es' else SUBJECT_EN) + ' (' + str(context['Booking_id']) + '-' + context['Resource_code'] + ')',
+    email_blurb=BODY if context['Customer_lang'] == 'es' else BODY_EN,
     custom_fields=custom_fields,
     status='sent'
   )
@@ -799,8 +799,8 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    eid, status = do_send_contract(file_rent, file_svcs, context)
-    #?eid, status = 'n/a', 'sent'
+    #eid, status = do_send_contract(file_rent, file_svcs, context)
+    eid, status = 'n/a', 'sent'
 
     # Update query
     query = '''
