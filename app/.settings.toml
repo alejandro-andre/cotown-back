@@ -26,8 +26,8 @@ CHECKINDAYS=14
 CHECKOUTDAYS=30
 
 # Docusign
-AUTHORIZATION_SERVER='account-d.docusign.com'
-ACCOUNT_BASE_URI='https://demo.docusign.net/restapi'
+AUTHORIZATION_SERVER='account.docusign.com'
+ACCOUNT_BASE_URI='https://eu.docusign.net/restapi'
 SCOPES=['signature','impersonation']
 
 [development]

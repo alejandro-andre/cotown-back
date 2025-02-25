@@ -1,4 +1,4 @@
-# https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature%20impersonation&INTEGRATION_KEY=4c35b85f-70e7-455d-a695-01d83cac1c1e&redirect_uri=http://localhost:8080/ds/callback
+# https://account.docusign.com/oauth/auth?response_type=code&scope=signature%20impersonation&client_id=4c35b85f-70e7-455d-a695-01d83cac1c1e&redirect_uri=https://core.cotown.com/callback
 
 
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, CustomFields, TextCustomField 
