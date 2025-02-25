@@ -544,8 +544,7 @@ def do_send_contract(file_rent, file_svcs, context):
 
   # Signer
   signer = Signer(
-    #?email=context['Customer_email'],
-    email='alejandro.andre@experis.es',
+    email=context['Customer_email'],
     name=context['Customer_name'],
     language=context['Customer_lang'] or 'es',
     recipient_id='1',
