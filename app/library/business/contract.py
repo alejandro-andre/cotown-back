@@ -609,7 +609,7 @@ def check_contracts(apiClient, id, current_status):
     api_client.set_oauth_host_name(settings.AUTHORIZATION_SERVER)
     
     # Private key
-    private_key = get_private_key('test.private.key').encode('ascii').decode('utf-8')
+    private_key = get_private_key('docusign.private.key').encode('ascii').decode('utf-8')
 
     # Get JWT token
     token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
@@ -622,12 +622,10 @@ def check_contracts(apiClient, id, current_status):
     api = EnvelopesApi(api_client)
     envelope = api.get_envelope(account_id=settings.API_ACCOUNT_ID, envelope_id=id)
 
-    # Status changed
+    # Status
     status = envelope.status
     if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
       status = 'other'
-    if status == current_status:
-      return False
     
     # Datetime
     dt = str(envelope._status_changed_date_time)[:19]
@@ -636,6 +634,10 @@ def check_contracts(apiClient, id, current_status):
     logger.info("Envelope: " + envelope.envelope_id)
     logger.info("Status..: " + current_status + ' -> ' + status)
     logger.info("Date....: " + dt)
+
+    # Not changed
+    if status == current_status:
+      return False
 
     # Update query
     query = '''
@@ -799,9 +801,8 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    eid, status = 'n/a', 'sent'
-    if context['Customer_id'] == '34955281L':
-      eid, status = do_send_contract(file_rent, file_svcs, context)
+    #eid, status = 'n/a', 'sent'
+    eid, status = do_send_contract(file_rent, file_svcs, context)
 
     # Update query
     query = '''

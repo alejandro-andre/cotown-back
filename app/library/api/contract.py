@@ -50,7 +50,7 @@ def req_pub_contract():
   logger.info(subject)
   logger.info(status)
   logger.info(dt)
-  #?q_change_contract(g.dbClient, id, dt, status)
+  q_change_contract(g.dbClient, id, dt, status)
 
   # Return
   return 'OK'
