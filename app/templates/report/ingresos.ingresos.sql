@@ -11,7 +11,8 @@ SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXT
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
   pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
   CASE WHEN i."Booking_id" IS NOT NULL THEN 'B2C' ELSE '---' END AS "Type",
-  pdt."Name" AS "Amount_type",
+  pd."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
@@ -40,7 +41,9 @@ SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXT
   END AS "Amount_due",
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
   pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
-  'B2B' AS "Type", pdt."Name" AS "Amount_type",
+  'B2B' AS "Type", 
+  pd."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
@@ -71,7 +74,8 @@ SELECT pr."Name" AS "Owner", EXTRACT(MONTH from i."Issued_date") AS "Month", EXT
   CASE WHEN p."Payment_date" IS NULL THEN 'Pending' ELSE 'Paid' END AS "Payment_status",
   pm."Name" AS "Payment_method", p."Payment_date", i."Code" AS "Invoice",
   UPPER(b."Booking_type"::text) AS "Type",
-  pdt."Name" AS "Amount_type",
+  pd."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   0 AS "Management_fee"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
@@ -107,7 +111,9 @@ SELECT
     ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
   END AS "Amount_due",
   'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
-  'B2C' AS "Type", pdt."Name" AS "Amount_type",
+  'B2C' AS "Type", 
+  pdt."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_price" bp 
   INNER JOIN "Booking"."Booking" b on b.id = bp."Booking_id" 
@@ -142,7 +148,9 @@ SELECT DISTINCT ON (bp.id)
     ELSE b."Rooms" * bp."Rent"
   END AS "Amount_due",
   'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
-  'B2B' AS "Type", pdt."Name" AS "Amount_type",
+  'B2B' AS "Type", 
+  pdt."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b on b.id = bp."Booking_id" 
@@ -173,7 +181,9 @@ SELECT
     ELSE bp."Services" + COALESCE(bp."Services_discount", 0)
   END AS "Amount_due",
   'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
-  'B2C' AS "Type", pdt."Name" AS "Amount_type",
+  'B2C' AS "Type", 
+  pdt."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_price" bp 
   INNER JOIN "Billing"."Tax" t ON t.id = 1
@@ -201,7 +211,9 @@ SELECT DISTINCT ON (bp.id)
     ELSE b."Rooms" * bp."Services"
   END AS "Amount_due",
   'Pending' AS "Payment_status", NULL AS "Payment_method", NULL AS "Payment_date", NULL AS "Invoice",
-  'B2B' AS "Type", pdt."Name" AS "Amount_type",
+  'B2B' AS "Type", 
+  pdt."Name" AS "Product",
+  pdt."Name" AS "Product_type",
   CASE WHEN pr."Provider_type_id" = 1 THEN r."Management_fee" / 100 ELSE NULL END AS "Management_fee"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Billing"."Tax" t ON t.id = 1
