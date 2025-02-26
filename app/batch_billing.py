@@ -1117,9 +1117,9 @@ def bill_lau(dbClient, con, now):
         AND i."Issued_date" >= DATE_TRUNC('month', '{now}'::date) 
         AND i."Issued_date" < (DATE_TRUNC('month', '{now}'::date) + INTERVAL '1 month')
     WHERE i.id IS NULL
+      AND COALESCE(bo."Rent", 0) > 0
       AND (bo."Date_estimated" > '{now}'::date OR bo."Date_estimated" IS NULL)
       AND (bo."Date_bill_from" < '{now}'::date OR bo."Date_bill_from" IS NULL)
-      AND bo."Rent" IS NOT NULL
       AND (bo."Unlawful" <> TRUE OR bo."Bill_unlawful" = TRUE)
     ORDER BY 1
     ''')
