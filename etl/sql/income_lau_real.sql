@@ -30,7 +30,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 
   INNER JOIN "Billing"."Product_type" pt ON pt.id = pr."Product_type_id" 
   INNER JOIN "Booking"."Booking_other" b ON b.id = i."Booking_other_id" 
-  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id" 
 WHERE i."Issued_date" >= '2024-01-01'
 ;
