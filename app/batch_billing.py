@@ -1107,6 +1107,7 @@ def bill_lau(dbClient, con, now):
     SELECT 
       bo.id, bo."Customer_id", bo."Resource_id",
       bo."Rent", COALESCE(bo."Extras", 0) AS "Extras", bo."Extras_concept", bo."Payment_method_id", bo."Product_id",
+      bo."Substatus_id",
       r."Code", r."Owner_id",
       p."Tax_id"
     FROM "Booking"."Booking_other" bo
@@ -1317,7 +1318,7 @@ def main():
   bill_group_concepts(dbClient, con)
 
   # 4. Bill LAU/Others
-  #bill_lau(dbClient, con, now)
+  bill_lau(dbClient, con, now)
 
   # 5. Generate payment for each manual bill
   pay_bills(dbClient, con)
