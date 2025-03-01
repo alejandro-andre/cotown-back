@@ -1107,7 +1107,7 @@ def bill_lau(dbClient, con, now):
     SELECT 
       bo.id, bo."Customer_id", bo."Resource_id",
       bo."Rent", COALESCE(bo."Extras", 0) AS "Extras", bo."Extras_concept", bo."Payment_method_id", bo."Product_id",
-      bo."Substatus_id",
+      bo."Substatus_id", bo."Unlawful",
       r."Code", r."Owner_id",
       p."Tax_id"
     FROM "Booking"."Booking_other" bo
