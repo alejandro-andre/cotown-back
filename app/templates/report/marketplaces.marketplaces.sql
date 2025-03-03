@@ -1,5 +1,3 @@
-(
-(
 WITH
 "Agent_bills" AS (
   SELECT 
@@ -19,6 +17,7 @@ WITH
      AND ab."Date_from" <= b."Confirmation_date" 
      AND ab."Date_to" >= b."Confirmation_date"
 )
+(
 SELECT 
   a."Name" AS "Marketplace", 
   b."Confirmation_date",
@@ -26,6 +25,8 @@ SELECT
   a."Commision_percent" / 100 AS "Commision_percent",
   a."Commision_value", 
   at."Name" AS "Agent_type",
+  pc."Bill_date_from", 
+  pc."Bill_date_to",
   COALESCE(b."Booking_fee_actual", 0) AS "Booking_fee",
   c."Name" AS "Customer", 
   substring(r."Code", 1, 6) AS "Building", 
@@ -52,30 +53,7 @@ FROM "Booking"."Booking" b
   LEFT JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
   LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
   WHERE b."Confirmation_date" >= %(fdesde)s AND b."Confirmation_date" < %(fhasta)s
-)
-
 UNION 
-
-(
-WITH
-"Agent_bills" AS (
-  SELECT 
-    b.id,
-    ab."Amount",
-    ab."Date_from" AS "Bill_date_from", 
-    ab."Date_to" AS "Bill_date_to",
-    COUNT(b.id) OVER (PARTITION BY ab.id) AS "Booking_count",
-    CASE 
-      WHEN COUNT(b.id) OVER (PARTITION BY ab.id) > 0 THEN 
-        ab."Amount" / COUNT(b.id) OVER (PARTITION BY ab.id)
-      ELSE 0
-    END AS "Cost"
-  FROM "Provider"."Agent_bills" ab 
-    LEFT JOIN "Booking"."Booking_group" b 
-      ON b."Agent_id" = ab."Agent_id" 
-     AND ab."Date_from" <= b."Confirmation_date" 
-     AND ab."Date_to" >= b."Confirmation_date"
-)
 SELECT 
   a."Name" AS "Marketplace", 
   b."Confirmation_date",
@@ -83,6 +61,8 @@ SELECT
   a."Commision_percent" / 100 AS "Commision_percent",
   a."Commision_value", 
   at."Name" AS "Agent_type",
+  pc."Bill_date_from", 
+  pc."Bill_date_to",
   0 AS "Booking_fee",
   c."Name" AS "Customer", 
   substring(r."Code", 1, 6) AS "Building", 
@@ -111,7 +91,37 @@ FROM "Booking"."Booking_group" b
   LEFT JOIN "Building"."Building_type" bt ON bt.id = r."Building_type_id" 
   LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
   WHERE b."Confirmation_date" >= %(fdesde)s AND b."Confirmation_date" < %(fhasta)s
+UNION
+SELECT 
+  a."Name" AS "Marketplace", 
+  NULL AS "Confirmation_date",
+  NULL AS "id",
+  a."Commision_percent" / 100 AS "Commision_percent",
+  a."Commision_value", 
+  at."Name" AS "Agent_type",
+  ab."Date_from" AS "Bill_date_from", 
+  ab."Date_to" AS "Bill_date_to",
+  NULL AS "Booking_fee",
+  NULL AS "Customer", 
+  NULL AS "Building", 
+  NULL AS "Flat", 
+  NULL AS "Place", 
+  NULL AS "Place_type", 
+  NULL AS "Date_from", 
+  NULL AS "Date_to",
+  NULL AS "Direct_cost",
+  NULL AS "Prorrated_cost",
+  ab."Amount",
+  NULL AS "Rent",
+  NULL AS "Tax",
+  NULL AS "Management_fee",
+  NULL AS "Commision_bill_status" 
+FROM "Provider"."Agent_bills" ab 
+  INNER JOIN "Provider"."Agent" a ON a.id = ab."Agent_id"
+  INNER JOIN "Provider"."Agent_type" at ON AT.id = a."Agent_type_id" 
+  LEFT JOIN "Booking"."Booking" b ON b."Agent_id" = ab."Agent_id" AND ab."Date_from" <= b."Confirmation_date" AND ab."Date_to" >= b."Confirmation_date"
+WHERE b.id IS NULL
+  AND ab."Date_from" < %(fhasta)s AND ab."Date_to" >= %(fdesde)s
 )
-
 ORDER BY 1, 2, 3
-);
+;
