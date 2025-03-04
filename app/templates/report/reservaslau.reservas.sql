@@ -18,4 +18,5 @@ FROM "Booking"."Booking_other" bo
   INNER JOIN "Booking"."Booking_subtype" bs ON bs.id = bo."Substatus_id" 
   INNER JOIN "Billing"."Product" p ON p.id = bo."Product_id"
   INNER JOIN "Auxiliar"."Monthname" m on m.id = bo."IPC_month"
+WHERE bo."Substatus_id" <> 6
 ;
