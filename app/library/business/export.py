@@ -67,6 +67,12 @@ def fill_sheet(df, columns, sheet):
     styles.append(cell._style)
     format.append(cell.value)
 
+  # Recorrer todas las celdas en la hoja
+  for row in sheet.iter_rows():
+    for cell in row:
+      if cell.value and isinstance(cell.value, str) and "(now)" in cell.value:
+        cell.value = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
   # Write data
   for r, row in enumerate(dataframe_to_rows(df, index=False, header=False), 2):
     for c in range(0, df.shape[1]):
