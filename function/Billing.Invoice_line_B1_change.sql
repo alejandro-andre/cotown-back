@@ -38,6 +38,9 @@ BEGIN
 
   -- Delete
   IF TG_OP = 'DELETE' THEN
+    IF issued THEN
+      RAISE EXCEPTION '!!!Bill has been already issued, cannot change!!!La factura ya ha sido emitida, no puede cambiarse!!!';
+    END IF;
     RETURN OLD;
   END IF;
 
