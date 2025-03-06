@@ -11,6 +11,7 @@
   "Date_estimated", 
   "Product_name",
   "Unlawful",
+  "Bill_unlawful",
   "Rent",
   "Month",
   "IPC_updated",
