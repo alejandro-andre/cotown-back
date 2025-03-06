@@ -65,15 +65,19 @@ def forecast(apiClient):
         beds_c    = to_float(row[ 4].value)
         beds_ad   = to_float(row[ 5].value)
         beds_st   = to_float(row[ 6].value)
-        sold      = to_float(row[ 8].value)
-        rent_l    = to_float(row[22].value)
-        rent_m    = to_float(row[23].value)
-        rent_s    = to_float(row[24].value)
-        rent_g    = to_float(row[25].value)
-        rent_tot  = to_float(row[26].value)
-        srvs      = to_float(row[27].value) + to_float(row[28].value)
-        bfee      = to_float(row[29].value)
-        occ_stab  = to_float(row[37].value)
+        beds_pot  = to_float(row[ 7].value)
+        sold      = to_float(row[ 9].value)
+        rent_l    = to_float(row[23].value)
+        rent_m    = to_float(row[24].value)
+        rent_s    = to_float(row[25].value)
+        rent_g    = to_float(row[26].value)
+        rent_tot  = to_float(row[27].value)
+        srvs      = to_float(row[28].value) + to_float(row[29].value)
+        bfee      = to_float(row[30].value)
+        occ_stab  = to_float(row[38].value)
+        mpr       = to_float(row[39].value)
+        mpr_st    = to_float(row[40].value)
+        mpr_pot   = to_float(row[41].value)
         rent_l_ad = rent_l * beds_ad / beds_c if beds_c else 0
         rent_m_ad = rent_m * beds_ad / beds_c if beds_c else 0
         rent_s_ad = rent_s * beds_ad / beds_c if beds_c else 0
@@ -106,21 +110,25 @@ def forecast(apiClient):
         line = ['ARG' + str(c), '-', '-', '(forecast adjusted)', month, '', '', row[1].value, 'Monthly rent', rent_g_ad, rent_g_ad, 'Forecast adjusted', 'GROUP', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
-        # Stabilised
-        rent = row[39].value or 0
-        line = ['SIX' + str(c), '-', '-', '(stabilised)', month, '', '', row[1].value, 'Monthly rent', rent, rent, 'Stabilised', '', '' ]
+        # MPR
+        line = ['MPA' + str(c), '-', '-', '(MPR available)', month, '', '', row[1].value, 'Monthly rent', mpr, mpr, 'MPR Available', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        line = ['MPC' + str(c), '-', '-', '(MPR convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st, mpr_st, 'MPR Convertible', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        line = ['MPP' + str(c), '-', '-', '(MPR potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot, mpr_pot, 'MPR Potential', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
+        beds_result = '"id","data_type","resource","date","beds","beds_c","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible"\n'
         if beds > 0:
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, days * sold, days * sold, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, 0, 0, 0, 0, days * beds, '']
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, beds_st, beds_pot, 0, 0, days * beds, '']
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
         if beds_st > 0:
           line = ['SOC' + str(c), 'Stabilised', row[1].value, month, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, 0, 0, 0, 0, days * beds_st, '']
+          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, beds_st, beds_pot, 0, 0, days * beds_st, '']
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
