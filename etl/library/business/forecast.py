@@ -119,7 +119,6 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
-        beds_result = '"id","data_type","resource","date","beds","beds_c","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible"\n'
         if beds > 0:
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, days * sold, days * sold, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
