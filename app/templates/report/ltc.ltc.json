@@ -8,19 +8,20 @@
 "Current_rent",
 "Gender",
 "Birth_date",
-"", 
+"",
+"Substatus_name",
+
 "Date_to",
 "Date_estimated",
 "Tenancy_type",
 "Pending_subrogation", 
 
-"Contribution_chance",
+"Negotiation",
 "Contribution_percent", 
 "Contribution_recommended",
 "Contribution_asking", 
 "Contribution_proposal", 
 "Contribution_proposal_date",
-"Comments",
 
 "Pre_capex_long_term",
 "Pre_capex_vacant",
