@@ -255,6 +255,7 @@ CREATE TABLE gold.booking (
   "nationality" varchar NULL,
   "continent" varchar NULL,
   "language" varchar NULL,
+  "reason" varchar NULL,
   "school" varchar NULL,
   "school_type" varchar NULL,
   "first_contact" date NULL,
