@@ -118,6 +118,14 @@ def forecast(apiClient):
         line = ['MPP' + str(c), '-', '-', '(MPR potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot, mpr_pot, 'MPR Potential', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
+        # Stabilised
+        line = ['SPA' + str(c), '-', '-', '(Stabilised available)', month, '', '', row[1].value, 'Monthly rent', mpr * occ_stab, mpr * occ_stab, 'Stabilised Available', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        line = ['SPC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, mpr_st * occ_stab, 'Stabilised Convertible', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        line = ['SPP' + str(c), '-', '-', '(Stabilised potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot * occ_stab, mpr_pot * occ_stab, 'Stabilised Potential', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
         # Occupancy forecast
         if beds > 0:
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, days * sold, days * sold, 0, 0, '', '']
