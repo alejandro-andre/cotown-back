@@ -124,6 +124,21 @@ BEGIN
     END IF;
   END IF;
 
+  -- Reason
+  IF NEW."Reason_id" IN (1, 3) THEN
+    IF NEW."School_id" IS NULL THEN
+      RAISE exception '!!!School not selected!!!Escuela no seleccionada!!!';
+    END IF;
+    IF NEW."School_id" = 1 AND NEW."Other_school" IS NULL THEN
+      RAISE exception '!!!School (other) not completed!!!Escuela (otra) no indicada!!!';
+    END IF;
+  END IF;
+  IF NEW."Reason_id" IN (2, 3, 4) THEN
+    IF NEW."Company" IS NULL THEN
+      RAISE exception '!!!Company not completed!!!Compañía no indicada!!!';
+    END IF;
+  END IF;
+
   -- Documentos obligatorios
   INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
     SELECT NEW."Customer_id", id
