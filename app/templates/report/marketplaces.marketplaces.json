@@ -4,6 +4,7 @@
 "Commision_percent",
 "Bill_date_from",
 "Bill_date_to",
+"Concept",
 "Amount",
 "id",
 "Confirmation_date",

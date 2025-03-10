@@ -2,6 +2,7 @@ WITH
 "Agent_bills" AS (
   SELECT 
     b.id,
+    ab."Concept",
     ab."Amount",
     ab."Date_from" AS "Bill_date_from", 
     ab."Date_to" AS "Bill_date_to",
@@ -37,6 +38,7 @@ SELECT
   b."Date_to",
   COALESCE(b."Commision", 0) AS "Direct_cost",
   COALESCE(pc."Cost", 0) AS "Prorrated_cost",
+  pc."Concept",
   pc."Amount",
   (SELECT SUM(bp."Rent_total")+SUM(bp."Services_total") AS "Rent" FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "Rent",
   COALESCE(t."Value", 0) / 100 AS "Tax",
@@ -53,7 +55,7 @@ FROM "Booking"."Booking" b
   LEFT JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
   LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
   WHERE b."Confirmation_date" >= %(fdesde)s AND b."Confirmation_date" < %(fhasta)s
-UNION 
+UNION ALL
 SELECT 
   a."Name" AS "Marketplace", 
   b."Confirmation_date",
@@ -73,6 +75,7 @@ SELECT
   b."Date_to", 
   COALESCE(b."Commision", 0) AS "Direct_cost",
   COALESCE(pc."Cost", 0) AS "Prorrated_cost",
+  pc."Concept",
   pc."Amount",
   (SELECT SUM(bp."Rent")+SUM(bp."Services") AS "Rent" FROM "Booking"."Booking_group_price" bp WHERE bp."Booking_id" = b.id) AS "Rent",
   CASE
@@ -91,7 +94,7 @@ FROM "Booking"."Booking_group" b
   LEFT JOIN "Building"."Building_type" bt ON bt.id = r."Building_type_id" 
   LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
   WHERE b."Confirmation_date" >= %(fdesde)s AND b."Confirmation_date" < %(fhasta)s
-UNION
+UNION ALL
 SELECT 
   a."Name" AS "Marketplace", 
   NULL AS "Confirmation_date",
@@ -111,6 +114,7 @@ SELECT
   NULL AS "Date_to",
   NULL AS "Direct_cost",
   NULL AS "Prorrated_cost",
+  ab."Concept",
   ab."Amount",
   NULL AS "Rent",
   NULL AS "Tax",
