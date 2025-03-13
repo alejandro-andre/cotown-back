@@ -237,7 +237,7 @@ def sql_dashboard_lau(status, vars):
   # Devolutions
   if status == 'dev':
     sql = select + f'''
-    WHERE AND b."Deposit_required_date" BETWEEN '{date_from}' AND '{date_to}' '''   
+    WHERE b."Deposit_required_date" BETWEEN '{date_from}' AND '{date_to}' '''   
 
   # ITP
   elif status == 'itp':
