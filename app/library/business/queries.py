@@ -222,7 +222,8 @@ def sql_dashboard_lau(status, vars):
       b."Date_from", b."Date_to", b."Date_estimated",
       b."Deposit", b."Deposit_required", b."Deposit_return_date",
       b."Compensation", b."Compensation_date",
-      b."ITP_required_date",
+      b."ITP_required_date", b."ITP_date", 
+      b."Burofax_date",
       r."Code" AS "Resource", 
       bu."Name" AS "Building",
       c."Name", c."Email", c."Phones"
