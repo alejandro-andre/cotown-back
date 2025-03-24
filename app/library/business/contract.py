@@ -800,8 +800,8 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    eid, status = 'n/a', 'sent'
-    #eid, status = do_send_contract(file_rent, file_svcs, context)
+    eid, status = do_send_contract(file_rent, file_svcs, context)
+    #eid, status = 'n/a', 'sent'
 
     # Update query
     query = '''
