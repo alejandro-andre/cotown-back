@@ -115,10 +115,12 @@ def fill_sheet(df, columns, sheet):
           except Exception as e:
             cell.value = row[c]
         elif format[c] == 'datetime':
-          try:
-            cell.value = datetime.strptime(row[c], '%Y-%m-%dT%H:%M:%S')
-          except Exception as e:
-            cell.value = row[c]
+          cell.value = row[c]
+          if row[c]:
+            try:
+              cell.value = datetime.strptime(row[c].split('.')[0], '%Y-%m-%dT%H:%M:%S')
+            except Exception as e:
+              pass
         elif format[c] is not None:
           t = Translator(format[c], 'A1')
           cell.value = t.translate_formula(row_delta = r - 2)
