@@ -93,6 +93,16 @@ def q_reasons(dbClient, lang):
  
 
 # ------------------------------------------------------
+# Get Schools
+# ------------------------------------------------------
+
+def q_schools(dbClient, lang):
+
+  # Schools query
+  return q(dbClient, f'SELECT id, "Name" FROM "Auxiliar"."School" WHERE id > 1 ORDER BY 2', ())
+ 
+
+# ------------------------------------------------------
 # Get Countries
 # ------------------------------------------------------
 
@@ -464,10 +474,10 @@ def q_insert_booking(dbClient, booking):
     sql = f'''
       INSERT INTO "Booking"."Booking" (
         "Date_from", "Date_to", "Customer_id", "Building_id", 
-        "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", "Comments", 
+        "Resource_type", "Flat_type_id", "Place_type_id", "Reason_id", "School_id", "Other_school", "Company", "Comments", 
         "Booking_channel_id", "Second_resident", "Lock"
       )
-      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
+      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, FALSE, FALSE)
       RETURNING id
     '''
     cur = dbClient.execute(con, sql, (
@@ -479,6 +489,9 @@ def q_insert_booking(dbClient, booking):
       booking["Flat_type_id"],
       booking["Place_type_id"],
       booking["Reason_id"],
+      booking["School_id"],
+      booking["Other_school"],
+      booking["Company"],
       booking["Comments"]
     ))
     id = cur.fetchone()[0]

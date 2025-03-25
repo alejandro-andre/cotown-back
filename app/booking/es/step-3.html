@@ -21,7 +21,6 @@
 
             [% if data.logged %]
 
-            <div class="form">
             <form id="book-form" action="/booking/4" method="post">
               <fieldset>
                 <div class="logged-booking pure-g">
@@ -32,12 +31,42 @@
                   <div class="pure-u-1">
                     <div class="campo">
                       <label class="label">Motivo de la estancia</label>
-                      <select name="Reason_id" required>
-                        <option value="">Motivo</option>
+                      <select id="Reason_id" name="Reason_id" required>
+                        <option value="">-- Indica el motivo--</option>
                         [% for c in data.reasons %]
                         <option value="[[c.id]]">[[c.Name]]</option>
                         [% endfor %]
                        </select>
+                    </div>
+                    <div style="height:25px;"></div>
+                  </div>
+
+                  <div id="School_id_div" class="pure-u-1" style="display:none;">
+                    <div class="campo">
+                      <label class="label">Escuela/Universidad</label>
+                      <select id="School_id" name="School_id" required>
+                        <option value="">-- Indica escuela o Universidad--</option>
+                        <option value="1">Otra (especifica)</option>
+                        [% for c in data.schools %]
+                        <option value="[[c.id]]">[[c.Name]]</option>
+                        [% endfor %]
+                       </select>
+                    </div>
+                  </div>
+
+                  <div id="Other_school" class="pure-u-1" style="display:none;">
+                    <div class="campo">
+                      <label class="label">&nbsp;</label>
+                      <input id="Other_school" class="input" type="text" name="Other_school" placeholder="Nombre de la Escuela/Universidad">
+                    </div>
+                  </div>
+                  
+                  <div style="height:25px;"></div>
+
+                  <div id="Company_div" class="pure-u-1" style="display:none;">
+                    <div class="campo">
+                      <label class="label">Empresa</label>
+                      <input id="Company" class="input" type="text" name="Company" placeholder="Nombre de la empresa">
                     </div>
                   </div>
 
@@ -62,11 +91,9 @@
                 </div>
               </fieldset>
             </form>
-            </div>
 
             [% else %]
 
-            <div class="form">
             <form id="login-form" action="/booking/4" method="post">
               <fieldset>
                 <div class="login pure-g">
@@ -107,9 +134,7 @@
                 </div>
               </fieldset>
             </form>
-            </div>
 
-            <div class="form">
             <form id="register-form" action="/booking/4" method="post">
               <fieldset>
                 <div class="registry pure-g">
@@ -213,8 +238,7 @@
 
               </fieldset>
             </form>
-            </div>
-            
+
           </div>
 
           [% include 'es/includes/summary.html' %]
@@ -228,5 +252,27 @@
 </body>
 
 [% include 'es/includes/footer.html' %]
+
+<script>
+  const reason = document.getElementById("Reason_id");
+  reason.addEventListener("change", () => {
+    // Study
+    study = (reason.value === "1" || reason.value === "3");
+    document.getElementById("School_id_div").style.display = study ? "block" : "none";
+    document.getElementById("School_id").required = study;
+
+    // Work
+    work = (reason.value === "2" || reason.value === "3" || reason.value === "4");
+    document.getElementById("Company_name_div").style.display = work ? "block" : "none";
+    document.getElementById("Company_name").required = work;
+  });
+
+  const school = document.getElementById("School_id");
+  school.addEventListener("change", () => {
+    s = (school.value === "1");
+    document.getElementById("School_name_div").style.display = s ? "block" : "none";
+    document.getElementById("School_name").required = s;
+  });
+</script>
 
 </html>

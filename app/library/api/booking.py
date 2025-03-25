@@ -332,6 +332,7 @@ def req_pub_booking(step):
       # Show summary
       genders   = q_genders(g.dbClient, lang)
       reasons   = q_reasons(g.dbClient, lang)
+      schools   = q_schools(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
       
@@ -349,6 +350,7 @@ def req_pub_booking(step):
       # Show summary again
       genders   = q_genders(g.dbClient, lang)
       reasons   = q_reasons(g.dbClient, lang)
+      schools   = q_schools(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
@@ -372,6 +374,7 @@ def req_pub_booking(step):
       # Show summary again
       genders   = q_genders(g.dbClient, lang)
       reasons   = q_reasons(g.dbClient, lang)
+      schools   = q_schools(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
@@ -409,6 +412,9 @@ def req_pub_booking(step):
         'Flat_type_id': place_type_id if acom_type == 'ap' else flat_type_id,
         'Place_type_id': None if acom_type == 'ap' else place_type_id,
         'Reason_id': get_var('Reason_id', None),
+        'School_id': get_var('School_id', None),
+        'Other_school': get_var('Other_school', None),
+        'Company': get_var('Company', None),
         'Comments': summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + (' / ' + extras) if extras else ''
       }
       booking_id, error = q_insert_booking(g.dbClient, booking)

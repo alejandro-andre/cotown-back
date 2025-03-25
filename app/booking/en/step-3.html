@@ -31,12 +31,42 @@
                   <div class="pure-u-1">
                     <div class="campo">
                       <label class="label">Reason for stay</label>
-                      <select name="Reason_id" required>
-                        <option value="">Reason</option>
+                      <select id="Reason_id" name="Reason_id" required>
+                        <option value="">-- Enter reason--</option>
                         [% for c in data.reasons %]
                         <option value="[[c.id]]">[[c.Name]]</option>
                         [% endfor %]
                        </select>
+                    </div>
+                    <div style="height:25px;"></div>
+                  </div>
+
+                  <div id="School_id_div" class="pure-u-1" style="display:none;">
+                    <div class="campo">
+                      <label class="label">School/University</label>
+                      <select id="School_id" name="School_id" required>
+                        <option value="">-- Enter school or university--</option>
+                        <option value="1">Other (specify)</option>
+                        [% for c in data.schools %]
+                        <option value="[[c.id]]">[[c.Name]]</option>
+                        [% endfor %]
+                       </select>
+                    </div>
+                  </div>
+
+                  <div id="Other_school" class="pure-u-1" style="display:none;">
+                    <div class="campo">
+                      <label class="label">&nbsp;</label>
+                      <input id="Other_school" class="input" type="text" name="Other_school" placeholder="School/University name">
+                    </div>
+                  </div>
+                  
+                  <div style="height:25px;"></div>
+
+                  <div id="Company_div" class="pure-u-1" style="display:none;">
+                    <div class="campo">
+                      <label class="label">Company</label>
+                      <input id="Company" class="input" type="text" name="Company" placeholder="Company name">
                     </div>
                   </div>
 
@@ -220,5 +250,27 @@
 </body>
 
 [% include 'en/includes/footer.html' %]
+
+<script>
+  const reason = document.getElementById("Reason_id");
+  reason.addEventListener("change", () => {
+    // Study
+    study = (reason.value === "1" || reason.value === "3");
+    document.getElementById("School_id_div").style.display = study ? "block" : "none";
+    document.getElementById("School_id").required = study;
+
+    // Work
+    work = (reason.value === "2" || reason.value === "3" || reason.value === "4");
+    document.getElementById("Company_div").style.display = work ? "block" : "none";
+    document.getElementById("Company").required = work;
+  });
+
+  const school = document.getElementById("School_id");
+  school.addEventListener("change", () => {
+    s = (school.value === "1");
+    document.getElementById("Other_school_div").style.display = s ? "block" : "none";
+    document.getElementById("Other_school").required = s;
+  });
+</script>
 
 </html>
