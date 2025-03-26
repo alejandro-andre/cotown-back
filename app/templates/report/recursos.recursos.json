@@ -22,6 +22,8 @@
 "",
 "",
 "",
+"Registry_num",
+"Registry_date",
 "Registry_code",
 "Resource_usage.Name",
 "Capex",
