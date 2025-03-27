@@ -1233,7 +1233,7 @@ def bill_lau(dbClient, con, now):
         dbClient.execute(con, 'UPDATE "Booking"."Booking_other_service" SET "Invoice_id" = %s WHERE id = %s', (billid ,extra['id']))
 
       # Update invoice
-      #?dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
+      dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
 
       # Commit
       con.commit()
