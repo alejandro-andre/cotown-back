@@ -3,6 +3,8 @@ SELECT
   cr."Name_en" AS "Reason",
   s."Name" AS "school",
   sc."Name_en" AS "school_type",
+  b."Other_school" AS "school_other",
+  b."Company" AS "company",
   b."Status" AS "status",
   bw."Name_en" AS "who",
   br."Name_en" AS "referral",
