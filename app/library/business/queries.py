@@ -275,6 +275,146 @@ def q_dashboard_lau(dbClient, status=None, vars=None):
 
 
 # ######################################################
+# Dashboard Administration
+# ######################################################
+
+def sql_dashboard_payments(vars):
+
+  # Params
+  date_from  = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
+  date_to    = (datetime.now() + timedelta(days=settings.LAUDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  building   = vars.get('building')
+  buildings  = vars.getlist('building[]')
+  location   = vars.get('location')
+
+  # Additional where
+  where = ''
+  if buildings:
+    where += f'''AND bu.id IN ({','.join(buildings)}) '''
+  elif building:
+    where += f'''AND bu.id={building} '''
+  if location:
+    where += f'''AND d."Location_id"={location} '''
+
+  # Pending payments
+  sql = f'''
+    SELECT
+      p.id,
+      p."Issued_date",
+      p."Concept", 
+      p."Payment_auth", 
+      p."Payment_date", 
+      p."Amount",
+      p."Comments",
+      pm."Name" AS "Payment_method",
+      c."Name" AS "Customer",
+      b.id AS "Booking_id", 
+      b."Date_from", b."Date_to",
+      r."Code" AS "Resource",
+      bu."Code" AS "Building",
+      STRING_AGG(i."Code", ', ') AS "Invoices",
+      SUM(i."Total") AS "Invoice_total"
+    FROM "Billing"."Payment" p
+      INNER JOIN "Billing"."Payment_method" pm ON pm.id = p."Payment_method_id"
+      INNER JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
+      INNER JOIN "Booking"."Booking" b ON b.id = p."Booking_id"
+      INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+      INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
+      LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
+    WHERE p."Issued_date" BETWEEN '{date_from}' AND '{date_to}'
+      AND p."Amount" > 0 
+      AND (p."Payment_date" IS NULL OR p."Payment_auth" IS NULL)
+      AND pm."Name" NOT LIKE '%%garantía%%'
+      AND pm."Name" NOT LIKE '%%Rectificativa%%'
+      {where}
+    GROUP BY
+      p.id,
+      p."Issued_date",
+      p."Concept", 
+      p."Payment_auth", 
+      p."Payment_date", 
+      p."Amount",
+      p."Comments",
+      c."Name",
+      pm."Name",
+      b.id, 
+      b."Date_from", b."Date_to",
+      r."Code",
+      bu."Code"
+    '''
+
+  # SQL
+  return sql
+
+
+def sql_dashboard_deposits(vars):
+
+  # Params
+  date_from  = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
+  date_to    = (datetime.now() + timedelta(days=settings.LAUDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  building   = vars.get('building')
+  buildings  = vars.getlist('building[]')
+  location   = vars.get('location')
+
+  # Additional where
+  where = ''
+  if buildings:
+    where += f'''AND bu.id IN ({','.join(buildings)}) '''
+  elif building:
+    where += f'''AND bu.id={building} '''
+  if location:
+    where += f'''AND d."Location_id"={location} '''
+
+  # Deposits
+  sql = '''
+    SELECT 
+      b.id AS "Booking_id",
+      b."Date_from", b."Date_to",
+      b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned",
+      c."Name" AS "Customer",
+      r."Code",
+      bu."Code"
+    FROM "Booking"."Booking" b 
+      INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+      INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
+      LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
+    WHERE b."Status" = 'devolvergarantia'
+      {where}
+  '''   
+
+  # SQL
+  return sql
+
+
+def q_dashboard_payments(dbClient, vars=None):
+
+  # Connect
+  con = dbClient.getconn()
+ 
+  # Get bookings
+  cur = dbClient.execute(con, sql_dashboard_payments(vars), vars)
+  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+  cur.close()
+  dbClient.putconn(con)
+  return result
+
+
+def q_dashboard_deposits(dbClient, vars=None):
+
+  # Connect
+  con = dbClient.getconn()
+ 
+  # Get bookings
+  cur = dbClient.execute(con, sql_dashboard_deposits(vars), vars)
+  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+  cur.close()
+  dbClient.putconn(con)
+  return result
+
+
+# ######################################################
 # Web - Flat prices
 # ######################################################
 
