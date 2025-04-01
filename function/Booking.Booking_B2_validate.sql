@@ -125,6 +125,9 @@ BEGIN
   END IF;
 
   -- Reason
+  IF NEW."Reason_id" IS NULL AND NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
+    RAISE exception '!!!Reason not selected!!!Motivo no seleccionado!!!';
+  END IF;
   IF NEW."Reason_id" IN (1, 3) THEN
     IF NEW."School_id" IS NULL THEN
       RAISE exception '!!!School not selected!!!Escuela no seleccionada!!!';
