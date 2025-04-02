@@ -367,20 +367,21 @@ def sql_dashboard_deposits(vars):
     where += f'''AND d."Location_id"={location} '''
 
   # Deposits
-  sql = '''
+  sql = f'''
     SELECT 
       b.id AS "Booking_id",
       b."Date_from", b."Date_to",
       b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned",
       c."Name" AS "Customer",
-      r."Code",
-      bu."Code"
+      r."Code" AS "Resource",
+      bu."Code" AS "Building"
     FROM "Booking"."Booking" b 
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
       INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
       LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
-    WHERE b."Status" = 'devolvergarantia'
+    WHERE b."Date_deposit_required" BETWEEN '{date_from}' AND '{date_to}' 
+      AND b."Status" = 'devolvergarantia' 
       {where}
   '''   
 

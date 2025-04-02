@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_dashboard_admon, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_dashboard_payments, q_dashboard_deposits, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones
 
 # Logging
 import logging
@@ -180,9 +180,14 @@ def req_dashboard_lau(type=None):
   return q_dashboard_lau(g.dbClient, status=type, vars=request.args)
 
 
-def req_dashboard_admon(type=None):
+def req_dashboard_payments(type=None):
 
-  return q_dashboard_admon(g.dbClient, status=type, vars=request.args)
+    return q_dashboard_payments(g.dbClient, vars=request.args)
+
+
+def req_dashboard_deposits(type=None):
+
+  return q_dashboard_deposits(g.dbClient, vars=request.args)
 
 
 def req_dashboard_operaciones(status=None):
