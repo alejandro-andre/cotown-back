@@ -172,11 +172,11 @@ CREATE TABLE gold.occupancy (
 
   "booking" varchar DEFAULT NULL,
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
-  "occupied" int NOT NULL,
-  "occupied_t" int NOT NULL,
+  "occupied" numeric NOT NULL,
+  "occupied_t" numeric NOT NULL,
   "resource" varchar NOT NULL,          -- Dimension resource
-  "sold" int NOT NULL,
-  "sold_t" int NOT NULL,
+  "sold" numeric NOT NULL,
+  "sold_t" numeric NOT NULL,
   "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT occupancy_pk PRIMARY KEY ("id"),
@@ -188,7 +188,7 @@ CREATE TABLE gold.income (
   "id" varchar NOT NULL,
   "date" date NOT NULL,
 
-  "amount" decimal(10, 2) NOT NULL,
+  "amount" numeric NOT NULL,
   "booking" varchar DEFAULT NULL,
   "customer" int8 DEFAULT NULL,         -- Dimension resource
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
@@ -199,8 +199,8 @@ CREATE TABLE gold.income (
   "product" varchar NOT NULL,
   "provider" varchar DEFAULT NULL,
   "resource" varchar NOT NULL,          -- Dimension resource
-  "rate" decimal(10, 2) NOT NULL,       -- Rent without discounts
-  "price" decimal(10, 2) DEFAULT NULL,  -- Standard monthly rate
+  "rate" numeric NOT NULL,              -- Rent without discounts
+  "price" numeric DEFAULT NULL,         -- Standard monthly rate
   "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT income_pk PRIMARY KEY ("id")

@@ -116,7 +116,7 @@ def forecast(apiClient):
         beds_ad   = to_float(row[ 5].value)
         beds_st   = to_float(row[ 6].value)
         beds_pot  = to_float(row[ 7].value)
-        sold      = to_float(row[ 9].value)
+        occu      = to_float(row[ 8].value)
         occ_l     = to_float(row[15].value)
         occ_m     = to_float(row[16].value)
         occ_s     = to_float(row[17].value)
@@ -182,13 +182,13 @@ def forecast(apiClient):
 
         # Occupancy forecast
         if beds > 0:
-          line = ['FOL' + str(c), 'Forecast', row[1].value, month, occ_l * days * sold, occ_l * days * sold, 0, 0, '', 'LONG']
+          line = ['FOL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, '', 'LONG']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOM' + str(c), 'Forecast', row[1].value, month, occ_m * days * sold, occ_m * days * sold, 0, 0, '', 'MEDIUM']
+          line = ['FOM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, '', 'MEDIUM']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOS' + str(c), 'Forecast', row[1].value, month, occ_s * days * sold, occ_s * days * sold, 0, 0, '', 'SHORT']
+          line = ['FOS' + str(c), 'Forecast', row[1].value, month, occ_s * days * occu * beds_c, occ_s * days * occu * beds_c, 0, 0, '', 'SHORT']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOG' + str(c), 'Forecast', row[1].value, month, occ_g * days * sold, occ_g * days * sold, 0, 0, '', 'GROUP']
+          line = ['FOG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, beds_st, beds_pot, 0, 0, days * beds, '']
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
