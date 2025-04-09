@@ -19,7 +19,7 @@ from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.occupancy import occupancy, beds
-from library.business.forecast import forecast
+from library.business.forecast import forecast, budget
 from library.business.gl import glSAP, glExcel
 
 # Logging
@@ -171,7 +171,9 @@ def main(interfaces):
     # Income
     if 'income' in interfaces:
       forecast(apiClient)
+      budget(apiClient)
       execute(dbDestination, '_clear_income')
+      load(dbOrigin, dbDestination, 'income', 'income_budget')
       load(dbOrigin, dbDestination, 'income', 'income_forecast')
       load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
       load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')

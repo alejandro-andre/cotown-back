@@ -199,7 +199,8 @@ CREATE TABLE gold.income (
   "product" varchar NOT NULL,
   "provider" varchar DEFAULT NULL,
   "resource" varchar NOT NULL,          -- Dimension resource
-  "rate" decimal(10, 2) NOT NULL,
+  "rate" decimal(10, 2) NOT NULL,       -- Rent without discounts
+  "price" decimal(10, 2) DEFAULT NULL,  -- Standard monthly rate
   "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT income_pk PRIMARY KEY ("id")

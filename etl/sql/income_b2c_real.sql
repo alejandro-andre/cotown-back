@@ -20,6 +20,12 @@ SELECT
 	  WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") / (1 + (t."Value" / 100))
 	  WHEN pr."Product_type_id" > 3 THEN COALESCE(bp."Services", il."Amount") / (1 + (t."Value" / 100))
   END AS "rate",
+  CASE 
+    WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN NULL
+    WHEN pr."Product_type_id" = 1 THEN b."Booking_fee"
+	  WHEN pr."Product_type_id" = 3 THEN bp."Rent_rack"
+	  WHEN pr."Product_type_id" > 3 THEN bp."Services_rack"
+  END AS "price",
   --'B2C' AS "income_type",
   'Real' AS "data_type",
   CASE 

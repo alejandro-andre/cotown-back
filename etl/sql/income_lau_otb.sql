@@ -25,6 +25,7 @@ SELECT
   pr."Name_en" AS "product",
   (COALESCE(b."Rent", 0) + COALESCE(b."Extras", 0)) / (1 + (t."Value" / 100)) AS "amount",
   (COALESCE(b."Rent", 0) + COALESCE(b."Extras", 0)) / (1 + (t."Value" / 100)) AS "rate",
+  NULL AS "price",
   CASE
     WHEN b."Unlawful" THEN 'Tentative'
     ELSE 'OTB'

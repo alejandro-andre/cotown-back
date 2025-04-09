@@ -21,6 +21,7 @@ SELECT
   pr."Name_en" AS "product",
   il."Amount" / (1 + (t."Value" / 100)) AS "amount",
   il."Amount" / (1 + (t."Value" / 100)) AS "rate",
+  NULL AS "price",
   'Real' AS "data_type",
   '' AS "discount_type"
 FROM "Billing"."Invoice_line" il 

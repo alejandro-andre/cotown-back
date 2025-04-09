@@ -25,6 +25,7 @@ SELECT
   	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
   	ELSE bp."Rent"
   END AS "rate",
+  NULL AS "price",
   --'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupobloqueado') THEN 'Tentative'
@@ -71,6 +72,7 @@ SELECT
   	WHEN bu."Building_type_id" = 3 THEN bp."Services" / 1.1
   	ELSE bp."Services"
   END AS "rate",
+  NULL AS "price",
   --'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupoconfirmado', 'inhouse') THEN 'OTB' 

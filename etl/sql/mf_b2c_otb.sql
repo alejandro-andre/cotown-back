@@ -21,6 +21,7 @@ SELECT
   	WHEN bu."Building_type_id" = 3 THEN ((bp."Rent" + COALESCE(bp."Rent_discount", 0)) / 1.1)
   	ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
   END  * r."Management_fee" / 100 AS "rate",
+  NULL AS "price",
   --'B2C' AS "income_type",
   CASE
     WHEN b."Status" = 'confirmada' THEN 'Tentative' 
