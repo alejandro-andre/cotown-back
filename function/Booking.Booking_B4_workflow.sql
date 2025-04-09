@@ -209,6 +209,7 @@ BEGIN
         INSERT
           INTO "Billing"."Payment" ("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" ) 
           VALUES (COALESCE(payment_method_id, 1), pos, NEW."Customer_id", NEW.id, NEW."Deposit", CURRENT_DATE, 'Garantía', 'deposito');
+  	    INSERT INTO "Customer"."Customer_email"  ("Customer_id", "Template", "Entity_id")  VALUES (NEW."Customer_id", 'deposito', NEW.id);
       END IF;
     END IF;
   END IF;
