@@ -134,6 +134,8 @@ CREATE TABLE gold.resource (
   "flat_type" varchar DEFAULT NULL,
   "place_type" varchar DEFAULT NULL,
   "billing_type" varchar DEFAULT NULL,
+  "area" numeric DEFAULT NULL,
+  "rooms" numeric DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
 CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
@@ -160,6 +162,9 @@ CREATE TABLE gold.beds (
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "resource" varchar NOT NULL,          -- Dimension resource
   "convertible" varchar DEFAULT NULL,
+  "val_current" numeric DEFAULT NULL,
+  "val_residential" numeric DEFAULT NULL,
+  "val_cosharing" numeric DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT beds_pk PRIMARY KEY ("id"),
 CONSTRAINT beds_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")

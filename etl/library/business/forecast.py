@@ -85,7 +85,7 @@ def forecast(apiClient):
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","price","data_type","stay_length","discount_type"\n' 
   occupancy_result = '"id","data_type","resource","date","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
-  beds_result = '"id","data_type","resource","date","beds","beds_c","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible"\n'
+  beds_result = '"id","data_type","resource","date","beds","beds_c","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible","val_current","val_residential","val_cosharing"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -190,12 +190,12 @@ def forecast(apiClient):
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['FOG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, beds_st, beds_pot, 0, 0, days * beds, '']
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, beds_st, beds_pot, 0, 0, days * beds, '', 0, 0, 0]
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
         if beds_st > 0:
           line = ['SOC' + str(c), 'Stabilised', row[1].value, month, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, beds_st, beds_pot, 0, 0, days * beds_st, '']
+          line = ['SOC' + str(c), 'Stabilised', row[1].value, month, beds_st, beds_st, beds_st, beds_pot, 0, 0, days * beds_st, '', 0, 0, 0]
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet

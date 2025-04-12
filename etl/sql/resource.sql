@@ -26,7 +26,13 @@ SELECT
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
     WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
   END AS "billing_type",
-  b."Estabilised_date"
+  b."Estabilised_date",
+  COALESCE(r."Area", 0) AS "Area",
+  CASE
+    WHEN r."Resource_type" = 'piso' THEN (SELECT COUNT(*) FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
+    WHEN r."Resource_type" = 'plaza' THEN 0
+    ELSE 1 
+  END AS "rooms"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
@@ -52,7 +58,9 @@ SELECT DISTINCT
   NULL AS "flat_type",
   NULL AS "place_type",
   '' AS "billing_type",
-  b."Estabilised_date"
+  b."Estabilised_date",
+  0 AS "Area",
+  0 AS "Rooms"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 

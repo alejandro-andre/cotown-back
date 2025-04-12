@@ -42,7 +42,7 @@ def beds(dbClient):
 
     # Building started?
     if date < row['Start_date']:
-      return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert]
+      return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
 
     # All flat non availability rows
     availability = df_avail[df_avail['Resource_id'] == row['flat']]
@@ -73,7 +73,7 @@ def beds(dbClient):
           beds_cnv = 1.0
           beds_cap = 1.0
 
-        return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert]
+        return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
 
     # Bed is available (and convertible, and potential)
     beds     = 1.0
@@ -95,7 +95,7 @@ def beds(dbClient):
         beds_c = 0.5
     
     # Return values
-    return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert]
+    return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
   
 
   # Log
@@ -108,6 +108,9 @@ def beds(dbClient):
   sql = '''
   -- All places
   SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date",
+  r."Pre_capex_long_term" AS "val_current",
+  r."Post_capex" AS "val_residential",
+  r."Post_capex" AS "val_cosharing",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -121,6 +124,9 @@ def beds(dbClient):
   
   -- All rooms without places
   SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date", 
+  r."Pre_capex_long_term" AS "val_current",
+  r."Post_capex" AS "val_residential",
+  r."Post_capex" AS "val_cosharing",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -135,6 +141,9 @@ def beds(dbClient):
   
   -- All Flats without rooms
   SELECT r.id, r."Code" AS "resource", r.id AS "flat", b."Start_date",
+  r."Pre_capex_long_term" AS "val_current",
+  r."Post_capex" AS "val_residential",
+  r."Post_capex" AS "val_cosharing",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -190,13 +199,13 @@ def beds(dbClient):
   df_beds = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
   # Beds and available nights
-  df_beds[['beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', ]] = df_beds.apply(count, axis=1, result_type='expand')
+  df_beds[['beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df_beds.apply(count, axis=1, result_type='expand')
   logger.info('- Beds and available nights calculated')
 
   # To CSV
   df_beds['id'] = range(1, 1 + len(df_beds))
   df_beds['data_type'] = 'Real'
-  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible'])  
+  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')
 
 
