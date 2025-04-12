@@ -29,7 +29,11 @@ SELECT
   b."Estabilised_date",
   COALESCE(r."Area", 0) AS "Area",
   CASE
-    WHEN r."Resource_type" = 'piso' THEN (SELECT COUNT(*) FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
+    WHEN r."Resource_type" = 'piso' THEN (
+      SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END 
+      FROM "Resource"."Resource" rr 
+      WHERE rr."Flat_id" = r.id
+    )
     WHEN r."Resource_type" = 'plaza' THEN 0
     ELSE 1 
   END AS "rooms"
