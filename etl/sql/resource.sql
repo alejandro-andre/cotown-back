@@ -30,7 +30,7 @@ SELECT
   COALESCE(r."Area", 0) AS "Area",
   CASE
     WHEN r."Resource_type" = 'piso' THEN (
-      SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END 
+      SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 1 END 
       FROM "Resource"."Resource" rr 
       WHERE rr."Flat_id" = r.id
     )
