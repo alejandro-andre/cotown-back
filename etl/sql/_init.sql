@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS gold.place_type CASCADE;
 DROP TABLE IF EXISTS gold.product CASCADE;
 DROP TABLE IF EXISTS gold.owner CASCADE;
 DROP TABLE IF EXISTS gold.location CASCADE;
+DROP TABLE IF EXISTS gold.resource_history CASCADE;
 DROP TABLE IF EXISTS gold.resource CASCADE;
 DROP TABLE IF EXISTS gold.income CASCADE;
 DROP TABLE IF EXISTS gold.occupancy CASCADE;
@@ -148,6 +149,25 @@ CONSTRAINT resource_location_fk FOREIGN KEY ("location") REFERENCES gold.locatio
 -- Facts
 -- -------------------------------------
 
+-- Create resource history table
+CREATE TABLE gold.resource_history (
+  "id" varchar NOT NULL,
+  "date" date NOT NULL,
+
+  "area"  numeric NOT NULL,               -- Area m2
+  "rooms" numeric NOT NULL,               -- Rooms
+  "beds" numeric NOT NULL,                -- Beds
+  "data_type" varchar NOT NULL,           -- Real, OTB, Forecast...
+  "resource" varchar NOT NULL,            -- Dimension resource
+  "status" varchar NOT NULL,              -- COSHARING, LTC, LTNC, FTC, PRECAPEX, CAPEX, RETAIL, OTHER...
+  "val_current" numeric DEFAULT NULL,     -- Current status valuation
+  "val_residential" numeric DEFAULT NULL, -- Residential valuation
+  "val_cosharing" numeric DEFAULT NULL,   -- Cosharing valuation
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT resource_history_pk PRIMARY KEY ("id"),
+CONSTRAINT resource_history_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
+);
+
 -- Create beds table
 CREATE TABLE gold.beds (
   "id" varchar NOT NULL,
@@ -212,40 +232,6 @@ CREATE TABLE gold.income (
 CONSTRAINT income_pk PRIMARY KEY ("id")
 );
 
--- Create general ledger
-CREATE TABLE gold.gl (
-  "cacc_doc_uuid" varchar NOT NULL,
-  "cacc_doc_it_uuid" varchar NOT NULL,
-  "cbus_part_uuid" varchar NULL,
-  "ccost_ctr_uuid" varchar NULL,
-  "ccreation_date" timestamp NOT NULL,
-  "cdoc_date" date NULL,
-  "cfiscyear" int4 NOT NULL,
-  "cfiscper" int4 NOT NULL,
-  "cfix_asset_uuid" varchar NULL,
-  "cglacct" varchar NOT NULL,
-  "cnote_hd" varchar NULL,
-  "cnote_it" varchar NULL,
-  "coedpartner" varchar NULL,
-  "coedref_f_id" varchar NULL,
-  "coff_glacct" varchar NULL,
-  "cposting_date" date NOT NULL,
-  "cprofitctr_uuid" varchar NULL,
-  "kccredit_currcomp" numeric NULL,
-  "kcdebit_currcomp" numeric NULL,
-  "kcbalance_currcomp" numeric NULL,
-  "tbus_part_uuid" varchar NULL,
-  "tcost_ctr_uuid" varchar NULL,
-  "tfix_asset_uuid" varchar NULL,
-  "tglacct" varchar NULL,
-  "toff_glacct" varchar NULL,
-  "tproduct_type" varchar NULL,
-  "tproduct_uuid" varchar NULL,
-  "tprofitctr_uuid" varchar NULL,
-  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT gl_pk PRIMARY KEY ("cfiscyear","cacc_doc_uuid", "cacc_doc_it_uuid")
-);
-
 -- Create booking
 CREATE TABLE gold.booking (
   "id" int8 NOT NULL,
@@ -300,4 +286,38 @@ CREATE TABLE gold.marketplace (
   "count" int8 NOT NULL,
   "cost" numeric NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create general ledger
+CREATE TABLE gold.gl (
+  "cacc_doc_uuid" varchar NOT NULL,
+  "cacc_doc_it_uuid" varchar NOT NULL,
+  "cbus_part_uuid" varchar NULL,
+  "ccost_ctr_uuid" varchar NULL,
+  "ccreation_date" timestamp NOT NULL,
+  "cdoc_date" date NULL,
+  "cfiscyear" int4 NOT NULL,
+  "cfiscper" int4 NOT NULL,
+  "cfix_asset_uuid" varchar NULL,
+  "cglacct" varchar NOT NULL,
+  "cnote_hd" varchar NULL,
+  "cnote_it" varchar NULL,
+  "coedpartner" varchar NULL,
+  "coedref_f_id" varchar NULL,
+  "coff_glacct" varchar NULL,
+  "cposting_date" date NOT NULL,
+  "cprofitctr_uuid" varchar NULL,
+  "kccredit_currcomp" numeric NULL,
+  "kcdebit_currcomp" numeric NULL,
+  "kcbalance_currcomp" numeric NULL,
+  "tbus_part_uuid" varchar NULL,
+  "tcost_ctr_uuid" varchar NULL,
+  "tfix_asset_uuid" varchar NULL,
+  "tglacct" varchar NULL,
+  "toff_glacct" varchar NULL,
+  "tproduct_type" varchar NULL,
+  "tproduct_uuid" varchar NULL,
+  "tprofitctr_uuid" varchar NULL,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT gl_pk PRIMARY KEY ("cfiscyear","cacc_doc_uuid", "cacc_doc_it_uuid")
 );
