@@ -2,7 +2,7 @@ SELECT
   CONCAT('COM', bp.id) AS "id",
   b.id AS "doc_id",
   'otb' AS "doc_type",
-  bp."Booking_id" AS "booking",
+  'C' || bp."Booking_id"::text AS "booking",
   bp."Rent_date" AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
