@@ -54,35 +54,27 @@ def history(dbClient):
   sql = '''
     SELECT
       r."Code" as "resource",
-      COALESCE(r."Area", 0) as "area",
+      b."Start_date",
       CASE 
         WHEN r."Resource_type" = 'piso' THEN r.id
         ELSE r."Flat_id"
       END AS "flat",
       CASE 
+        WHEN r."Resource_type" = 'piso' THEN COALESCE(r."Area", 0)
+        ELSE 0
+      END AS "area",
+      CASE 
         WHEN r."Resource_type" = 'plaza' THEN 1
         WHEN r."Resource_type" = 'habitacion' THEN (
-          SELECT GREATEST(1, COUNT(*))
+          SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END
           FROM "Resource"."Resource" rr
-          WHERE rr."Room_id" = r.id
-        )
-        ELSE (
-          SELECT COUNT("Flat_id") - COUNT("Room_id") / 2
-          FROM "Resource"."Resource" rr
-          WHERE rr."Flat_id" = r.id
-        )
+          WHERE rr."Room_id" = r.id    )
+        ELSE 0
       END AS "beds",
-      CASE 
-        WHEN r."Resource_type" = 'plaza' THEN 0
-        WHEN r."Resource_type" = 'piso' THEN (
-          SELECT COUNT(*)
-          FROM "Resource"."Resource" rr
-          WHERE rr."Flat_id" = r.id
-          AND rr."Resource_type" = 'habitacion'
-        )
-        ELSE 1
-      END AS "rooms",
-      b."Start_date"
+      CASE
+        WHEN r."Resource_type" = 'habitacion' THEN 1
+        ELSE 0
+      END AS "rooms"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     ORDER BY 1
