@@ -278,7 +278,7 @@ CREATE TABLE gold.booking (
 -- Create marketplace costs
 CREATE TABLE gold.marketplace (
   "id" varchar NOT NULL,
-  "booking" int8 NOT NULL,
+  "booking" varchar NOT NULL,
   "marketplace" varchar NULL,
   "amount" numeric NULL,
   "date_from" date NULL,
