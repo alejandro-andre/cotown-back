@@ -6,7 +6,7 @@ SELECT
   'LOX' || b.id::TEXT || '.' || d."Date" AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
-  b.id AS "booking",
+  'L' || b.id::text AS "booking",
   d."Date" AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",

@@ -2,7 +2,7 @@ SELECT
   CONCAT('CRX', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
-  b.id AS "booking",
+  'C' || b.id::text AS "booking",
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
   i."Customer_id" AS "customer",
