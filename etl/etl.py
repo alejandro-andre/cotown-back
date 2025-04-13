@@ -18,6 +18,7 @@ from library.services.dbclient import DBClient
 from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.business.load import load, execute
+from library.business.history import history
 from library.business.occupancy import occupancy, beds
 from library.business.forecast import forecast, budget
 from library.business.gl import glSAP, glExcel
@@ -99,11 +100,6 @@ def main(interfaces):
     logger.error(e)
     return
 
-  # Test
-  if 'test' in interfaces:
-    beds(dbOrigin)
-    occupancy(dbOrigin)
-
   # Process
   try:
 
@@ -184,6 +180,12 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'income', 'mf_real')
       load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
       load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
+
+    # History
+    if 'history' in interfaces:
+      history(dbOrigin)
+      execute(dbDestination, '_clear_history')
+      load(dbOrigin, dbDestination, 'resource_history', 'history_real')
 
     # Beds
     if 'beds' in interfaces:

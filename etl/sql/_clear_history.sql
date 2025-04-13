@@ -1,0 +1,1 @@
+TRUNCATE gold.resource_history CASCADE;
