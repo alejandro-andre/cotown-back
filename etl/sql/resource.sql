@@ -26,16 +26,30 @@ SELECT
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
     WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
   END AS "billing_type",
-  b."Estabilised_date",
-  COALESCE(r."Area", 0) AS "Area",
-  CASE
-    WHEN r."Resource_type" = 'piso' THEN (
-      SELECT CASE WHEN COUNT(*) > 0 THEN COUNT(*) ELSE 1 END 
-      FROM "Resource"."Resource" rr 
-      WHERE rr."Flat_id" = r.id
-    )
-    WHEN r."Resource_type" = 'plaza' THEN 0
-    ELSE 1 
+  b."Estabilised_date" AS "estabilised_date",
+  COALESCE(r."Area", 0) AS "area",
+  CASE 
+  	WHEN r."Resource_type" = 'plaza' THEN 1
+  	WHEN r."Resource_type" = 'habitacion' THEN (
+  		SELECT GREATEST(1, COUNT(*))
+  		FROM "Resource"."Resource" rr
+  		WHERE rr."Room_id" = r.id
+  	)
+  	ELSE (
+  		SELECT COUNT("Flat_id") - COUNT("Room_id") / 2
+  		FROM "Resource"."Resource" rr
+  		WHERE rr."Flat_id" = r.id
+  	)
+  END AS "beds",
+  CASE 
+  	WHEN r."Resource_type" = 'plaza' THEN 0
+  	WHEN r."Resource_type" = 'piso' THEN (
+  		SELECT COUNT(*)
+  		FROM "Resource"."Resource" rr
+  		WHERE rr."Flat_id" = r.id
+  		AND rr."Resource_type" = 'habitacion'
+  	)
+  	ELSE 1
   END AS "rooms"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
@@ -45,7 +59,6 @@ INNER JOIN "Geo"."District" d ON d.id = b."District_id"
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza', 'local', 'parking', 'trastero')
 
 UNION
 
@@ -62,9 +75,10 @@ SELECT DISTINCT
   NULL AS "flat_type",
   NULL AS "place_type",
   '' AS "billing_type",
-  b."Estabilised_date",
-  0 AS "Area",
-  0 AS "Rooms"
+  b."Estabilised_date" AS "estabilised_date",
+  0 AS "area",
+  0 AS "rooms",
+  0 AS "beds"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
@@ -73,5 +87,6 @@ INNER JOIN "Geo"."District" d ON d.id = b."District_id"
 INNER JOIN "Geo"."Location" l ON l.id = d."Location_id"
 INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id" 
 LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id" 
-WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza', 'local', 'parking', 'trastero')
+
+ORDER BY 1
 ;

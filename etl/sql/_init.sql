@@ -136,6 +136,7 @@ CREATE TABLE gold.resource (
   "billing_type" varchar DEFAULT NULL,
   "area" numeric DEFAULT NULL,
   "rooms" numeric DEFAULT NULL,
+  "beds" numeric DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
 CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
