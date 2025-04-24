@@ -7,8 +7,8 @@ SELECT
   bo."Include_gas", bo."Include_electricity", bo."Include_water",
   bo."Contribution_percent", bo."Contribution_recommended", bo."Contribution_asking", 
   bo."Contribution_proposal", bo."Contribution_proposed_date", bo."Contribution_comments",
-  bo."Comments", 
-  bu."Name" AS "Building_name", r."Code",
+  bo."Comments",
+  bu."Name" AS "Building_name", r."Code", r."SAP_code",
   c."Name" AS "Customer_name", c."Document", c."Phones",
   bs."Name" AS "Status_name",
   CASE

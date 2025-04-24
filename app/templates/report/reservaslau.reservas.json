@@ -2,6 +2,7 @@
   "id", 
   "Building_name", 
   "Code",
+  "SAP_code",
   "Customer_name", 
   "Document", 
   "Phones",

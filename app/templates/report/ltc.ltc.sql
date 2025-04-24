@@ -3,6 +3,7 @@ SELECT
   r."Code" AS "Resource", rs."Name" AS "Status_name", l."Name" AS "City", r."Area", r. "Places", 
   COALESCE(bo."Rent", 0) + COALESCE(bo."Extras", 0) AS "Current_rent",
   r."Pre_capex_long_term", r."Pre_capex_vacant", r."Post_capex", r."Capex",
+  r."SAP_code",
   g."Name_en" AS "Gender", 
   c."Birth_date",
   etsl.labels[array_position(ets.values, bo."Pending_subrogation"::text)]::text AS "Pending_subrogation",
