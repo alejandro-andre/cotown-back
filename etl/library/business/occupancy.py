@@ -270,7 +270,7 @@ def occupancy(dbClient):
         b."Billing_type",
         b."Billing_type_last",
         CASE 
-          WHEN b."Status" IN ('pendientepago', 'confirmada', 'grupobloqueado') THEN 'Tentative' 
+          WHEN b."Status" IN ('confirmada', 'grupobloqueado') THEN 'Tentative' 
           ELSE 'Real' 
         END AS "data_type",
         CASE
@@ -287,6 +287,7 @@ def occupancy(dbClient):
     ) AS r ON r.id = b."Resource_id"
     INNER JOIN date_range dr ON dr.date BETWEEN DATE_TRUNC('month', b."Date_from") AND b."Date_to"
     WHERE b."Availability_id" IS NULL
+      AND b."Status" NOT IN IN ('pendientepago')
       AND b."Date_from" <= '{END_DATE}'
       AND b."Date_to" >= '{START_DATE}'
     ORDER BY 1 DESC, 3
