@@ -126,7 +126,8 @@ def forecast(apiClient):
         rent_s    = to_float(row[25].value)
         rent_g    = to_float(row[26].value)
         rent_tot  = to_float(row[27].value)
-        srvs      = to_float(row[28].value) + to_float(row[29].value)
+        srvs_tot  = to_float(row[28].value)
+        srvs_cln  = to_float(row[29].value)
         bfee      = to_float(row[30].value)
         occ_stab  = to_float(row[38].value)
         mpr       = to_float(row[39].value)
@@ -136,7 +137,7 @@ def forecast(apiClient):
         rent_m_ad = (rent_m * beds_ad / beds_c) if beds_c else 0
         rent_s_ad = (rent_s * beds_ad / beds_c) if beds_c else 0
         rent_g_ad = (rent_g * beds_ad / beds_c) if beds_c else 0
-        mfee      = round((rent_tot + srvs / 1.21) * mgmt_fee, 2)
+        mfee      = round((rent_tot + (srvs_tot + srvs_cln) / 1.21) * mgmt_fee, 2)
 
         # Forecast
         line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, None, 'Forecast', 'LONG', '' ]
@@ -147,7 +148,9 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FRG' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_g, rent_g, None, 'Forecast', 'GROUP', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FSV' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly services', srvs, srvs, None, 'Forecast', '', '' ]
+        line = ['FST' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Periodic cleaning service', srvs_tot, srvs_tot, None, 'Forecast', '', '' ]
+        forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        line = ['FSC' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Check-out cleaning services', srvs_cln, srvs_cln, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, bfee, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
