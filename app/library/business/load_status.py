@@ -47,6 +47,11 @@ def load_status(dbClient, con, data):
 
   # Get all locks
   for irow, row in enumerate(data.iter_rows(min_row=3)):
+    # Skip empty rows
+    if all((cell.value is None or cell.value == '') for cell in row):
+      continue
+
+    # Process
     try:
 
       # Empty record

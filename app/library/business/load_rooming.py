@@ -22,6 +22,11 @@ def load_rooming(dbClient, con, data):
 
   # Loop thru all rows skipping four first rows
   for irow, row in enumerate(data.iter_rows(min_row=5)):
+    # Skip empty rows
+    if all((cell.value is None or cell.value == '') for cell in row):
+      continue
+
+    # Process
     try:
 
       # Empty record

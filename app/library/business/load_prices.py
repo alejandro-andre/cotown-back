@@ -22,6 +22,11 @@ def load_prices(dbClient, con, data):
 
   # Loop thru all rows skipping two first rows
   for irow, row in enumerate(data.iter_rows(min_row=3)):
+    # Skip empty rows
+    if all((cell.value is None or cell.value == '') for cell in row):
+      continue
+
+    # Process
     try:
 
       # Empty record
