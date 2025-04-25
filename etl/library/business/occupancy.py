@@ -262,7 +262,7 @@ def occupancy(dbClient):
       SELECT generate_series('{START_DATE}', '{END_DATE}', interval '1 month')::date AS "date"
     )
     SELECT
-        b.id AS "booking",
+        COALESCE(b."Booking_id", b."Booking_group_id", b.id) AS "booking",
         r."Code" AS "resource",
         dr.date,
         b."Date_from",
@@ -270,7 +270,7 @@ def occupancy(dbClient):
         b."Billing_type",
         b."Billing_type_last",
         CASE 
-          WHEN b."Status" IN ('pendientepago', 'grupobloqueado') THEN 'Tentative' 
+          WHEN b."Status" IN ('pendientepago', 'confirmada', 'grupobloqueado') THEN 'Tentative' 
           ELSE 'Real' 
         END AS "data_type",
         CASE
