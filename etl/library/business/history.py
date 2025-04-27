@@ -74,7 +74,11 @@ def history(dbClient):
       CASE
         WHEN r."Resource_type" = 'habitacion' THEN 1
         ELSE 0
-      END AS "rooms"
+      END AS "rooms",
+      CASE
+        WHEN r."Resource_type" IN ('habitacion', 'plaza') THEN 0
+        ELSE 1
+      END AS "units"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     ORDER BY 1
@@ -149,5 +153,5 @@ def history(dbClient):
   df_history['val_current'] = 0
   df_history['val_residential'] = 0
   df_history['val_cosharing'] = 0
-  df_history.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
+  df_history.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
   logger.info('- History saved')

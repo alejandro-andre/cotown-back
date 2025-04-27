@@ -155,6 +155,7 @@ CREATE TABLE gold.resource_history (
   "date" date NOT NULL,
 
   "area"  numeric NOT NULL,               -- Area m2
+  "units" numeric NOT NULL,               -- Units (flats...)
   "rooms" numeric NOT NULL,               -- Rooms
   "beds" numeric NOT NULL,                -- Beds
   "data_type" varchar NOT NULL,           -- Real, OTB, Forecast...
