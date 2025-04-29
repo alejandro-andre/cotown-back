@@ -41,9 +41,15 @@ def history(dbClient):
         return r['Type']
 
     # Default
+    if (row['Resource_type'] == 'local'):
+      return 'RETAIL'
+    elif (row['Resource_type'] == 'parking'):
+      return 'PARKING'
+    elif (row['Resource_type'] == 'trastero'):
+      return 'STORAGE'
     return 'COSHARING'
-  
-  
+
+
   # Log
   logger.info('Calculating resources history...')
 
@@ -55,6 +61,7 @@ def history(dbClient):
     SELECT
       r."Code" as "resource",
       b."Start_date",
+      r."Resource_type",
       CASE 
         WHEN r."Resource_type" = 'piso' THEN r.id
         ELSE r."Flat_id"
