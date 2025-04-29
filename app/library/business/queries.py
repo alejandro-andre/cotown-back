@@ -313,7 +313,8 @@ def sql_dashboard_payments(vars):
       r."Code" AS "Resource",
       bu."Code" AS "Building",
       STRING_AGG(i."Code", ', ') AS "Invoices",
-      SUM(i."Total") AS "Invoice_total"
+      SUM(i."Total") AS "Invoice_total",
+      p."Warning_1", p."Warning_2", p."Warning_3"
     FROM "Billing"."Payment" p
       INNER JOIN "Billing"."Payment_method" pm ON pm.id = p."Payment_method_id"
       INNER JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
