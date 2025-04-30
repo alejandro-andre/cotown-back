@@ -38,6 +38,6 @@ FROM "Booking"."Booking_other" b
   INNER JOIN "Billing"."Product" pr ON pr.id = b."Product_id"
   INNER JOIN "Billing"."Product_type" pt ON pt.id = pr."Product_type_id" 
   INNER JOIN "Billing"."Tax" t ON t.id = pr."Tax_id" 
-  INNER JOIN "Dates" d ON d."Date" BETWEEN b."Date_from" AND COALESCE(b."Date_to", b."Date_estimated", '2030-01-01'::date)
+  INNER JOIN "Dates" d ON d."Date" BETWEEN b."Date_from" AND COALESCE(b."Date_estimated", b."Date_to", '2030-01-01'::date)
 ORDER BY 2
 ;
