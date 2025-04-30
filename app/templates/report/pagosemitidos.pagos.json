@@ -15,6 +15,9 @@
 "",
 "Customer_name",
 "Customer_email",
+"Warning_1",
+"Warning_2",
+"Warning_3",
 "",
 "",
 "Address",
@@ -28,5 +31,5 @@
 "Building",
 "Booking_group_id",
 "Booking_group_date_from",
-"Booking_gropu_date_to"
+"Booking_group_date_to"
 ]
