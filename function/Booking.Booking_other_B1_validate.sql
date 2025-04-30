@@ -39,7 +39,7 @@ BEGIN
   IF NEW."Contribution_recommended" IS NULL AND NEW."Contribution_percent" IS NOT NULL THEN
     NEW."Contribution_recommended" := COALESCE(NEW."Contribution_percent", 0) * pre_capex_diff / 100;
   END IF;
-  IF NEW."Contribution_recommended" IS NOT NULL THEN
+  IF NEW."Contribution_recommended" IS NOT NULL AND pre_capex_diff > 0 THEN
     NEW."Contribution_percent" := ROUND(10000 * NEW."Contribution_recommended" / pre_capex_diff) / 100;
   END IF;
 
