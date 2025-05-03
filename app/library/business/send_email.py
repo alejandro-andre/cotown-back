@@ -148,21 +148,20 @@ def smtp_mail(to, subject, body, cc=None, bcc=None, file=None):
 
   # Attach file
   if file:
-    payload = MIMEBase('application', 'octate-stream', Name=file.filename)
+    file.seek(0)
+    payload = MIMEBase('application', 'octet-stream', Name=file.filename)
     payload["Content-Disposition"] = f'attachment; filename="{file.filename}"'
-    payload.add_header('Content-Decomposition', 'attachment', filename=file.filename)
     payload.set_payload(file.read())
     encoders.encode_base64(payload)
     msg.attach(payload)
 
   # Send mail
   context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-  session = smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT)
-  session.ehlo()
-  session.starttls(context=context)
-  session.login(settings.SMTPUSER, settings.SMTPPASS)
-  errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
-  session.quit()
+  with smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT) as session:
+    session.ehlo()
+    session.starttls(context=context)
+    session.login(settings.SMTPUSER, settings.SMTPPASS)
+    errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
   return errors
 
 

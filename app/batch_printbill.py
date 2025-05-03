@@ -70,14 +70,14 @@ def main():
   }
   ''')
 
-  # Loop thru contracts
+  # Loop thru bills
   num = 0
   if bills  is not None:
     for b in bills.get('data'):
         id = b['id']
         logger.debug(id)
-        do_bill(apiClient, id)
-        num += 1
+        if do_bill(apiClient, id):
+          num += 1
   logger.info('{} bills printed'.format(num))
 
 

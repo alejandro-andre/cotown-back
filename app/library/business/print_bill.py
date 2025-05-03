@@ -15,6 +15,7 @@ logger = logging.getLogger('COTOWN')
 
 # Cotown includes
 from library.services.utils import flatten
+from library.business.send_email import smtp_mail
 
 
 # ######################################################
@@ -42,6 +43,12 @@ query BillById ($id: Int!) {
                 Building_code: Code
             }
         }
+        Booking_otherViaBooking_other_id {
+            ResourceViaResource_id {
+                Resource_code: Code
+            }
+            Send_bill
+        }
         Bill_code: Code
         Bill_concept: Concept
         Issued
@@ -50,6 +57,7 @@ query BillById ($id: Int!) {
         CustomerViaCustomer_id {
             Customer_id: Document
             Customer_name: Name
+            Customer_email: Email
             Customer_address: Address
             Customer_zip: Zip
             Customer_city: City
@@ -164,6 +172,17 @@ def do_bill(apiClient, id):
       data=file.read()
     )
     oid = response.content
+
+    # Email bill
+    if context['Send_bill'] and context['Customer_email']:
+      logger.info('Send bill to ' + context['Customer_email'])
+      file.filename = context['Bill_code'] + '.pdf'
+      smtp_mail(
+        context['Customer_email'],
+        context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
+        'Adjuntamos factura ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
+        file=file
+      )
 
     # Update query
     query = '''
