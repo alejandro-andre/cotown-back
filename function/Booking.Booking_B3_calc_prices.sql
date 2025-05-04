@@ -3,6 +3,8 @@ DECLARE
 
   curr_user VARCHAR;
 
+  promotion RECORD;
+
   dias INTEGER;
   months INTEGER;
   ano INTEGER;
@@ -26,6 +28,10 @@ DECLARE
 
   monthly_rent NUMERIC;
   monthly_services NUMERIC;
+
+  disc_type INTEGER;
+  disc_rent NUMERIC;
+  disc_services NUMERIC;
 
   curr_rent NUMERIC;
   curr_services NUMERIC;
@@ -53,8 +59,13 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  -- Look up promotion
+  SELECT *
+  INTO promotion
+  FROM "Billing"."Promotion"
+  WHERE id = NEW."Promotion_id";
+
   -- Not ECO_EXT?
-  --IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Check_out" OR NEW."New_check_out" = NEW."Date_to" THEN
   IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
 
     -- Dates and resource not changed, ignore
@@ -220,9 +231,26 @@ BEGIN
     -- End of period (first day next month or last day + 1)
     dt_next := LEAST(date_trunc('month', dt_curr) + INTERVAL '1 month', dt_to);
  
-    -- Complete months
+    -- Base prices
     curr_rent     := monthly_rent;
     curr_services := monthly_services;
+    disc_rent     := 0;
+    disc_services := 0;
+    disc_type     := NULL;
+
+    -- Base promotion
+    IF dt_curr >= promotion."Date_from" AND dt_curr <= promotion."Date_to" THEN
+      IF promotion."Value_rent" IS NOT NULL THEN
+        disc_rent := promotion."Value_rent";
+        disc_type := 1;
+      ELSE
+        IF promotion."Value_rent_pct" IS NOT NULL THEN
+          disc_rent     := curr_rent * (promotion."Value_rent_pct" / 100);
+          disc_services := curr_services * (promotion."Value_rent_pct" / 100);
+          disc_type     := 1;
+        END IF;
+      END IF;
+    END IF;
 
     -- Incomplete months
     dt_intr := AGE(dt_next, dt_curr);
@@ -230,14 +258,18 @@ BEGIN
      
       IF NEW."Billing_type" = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
-          curr_rent := ROUND(monthly_rent / 2, 1);
+          disc_rent     := ROUND(disc_rent / 2, 1);
+          disc_services := ROUND(disc_services / 2, 1);
+          curr_rent     := ROUND(monthly_rent / 2, 1);
           curr_services := ROUND(monthly_services / 2, 1);
         END IF;
       END IF;
    
       IF NEW."Billing_type" = 'proporcional' THEN
         dias := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
-        curr_rent := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / dias, 1);
+        disc_rent     := ROUND(disc_rent * EXTRACT(DAY FROM dt_intr) / dias, 1);
+        disc_services := ROUND(disc_services * EXTRACT(DAY FROM dt_intr) / dias, 1);
+        curr_rent     := ROUND(monthly_rent * EXTRACT(DAY FROM dt_intr) / dias, 1);
         curr_services := ROUND(monthly_services * EXTRACT(DAY FROM dt_intr) / dias, 1);
       END IF;
 
@@ -245,8 +277,8 @@ BEGIN
 
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
-      ("Booking_id", "Rent_date", "Rent", "Services", "Rent_total", "Services_total", "Rent_rack", "Services_rack")
-      VALUES (NEW.id, dt_curr, curr_rent, curr_services, curr_rent, curr_services, monthly_rent, monthly_services)
+      ("Booking_id", "Rent_date", "Rent", "Services", "Rent_discount", "Services_discount", "Rent_rack", "Services_rack", "Discount_type_id")
+      VALUES (NEW.id, dt_curr, curr_rent, curr_services, disc_rent, disc_services, monthly_rent, monthly_services, disc_type)
       ON CONFLICT ("Booking_id", "Rent_date") DO NOTHING;
  
     -- Next month
