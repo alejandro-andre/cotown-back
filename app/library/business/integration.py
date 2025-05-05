@@ -26,6 +26,7 @@ def q_int_customers(dbClient, date, codes):
       SELECT
         c.id,
         CASE WHEN r."Owner_id" = 10 THEN FALSE ELSE TRUE END AS "third_party",
+        'Roomi' AS "subtype",
         CASE WHEN c."Billing_type" IS NOT NULL THEN c."Billing_type" ELSE c."Type" END AS "type",
         CASE WHEN bi."Name" IS NOT NULL THEN bi."Name" ELSE i."Name" END AS "document_type",
         CASE WHEN c."Billing_id_type_id" IS NOT NULL THEN
@@ -71,6 +72,7 @@ def q_int_customers(dbClient, date, codes):
       SELECT
         c.id,
         CASE WHEN r."Owner_id" = 10 THEN FALSE ELSE TRUE END AS "third_party",
+        'Roomi' AS "subtype",
         CASE WHEN c."Billing_type" IS NOT NULL THEN c."Billing_type" ELSE c."Type" END AS "type",
         CASE WHEN bi."Name" IS NOT NULL THEN bi."Name" ELSE i."Name" END AS "document_type",
         CASE WHEN c."Billing_id_type_id" IS NOT NULL THEN
@@ -117,6 +119,11 @@ def q_int_customers(dbClient, date, codes):
       SELECT
         c.id,
         CASE WHEN r."Owner_id" = 10 THEN FALSE ELSE TRUE END AS "third_party",
+        CASE 
+          WHEN r."Resource_type" = 'local' THEN 'Locales'
+          WHEN r."Resource_type" = 'parking' THEN 'Parking'
+          ELSE 'LAU' 
+        END AS "subtype",
         CASE WHEN c."Billing_type" IS NOT NULL THEN c."Billing_type" ELSE c."Type" END AS "type",
         CASE WHEN bi."Name" IS NOT NULL THEN bi."Name" ELSE i."Name" END AS "document_type",
         CASE WHEN c."Billing_id_type_id" IS NOT NULL THEN
