@@ -65,13 +65,20 @@ BEGIN
 
   -- Actualiza el estado a 'check_out' de todas las reservas que tienen que salir en el dia en curso
   BEGIN
-    UPDATE "Booking"."Booking"
-    SET "Status"='checkout'
-    WHERE CURRENT_DATE >= COALESCE("Booking"."Check_out", "Booking"."Date_to")
-    AND "Booking"."Status"='inhouse';
-  EXCEPTION WHEN OTHERS THEN
-    RAISE NOTICE 'Error en check-out: % %', SQLSTATE, SQLERRM;
-  END; 
+    FOR rec IN
+      SELECT * FROM "Booking"."Booking"
+	    WHERE CURRENT_DATE >= COALESCE("Booking"."Check_out", "Booking"."Date_to")
+	    AND "Booking"."Status"='inhouse'
+    LOOP
+      BEGIN
+        UPDATE "Booking"."Booking"
+        SET "Status" = 'checkout'
+        WHERE id = rec.id;
+      EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE 'Error en check-out %: % %', rec.id, SQLSTATE, SQLERRM;
+      END;
+    END LOOP;
+  END;  
 
   -- Borra cuestionarios no completados, siete dias despues
   BEGIN
