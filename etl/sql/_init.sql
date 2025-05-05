@@ -120,6 +120,17 @@ CREATE TABLE gold.place_type (
 CONSTRAINT place_type_pk PRIMARY KEY ("id")
 );
 
+-- Create buildings table
+CREATE TABLE gold.building (
+  "id" varchar NOT NULL,
+  "name" varchar NOT NULL,
+  "address" varchar DEFAULT NULL,
+  "lat" numeric DEFAULT NULL,
+  "lon" numeric DEFAULT NULL,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT building_pk PRIMARY KEY ("id")
+);
+
 -- Create resources table
 CREATE TABLE gold.resource (
   "id" varchar NOT NULL,
@@ -129,7 +140,6 @@ CREATE TABLE gold.resource (
   "start_date" date DEFAULT NULL,
   "estabilised_date" date DEFAULT NULL, 
   "building" varchar NOT NULL,
-  "building_name" varchar NOT NULL,
   "segment" varchar NOT NULL,
   "flat" varchar DEFAULT NULL,
   "flat_type" varchar DEFAULT NULL,

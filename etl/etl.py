@@ -122,6 +122,7 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'place_type', 'place_type')
       load(dbOrigin, dbDestination, 'location', 'location')
       load(dbOrigin, dbDestination, 'product', 'product')
+      load(dbOrigin, dbDestination, 'building', 'building')
       load(dbOrigin, dbDestination, 'resource', 'resource')
 
 
