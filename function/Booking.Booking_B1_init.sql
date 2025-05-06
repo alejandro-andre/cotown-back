@@ -30,8 +30,8 @@ BEGIN
   IF NEW."Booking_fee_calc" IS NULL THEN
 
     -- Year
-    year := EXTRACT(YEAR FROM NOW());
-    IF EXTRACT(MONTH FROM NOW()) > 8 THEN
+    year := EXTRACT(YEAR FROM NEW."Date_from");
+    IF EXTRACT(MONTH FROM NEW."Date_from") > 8 THEN
       year := year + 1;
     END IF; 
 
