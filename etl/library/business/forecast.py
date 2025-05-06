@@ -60,9 +60,9 @@ def budget(apiClient):
         # Data
         budget = to_float(row[ 2].value)
         uw     = to_float(row[ 3].value)
-        line = ['BUD' + str(c), '-', '-', '(budget)', month, '', '', row[1].value, 'Monthly rent', budget, budget, None, 'Budget', '', '' ]
+        line = ['BUD' + str(c), '-', '-', '(budget)', month, '', '', row[1].value, 'Monthly rent', budget, 0, None, 'Budget', '', '' ]
         budget_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['BUW' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', uw, uw, None, 'UW', '', '' ]
+        line = ['BUW' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', uw, 0, None, 'UW', '', '' ]
         budget_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
@@ -149,15 +149,15 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FRG' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_g, rent_g, None, 'Forecast', 'GROUP', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FST' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Periodic cleaning service', srvs_tot, srvs_tot, None, 'Forecast', '', '' ]
+        line = ['FST' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Periodic cleaning service', srvs_tot, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FSC' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Check-out cleaning services', srvs_cln, srvs_cln, None, 'Forecast', '', '' ]
+        line = ['FSC' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Check-out cleaning services', srvs_cln, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FRR' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Reinvoices', reinv, reinv, None, 'Forecast', '', '' ]
+        line = ['FRR' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Reinvoices', reinv, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, bfee, None, 'Forecast', '', '' ]
+        line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FMF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Management fee', mfee, mfee, None, 'Forecast', '', '' ]
+        line = ['FMF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Management fee', mfee, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Forecast ajusted
@@ -171,19 +171,19 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # MPR
-        line = ['MPA' + str(c), '-', '-', '(MPR available)', month, '', '', row[1].value, 'Monthly rent', mpr, mpr, None, 'MPR Available', '', '' ]
+        line = ['MPA' + str(c), '-', '-', '(MPR available)', month, '', '', row[1].value, 'Monthly rent', mpr, 0, None, 'MPR Available', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['MPC' + str(c), '-', '-', '(MPR convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st, mpr_st, None, 'MPR Convertible', '', '' ]
+        line = ['MPC' + str(c), '-', '-', '(MPR convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st, 0, None, 'MPR Convertible', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['MPP' + str(c), '-', '-', '(MPR potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot, mpr_pot, None, 'MPR Potential', '', '' ]
+        line = ['MPP' + str(c), '-', '-', '(MPR potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot, 0, None, 'MPR Potential', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Stabilised
-        line = ['SPA' + str(c), '-', '-', '(Stabilised available)', month, '', '', row[1].value, 'Monthly rent', mpr * occ_stab, mpr * occ_stab, None, 'Stabilised Available', '', '' ]
+        line = ['SPA' + str(c), '-', '-', '(Stabilised available)', month, '', '', row[1].value, 'Monthly rent', mpr * occ_stab, 0, None, 'Stabilised Available', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SPC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, mpr_st * occ_stab, None, 'Stabilised Convertible', '', '' ]
+        line = ['SPC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, 0, None, 'Stabilised Convertible', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SPP' + str(c), '-', '-', '(Stabilised potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot * occ_stab, mpr_pot * occ_stab, None, 'Stabilised Potential', '', '' ]
+        line = ['SPP' + str(c), '-', '-', '(Stabilised potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot * occ_stab, 0, None, 'Stabilised Potential', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
