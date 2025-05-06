@@ -20,7 +20,7 @@ SELECT
   END AS "stay_length",
   pr."Name_en" AS "product",
   il."Amount" / (1 + (t."Value" / 100)) AS "amount",
-  il."Amount" / (1 + (t."Value" / 100)) AS "rate",
+  0 AS "rate",
   NULL AS "price",
   'Real' AS "data_type",
   '' AS "discount_type"

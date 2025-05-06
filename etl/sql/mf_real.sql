@@ -9,7 +9,7 @@ SELECT
   r."Code" AS "resource",
   'Management fee' AS "product",
   il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "amount",
-  il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "rate",
+  0 AS "rate",
   CASE
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
@@ -44,7 +44,7 @@ SELECT
   r."Code" AS "resource",
   'Management fee' AS "product",
   il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "amount",
-  il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "rate",
+  0 AS "rate",
   'GROUP' AS "stay_length",
   NULL AS "price",
   --'B2B' AS "income_type",

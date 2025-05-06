@@ -15,10 +15,8 @@ SELECT
   pr."Name_en" AS "product",
   il."Amount" / (1 + (t."Value" / 100)) AS "amount",
   CASE 
-    WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN il."Amount" / (1 + (t."Value" / 100))
-    WHEN pr."Product_type_id" = 1 THEN COALESCE(b."Booking_fee", il."Amount") / (1 + (t."Value" / 100))
-	  WHEN pr."Product_type_id" = 3 THEN COALESCE(bp."Rent", il."Amount") / (1 + (t."Value" / 100))
-	  WHEN pr."Product_type_id" > 3 THEN COALESCE(bp."Services", il."Amount") / (1 + (t."Value" / 100))
+	  WHEN pr."Product_id" = 3 THEN COALESCE(bp."Rent", il."Amount") / (1 + (t."Value" / 100))
+	  ELSE 0
   END AS "rate",
   CASE 
     WHEN i."Rectified" OR i."Bill_type" = 'rectificativa' THEN NULL
