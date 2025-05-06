@@ -5,6 +5,7 @@
 # System includes
 import requests
 import logging
+import traceback
 from io import BytesIO
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
@@ -174,7 +175,7 @@ def do_bill(apiClient, id):
     oid = response.content
 
     # Email bill
-    if context['Send_bill'] and context['Customer_email']:
+    if context.get('Send_bill') and context['Customer_email']:
       logger.info('Send bill to ' + context['Customer_email'])
       file.filename = context['Bill_code'] + '.pdf'
       smtp_mail(
@@ -212,4 +213,5 @@ def do_bill(apiClient, id):
  
   except Exception as error:
     logger.error(error)
+    traceback.print_exc()
     return False
