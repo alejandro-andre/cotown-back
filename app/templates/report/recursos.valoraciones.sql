@@ -7,4 +7,4 @@ SELECT
   rv."Post_capex_residential"
 FROM "Resource"."Resource_value" rv
   INNER JOIN "Resource"."Resource" r ON r.id = rv."Resource_id"
-ORDER BY 1, 2
+ORDER BY 2, 1
