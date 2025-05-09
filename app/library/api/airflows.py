@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_dashboard_payments, q_dashboard_deposits, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_dashboard_payments, q_dashboard_deposits, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones, sql_dashboard_payments, sql_dashboard_deposits
 
 # Logging
 import logging
@@ -200,7 +200,7 @@ def req_prev_next_operaciones():
   return q_prev_next(g.dbClient)
 
 
-def req_report_operaciones(status=None):
+def req_dashboard_to_excel(status=None):
 
   # Querystring variables
   vars = {}
@@ -210,17 +210,27 @@ def req_report_operaciones(status=None):
     except:
       vars[item] = request.args[item]
 
+  # Payments?
+  if status == 'pay':
+    external_sql = sql_dashboard_payments(request.args)
+
+  # Deposits?
+  if status == 'dep':
+    external_sql = sql_dashboard_deposits(request.args)
+
+  # Operations
+  else:
+    external_sql = sql_dashboard_operaciones(status, request.args)
+
   # Export
-  external_sql = sql_dashboard_operaciones(status, request.args)
-  result = do_export_to_excel(g.apiClient, g.dbClient, 'operaciones.' + status, vars, external_sql)
+  result = do_export_to_excel(g.apiClient, g.dbClient, 'dashboard.' + status, vars, external_sql)
   if result is None:
     abort(404)
 
   # Response
   response = send_file(result, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-  response.headers['Content-Disposition'] = 'inline; filename="operaciones.xlsx"'
+  response.headers['Content-Disposition'] = 'inline; filename="dashboard.xlsx"'
   return response   
-
 
 
 # ---------------------------------------------------
