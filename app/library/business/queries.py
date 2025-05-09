@@ -381,8 +381,8 @@ def sql_dashboard_deposits(vars):
       INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
       INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
       LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
-    WHERE b."Date_deposit_required" BETWEEN '{date_from}' AND '{date_to}' 
-      AND b."Status" = 'devolvergarantia' 
+    WHERE b."Status" = 'devolvergarantia' 
+      AND (b."Date_deposit_required" BETWEEN '{date_from}' AND '{date_to}' OR b."Date_deposit_required" IS NULL)
       {where}
   '''   
 
