@@ -48,7 +48,7 @@ def history(dbClient):
     # Current value
     current = best['Pre_capex_long_term'] or 0
     if status == 'COSHARING':
-      current = best['post_capex'] or 0
+      current = best['Post_capex'] or 0
     elif status in ('PRECAPEX', 'CAPEX', ):
       current = best['Pre_capex_vacant'] or 0
 
