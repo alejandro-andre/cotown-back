@@ -29,6 +29,7 @@ def history(dbClient):
   # Get valuation
   def valuate(row, val_grouped):
     # Data
+    status = row['status']
     resource = row['resource']
     date = row['date']
     
@@ -37,17 +38,22 @@ def history(dbClient):
       return pd.Series([0, 0, 0])
     
     # Get recent valuation or oldest one
-    vals = val_grouped.get_group(resource)
-    valid_vals = vals[vals['Valuation_date'] <= date]
-    if not valid_vals.empty:
-      best = valid_vals.iloc[-1]
+    values = val_grouped.get_group(resource)
+    valid_values = values[values['Valuation_date'] <= date]
+    if not valid_values.empty:
+      best = valid_values.iloc[-1]
     else:
-      best = vals.iloc[0]
-    return pd.Series([
-      best['Post_capex'] or 0,
-      best['Post_capex_residential'] or 0,
-      best['Pre_capex_vacant'] or 0
-    ])
+      best = values.iloc[0]
+
+    # Current value
+    current = best['Pre_capex_long_term'] or 0
+    if status == 'COSHARING':
+      current = best['post_capex'] or 0
+    elif status in ('PRECAPEX', 'CAPEX', ):
+      current = best['Pre_capex_vacant'] or 0
+
+    # Return
+    return pd.Series([current, best['Post_capex_residential'] or 0, best['Post_capex'] or 0])
 
 
   # Get status

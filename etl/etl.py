@@ -164,9 +164,12 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'booking', 'booking')
       load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
 
+    # Forecast
+    if 'income' in interfaces or 'beds' in interfaces  or 'occupancy' in interfaces:
+      forecast(apiClient)
+
     # Income
     if 'income' in interfaces:
-      forecast(apiClient)
       budget(apiClient)
       execute(dbDestination, '_clear_income')
       load(dbOrigin, dbDestination, 'income', 'income_budget')
@@ -189,7 +192,6 @@ def main(interfaces):
 
     # Beds
     if 'beds' in interfaces:
-      forecast(apiClient)
       beds(dbOrigin)
       execute(dbDestination, '_clear_beds')
       load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
@@ -197,7 +199,6 @@ def main(interfaces):
 
     # Occupancy
     if 'occupancy' in interfaces:
-      forecast(apiClient)
       occupancy(dbOrigin)
       execute(dbDestination, '_clear_occupancy')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
