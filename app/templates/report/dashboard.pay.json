@@ -1,5 +1,17 @@
 [
-"id",
-"Date_from",
-"Date_to"
+  "Booking_id",
+  "Date_from",
+  "Date_to",
+  "Resource",
+  "Customer",
+  "id",
+  "Issued_date",
+  "Amount",
+  "Concept", 
+  "Invoices",
+  "Payment_method",
+  "Comments",
+  "Warning_1",
+  "Warning_2", 
+  "Warning_3"
 ]

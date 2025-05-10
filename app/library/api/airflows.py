@@ -215,7 +215,7 @@ def req_dashboard_to_excel(status=None):
     external_sql = sql_dashboard_payments(request.args)
 
   # Deposits?
-  if status == 'dep':
+  elif status == 'dep':
     external_sql = sql_dashboard_deposits(request.args)
 
   # Operations

@@ -1,0 +1,11 @@
+[
+  "Booking_id",
+  "Date_from",
+  "Date_to",
+  "Resource",
+  "Customer",
+  "Deposit_required", 
+  "Date_deposit_required", 
+  "Deposit_returned", 
+  "Date_deposit_returned"
+]
