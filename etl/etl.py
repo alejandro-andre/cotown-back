@@ -125,7 +125,6 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'building', 'building')
       load(dbOrigin, dbDestination, 'resource', 'resource')
 
-
     # ------------------------------------
     # SAP
     # ------------------------------------

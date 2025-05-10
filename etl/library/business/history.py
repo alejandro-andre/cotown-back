@@ -26,34 +26,67 @@ END_DATE   = '2029-12-31'
 
 def history(dbClient):
 
-  def count(row):
-    # Date
+  # Get valuation
+  def valuate(row, val_grouped):
+    # Data
+    resource = row['resource']
     date = row['date']
+    
+    # Not valuated
+    if resource not in val_grouped.groups:
+      return pd.Series([0, 0, 0])
+    
+    # Get recent valuation or oldest one
+    vals = val_grouped.get_group(resource)
+    valid_vals = vals[vals['Valuation_date'] <= date]
+    if not valid_vals.empty:
+      best = valid_vals.iloc[-1]
+    else:
+      best = vals.iloc[0]
+    return pd.Series([
+      best['Post_capex'] or 0,
+      best['Post_capex_residential'] or 0,
+      best['Pre_capex_vacant'] or 0
+    ])
 
-    # Building started?
+
+  # Get status
+  def status(row, avail_grouped):
+
+    # Status type
+    def default_type(resource_type):
+      if resource_type == 'local':
+        return 'RETAIL'
+      elif resource_type == 'parking':
+        return 'PARKING'
+      elif resource_type == 'trastero':
+        return 'STORAGE'
+      return 'COSHARING'
+    
+    # Data
+    date = row['date']
+    flat_id = row['flat']
+
+    # Building not active
     if date < row['Start_date']:
       return 'OUT'
 
-    # All flat non availability rows
-    availability = df_avail[df_avail['id'] == row['flat']]
+    # No unavailabilities
+    if flat_id not in avail_grouped.groups:
+      return default_type(row['Resource_type'])
+
+    # Search availability for that resource and date
+    availability = avail_grouped.get_group(flat_id)
     for _, r in availability.iterrows():
       if r['Date_from'] <= date <= r['Date_to']:
         return r['Type']
 
     # Default
-    if (row['Resource_type'] == 'local'):
-      return 'RETAIL'
-    elif (row['Resource_type'] == 'parking'):
-      return 'PARKING'
-    elif (row['Resource_type'] == 'trastero'):
-      return 'STORAGE'
-    return 'COSHARING'
+    return default_type(row['Resource_type'])
 
-
-  # Log
-  logger.info('Calculating resources history...')
 
   # Connection
+  logger.info('Calculating resources history...')
   con = dbClient.getconn()
 
   # Existing (all) resources
@@ -103,6 +136,32 @@ def history(dbClient):
     cur.close()
   logger.info('- Resources retrieved')
 
+  # Valuations
+  sql = '''
+    SELECT 
+      r."Code" as "resource", 
+      rv."Valuation_date",
+      rv."Pre_capex_long_term",
+      rv."Pre_capex_vacant",
+      rv."Post_capex_residential",
+      rv."Post_capex"
+    FROM "Resource"."Resource_value" rv 
+      INNER JOIN "Resource"."Resource" r on r.id = rv."Resource_id"
+  '''
+  try:
+    cur = dbClient.execute(con, sql)
+    columns = [desc[0] for desc in cur.description]
+    df_values = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+  except Exception as e:
+    logger.error(e)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+  finally:
+    cur.close()
+  df_val_by_resource = df_values.groupby('resource')
+  logger.info('- Valuations retrieved')
+
   # Availability each month
   sql = '''
     SELECT
@@ -140,6 +199,7 @@ def history(dbClient):
     return None
   finally:
     cur.close()
+  df_avail_by_flat = df_avail.groupby('id')
   logger.info('- Unavailabilities retrieved')
 
   # Dates
@@ -150,15 +210,16 @@ def history(dbClient):
   df_res['key'] = 1
   df_history = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
-  # Calculate
-  df_history['status'] = df_history.apply(count, axis=1, result_type='expand')
-  logger.info('- History calculated')
+  # Status
+  df_history['status'] = df_history.apply(lambda row: status(row, df_avail_by_flat), axis=1)
+  logger.info('- Status calculated')
+
+  # Valuation
+  df_history[['val_current', 'val_residential', 'val_cosharing']] = df_history.apply(lambda row: valuate(row, df_val_by_resource), axis=1)
+  logger.info('- Valuations calculated')
 
   # To CSV
   df_history['id'] = range(1, 1 + len(df_history))
   df_history['data_type'] = 'Real'
-  df_history['val_current'] = 0
-  df_history['val_residential'] = 0
-  df_history['val_cosharing'] = 0
   df_history.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
   logger.info('- History saved')
