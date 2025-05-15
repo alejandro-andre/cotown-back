@@ -153,7 +153,7 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FSC' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Check-out cleaning services', srvs_cln, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FRR' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Other', reinv, 0, None, 'Forecast', '', '' ]
+        line = ['FRR' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Others', reinv, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
