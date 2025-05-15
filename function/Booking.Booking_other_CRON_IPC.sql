@@ -4,12 +4,13 @@ DECLARE
   ipc_value NUMERIC;
   rec RECORD;
 
+  -- IPC en dos meses
   cur CURSOR FOR
     SELECT *
     FROM "Booking"."Booking_other"
     WHERE ("Date_to" > CURRENT_DATE OR "Date_to" IS NULL)
-      AND EXTRACT(MONTH FROM CURRENT_DATE + INTERVAL '1 month') = "IPC_month"
-      AND EXTRACT(YEAR FROM CURRENT_DATE + INTERVAL '1 month') > EXTRACT(YEAR FROM "IPC_updated");
+      AND EXTRACT(MONTH FROM CURRENT_DATE + INTERVAL '2 month') = "IPC_month"
+      AND "IPC_updated" < (CURRENT_DATE - INTERVAL '1 month');
 
 BEGIN
 
