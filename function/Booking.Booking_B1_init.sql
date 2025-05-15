@@ -13,7 +13,7 @@ BEGIN
     NEW."Status" := 'solicitud';
   END IF;
 
-  -- Look up promotion
+  -- Look up applicable promotion
   SELECT *
   INTO promotion
   FROM "Billing"."Promotion" p
@@ -22,6 +22,8 @@ BEGIN
     AND (p."Place_type_id" IS NULL OR p."Place_type_id" = NEW."Place_type_id")
     AND p."Date_from" <= NEW."Date_to" 
     AND p."Date_to" >= NEW."Date_from"
+    AND p."Active_from" <= CURRENT_DATE
+    AND p."Active_to" >= CURRENT_DATE
   ORDER BY id DESC
   LIMIT 1;
   NEW."Promotion_id" = promotion.id;

@@ -65,6 +65,9 @@ BEGIN
   FROM "Billing"."Promotion"
   WHERE id = NEW."Promotion_id";
 
+  -- Check if promotion still applicable
+  -- ...
+
   -- Not ECO_EXT?
   IF NEW."New_check_out" IS NULL OR NEW."New_check_out" = NEW."Date_to" THEN
 
