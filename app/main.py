@@ -180,13 +180,7 @@ def runapp():
   # Airflows plugins - Reports
   app.add_url_rule(settings.API_PREFIX + '/download/<string:name>', view_func=req_download, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/export/<string:name>', view_func=req_export, methods=['GET'])
-
-  # Airflows plugins - Planning
-  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=req_availability, methods=['POST'])
-
-  # Airflows plugins - Change booking status
-  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=req_booking_status, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>/<string:oldstatus>', view_func=req_booking_status, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/report/<string:status>', view_func=req_dashboard_to_excel, methods=['GET'])
 
   # Airflows plugins - Dashboards
   app.add_url_rule(settings.API_PREFIX + '/dashboard', view_func=req_dashboard_operaciones, methods=['GET'])
@@ -195,8 +189,14 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/dashboard/payments', view_func=req_dashboard_payments, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboard/deposits', view_func=req_dashboard_deposits, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/dashboardlau/<string:type>', view_func=req_dashboard_lau, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/report/<string:status>', view_func=req_dashboard_to_excel, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/labels/<int:id>/<string:locale>', view_func=req_labels, methods=['GET'])
+
+  # Airflows plugins - Planning
+  app.add_url_rule(settings.API_PREFIX + '/availability', view_func=req_availability, methods=['POST'])
+
+  # Airflows plugins - Change booking status
+  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>', view_func=req_booking_status, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/booking/<int:id>/status/<string:status>/<string:oldstatus>', view_func=req_booking_status, methods=['GET'])
 
   # Payment functions
   app.add_url_rule(settings.API_PREFIX + '/pay/<int:id>', view_func=req_pay, methods=['GET'])
