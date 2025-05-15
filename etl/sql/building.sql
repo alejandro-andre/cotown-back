@@ -1,9 +1,11 @@
 SELECT
-  "Code" AS id,
-  "Name" AS "name",
-  "Address" AS "address",
-  "Lat_lon"[0] AS "lat",
-  "Lat_lon"[1] AS "lon",
-  "Start_date" AS "start_date"
-FROM
-  "Building"."Building";
+  b."Code" AS id,
+  b."Name" AS "name",
+  b."Address" AS "address",
+  b."Lat_lon"[0] AS "lat",
+  b."Lat_lon"[1] AS "lon",
+  b."Start_date" AS "start_date",
+  l."Name" AS "city"
+FROM "Building"."Building" b
+  INNER JOIN "Geo"."District" d ON d.id = b."District_id"
+  INNER JOIN "Geo"."Location" l ON l.id = d."Location_id";

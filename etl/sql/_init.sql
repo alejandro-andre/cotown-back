@@ -124,6 +124,7 @@ CONSTRAINT place_type_pk PRIMARY KEY ("id")
 -- Create buildings table
 CREATE TABLE gold.building (
   "id" varchar NOT NULL,
+  "city" varchar NOT NULL,
   "name" varchar NOT NULL,
   "address" varchar DEFAULT NULL,
   "lat" numeric DEFAULT NULL,

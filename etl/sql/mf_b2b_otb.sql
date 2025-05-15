@@ -19,7 +19,7 @@ SELECT
   CASE 
   	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
   	ELSE bp."Rent"
-  END * r."Management_fee" / 100 AS "amount",
+  END * COALESCE(r."Management_fee", 0) / 100 AS "amount",
   0 AS "rate",
   NULL AS "price",
   --'B2B' AS "income_type",
