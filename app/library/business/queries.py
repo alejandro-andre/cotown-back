@@ -374,6 +374,7 @@ def sql_dashboard_deposits(vars):
       b."Date_from", b."Date_to",
       b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned",
       c."Name" AS "Customer",
+      c."Email" AS "Email",
       r."Code" AS "Resource",
       bu."Code" AS "Building"
     FROM "Booking"."Booking" b 
