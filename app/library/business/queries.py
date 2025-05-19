@@ -308,6 +308,7 @@ def sql_dashboard_payments(vars):
       p."Comments",
       pm."Name" AS "Payment_method",
       c."Name" AS "Customer",
+      c."Email" AS "Email",
       b.id AS "Booking_id", 
       b."Date_from", b."Date_to",
       r."Code" AS "Resource",
