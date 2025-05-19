@@ -339,6 +339,7 @@ def sql_dashboard_payments(vars):
       p."Amount",
       p."Comments",
       c."Name",
+      c."Email",
       pm."Name",
       b.id, 
       b."Date_from", b."Date_to",
