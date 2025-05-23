@@ -114,11 +114,19 @@ def history(dbClient):
         WHEN r."Resource_type" = 'habitacion' THEN (
           SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END
           FROM "Resource"."Resource" rr
-          WHERE rr."Room_id" = r.id    )
+          WHERE rr."Room_id" = r.id )
+        WHEN r."Resource_type" = 'piso' THEN (
+          SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END
+          FROM "Resource"."Resource" rr
+          WHERE rr."Flat_id" = r.id )
         ELSE 0
       END AS "beds",
       CASE
         WHEN r."Resource_type" = 'habitacion' THEN 1
+        WHEN r."Resource_type" = 'piso' THEN (
+          SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END
+          FROM "Resource"."Resource" rr
+          WHERE rr."Flat_id" = r.id )
         ELSE 0
       END AS "rooms",
       CASE
