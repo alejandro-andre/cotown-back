@@ -134,10 +134,10 @@ def forecast(apiClient):
         mpr       = to_float(row[40].value)
         mpr_st    = to_float(row[41].value)
         mpr_pot   = to_float(row[42].value)
-        rent_l_ad = (rent_l * beds_ad / beds_c) if beds_c else 0
-        rent_m_ad = (rent_m * beds_ad / beds_c) if beds_c else 0
-        rent_s_ad = (rent_s * beds_ad / beds_c) if beds_c else 0
-        rent_g_ad = (rent_g * beds_ad / beds_c) if beds_c else 0
+        rent_l_ad = (rent_l * beds_ad / beds) if beds else 0
+        rent_m_ad = (rent_m * beds_ad / beds) if beds else 0
+        rent_s_ad = (rent_s * beds_ad / beds) if beds else 0
+        rent_g_ad = (rent_g * beds_ad / beds) if beds else 0
         mfee      = round((rent_tot + (srvs_tot + srvs_cln) / 1.21) * mgmt_fee, 2)
 
         # Forecast
