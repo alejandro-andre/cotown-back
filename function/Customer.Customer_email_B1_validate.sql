@@ -9,6 +9,11 @@ DECLARE
 
 BEGIN
 
+  -- IPC, send always
+  IF NEW."Template" = 'ipc' THEN
+    RETURN NEW;
+  END IF;
+
   -- Empresa? Ignora
   SELECT "Type"
   INTO tipo
@@ -41,7 +46,7 @@ BEGIN
   END IF;
 
   -- Ignora el email
-  --RAISE NOTICE 'EMAIL % A % IGNORADO', NEW."Template", NEW."Customer_id";
+  RAISE NOTICE 'EMAIL % A % IGNORADO', NEW."Template", NEW."Customer_id";
   RETURN NULL;
 
 END;
