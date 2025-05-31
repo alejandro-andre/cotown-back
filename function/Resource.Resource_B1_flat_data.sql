@@ -25,7 +25,14 @@ BEGIN
       "Sale_type" = NEW."Sale_type",
       "Management_fee" = NEW."Management_fee",
       "SAP_code" = NEW."SAP_code"
-    WHERE "Flat_id" = NEW.id 
+    WHERE "Building_id" <> NEW."Building_id"
+      AND "Owner_id" <> NEW."Owner_id"
+      AND "Service_id" <> NEW."Service_id"
+      AND "Billing_type" <> NEW."Billing_type"
+      AND "Sale_type" <> NEW."Sale_type"
+      AND "Management_fee" <> NEW."Management_fee"
+      AND "SAP_code" <> NEW."SAP_code"
+      AND "Flat_id" = NEW.id
       AND id <> NEW.id;
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
