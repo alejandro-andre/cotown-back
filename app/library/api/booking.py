@@ -199,8 +199,28 @@ def login(usr, pwd):
 # Web register
 # ---------------------------------------------------
 
-def register():
+def register(segment):
 
+  # Add to AC
+  contact = {
+    'firstname': get_var('Name', save=False),
+    'lastname': '',
+    'email': get_var('Email', save=False),
+    'phone': get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
+    '13': get_var('Birth_date', save=False),
+    '3': to_int(get_var('Nationality_id', save=False)),
+    '2': to_int(get_var('Gender_id', save=False)),
+    '185': 'Web',
+    '186': 'VSH' if segment == 1 else 'COTOWN',
+    '188': 'B2C',
+    '168': get_var('utm_campaign', save=False),
+    '169': get_var('utm_medium', save=False),
+    '170': get_var('utm_source', save=False),
+    '173': get_var('gclid', save=False)
+  }
+  logger.info(contact)
+  #add_contact(contact)
+  
   # Insert customer
   customer = {   
    'Name': get_var('Name', save=False),
@@ -384,7 +404,7 @@ def req_pub_booking(step):
     elif step == 4 and action == 'register':
        
       # Try to register
-      logged, customer, error_register = register()
+      logged, customer, error_register = register(segment)
       session['logged'] = logged
       session['customer'] = customer
       step = 3

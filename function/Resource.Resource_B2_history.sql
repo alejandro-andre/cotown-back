@@ -9,10 +9,6 @@ DECLARE
   
 BEGIN
 
-  -- Superuser ROLE
-  curr_user := CURRENT_USER;
-  RESET ROLE;
-
   -- Year
   ano := EXTRACT(YEAR FROM CURRENT_DATE);
   IF (EXTRACT(MONTH FROM CURRENT_DATE) > 8) THEN
@@ -27,6 +23,9 @@ BEGIN
     AND pd."Building_id" = NEW."Building_id"
     AND pd."Flat_type_id" = NEW."Flat_type_id"
     AND pd."Place_type_id" = NEW."Place_type_id";
+  IF NOT FOUND THEN
+    RETURN NEW;
+  END IF;
 
   -- Get last prices
   SELECT *
@@ -36,12 +35,17 @@ BEGIN
   ORDER BY "Date_price" DESC
   LIMIT 1;
 
-  -- Insert history
   IF NOT FOUND 
     OR NEW."Rate_id" <> cur."Rate_id" 
     OR rec."Rent_short" <> cur."Rent_short" 
     OR rec."Rent_medium" <> cur."Rent_medium"
     OR rec."Rent_long" <> cur."Rent_long" THEN
+
+    -- Superuser ROLE
+    curr_user := CURRENT_USER;
+    RESET ROLE;
+
+	-- Insert history
     INSERT INTO "Resource"."Resource_price" ( 
   	  "Resource_id", "Date_price", "Rate_id", 
       "Rent_short", "Rent_medium", "Rent_long", "Services", "Deposit", "Limit", "Final_cleaning", "Booking_fee"
@@ -60,10 +64,13 @@ BEGIN
   	  "Limit" = EXCLUDED."Limit",
   	  "Final_cleaning" = EXCLUDED."Final_cleaning",
   	  "Booking_fee" = EXCLUDED."Booking_fee";
+
+    -- Current user ROLE
+    EXECUTE 'SET ROLE "' || curr_user || '"';
+
   END IF;
 
   -- Return
-  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;
