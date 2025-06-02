@@ -226,10 +226,10 @@
                   </div>          
          
                   <input type="hidden" name="book_action" value="register">
-                  <input type="hidden" id="168" name="168">
-                  <input type="hidden" id="169" name="169">
-                  <input type="hidden" id="170" name="170">
-                  <input type="hidden" id="173" name="173">
+                  <input type="hidden" id="utm_campaign" name="utm_campaign">
+                  <input type="hidden" id="utm_medium" name="utm_medium">
+                  <input type="hidden" id="utm_source" name="utm_source">
+                  <input type="hidden" id="gclid" name="gclid">
 
                   <section class="next">
                     <button type="submit" class="btn-secondary">Sign up</button>
@@ -277,14 +277,12 @@
       document.getElementById("Other_school_div").style.display = s ? "block" : "none";
       document.getElementById("Other_school").required = s;
     });
-  
-  // Marketing tags
-  console.log(sessionStorage.getItem('utm_campaign'));
-  document.getElementById("168").value = sessionStorage.getItem('utm_campaign');
-  document.getElementById("169").value = sessionStorage.getItem('utm_medium');
-  document.getElementById("170").value = sessionStorage.getItem('utm_source');
-  document.getElementById("173").value = sessionStorage.getItem('gclid');
 
+  // Marketing tags
+  document.getElementById("utm_campaign").value = sessionStorage.getItem('utm_campaign');
+  document.getElementById("utm_medium").value = sessionStorage.getItem('utm_medium');
+  document.getElementById("utm_source").value = sessionStorage.getItem('utm_source');
+  document.getElementById("gclid").value = sessionStorage.getItem('gclid');
 </script>
 
 </html>
