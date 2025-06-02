@@ -219,15 +219,17 @@
                   [% endif %]
 
                   <div class="pure-u-1">
-                    <div class="campo checkbox">
-                      <input id="accept" name="accept" type="checkbox" required/>
-                      <label for="accept" class="pure-checkbox">
-                        Acepto las condiciones del servicio y la <a href="/es/politica-privacidad.html">política de privacidad</a>
-                      </label>
-                    </div>
+                    <input id="accept" name="accept" type="checkbox" required/>
+                    <label for="accept" class="label">
+                      Acepto las condiciones del servicio y la <a href="/es/politica-privacidad.html">política de privacidad</a>
+                    </label>
                   </div>          
          
                   <input type="hidden" name="book_action" value="register">
+                  <input type="hidden" id="168" name="168">
+                  <input type="hidden" id="169" name="169">
+                  <input type="hidden" id="170" name="170">
+                  <input type="hidden" id="173" name="173">
 
                   <section class="next">
                     <button type="submit" class="btn-secondary">Registrarse</button>
@@ -254,25 +256,34 @@
 [% include 'es/includes/footer.html' %]
 
 <script>
+  // Reason change
   const reason = document.getElementById("Reason_id");
-  reason.addEventListener("change", () => {
-    // Study
-    study = (reason.value === "1" || reason.value === "3");
-    document.getElementById("School_id_div").style.display = study ? "block" : "none";
-    document.getElementById("School_id").required = study;
+  if (reason)
+    reason.addEventListener("change", () => {
+      // Study
+      study = (reason.value === "1" || reason.value === "3");
+      document.getElementById("School_id_div").style.display = study ? "block" : "none";
+      document.getElementById("School_id").required = study;
 
-    // Work
-    work = (reason.value === "2" || reason.value === "3" || reason.value === "4");
-    document.getElementById("Company_name_div").style.display = work ? "block" : "none";
-    document.getElementById("Company_name").required = work;
-  });
+      // Work
+      work = (reason.value === "2" || reason.value === "3" || reason.value === "4");
+      document.getElementById("Company_name_div").style.display = work ? "block" : "none";
+      document.getElementById("Company_name").required = work;
+    });
 
   const school = document.getElementById("School_id");
-  school.addEventListener("change", () => {
-    s = (school.value === "1");
-    document.getElementById("School_name_div").style.display = s ? "block" : "none";
-    document.getElementById("School_name").required = s;
-  });
+  if (school)
+    school.addEventListener("change", () => {
+      s = (school.value === "1");
+      document.getElementById("Other_school_div").style.display = s ? "block" : "none";
+      document.getElementById("Other_school").required = s;
+    });
+
+  // Marketing tags
+  document.getElementById("168").value = sessionStorage.getItem('utm_campaign');
+  document.getElementById("169").value = sessionStorage.getItem('utm_medium');
+  document.getElementById("170").value = sessionStorage.getItem('utm_source');
+  document.getElementById("173").value = sessionStorage.getItem('gclid');
 </script>
 
 </html>
