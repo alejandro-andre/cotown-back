@@ -38,17 +38,24 @@ BEGIN
   FETCH cur INTO reg;
   WHILE (FOUND) LOOP
  
-    -- Inserta los bloqueos de la no disponibilidad
-    INSERT INTO "Booking"."Booking_detail" (
-      "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
-      "Status", "Date_from", "Date_to", "Lock"
-    )
-    VALUES (
-      NEW.id, NULL, NULL, NULL, reg.id, reg."Building_id",
-      status, NEW."Date_from", NEW."Date_to", TRUE
-    );
+    -- Bloqueos solo para habitaciones
+    --IF status <> 'Camas B2B' OR reg."Resource_type" <> 'piso' THEN
 
-     FETCH cur INTO reg;
+      -- Inserta los bloqueos de la no disponibilidad
+      INSERT INTO "Booking"."Booking_detail" (
+        "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
+        "Status", "Date_from", "Date_to", "Lock"
+      )
+      VALUES (
+        NEW.id, NULL, NULL, NULL, reg.id, reg."Building_id",
+        status, NEW."Date_from", NEW."Date_to", TRUE
+      );
+
+    --END IF;
+
+	-- Siguiente
+    FETCH cur INTO reg;
+
   END LOOP;
   CLOSE cur;
 
