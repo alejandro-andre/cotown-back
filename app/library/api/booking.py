@@ -184,6 +184,12 @@ def login(usr, pwd):
         Birth_date
         Nationality_id
         Gender_id
+        Country: CountryViaNationality_id {
+          Name
+        }
+        Gender: GenderViaGender_id {
+          Name
+        }
       } 
     }''')
     if len(result['data']) != 1:
@@ -201,26 +207,6 @@ def login(usr, pwd):
 
 def register(segment):
 
-  # Add to AC
-  contact = {
-    'firstname': get_var('Name', save=False),
-    'lastname': '',
-    'email': get_var('Email', save=False),
-    'phone': get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
-    '13': get_var('Birth_date', save=False),
-    '3': to_int(get_var('Nationality_id', save=False)),
-    '2': to_int(get_var('Gender_id', save=False)),
-    '185': 'Web',
-    '186': 'VSH' if segment == 1 else 'COTOWN',
-    '188': 'B2C',
-    '168': get_var('utm_campaign', save=False),
-    '169': get_var('utm_medium', save=False),
-    '170': get_var('utm_source', save=False),
-    '173': get_var('gclid', save=False)
-  }
-  logger.info(contact)
-  #add_contact(contact)
-  
   # Insert customer
   customer = {   
    'Name': get_var('Name', save=False),
@@ -240,9 +226,31 @@ def register(segment):
       return None, customer, { 'en': 'Email already exists', 'es': 'El Email ya existe!!!' }
     return None, customer, process_error(error.pgerror)
   
-  # Login current created user
+  # Login currently created user
   customer['id'] = id
   logged, customer = login(customer['Email'], 'Passw0rd!')
+
+  # Add to AC
+  contact = {
+    'firstname': customer['Name'],
+    'lastname': '',
+    'email': customer['Email'],
+    'phone': customer['Phones'],
+    '13': customer['Birth_date'],
+    '3': customer['Country']['Name'] if customer['Country'] else '',
+    '2': customer['Gender']['Name'] if customer['Gender'] else '',
+    '185': 'Web',
+    '186': 'VSH' if segment == 1 else 'COTOWN',
+    '188': 'B2C',
+    '168': get_var('utm_campaign', save=False),
+    '169': get_var('utm_medium', save=False),
+    '170': get_var('utm_source', save=False),
+    '173': get_var('gclid', save=False)
+  }
+  logger.info(contact)
+  #add_contact(contact)
+  
+  # Return
   return logged, customer, None
 
 
