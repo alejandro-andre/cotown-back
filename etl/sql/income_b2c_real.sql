@@ -15,7 +15,7 @@ SELECT
   pr."Name_en" AS "product",
   il."Amount" / (1 + (t."Value" / 100)) AS "amount",
   CASE 
-	  WHEN pr.id = 3 THEN COALESCE(bp."Rent", il."Amount") / (1 + (t."Value" / 100))
+	  WHEN pr.id = 3 THEN COALESCE(bp."Rent_rack", il."Amount") / (1 + (t."Value" / 100))
 	  ELSE 0
   END AS "rate",
   CASE 
