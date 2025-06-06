@@ -18,8 +18,8 @@ SELECT
   	ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
   END AS "amount",
   CASE 
-  	WHEN bu."Building_type_id" = 3 THEN bp."Rent_rack"/ 1.1
-  	ELSE bp."Rent_Rack"
+  	WHEN bu."Building_type_id" = 3 THEN COALESCE(bp."Rent_rack", bp."Rent") / 1.1
+  	ELSE COALESCE(bp."Rent_rack", bp."Rent")
   END AS "rate",
   "Rent_rack" AS "price",
   --'B2C' AS "income_type",

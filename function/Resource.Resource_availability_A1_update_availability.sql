@@ -11,6 +11,7 @@ DECLARE
     WHERE "Code" LIKE CONCAT(code, '%')
     OR code LIKE CONCAT("Code", '%');
   status VARCHAR;
+  not_flat BOOL;
 
 BEGIN
 
@@ -31,7 +32,7 @@ BEGIN
   SELECT "Code" INTO code FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
 
   -- Lee el status
-  SELECT "Name" INTO status FROM "Resource"."Resource_status" WHERE id = NEW."Status_id";
+  SELECT "Name", "Not_flat" INTO status, not_flat FROM "Resource"."Resource_status" WHERE id = NEW."Status_id";
 
   -- Abre el cursor
   OPEN cur;
@@ -39,7 +40,8 @@ BEGIN
   WHILE (FOUND) LOOP
  
     -- Bloqueos solo para habitaciones
-    --IF status <> 'Camas B2B' OR reg."Resource_type" <> 'piso' THEN
+    IF not_flat AND reg."Resource_type" = 'piso' THEN
+    ELSE
 
       -- Inserta los bloqueos de la no disponibilidad
       INSERT INTO "Booking"."Booking_detail" (
@@ -51,7 +53,7 @@ BEGIN
         status, NEW."Date_from", NEW."Date_to", TRUE
       );
 
-    --END IF;
+    END IF;
 
 	-- Siguiente
     FETCH cur INTO reg;
