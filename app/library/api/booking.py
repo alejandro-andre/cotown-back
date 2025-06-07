@@ -248,7 +248,7 @@ def register(segment):
     '173': get_var('gclid', save=False)
   }
   logger.info(contact)
-  #add_contact(contact)
+  add_contact(contact)
   
   # Return
   return logged, customer, None
