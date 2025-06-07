@@ -183,7 +183,7 @@ def bill_month(dbClient, con):
   cur = dbClient.execute(con,
     '''
     SELECT 
-      p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
+      p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", p."Invoice_external",
       b."Customer_id", b."Tax_id" as "Tax", c."Payment_method_id", r.id as "Resource_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt", 
       pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos"
     FROM "Booking"."Booking_price" p
@@ -197,7 +197,6 @@ def bill_month(dbClient, con):
     WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
       AND "Invoice_rent_id" IS NULL
       AND "Invoice_services_id" IS NULL
-      AND "Invoice_external" = FALSE
       AND "Rent_date" <= CURRENT_DATE
       AND "Rent_date" >= %s
     ''', (settings.BILLDATE, ))
@@ -211,6 +210,10 @@ def bill_month(dbClient, con):
 
     # Capture exceptions
     try:
+
+      # Payment method for external invoices
+      if item['Invoice_external']:
+        item['Payment_method_id'] = 5
 
       # Get all asap and recurrent extra rent
       cur = dbClient.execute(con,
