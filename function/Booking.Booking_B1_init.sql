@@ -13,6 +13,13 @@ BEGIN
     NEW."Status" := 'solicitud';
   END IF;
 
+  -- IVA por defecto según edificio
+  SELECT COALESCE(bt."Tax_id", 2)
+  INTO NEW."Tax_id"
+  FROM "Building"."Building" b
+  INNER JOIN "Building"."Building_type" bt ON bt.id = b."Building_type_id"
+  WHERE b.id = NEW."Building_id";
+
   -- Look up applicable promotion
   SELECT *
   INTO promotion

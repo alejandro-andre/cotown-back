@@ -184,7 +184,7 @@ def bill_month(dbClient, con):
     '''
     SELECT 
       p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date",
-      b."Customer_id", b."Tax", c."Payment_method_id", r.id as "Resource_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt", 
+      b."Customer_id", b."Tax_id" as "Tax", c."Payment_method_id", r.id as "Resource_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt", 
       pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos"
     FROM "Booking"."Booking_price" p
       INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
@@ -327,7 +327,7 @@ def bill_month(dbClient, con):
               item['Resource_id'],
               total_rent,
               PR_RENT,
-              (VAT_21 if item['Tax'] else product['tax']) if item['Tax_id'] is None else item['Tax_id'],
+              item['Tax'] if item['Tax'] is not None else item['Tax_id'] if item['Tax_id'] is not None else VAT_0,
               product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date'])[:7]
             )
           )
