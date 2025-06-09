@@ -232,8 +232,8 @@ def register(segment):
 
   # Add to AC
   contact = {
-    'firstname': customer['Name'],
-    'lastname': '',
+    'firstName': customer['Name'],
+    'lastName': '',
     'email': customer['Email'],
     'phone': customer['Phones'],
     '13': customer['Birth_date'],
