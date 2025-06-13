@@ -39,7 +39,7 @@ FROM "Resource"."Resource" r
   INNER JOIN "Models"."EnumType" etn ON etn.id = 28
   INNER JOIN "Models"."EnumTypeLabel" etsl ON etsl.container = ets.id AND etsl.locale = 'en_US'
   INNER JOIN "Models"."EnumTypeLabel" etnl ON etnl.container = etn.id AND etnl.locale = 'en_US'
-WHERE p."Name" LIKE 'Renta (LAU)%'
+WHERE r."Resource_type" = 'piso'
   AND r."Status_id" IN (2, 3)
   AND bo."Substatus_id" <> 6
 ORDER BY "Tenancy_type" DESC, 1
