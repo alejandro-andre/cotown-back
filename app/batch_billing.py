@@ -764,7 +764,7 @@ def bill_concepts(dbClient, con):
       s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id", s."Payment_method_id", s."Provider_id",
       p."Product_type_id",
       r."Code", r."Owner_id", r."Service_id",
-      pr."Pos"
+      pr."Pos",pr ."Receipt"
     FROM "Booking"."Booking" b
       INNER JOIN "Booking"."Booking_service" s ON s."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
@@ -824,7 +824,7 @@ def bill_concepts(dbClient, con):
           RETURNING id
           ''',
           (
-            'factura',
+            'recibo' if item['Receipt'] else 'factura',
             False,
             False,
             datetime.now(),
