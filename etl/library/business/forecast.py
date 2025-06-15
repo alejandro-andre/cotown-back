@@ -198,6 +198,10 @@ def forecast(apiClient):
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_c, beds_st, beds_pot, 0, 0, days * beds, '', 0, 0, 0]
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, days * beds * occ_stab, days * beds * occ_stab, 0, 0, '', '']
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, beds, beds, beds, beds_pot, 0, 0, days * beds, '', 0, 0, 0]
+          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
         if beds_st > 0:
           line = ['SOC' + str(c), 'Stabilised', row[1].value, month, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
