@@ -1,5 +1,5 @@
 SELECT 
-  bu."Code" AS "Building", 
+  p."Name" AS "Product", bu."Code" AS "Building",
   r."Code" AS "Resource", rs."Name" AS "Status_name", l."Name" AS "City", r."Area", r. "Places", 
   COALESCE(bo."Rent", 0) + COALESCE(bo."Extras", 0) AS "Current_rent",
   r."Pre_capex_long_term", r."Pre_capex_vacant", r."Post_capex", r."Post_capex_residential", r."Capex",
@@ -21,6 +21,7 @@ SELECT
   bo."Contribution_proposed_date", 
   bs."Name_en" AS "Substatus_name",
   CASE
+    WHEN p."Name" = 'Local' THEN 'Local'
     WHEN bo."Date_estimated" IS NULL AND bo."Date_to" IS NULL THEN 'LTNC'
     WHEN bo."Date_estimated" IS NOT NULL AND bo."Date_to" IS NULL THEN 'LTC'
     ELSE 'FTC'
