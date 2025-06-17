@@ -16,6 +16,33 @@ logger = logging.getLogger('COTOWN')
 # Misc functions
 # ######################################################
 
+# Month name
+def month(m, lang='es'):
+
+  try:
+    if lang == 'es':
+      return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][m-1]
+    else:
+      return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][m-1]
+  except:
+    return '--'
+
+
+# List of months (MMM YYYY) between two dates
+def month_dates(date_from, date_to, price):
+
+  df = datetime.strptime(date_from, "%Y-%m-%d")
+  dt = datetime.strptime(date_to, "%Y-%m-%d") + timedelta(days=1)
+  d = month(df.month).capitalize()[:3] + ' ' + str(df.year)
+  dates = [{'date': d, 'price': 0}]
+  next = (df.replace(day=1) + relativedelta(months=1))
+  while next <= dt:
+    d = month(next.month).capitalize()[:3] + ' ' + str(next.year)
+    dates.append({ 'date': d, 'price': price })
+    next += relativedelta(months=1)
+  return dates
+
+
 # Num. of the day of a date and num. of days of that month
 def days(date):
 
@@ -381,6 +408,14 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       if dayt < 15:
         data['Rent_last'] = data['Rent'] / 2
 
+    # Details
+    months = month_dates(date_from, date_to, float(data['Rent']) + float(data['Services']))
+    months[0]['price'] = float(data['Rent_first']) + float(data['Services'])
+    months[-1]['price'] = float(data['Rent_last']) + float(data['Services'])
+    total = 0
+    for m in months:
+      total += m['price']
+
     # Convert and return data
     data['Booking_fee'] = float(data['Booking_fee'])
     data['Deposit'] = float(data['Deposit'])
@@ -389,6 +424,8 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     data['Rent_last'] = float(data['Rent_last'])
     data['Services'] = float(data['Services'])
     data['Final_cleaning'] = float(data['Final_cleaning'])
+    data['Months'] = months
+    data['Total'] = total
     dbClient.putconn(con)
     return data
  
