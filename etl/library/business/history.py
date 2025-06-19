@@ -77,6 +77,11 @@ def history(dbClient):
     if date < row['Start_date']:
       return 'OUT'
 
+    # Resource not existent
+    if row['Date_from'] and row['Date_to']:
+      if row['Date_from'] <= date <= row['Date_to']:
+          return 'OUT'
+
     # No unavailabilities
     if flat_id not in avail_grouped.groups:
       return default_type(row['Resource_type'])
@@ -101,6 +106,8 @@ def history(dbClient):
       r."Code" as "resource",
       b."Start_date",
       r."Resource_type",
+      ra."Date_from",
+      ra."Date_to",
       CASE 
         WHEN r."Resource_type" = 'piso' THEN r.id
         ELSE r."Flat_id"
@@ -135,6 +142,7 @@ def history(dbClient):
       END AS "units"
     FROM "Resource"."Resource" r
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+      LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
     ORDER BY 1
   '''
   try:
