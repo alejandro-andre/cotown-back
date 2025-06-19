@@ -40,9 +40,14 @@ def beds(dbClient):
     # Date
     date = row['date']
 
-    # Building started?
+    # Building not active
     if date < row['Start_date']:
       return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+
+    # Resource not existent
+    if row['Date_from'] and row['Date_to']:
+      if row['Date_from'] <= date <= row['Date_to']:
+        return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
 
     # All flat non availability rows
     availability = df_avail[df_avail['Resource_id'] == row['flat']]
@@ -111,6 +116,8 @@ def beds(dbClient):
   r."Pre_capex_long_term" AS "val_current",
   r."Post_capex" AS "val_residential",
   r."Post_capex" AS "val_cosharing",
+  ra."Date_from",
+  ra."Date_to",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -118,6 +125,7 @@ def beds(dbClient):
   END AS "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+  LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE r."Resource_type" = 'plaza'
   
   UNION
@@ -127,6 +135,8 @@ def beds(dbClient):
   r."Pre_capex_long_term" AS "val_current",
   r."Post_capex" AS "val_residential",
   r."Post_capex" AS "val_cosharing",
+  ra."Date_from",
+  ra."Date_to",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -134,6 +144,7 @@ def beds(dbClient):
   END AS "type"
   FROM "Resource"."Resource" r 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+  LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE "Resource_type" = 'habitacion' AND 
   NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Room_id" = r.id)
   
@@ -144,12 +155,15 @@ def beds(dbClient):
   r."Pre_capex_long_term" AS "val_current",
   r."Post_capex" AS "val_residential",
   r."Post_capex" AS "val_cosharing",
+  ra."Date_from",
+  ra."Date_to",
   CASE
     WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
     WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
     WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
   END AS "type"
   FROM "Resource"."Resource" r 
+  LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
   WHERE "Resource_type" = 'piso' AND 
   NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
