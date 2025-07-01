@@ -1,0 +1,5 @@
+enumType Auxiliar.Payment_type {
+    labels en_US: "Booking fee" "Deposit" "Rent/Services" "Check-in" "Check-out"
+    labels es_ES: "Booking fee" "Deposito" "Renta/Servicios" "Check-in" "Check-out"
+    values: "booking" "deposito" "servicios" "checkin" "checkout"
+}

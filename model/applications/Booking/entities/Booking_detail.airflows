@@ -1,0 +1,217 @@
+entity Booking.Booking_detail {
+    attribute Building_id {
+        computed
+        type: INTEGER
+    }
+    attribute Booking_group_id {
+        computed
+        type: INTEGER
+    }
+    attribute Booking_rooming_id {
+        computed
+        type: INTEGER
+    }
+    attribute Resource_id {
+        computed
+        type: INTEGER
+    }
+    attribute Flat_type_id {
+        computed
+        type: INTEGER
+    }
+    attribute Place_type_id {
+        computed
+        type: INTEGER
+    }
+    attribute Billing_type {
+        computed
+        type: TEXT
+    }
+    attribute Status {
+        computed
+        type: TEXT
+    }
+    attribute Date_from {
+        computed
+        type: DATE
+    }
+    attribute Date_to {
+        computed
+        type: DATE
+    }
+    attribute Lock {
+        computed
+        type: BOOLEAN
+    }
+    attribute Booked_resource_id {
+        computed
+        type: INTEGER
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Availability_id {
+        computed
+        type: INTEGER
+    }
+    attribute Booking_id {
+        computed
+        type: INTEGER
+    }
+    attribute Billing_type_last {
+        computed
+        type: TEXT
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    documentation: "Tabla interna para la gestión de disponibilidad"
+    exportToCSVEnabled
+    icon: "details"
+    key Booking_detail_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_detail_Availability_id_uk {
+        attribute Availability_id
+        attribute Booking_id
+        attribute Booking_group_id
+        documentation: "Tabla auxiliar de reservas/bloqueos"
+        unique
+    }
+    key Booking_detail_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Reservas"
+        singular: "Reserva"
+    }
+    label en_US {
+        plural: "Bookings"
+        singular: "Booking"
+    }
+    language: es_ES
+    order: 140
+    reference Availability_id {
+        attribute Availability_id
+        cascadeDelete
+        documentation: "Resource_availability_pkey"
+        list
+        referencedKey: Resource.Resource_availability.Resource_availability_pkey
+        visible
+    }
+    reference Booked_resource_id {
+        attribute Booked_resource_id
+        cascadeDelete
+        documentation: "Resource_pkey"
+        list
+        referencedKey: Resource.Resource.Resource_pkey
+        visible
+    }
+    reference Booking_group_id {
+        attribute Booking_group_id
+        cascadeDelete
+        documentation: "Booking_group_pkey"
+        list
+        referencedKey: Booking.Booking_group.Booking_group_pkey
+        visible
+    }
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        cascadeDelete
+        documentation: "Booking_pkey"
+        list
+        referencedKey: Booking.Booking.Booking_pkey
+        visible
+    }
+    reference Booking_rooming_id {
+        attribute Booking_rooming_id
+        cascadeDelete
+        documentation: "Booking_group_rooming_pkey"
+        list
+        referencedKey: Booking.Booking_group_rooming.Booking_group_rooming_pkey
+        visible
+    }
+    reference Building_id {
+        attribute Building_id
+        cascadeDelete
+        documentation: "Building_pkey"
+        list
+        referencedKey: Building.Building.Building_pkey
+        visible
+    }
+    reference Flat_type_id {
+        attribute Flat_type_id
+        documentation: "Resource_flat_type_pkey"
+        list
+        referencedKey: Resource.Resource_flat_type.Resource_flat_type_pkey
+        visible
+    }
+    reference Place_type_id {
+        attribute Place_type_id
+        documentation: "Resource_place_type_pkey"
+        list
+        referencedKey: Resource.Resource_place_type.Resource_place_type_pkey
+        visible
+    }
+    reference Resource_id {
+        attribute Resource_id
+        cascadeDelete
+        documentation: "Resource_pkey"
+        list
+        referencedKey: Resource.Resource.Resource_pkey
+        visible
+    }
+    trigger Booking_detail_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_detail_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_detail_B0_search
+        moment: BEFORE
+    }
+}

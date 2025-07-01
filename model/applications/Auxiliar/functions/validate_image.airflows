@@ -1,0 +1,5 @@
+function Auxiliar.validate_image {
+    documentation: "-- Validate image size"
+    language: plpgsql
+    path: "applications/Auxiliar/functions/validate_image.pgsql"
+}

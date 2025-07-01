@@ -1,0 +1,385 @@
+entity Booking.Booking_price {
+    attribute Booking_id {
+        computed
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Rent_date {
+        basicFilter
+        label
+        label es_ES: "Mes"
+        label en_US: "Rent date"
+        lastInRow
+        list
+        order: 2
+        orderInList: 1
+        required
+        sm: 2
+        suffix: "€"
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Rent {
+        label es_ES: "Renta"
+        label en_US: "Rent"
+        order: 5
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services {
+        label es_ES: "Servicios"
+        label en_US: "Services"
+        order: 11
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Rent_discount {
+        label es_ES: "€ Supl(+) / Desc(-) renta"
+        label en_US: "€ Rent incr/disc"
+        list
+        order: 6
+        orderInList: 6
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Apply_to_all {
+        defaultValue: "FALSE"
+        label es_ES: "Aplicar a todas las líneas"
+        label en_US: "Apply to all lines"
+        order: 16
+        required
+        sm: 3
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Rent_total {
+        computed
+        label es_ES: "Renta+Descuentos"
+        label en_US: "Rent+Discounts"
+        list
+        order: 4
+        orderInList: 2
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services_total {
+        computed
+        label es_ES: "Servicios+Descuentos"
+        label en_US: "Services+Discounts"
+        list
+        order: 10
+        orderInList: 3
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Rent_rack {
+        label es_ES: "Renta (rack rate)"
+        label en_US: "Rent (rack rate)"
+        list
+        order: 8
+        orderInList: 4
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services_rack {
+        label es_ES: "Servicios (rack rate)"
+        label en_US: "Services (rack rate)"
+        list
+        order: 14
+        orderInList: 5
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Invoice_external {
+        defaultValue: "FALSE"
+        label es_ES: "Facturado externamente"
+        label en_US: "Invoiced externally"
+        list
+        order: 17
+        orderInList: 12
+        required
+        sm: 3
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Services_discount {
+        label es_ES: "€ Supl(+) / Desc(-) servicios"
+        label en_US: "€ Services incr/disc"
+        list
+        order: 12
+        orderInList: 7
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Invoice_rent_id {
+        computed
+        label es_ES: "Factura renta"
+        label en_US: "Invoice rent #"
+        order: 9
+        orderInList: 10
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Invoice_services_id {
+        computed
+        label es_ES: "Factura servicios"
+        label en_US: "Invoice services #"
+        order: 15
+        orderInList: 11
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Rent_discount_pct {
+        label es_ES: "% Supl(+) / Desc(-) renta"
+        label en_US: "% Rent incr/disc"
+        order: 7
+        orderInList: 8
+        precision: 8
+        scale: 4
+        sm: 2
+        step: 1.0E-4
+        suffix: "%"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services_discount_pct {
+        label en_US: "% Services incr/disc"
+        label es_ES: "% Supl(+) / Desc(-) servicios"
+        order: 13
+        orderInList: 9
+        precision: 8
+        scale: 4
+        sm: 2
+        step: 1.0E-4
+        suffix: "%"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Comments {
+        basicFilter
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        length: 4000
+        multiline
+        order: 20
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Discount_type_id {
+        label es_ES: "Motivo suplemento/descuento"
+        label en_US: "Reason"
+        order: 15
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Precios mensuales para todo el periodo de cada reserva"
+    exportToCSVEnabled
+    icon: "monetization_on"
+    key Booking_price_Booking_id_uk {
+        attribute Booking_id
+        attribute Rent_date
+        documentation: "No puede haber dos precios en la misma fecha"
+        unique
+    }
+    key Booking_price_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_price_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Precios"
+        singular: "Precio"
+    }
+    label en_US {
+        plural: "Prices"
+        singular: "Price"
+    }
+    language: es_ES
+    order: 10
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        cascadeDelete
+        documentation: "Booking_pkey"
+        list
+        listGroup: Prices
+        listIsVisible
+        listOrder: 300
+        listSm: 12
+        listTab: Booking
+        listXs: 12
+        order: 1
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Discount_type_id {
+        attribute Discount_type_id
+        basicFilter
+        documentation: "Booking_discount_type_pkey"
+        order: 15
+        orderInList: 8
+        referencedKey: Booking.Booking_discount_type.Booking_discount_type_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Invoice_rent_id {
+        attribute Invoice_rent_id
+        basicFilter
+        cascadeSetNull
+        documentation: "Invoice_pkey"
+        list
+        order: 9
+        orderInList: 9
+        referencedKey: Billing.Invoice.Invoice_pkey
+        sm: 2
+        visible
+        xs: 12
+    }
+    reference Invoice_services_id {
+        attribute Invoice_services_id
+        basicFilter
+        cascadeSetNull
+        documentation: "Invoice_pkey"
+        list
+        order: 15
+        orderInList: 10
+        referencedKey: Billing.Invoice.Invoice_pkey
+        sm: 2
+        visible
+        xs: 12
+    }
+    trigger Booking_price_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_price_B1_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_price_B1_validate
+        moment: BEFORE
+    }
+    trigger Booking_price_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_price_B0_search
+        moment: BEFORE
+    }
+}

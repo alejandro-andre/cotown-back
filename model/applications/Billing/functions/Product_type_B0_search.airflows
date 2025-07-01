@@ -1,0 +1,4 @@
+function Billing.Product_type_B0_search {
+    language: plpgsql
+    path: "applications/Billing/functions/Product_type_B0_search.pgsql"
+}

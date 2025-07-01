@@ -1,0 +1,4 @@
+function Geo.Country_B0_search {
+    language: plpgsql
+    path: "applications/Geo/functions/Country_B0_search.pgsql"
+}

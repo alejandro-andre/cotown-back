@@ -1,0 +1,5 @@
+function Provider.Provider_B2_validate {
+    documentation: "-- Verifica el proveedor"
+    language: plpgsql
+    path: "applications/Provider/functions/Provider_B2_validate.pgsql"
+}

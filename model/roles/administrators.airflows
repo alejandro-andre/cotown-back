@@ -1,0 +1,656 @@
+role administrators {
+    entityAttributePermission Booking.Booking.School_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Resource_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Second_resident {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Origin_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Building_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Date_to {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Expiry_date {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Flat_type_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Place_type_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Deposit {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_services {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_time {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Final_cleaning {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Request_date {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Confirmation_date {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out_keyless_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Eco_ext_change_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Eco_ext_keyless_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_fee_calc {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_discount_type_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Damages_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Deposit_required {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Date_deposit_required {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Date_deposit_returned {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out_option_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Flight_out {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Billing_type {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_status {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Status {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_who_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Customer_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Issues {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Date_from {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Cha_ext {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out_time {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out_revision_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Old_check_out {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Eco_ext_fee {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_referral_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_channel_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Issues_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Reason_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Resource_type {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Billing_type_last {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Company {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Services {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Limit {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_fee {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_fee_actual {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Booking_fee_returned {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Deposit_actual {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Deposit_returned {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Commision {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Ignore_black_list {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Commision_bill_status {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Created_at {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Updated_at {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Created_by {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Updated_by {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Search {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Rent {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_signed {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.New_check_out {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Damages {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Comments {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Link_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Info {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Lock {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Arrival {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Flight {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_option_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_rent {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Button_discard {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Button_checkin {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Button_checkout {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Agent_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Button_options {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Destination_id {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_keys_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_room_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_keyless_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_notice_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out_keys_ok {
+        types: SELECT INSERT UPDATE
+    }
+    entityPermission Provider.Provider_contact_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Customer.Customer_contact_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Provider_bill {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Customer.Customer_fav {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Building.Building_service_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Building.Building_value {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Building.Building_service {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Building.Building_transport_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Building.Building_transport {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_flat_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_price {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_value {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Promotion {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Partner {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Agent_type {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Provider.Agent_bills {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Provider.Provider_template {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Provider.Provider_contract {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Customer.Customer_email {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Geo.Location {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Geo.District {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Building.Building {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Building.Building_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Media_resource_type {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Auxiliar.School_category {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Provider_contact {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Provider.Provider_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_doc_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_flat_amenity {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_usage {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Pricing_rate {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Pricing_detail {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_price {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_detail {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Invoice {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Post_tag {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Advantages {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Testimonials {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Team {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Social_network {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Banner {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Media_location {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_district {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_building {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Customer.Customer {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Customer.Customer_contact {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Customer_reason {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Agent {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_amenity_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_amenity {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_inventory_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_inventory_zone {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_inventory {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Building.Building_doc_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Building.Building_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_availability {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Geo.Office {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_place_text {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_flat_subtype {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Geo.Location_text {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_place_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_status {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking {
+        types: MENU
+    }
+    entityPermission Booking.Booking_who {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_channel {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_option {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_service {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_referral {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_rooming {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Checkin_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_doc {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_questionnaire {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_discount_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Checkin_price {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_question_group {
+        types: UPDATE MENU
+    }
+    entityPermission Booking.Booking_question {
+        types: UPDATE
+    }
+    entityPermission Booking.Booking_answer {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_log {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_group {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_group_rooming {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Product {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Product_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Tax {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Tax_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_group_price {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_group_service {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_group_rooms {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_other {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_subtype {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_other_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_other_resource {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_other_service {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Geo.Province {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.Email_cc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_service_type {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_country {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_province {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_amenity {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_post {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Text {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Segment {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.School {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.Files {
+        types: UPDATE MENU
+    }
+    entityPermission Auxiliar.Gender {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Geo.Country {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Customer.Customer_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Customer.Customer_doc_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Provider_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Provider.Provider_doc_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Invoice_line {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Payment_method {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Payment {
+        types: UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Tag {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Media {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Faq_topic {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Faq_question {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Post {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Provider {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Language {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Id_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.Email {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.User {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.Role {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.User_role {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Auxiliar.Holiday {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Timetable {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Ipc {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Batch.Upload {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Sequence {
+        types: INSERT UPDATE DELETE
+    }
+}

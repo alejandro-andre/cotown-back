@@ -1,0 +1,5 @@
+application Batch {
+    label es_ES: "Procesos"
+    label en_US: "Batch"
+    order: 10
+}

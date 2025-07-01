@@ -1,0 +1,6 @@
+function Admin.goout {
+    documentation: "// Redirige a una pagina externa (con token)"
+    httpEnabled
+    language: ECMAScriptNashorn
+    path: "applications/Admin/functions/goout.js"
+}

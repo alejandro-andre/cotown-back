@@ -1,0 +1,108 @@
+entity Batch.Upload {
+    attribute Result {
+        label es_ES: "Resultado"
+        label en_US: "Result"
+        length: 200
+        list
+        order: 2
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Log {
+        computed
+        label es_ES: "Log"
+        label en_US: "Log"
+        list
+        multiline
+        order: 3
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        label es_ES: "Solicitado"
+        list
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        label es_ES: "Finalizado"
+        list
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        label
+        label es_ES: "Id proceso"
+        label en_US: "Process Id"
+        required
+        type: SERIAL
+    }
+    attribute File {
+        label es_ES: "Fichero"
+        label en_US: "File"
+        length: 200
+        order: 1
+        required
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    defaultOrderAttribute: Created_at
+    defaultOrderDesc
+    documentation: "Cargas de datos"
+    exportToCSVEnabled
+    icon: "cloud_upload"
+    key Upload_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label es_ES {
+        plural: "Cargas"
+        singular: "Carga"
+    }
+    label en_US {
+        plural: "Uploads"
+        singular: "Upload"
+    }
+    language: es_ES
+    menu
+    order: 10
+    trigger Upload_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+enumType Auxiliar.Agent_payment_method {
+    labels en_US: "Discount on the first rent" "Direct debit" "Transfer"
+    labels es_ES: "Descuento sobre la primera renta" "Domiciliación" "Transferencia"
+    values: "firstrent" "debit" "transfer"
+}

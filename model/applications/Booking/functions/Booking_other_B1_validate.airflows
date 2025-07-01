@@ -1,0 +1,5 @@
+function Booking.Booking_other_B1_validate {
+    documentation: "-- Verifica los datos de la reserva"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_other_B1_validate.pgsql"
+}

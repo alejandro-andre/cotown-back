@@ -1,0 +1,5 @@
+function Resource.Resource_availability_A1_update_availability {
+    documentation: "-- Almacena los bloqueos de un piso en tabla auxiliar"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_availability_A1_update_availability.pgsql"
+}

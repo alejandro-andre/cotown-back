@@ -1,0 +1,5 @@
+function Admin.User_B1_update_user {
+    documentation: "-- Verifica el usuario"
+    language: plpgsql
+    path: "applications/Admin/functions/User_B1_update_user.pgsql"
+}

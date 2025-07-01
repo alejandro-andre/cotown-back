@@ -1,0 +1,146 @@
+entity Marketing.Media_country {
+    attribute Updated_at {
+        computed
+        length: 100
+        type: TIMESTAMP
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        type: TIMESTAMP
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Country_id {
+        length: 100
+        order: 1
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Image_type {
+        basicFilter
+        enumType: Auxiliar.Media_type
+        label es_ES: "Tipo de imagen"
+        label en_US: "Image type"
+        list
+        order: 2
+        orderInList: 2
+        required
+        sm: 3
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Order {
+        label es_ES: "Posición"
+        label en_US: "Order"
+        lastInRow
+        length: 100
+        list
+        order: 3
+        orderInList: 3
+        sm: 3
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 4
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Image {
+        label es_ES: "Imagen"
+        label en_US: "Image"
+        length: 100
+        list
+        order: 5
+        orderInList: 1
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        length: 100
+        type: TIMESTAMP
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        type: TIMESTAMP
+    }
+    documentation: "No usar"
+    exportToCSVEnabled
+    icon: "image"
+    key Media_country_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Media_country_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Imágenes"
+        singular: "Imagen"
+    }
+    label en_US {
+        plural: "Images"
+        singular: "Image"
+    }
+    language: es_ES
+    order: 200
+    reference Country_id {
+        attribute Country_id
+        basicFilter
+        documentation: "Country_pkey"
+        list
+        order: 1
+        referencedKey: Geo.Country.Country_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Media_country_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Media_country_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Marketing.Media_country_B0_search
+        moment: BEFORE
+    }
+    trigger Media_country_imagecheck {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Auxiliar.validate_image
+        moment: BEFORE
+    }
+}

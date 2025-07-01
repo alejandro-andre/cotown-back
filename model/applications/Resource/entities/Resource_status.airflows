@@ -1,0 +1,120 @@
+entity Resource.Resource_status {
+    attribute Not_flat {
+        basicFilter
+        defaultValue: "FALSE"
+        label es_ES: "No bloquea piso"
+        label en_US: "Do not lock flat"
+        list
+        order: 3
+        sm: 3
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 1
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Available {
+        basicFilter
+        defaultValue: "FALSE"
+        label es_ES: "Stock"
+        label en_US: "Stock"
+        list
+        order: 2
+        required
+        sm: 3
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    documentation: "Posibles estados de los recursos: disponible, en obras, etc."
+    exportToCSVEnabled
+    icon: "work"
+    key Resource_status_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Resource_status_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Estados"
+        singular: "Estado"
+    }
+    label en_US {
+        plural: "Resource statuses"
+        singular: "Resource status"
+    }
+    language: es_ES
+    menu
+    order: 20
+    trigger Resource_status_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Resource_status_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Resource.Resource_status_B0_search
+        moment: BEFORE
+    }
+}

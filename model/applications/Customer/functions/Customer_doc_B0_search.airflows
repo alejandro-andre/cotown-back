@@ -1,0 +1,4 @@
+function Customer.Customer_doc_B0_search {
+    language: plpgsql
+    path: "applications/Customer/functions/Customer_doc_B0_search.pgsql"
+}

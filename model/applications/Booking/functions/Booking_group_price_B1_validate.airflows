@@ -1,0 +1,5 @@
+function Booking.Booking_group_price_B1_validate {
+    documentation: "-- Precios y descuentos"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_group_price_B1_validate.pgsql"
+}

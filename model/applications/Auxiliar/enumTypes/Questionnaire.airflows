@@ -1,0 +1,5 @@
+enumType Auxiliar.Questionnaire {
+    labels en_US: "Check-in" "Check-out"
+    labels es_ES: "Check-in" "Check-out"
+    values: "checkin" "checkout"
+}

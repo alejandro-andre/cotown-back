@@ -1,0 +1,120 @@
+entity Auxiliar.Segment {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        lastInRow
+        length: 50
+        list
+        order: 1
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Description {
+        label es_ES: "Descripción"
+        label en_US: "Description"
+        length: 100
+        list
+        multiline
+        order: 2
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Url {
+        label es_ES: "URL"
+        label en_US: "URL"
+        length: 100
+        order: 3
+        required
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Marcas o segmentos de negocio. Cada marca podrá comercializar un conjunto de productos en un sitio web. Los recursos se asociarán a marcas."
+    exportToCSVEnabled
+    icon: "web"
+    key Segment_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Segment_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Marcas"
+        singular: "Marca"
+    }
+    label en_US {
+        plural: "Brands"
+        singular: "Brand"
+    }
+    language: es_ES
+    menu
+    order: 10
+    trigger Segment_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Segment_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.Segment_B0_search
+        moment: BEFORE
+    }
+}

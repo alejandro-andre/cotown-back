@@ -1,0 +1,5 @@
+function Billing.Invoice_line_B1_change {
+    documentation: "-- Verifica si se puede modificar la factura"
+    language: plpgsql
+    path: "applications/Billing/functions/Invoice_line_B1_change.pgsql"
+}

@@ -1,0 +1,6 @@
+function Booking.Booking_other_CRON_IPC {
+    cronExpression: "0 0 25 * *"
+    documentation: "-- Update IPC"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_other_CRON_IPC.pgsql"
+}

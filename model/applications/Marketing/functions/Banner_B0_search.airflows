@@ -1,0 +1,4 @@
+function Marketing.Banner_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Banner_B0_search.pgsql"
+}

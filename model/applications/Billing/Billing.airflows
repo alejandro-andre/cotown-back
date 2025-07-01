@@ -1,0 +1,5 @@
+application Billing {
+    label es_ES: "Facturación"
+    label en_US: "Billing"
+    order: 8
+}

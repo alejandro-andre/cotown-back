@@ -1,0 +1,5 @@
+function Resource.Resource_value_A1_update {
+    documentation: "-- Actualiza la valoración"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_value_A1_update.pgsql"
+}

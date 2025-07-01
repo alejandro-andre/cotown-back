@@ -1,0 +1,5 @@
+enumType Auxiliar.Cleaning {
+    labels en_US: "No" "Weekly" "Biweekly" "Monthly"
+    labels es_ES: "No" "Semanal" "Quincenal" "Mensual"
+    values: "no" "semanal" "quincenal" "mensual"
+}

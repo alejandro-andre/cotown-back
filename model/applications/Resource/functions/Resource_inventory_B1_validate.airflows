@@ -1,0 +1,5 @@
+function Resource.Resource_inventory_B1_validate {
+    documentation: "-- Valida que las fechas de compra sea menor o igual a la fecha en curso y que la fecha de garnatia sea mayor que la fecha de compra"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_inventory_B1_validate.pgsql"
+}

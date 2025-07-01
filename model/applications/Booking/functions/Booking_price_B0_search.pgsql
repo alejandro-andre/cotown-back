@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Comments"::text,''); RETURN NEW; END;

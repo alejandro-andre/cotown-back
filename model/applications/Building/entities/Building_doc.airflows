@@ -1,0 +1,144 @@
+entity Building.Building_doc {
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Building_id {
+        computed
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 1
+        required
+        type: INTEGER
+    }
+    attribute Building_doc_type_id {
+        label es_ES: "Tipo de documento"
+        label en_US: "Document type"
+        order: 2
+        required
+        type: INTEGER
+    }
+    attribute Document {
+        basicFilter
+        label es_ES: "Documento"
+        label en_US: "Document"
+        order: 4
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Description {
+        label es_ES: "Descripción"
+        label en_US: "Description"
+        length: 4000
+        list
+        multiline
+        order: 3
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Categorización de los tipos de documentos de edificios"
+    exportToCSVEnabled
+    icon: "filter_none"
+    key Building_doc_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Building_doc_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Documentos"
+        singular: "Documento"
+    }
+    label en_US {
+        plural: "Documents"
+        singular: "Document"
+    }
+    language: es_ES
+    order: 10
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Files
+        listXs: 12
+        order: 1
+        referencedKey: Building.Building.Building_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Building_doc_type_id {
+        attribute Building_doc_type_id
+        basicFilter
+        documentation: "Building_doc_type_pkey"
+        list
+        order: 1
+        referencedKey: Building.Building_doc_type.Building_doc_type_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Building_doc_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Building_doc_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Building.Building_doc_B0_search
+        moment: BEFORE
+    }
+}

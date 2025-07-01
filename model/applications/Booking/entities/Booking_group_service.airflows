@@ -1,0 +1,255 @@
+entity Booking.Booking_group_service {
+    attribute Billing_date_from {
+        label es_ES: "Fecha servicio"
+        label en_US: "Service date"
+        list
+        order: 2
+        orderInList: 1
+        required
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Billing_date_to {
+        label es_ES: "Facturar hasta (*recurrente)"
+        label en_US: "Bill until (*recurrent)"
+        list
+        order: 3
+        orderInList: 2
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Product_id {
+        label es_ES: "Producto/Servicio"
+        label en_US: "Product"
+        order: 6
+        required
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Provider_id {
+        label es_ES: "Proveedor"
+        label en_US: "Provider"
+        order: 9
+        sm: 12
+        type: INTEGER
+        xs: 12
+    }
+    attribute Concept {
+        label es_ES: "Concepto"
+        label en_US: "Concept"
+        length: 200
+        list
+        order: 10
+        orderInList: 4
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        length: 4000
+        multiline
+        order: 11
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Amount {
+        label es_ES: "Importe por plaza"
+        label en_US: "Amount by place"
+        list
+        order: 7
+        orderInList: 5
+        precision: 8
+        required
+        scale: 2
+        sm: 4
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Tax_id {
+        computed
+        label es_ES: "Impuesto"
+        label en_US: "Tax"
+        order: 8
+        orderInList: 6
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Invoice_services_id {
+        computed
+        label es_ES: "Factura"
+        label en_US: "Factura"
+        list
+        order: 4
+        orderInList: 8
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Booking_id {
+        computed
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        lastInRow
+        order: 1
+        required
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Servicios adicionales proporcionados, que se incorporarán a las facturas."
+    exportToCSVEnabled
+    icon: "local_laundry_service"
+    key Booking_group_service_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_group_service_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Conceptos extra"
+        singular: "Concepto extra"
+    }
+    label en_US {
+        plural: "Extra concepts"
+        singular: "Extra concept"
+    }
+    language: es_ES
+    order: 15
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        documentation: "Booking_group_pkey"
+        list
+        listGroup: Prices
+        listIsVisible
+        listOrder: 91
+        listSm: 12
+        listTab: Booking
+        listXs: 12
+        order: 1
+        referencedKey: Booking.Booking_group.Booking_group_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Invoice_services_id {
+        attribute Invoice_services_id
+        documentation: "Invoice_pkey"
+        list
+        order: 4
+        referencedKey: Billing.Invoice.Invoice_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Product_id {
+        additionalFilter: "Product_type_id:{GT:2}"
+        attribute Product_id
+        basicFilter
+        documentation: "Product_pkey"
+        list
+        order: 6
+        referencedKey: Billing.Product.Product_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Provider_id {
+        attribute Provider_id
+        documentation: "Provider_pkey"
+        order: 9
+        referencedKey: Provider.Provider.Provider_pkey
+        sm: 12
+        xs: 12
+    }
+    reference Tax_id {
+        attribute Tax_id
+        documentation: "Tax_pkey"
+        list
+        order: 8
+        referencedKey: Billing.Tax.Tax_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    trigger Booking_group_service_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_group_service_B1_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_service_B1_validate
+        moment: BEFORE
+    }
+    trigger Booking_group_service_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_service_B0_search
+        moment: BEFORE
+    }
+}

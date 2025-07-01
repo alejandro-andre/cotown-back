@@ -1,0 +1,5 @@
+function Customer.Customer_B3_validate {
+    documentation: "-- Verifica el cliente"
+    language: plpgsql
+    path: "applications/Customer/functions/Customer_B3_validate.pgsql"
+}

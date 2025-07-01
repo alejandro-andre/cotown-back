@@ -1,0 +1,983 @@
+role cotown {
+    entityAttributePermission Booking.Booking.School_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Flat_type_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Interior {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Contract_electricity {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Resource_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Second_resident {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Origin_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Promotion_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Tax_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Contract_water {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Place_type_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Building_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Owner_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Date_to {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Expiry_date {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Flat_type_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Place_type_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Deposit {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Contract_services {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_time {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Final_cleaning {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Request_date {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Confirmation_date {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out_keyless_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Eco_ext_change_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Eco_ext_keyless_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_fee_calc {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_discount_type_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Damages_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Deposit_required {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Date_deposit_required {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Date_deposit_returned {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out_option_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Flight_out {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Billing_type {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Contract_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Contract_status {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Other_school {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Service_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Area {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Billing_type {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Rate_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Management_fee {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Places {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Part {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Flat_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Room_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Wifi_ssid {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Wifi_key {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Gate_mac {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Gate_phone {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Street {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Flat_subtype_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Usage_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Contract_gas {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Notes {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Orientation {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Description_en {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Sale_type {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Gate_url {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Baths {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Registry_code {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Pre_capex_long_term {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Created_at {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Status {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_who_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Customer_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Issues {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Date_from {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Customer {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Cha_ext {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out_time {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out_revision_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Old_check_out {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Eco_ext_fee {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_referral_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_channel_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Issues_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Reason_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.SAP_code {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Resource_type {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Billing_type_last {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Company {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Resource_type {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Code {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Building_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Address {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Description {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Services {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Limit {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_fee {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_fee_actual {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Booking_fee_returned {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Deposit_actual {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Deposit_returned {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Commision {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Ignore_black_list {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Commision_bill_status {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Created_at {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Updated_at {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Created_by {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Updated_by {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Search {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Rent {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Post_capex {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Pre_capex_vacant {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Status_id {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Weigth {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Capex {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Updated_at {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Created_by {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Updated_by {
+        types: SELECT
+    }
+    entityAttributePermission Resource.Resource.Search {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Contract_signed {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.New_check_out {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Damages {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Comments {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Link_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Info {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Lock {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Arrival {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Flight {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_option_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Contract_rent {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Button_discard {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Button_checkin {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Button_checkout {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Agent_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Button_options {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Destination_id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_keys_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_room_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_keyless_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_notice_ok {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out_keys_ok {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_contact_type {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_contact_type {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_bill {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_fav {
+        types: SELECT
+    }
+    entityPermission Building.Building_service_type {
+        types: SELECT
+    }
+    entityPermission Building.Building_value {
+        types: SELECT
+    }
+    entityPermission Building.Building_service {
+        types: SELECT
+    }
+    entityPermission Building.Building_transport_type {
+        types: SELECT
+    }
+    entityPermission Building.Building_transport {
+        types: SELECT
+    }
+    entityPermission Resource.Resource {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_flat_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_price {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_value {
+        types: SELECT
+    }
+    entityPermission Billing.Promotion {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_photo {
+        types: SELECT
+    }
+    entityPermission Marketing.Partner {
+        types: SELECT
+    }
+    entityPermission Provider.Agent_type {
+        types: SELECT
+    }
+    entityPermission Provider.Agent_bills {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_template {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_contract {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_email {
+        types: SELECT
+    }
+    entityPermission Geo.Location {
+        types: SELECT
+    }
+    entityPermission Geo.District {
+        types: SELECT
+    }
+    entityPermission Building.Building {
+        types: SELECT
+    }
+    entityPermission Building.Building_type {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_resource_type {
+        types: SELECT
+    }
+    entityPermission Auxiliar.School_category {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_contact {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_doc_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_doc {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_flat_amenity {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_usage {
+        types: SELECT
+    }
+    entityPermission Billing.Pricing_rate {
+        types: SELECT
+    }
+    entityPermission Billing.Pricing_detail {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_price {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_detail {
+        types: SELECT
+    }
+    entityPermission Billing.Invoice {
+        types: SELECT
+    }
+    entityPermission Marketing.Post_tag {
+        types: SELECT
+    }
+    entityPermission Marketing.Advantages {
+        types: SELECT
+    }
+    entityPermission Marketing.Testimonials {
+        types: SELECT
+    }
+    entityPermission Marketing.Team {
+        types: SELECT
+    }
+    entityPermission Marketing.Contact {
+        types: SELECT
+    }
+    entityPermission Marketing.Social_network {
+        types: SELECT
+    }
+    entityPermission Marketing.Banner {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_location {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_district {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_building {
+        types: SELECT
+    }
+    entityPermission Customer.Customer {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_contact {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_status {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_resident_status {
+        types: SELECT
+    }
+    entityPermission Booking.Customer_reason {
+        types: SELECT
+    }
+    entityPermission Provider.Agent {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_amenity_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_amenity {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_inventory_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_inventory_zone {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_inventory {
+        types: SELECT
+    }
+    entityPermission Building.Building_doc_type {
+        types: SELECT
+    }
+    entityPermission Building.Building_doc {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_availability {
+        types: SELECT
+    }
+    entityPermission Geo.Office {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_place_text {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_flat_subtype {
+        types: SELECT
+    }
+    entityPermission Geo.Location_text {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_place_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_status {
+        types: SELECT
+    }
+    entityPermission Billing.Promotion_resource {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_search {
+        types: SELECT
+    }
+    entityPermission Booking.Booking {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_who {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_channel {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_option {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_service {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_referral {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_rooming {
+        types: SELECT
+    }
+    entityPermission Booking.Checkin_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_doc {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_questionnaire {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_discount_type {
+        types: SELECT
+    }
+    entityPermission Booking.Checkin_price {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_question_group {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_question {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_answer {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_log {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_rooming {
+        types: SELECT
+    }
+    entityPermission Billing.Product {
+        types: SELECT
+    }
+    entityPermission Billing.Product_type {
+        types: SELECT
+    }
+    entityPermission Billing.Tax {
+        types: SELECT
+    }
+    entityPermission Billing.Tax_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_price {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_service {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_rooms {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_other {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_subtype {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_other_doc {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_other_resource {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_other_service {
+        types: SELECT
+    }
+    entityPermission Geo.Province {
+        types: SELECT
+    }
+    entityPermission Admin.Email_cc {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_service_type {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_country {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_province {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_amenity {
+        types: SELECT
+    }
+    entityPermission Marketing.Media_post {
+        types: SELECT
+    }
+    entityPermission Marketing.Text {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Segment {
+        types: SELECT
+    }
+    entityPermission Auxiliar.School {
+        types: SELECT
+    }
+    entityPermission Admin.Files {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Gender {
+        types: SELECT
+    }
+    entityPermission Geo.Country {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_doc {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_doc_type {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_doc {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_doc_type {
+        types: SELECT
+    }
+    entityPermission Billing.Invoice_line {
+        types: SELECT
+    }
+    entityPermission Billing.Payment_method {
+        types: SELECT
+    }
+    entityPermission Billing.Payment {
+        types: SELECT
+    }
+    entityPermission Marketing.Tag {
+        types: SELECT
+    }
+    entityPermission Marketing.Media {
+        types: SELECT
+    }
+    entityPermission Marketing.Faq_topic {
+        types: SELECT
+    }
+    entityPermission Marketing.Faq_question {
+        types: SELECT
+    }
+    entityPermission Marketing.Post {
+        types: SELECT
+    }
+    entityPermission Provider.Provider {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Language {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Id_type {
+        types: SELECT
+    }
+    entityPermission Admin.Email {
+        types: SELECT
+    }
+    entityPermission Admin.User {
+        types: SELECT
+    }
+    entityPermission Admin.Role {
+        types: SELECT
+    }
+    entityPermission Admin.User_role {
+        types: SELECT
+    }
+    entityPermission Admin.Notificaton {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Holiday {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Timetable {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Monthname {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Ipc {
+        types: SELECT
+    }
+    entityPermission Batch.Upload {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Sequence {
+        types: SELECT
+    }
+    entityPermission Admin.Log {
+        types: SELECT
+    }
+    rowLevelPermission Cotown_Cotown_template {
+        as: PERMISSIVE
+        entity: Resource.Resource
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Resource_price {
+        as: PERMISSIVE
+        entity: Resource.Resource_price
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Customer {
+        as: PERMISSIVE
+        entity: Provider.Provider_template
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Invoice_line {
+        as: PERMISSIVE
+        entity: Customer.Customer_email
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Customer_doc {
+        as: PERMISSIVE
+        entity: Building.Building
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Cotown_contact {
+        as: PERMISSIVE
+        entity: Provider.Provider_contact
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Building {
+        as: PERMISSIVE
+        entity: Resource.Resource_doc
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Resource_doc {
+        as: PERMISSIVE
+        entity: Billing.Pricing_detail
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Resource_availability {
+        as: PERMISSIVE
+        entity: Booking.Booking_price
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Booking_price {
+        as: PERMISSIVE
+        entity: Billing.Invoice
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Customer {
+        as: PERMISSIVE
+        entity: Customer.Customer
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Booking_group_price {
+        as: PERMISSIVE
+        entity: Customer.Customer_contact
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Cotown_template {
+        as: PERMISSIVE
+        entity: Resource.Resource_amenity
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Resource {
+        as: PERMISSIVE
+        entity: Resource.Resource_inventory
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Resource_amenity {
+        as: PERMISSIVE
+        entity: Resource.Resource_availability
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Resource_inventory {
+        as: PERMISSIVE
+        entity: Booking.Booking
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Payment {
+        as: PERMISSIVE
+        entity: Booking.Booking_option
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Pricing_detail {
+        as: PERMISSIVE
+        entity: Booking.Booking_group
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Booking {
+        as: PERMISSIVE
+        entity: Booking.Booking_group_rooming
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Booking_option {
+        as: PERMISSIVE
+        entity: Booking.Booking_group_price
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Invoice {
+        as: PERMISSIVE
+        entity: Customer.Customer_doc
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Booking_group {
+        as: PERMISSIVE
+        entity: Billing.Invoice_line
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Booking_rooming {
+        as: PERMISSIVE
+        entity: Billing.Payment
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Cotown_Provider {
+        as: PERMISSIVE
+        entity: Provider.Provider
+        expression: "TRUE"
+        for: ALL
+    }
+}

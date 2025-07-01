@@ -1,0 +1,5 @@
+function Booking.Booking_A1_init {
+    documentation: "-- Inicio del workflow de reserva"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_A1_init.pgsql"
+}

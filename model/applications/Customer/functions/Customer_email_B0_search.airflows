@@ -1,0 +1,4 @@
+function Customer.Customer_email_B0_search {
+    language: plpgsql
+    path: "applications/Customer/functions/Customer_email_B0_search.pgsql"
+}

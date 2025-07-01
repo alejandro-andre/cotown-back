@@ -1,0 +1,5 @@
+enumType Auxiliar.Contract_status {
+    labels en_US: "Sent" "Delivered" "Declined" "Completed" "Expired" "Other"
+    labels es_ES: "Enviado" "Entregado" "Rechazado" "Completado" "Expirado" "Otro"
+    values: "sent" "delivered" "declined" "completed" "expired" "other"
+}

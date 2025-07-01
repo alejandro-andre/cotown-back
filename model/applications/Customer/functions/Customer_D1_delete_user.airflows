@@ -1,0 +1,5 @@
+function Customer.Customer_D1_delete_user {
+    documentation: "-- Borra el usuario y rol de BD"
+    language: plpgsql
+    path: "applications/Customer/functions/Customer_D1_delete_user.pgsql"
+}

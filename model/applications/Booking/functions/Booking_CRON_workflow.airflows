@@ -1,0 +1,6 @@
+function Booking.Booking_CRON_workflow {
+    cronExpression: "2,17,32,47 * * * *"
+    documentation: "-- Actualizacion planificada de status"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_CRON_workflow.pgsql"
+}

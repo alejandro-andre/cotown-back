@@ -1,0 +1,5 @@
+enumType Auxiliar.Flat_room_type {
+    labels en_US: "Flat" "Room/Place"
+    labels es_ES: "Piso" "Habitación/Plaza"
+    values: "piso" "habitacion"
+}

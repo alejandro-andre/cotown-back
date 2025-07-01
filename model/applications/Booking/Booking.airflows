@@ -1,0 +1,5 @@
+application Booking {
+    label es_ES: "Reservas"
+    label en_US: "Bookings"
+    order: 6
+}

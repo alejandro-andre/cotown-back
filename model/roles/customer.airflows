@@ -1,0 +1,479 @@
+role customer {
+    entityAttributePermission Booking.Booking.School_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Bank_city {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Bank_country_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.id {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.IBAN {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.User_name {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_in_time {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out_option_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Flight_out {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_status {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking_option.Accepted {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking_option.Created_at {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.Photo {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Same_account {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking_option.Updated_at {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking_option.Created_by {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking_option.Updated_by {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking_option.Search {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Lang {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Id_type_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Provider.Agent.Name {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.Created_at {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.Updated_at {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Created_by {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.Updated_by {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Search {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Document {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Name {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.Address {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Zip {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.City {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Province {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Country_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Email {
+        types: SELECT
+    }
+    entityAttributePermission Customer.Customer.GDPR {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Swift {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_name {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_address {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_zip {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_city {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_id_type_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_document {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Bank_holder {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Bank_name {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Bank_address {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Provider.Agent.id {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Check_out_time {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Reason_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Phones {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Gender_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Language_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Nationality_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Country_origin_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Birth_date {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Tutor_id_type_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.School_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Bank_account {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Tutor_document {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Tutor_name {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Tutor_email {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Tutor_phones {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Payment_method_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_province {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_country_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Customer.Customer.Billing_type {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Created_at {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Updated_at {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Created_by {
+        types: SELECT
+    }
+    entityAttributePermission Booking.Booking.Updated_by {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Search {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Contract_signed {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Arrival {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Flight {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_in_option_id {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Booking.Booking.Check_out {
+        types: SELECT UPDATE
+    }
+    entityAttributePermission Provider.Provider.id {
+        types: SELECT
+    }
+    entityAttributePermission Provider.Provider.Name {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_contact_type {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_fav {
+        types: SELECT
+    }
+    entityPermission Resource.Resource {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_flat_type {
+        types: SELECT
+    }
+    entityPermission Billing.Promotion {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_photo {
+        types: SELECT INSERT
+    }
+    entityPermission Provider.Provider_contract {
+        types: SELECT
+    }
+    entityPermission Geo.Location {
+        types: SELECT
+    }
+    entityPermission Geo.District {
+        types: SELECT
+    }
+    entityPermission Building.Building {
+        types: SELECT
+    }
+    entityPermission Building.Building_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_price {
+        types: SELECT
+    }
+    entityPermission Billing.Invoice {
+        types: SELECT MENU
+    }
+    entityPermission Customer.Customer {
+        types: MENU
+    }
+    entityPermission Customer.Customer_contact {
+        types: SELECT INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Customer_reason {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_place_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking {
+        types: SELECT MENU
+    }
+    entityPermission Booking.Booking_who {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_channel {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_option {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_referral {
+        types: SELECT
+    }
+    entityPermission Booking.Checkin_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_doc {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_questionnaire {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_discount_type {
+        types: SELECT
+    }
+    entityPermission Booking.Checkin_price {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_question_group {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_question {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_rooming {
+        types: SELECT UPDATE
+    }
+    entityPermission Billing.Product {
+        types: SELECT
+    }
+    entityPermission Billing.Product_type {
+        types: SELECT
+    }
+    entityPermission Billing.Tax {
+        types: SELECT
+    }
+    entityPermission Billing.Tax_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_price {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Segment {
+        types: SELECT
+    }
+    entityPermission Auxiliar.School {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Gender {
+        types: SELECT
+    }
+    entityPermission Geo.Country {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_doc {
+        types: SELECT UPDATE MENU
+    }
+    entityPermission Customer.Customer_doc_type {
+        types: SELECT
+    }
+    entityPermission Billing.Payment_method {
+        types: SELECT
+    }
+    entityPermission Billing.Payment {
+        types: SELECT MENU
+    }
+    entityPermission Auxiliar.Language {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Id_type {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Holiday {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Timetable {
+        types: SELECT
+    }
+    rowLevelPermission Customer_Resource {
+        as: PERMISSIVE
+        entity: Resource.Resource
+        expression: "id IN (SELECT DISTINCT \"Resource_id\" FROM \"Booking\".\"Booking\" WHERE \"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Customer_Customer_email {
+        as: PERMISSIVE
+        entity: Customer.Customer_email
+        expression: "\"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Building {
+        as: PERMISSIVE
+        entity: Building.Building
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Customer_Booking_price {
+        as: PERMISSIVE
+        entity: Booking.Booking_price
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking\" WHERE \"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Customer_Invoice {
+        as: PERMISSIVE
+        entity: Billing.Invoice
+        expression: "\"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Customer {
+        as: PERMISSIVE
+        entity: Customer.Customer
+        expression: "\"User_name\" = CURRENT_USER"
+        for: ALL
+    }
+    rowLevelPermission Customer_Customer_contact {
+        as: PERMISSIVE
+        entity: Customer.Customer_contact
+        expression: "\"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Booking {
+        as: PERMISSIVE
+        entity: Booking.Booking
+        expression: "\"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Booking_option {
+        as: PERMISSIVE
+        entity: Booking.Booking_option
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking\" WHERE \"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Customer_Booking_group {
+        as: PERMISSIVE
+        entity: Booking.Booking_group
+        expression: "\"Payer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Booking_rooming {
+        as: PERMISSIVE
+        entity: Booking.Booking_group_rooming
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking_group\" WHERE \"Payer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Customer_Booking_group_price {
+        as: PERMISSIVE
+        entity: Booking.Booking_group_price
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking_group\" WHERE \"Payer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Customer_Customer_doc {
+        as: PERMISSIVE
+        entity: Customer.Customer_doc
+        expression: "\"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Invoice_line {
+        as: PERMISSIVE
+        entity: Billing.Invoice_line
+        expression: "\"Invoice_id\" IN (SELECT id FROM \"Billing\".\"Invoice\" WHERE \"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Customer_Payment {
+        as: PERMISSIVE
+        entity: Billing.Payment
+        expression: "\"Customer_id\" = (SELECT id FROM \"Customer\".\"Customer\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Customer_Provider {
+        as: PERMISSIVE
+        entity: Provider.Provider
+        expression: "TRUE"
+        for: ALL
+    }
+}

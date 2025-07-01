@@ -1,0 +1,133 @@
+entity Booking.Booking_questionnaire {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Questionnaire_type {
+        basicFilter
+        enumType: Auxiliar.Questionnaire
+        label
+        label es_ES: "Tipo de cuestionario"
+        label en_US: "Questionnaire type"
+        length: 10
+        list
+        order: 2
+        required
+        sm: 3
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Booking_id {
+        computed
+        label
+        label es_ES: "Reserva B2C"
+        label en_US: "B2C Booking"
+        order: 1
+        required
+        sm: 3
+        textFilter
+        type: INTEGER
+        xs: 12
+    }
+    attribute Completed {
+        label es_ES: "Fecha completado"
+        label en_US: "Completion date"
+        list
+        order: 3
+        sm: 3
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Cuestionarios"
+    exportToCSVEnabled
+    icon: "exposure"
+    key Booking_questionnaire_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_questionnaire_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Cuestionarios"
+        singular: "Cuestionario"
+    }
+    label en_US {
+        plural: "Questionnaires"
+        singular: "Questionnaire"
+    }
+    language: es_ES
+    order: 90
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        cascadeDelete
+        documentation: "Booking_pkey"
+        list
+        listIsVisible
+        listSm: 12
+        listTab: Questionnaires
+        listXs: 12
+        order: 1
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    trigger Booking_questionnaire_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_questionnaire_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_questionnaire_B0_search
+        moment: BEFORE
+    }
+}

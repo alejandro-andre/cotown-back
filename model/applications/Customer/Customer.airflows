@@ -1,0 +1,5 @@
+application Customer {
+    label es_ES: "Clientes"
+    label en_US: "Customers"
+    order: 2
+}

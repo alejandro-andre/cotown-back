@@ -1,0 +1,115 @@
+entity Provider.Provider_contract {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        list
+        order: 1
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Template {
+        label es_ES: "Contenido"
+        label en_US: "Content"
+        multiline
+        order: 2
+        required
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Annex {
+        label es_ES: "Anexo inglés"
+        label en_US: "Annex english"
+        multiline
+        order: 3
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Plantillas de contrato"
+    exportToCSVEnabled
+    icon: "playlist_add_check"
+    key Provider_contract_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Provider_contract_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Plantillas de contrato"
+        singular: "Plantilla de contrato"
+    }
+    label en_US {
+        plural: "Contracts"
+        singular: "Contract"
+    }
+    language: es_ES
+    menu
+    order: 50
+    trigger Provider_contract_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Provider_contract_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Provider.Provider_contract_B0_search
+        moment: BEFORE
+    }
+}

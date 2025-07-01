@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Name"::text,'')||' '||COALESCE(NEW."Email"::text,''); RETURN NEW; END;

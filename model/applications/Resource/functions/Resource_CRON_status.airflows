@@ -1,0 +1,6 @@
+function Resource.Resource_CRON_status {
+    cronExpression: "0 * * * * "
+    documentation: "-- Actualizacion planificada de status"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_CRON_status.pgsql"
+}

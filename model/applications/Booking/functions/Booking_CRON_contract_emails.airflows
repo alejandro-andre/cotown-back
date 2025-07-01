@@ -1,0 +1,6 @@
+function Booking.Booking_CRON_contract_emails {
+    cronExpression: "5,20,35,50 * * * *"
+    documentation: "-- Envio planificado de emails"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_CRON_contract_emails.pgsql"
+}

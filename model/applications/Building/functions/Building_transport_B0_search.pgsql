@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Description"::text,'')||' '||COALESCE(NEW."Description_en"::text,''); RETURN NEW; END;

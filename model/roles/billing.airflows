@@ -1,0 +1,53 @@
+role billing {
+    entityPermission Provider.Provider_bill {
+        types: INSERT UPDATE
+    }
+    entityPermission Provider.Provider_template {
+        types: INSERT UPDATE
+    }
+    entityPermission Provider.Provider_contract {
+        types: INSERT UPDATE
+    }
+    entityPermission Building.Building {
+        types: MENU
+    }
+    entityPermission Billing.Invoice {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Customer.Customer {
+        types: UPDATE MENU
+    }
+    entityPermission Booking.Booking {
+        types: MENU
+    }
+    entityPermission Booking.Booking_group {
+        types: MENU
+    }
+    entityPermission Billing.Product {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Product_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_other {
+        types: MENU
+    }
+    entityPermission Booking.Booking_subtype {
+        types: MENU
+    }
+    entityPermission Billing.Invoice_line {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Payment {
+        types: UPDATE DELETE MENU
+    }
+    entityPermission Provider.Provider {
+        types: UPDATE MENU
+    }
+    entityPermission Admin.Email {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Sequence {
+        types: INSERT UPDATE DELETE
+    }
+}

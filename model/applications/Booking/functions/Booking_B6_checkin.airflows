@@ -1,0 +1,5 @@
+function Booking.Booking_B6_checkin {
+    documentation: "-- Gestiona el pago del check-in"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_B6_checkin.pgsql"
+}

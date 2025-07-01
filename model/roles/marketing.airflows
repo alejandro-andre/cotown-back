@@ -1,0 +1,146 @@
+role marketing {
+    entityPermission Building.Building_service_type {
+        types: UPDATE MENU
+    }
+    entityPermission Building.Building_service {
+        types: UPDATE
+    }
+    entityPermission Building.Building_transport_type {
+        types: UPDATE MENU
+    }
+    entityPermission Building.Building_transport {
+        types: UPDATE
+    }
+    entityPermission Resource.Resource {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_flat_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_price {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Promotion {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Partner {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Geo.Location {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Geo.District {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Building.Building {
+        types: UPDATE MENU
+    }
+    entityPermission Building.Building_type {
+        types: UPDATE MENU
+    }
+    entityPermission Marketing.Media_resource_type {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_flat_amenity {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Post_tag {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Advantages {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Testimonials {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Team {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Social_network {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Banner {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Media_location {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_district {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_building {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Customer.Customer {
+        types: MENU
+    }
+    entityPermission Resource.Resource_amenity {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_inventory {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_availability {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Geo.Office {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_place_text {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Resource.Resource_flat_subtype {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Resource.Resource_place_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking {
+        types: MENU
+    }
+    entityPermission Booking.Booking_group {
+        types: MENU
+    }
+    entityPermission Marketing.Media_service_type {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_country {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_province {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_amenity {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Media_post {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Text {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.School {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Tag {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Media {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Faq_topic {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Marketing.Faq_question {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Marketing.Post {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Admin.Email {
+        types: INSERT UPDATE DELETE MENU
+    }
+}

@@ -1,0 +1,4 @@
+function Provider.Agent_bills_B0_search {
+    language: plpgsql
+    path: "applications/Provider/functions/Agent_bills_B0_search.pgsql"
+}

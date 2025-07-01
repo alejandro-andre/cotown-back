@@ -1,0 +1,4 @@
+function Auxiliar.Timetable_B0_search {
+    language: plpgsql
+    path: "applications/Auxiliar/functions/Timetable_B0_search.pgsql"
+}

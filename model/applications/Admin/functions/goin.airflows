@@ -1,0 +1,6 @@
+function Admin.goin {
+    documentation: "// Redirige a una pagina interna (sin token)"
+    httpEnabled
+    language: ECMAScriptNashorn
+    path: "applications/Admin/functions/goin.js"
+}

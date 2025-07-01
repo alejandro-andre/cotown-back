@@ -1,0 +1,5 @@
+enumType Auxiliar.Group_status {
+    labels en_US: "Tentative" "Confirmed" "On going" "Canceled" "Revision" "Return deposit" "Completed"
+    labels es_ES: "Tentativa" "Confirmada" "En curso" "Cancelada" "En revisión" "Devolver garantía" "Finalizada"
+    values: "grupobloqueado" "grupoconfirmado" "inhouse" "cancelada" "revision" "devolvergarantia" "finalizada"
+}

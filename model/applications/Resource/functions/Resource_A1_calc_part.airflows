@@ -1,0 +1,5 @@
+function Resource.Resource_A1_calc_part {
+    documentation: "-- Calcula las partes de un piso que supone una plaza o habitación"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_A1_calc_part.pgsql"
+}

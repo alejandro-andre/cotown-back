@@ -1,0 +1,5 @@
+function Booking.Booking_B4_workflow {
+    documentation: "-- Workflow de reserva"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_B4_workflow.pgsql"
+}

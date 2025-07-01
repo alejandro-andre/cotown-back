@@ -1,0 +1,4 @@
+function Billing.Invoice_B0_search {
+    language: plpgsql
+    path: "applications/Billing/functions/Invoice_B0_search.pgsql"
+}

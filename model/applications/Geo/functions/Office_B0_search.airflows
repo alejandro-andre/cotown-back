@@ -1,0 +1,4 @@
+function Geo.Office_B0_search {
+    language: plpgsql
+    path: "applications/Geo/functions/Office_B0_search.pgsql"
+}

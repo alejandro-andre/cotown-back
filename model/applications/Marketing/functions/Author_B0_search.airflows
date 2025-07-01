@@ -1,0 +1,4 @@
+function Marketing.Author_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Author_B0_search.pgsql"
+}

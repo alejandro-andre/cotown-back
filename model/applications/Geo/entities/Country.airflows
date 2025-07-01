@@ -1,0 +1,216 @@
+entity Geo.Country {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Code {
+        label es_ES: "Código"
+        label en_US: "Code"
+        length: 2
+        list
+        order: 1
+        orderInList: 5
+        required
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Alpha3 {
+        label es_ES: "Alpha-3"
+        label en_US: "Alpha3"
+        order: 2
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Num {
+        label es_ES: "Numérico"
+        label en_US: "Num"
+        length: 3
+        order: 3
+        sm: 3
+        tab: General
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Tld {
+        label es_ES: "TLD"
+        label en_US: "TLD"
+        order: 4
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre (español)"
+        label en_US: "Name (spanish)"
+        labelLanguage: es_ES
+        length: 100
+        list
+        order: 5
+        orderInList: 1
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name_en {
+        basicFilter
+        label
+        label es_ES: "Nombre (inglés)"
+        label en_US: "Name (english)"
+        labelLanguage: en_US
+        length: 100
+        list
+        order: 6
+        orderInList: 2
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Continent {
+        basicFilter
+        label es_ES: "Continente"
+        label en_US: "Continent"
+        length: 30
+        order: 7
+        orderInList: 4
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Prefix {
+        basicFilter
+        label es_ES: "Prefijo telefónico"
+        label en_US: "Phone prefix"
+        length: 20
+        order: 8
+        orderInList: 6
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Sepa {
+        defaultValue: "FALSE"
+        label es_ES: "SEPA"
+        label en_US: "SEPA"
+        list
+        order: 9
+        orderInList: 3
+        required
+        sm: 3
+        tab: General
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Inventario de países del mundo, para indicar la dirección de origen o nacionalidad de los residentes."
+    exportToCSVEnabled
+    icon: "public"
+    key Country_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Country_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Países"
+        singular: "País"
+    }
+    label en_US {
+        plural: "Countries"
+        singular: "Country"
+    }
+    language: es_ES
+    menu
+    order: 10
+    tab General {
+        label es_ES: "General"
+        label en_US: "General"
+        order: 1
+    }
+    tab Files {
+        label es_ES: "Images"
+        label en_US: "Files"
+        order: 2
+    }
+    trigger Country_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Country_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Geo.Country_B0_search
+        moment: BEFORE
+    }
+}

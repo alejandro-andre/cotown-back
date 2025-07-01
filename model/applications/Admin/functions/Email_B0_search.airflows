@@ -1,0 +1,4 @@
+function Admin.Email_B0_search {
+    language: plpgsql
+    path: "applications/Admin/functions/Email_B0_search.pgsql"
+}

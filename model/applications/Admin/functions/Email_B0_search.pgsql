@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Name"::text,'')||' '||COALESCE(NEW."Subject"::text,'')||' '||COALESCE(NEW."Subject_en"::text,'')||' '||COALESCE(NEW."Body"::text,'')||' '||COALESCE(NEW."Body_en"::text,'')||' '||COALESCE(NEW."Rich_body"::text,'')||' '||COALESCE(NEW."Rich_body_en"::text,''); RETURN NEW; END;

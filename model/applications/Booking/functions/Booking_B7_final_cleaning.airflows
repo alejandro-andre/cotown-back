@@ -1,0 +1,5 @@
+function Booking.Booking_B7_final_cleaning {
+    documentation: "-- Final cleaning"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_B7_final_cleaning.pgsql"
+}

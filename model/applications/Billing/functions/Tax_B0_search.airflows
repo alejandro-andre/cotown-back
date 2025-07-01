@@ -1,0 +1,4 @@
+function Billing.Tax_B0_search {
+    language: plpgsql
+    path: "applications/Billing/functions/Tax_B0_search.pgsql"
+}

@@ -1,0 +1,136 @@
+entity Geo.Province {
+    attribute Country_id {
+        label es_ES: "País"
+        label en_US: "Country"
+        order: 1
+        orderInList: 2
+        required
+        sm: 6
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 2
+        orderInList: 1
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Inventario de provincias o regiones de los países. Un país puede tener varias provincias. Sólo para los recursos."
+    exportToCSVEnabled
+    icon: "map"
+    key Province_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Province_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Provincias"
+        singular: "Provincia"
+    }
+    label en_US {
+        plural: "Provinces"
+        singular: "Province"
+    }
+    language: es_ES
+    menu
+    order: 20
+    reference Country_id {
+        attribute Country_id
+        basicFilter
+        documentation: "Country_pkey"
+        list
+        listIsVisible
+        listOrder: 9
+        listSm: 12
+        listTab: General
+        listXs: 12
+        order: 1
+        orderInList: 2
+        referencedKey: Geo.Country.Country_pkey
+        sm: 6
+        tab: General
+        visible
+        xs: 12
+    }
+    tab General {
+        label es_ES: "General"
+        label en_US: "General"
+        order: 1
+    }
+    tab Files {
+        label es_ES: "Images"
+        label en_US: "Files"
+        order: 2
+    }
+    trigger Province_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Province_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Geo.Province_B0_search
+        moment: BEFORE
+    }
+}

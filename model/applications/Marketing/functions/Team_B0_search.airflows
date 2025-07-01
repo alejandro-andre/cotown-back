@@ -1,0 +1,4 @@
+function Marketing.Team_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Team_B0_search.pgsql"
+}

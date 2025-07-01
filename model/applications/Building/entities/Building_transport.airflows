@@ -1,0 +1,145 @@
+entity Building.Building_transport {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Building_id {
+        computed
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 1
+        required
+        type: INTEGER
+    }
+    attribute Transport_id {
+        label es_ES: "Medio de transporte"
+        label en_US: "Transport type"
+        order: 2
+        required
+        type: INTEGER
+    }
+    attribute Description {
+        label es_ES: "Detalles (español)"
+        label en_US: "Details (spanish)"
+        length: 200
+        list
+        order: 3
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Description_en {
+        label es_ES: "Detalles (inglés)"
+        label en_US: "Details (english)"
+        length: 200
+        list
+        order: 4
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    documentation: "Disponibilidad de tipos de transporte para cada edificio. Un edificio puede tener varios transportes."
+    exportToCSVEnabled
+    icon: "directions_car"
+    key Building_transport_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Building_transport_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Transportes"
+        singular: "Transporte"
+    }
+    label en_US {
+        plural: "Transports"
+        singular: "Transport"
+    }
+    language: es_ES
+    order: 10
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        list
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Services
+        listXs: 12
+        order: 1
+        referencedKey: Building.Building.Building_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Transport_id {
+        attribute Transport_id
+        basicFilter
+        documentation: "Building_transport_type_pkey"
+        list
+        order: 2
+        referencedKey: Building.Building_transport_type.Building_transport_type_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Building_transport_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Building_transport_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Building.Building_transport_B0_search
+        moment: BEFORE
+    }
+}

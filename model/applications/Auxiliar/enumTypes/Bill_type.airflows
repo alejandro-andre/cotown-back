@@ -1,0 +1,5 @@
+enumType Auxiliar.Bill_type {
+    labels en_US: "Invoice" "Credit note" "Receipt"
+    labels es_ES: "Factura" "Factura rectificativa" "Recibo"
+    values: "factura" "rectificativa" "recibo"
+}

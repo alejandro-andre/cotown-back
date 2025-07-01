@@ -1,0 +1,44 @@
+role admin {
+    rowLevelPermission Admin_Admin_email {
+        as: PERMISSIVE
+        entity: Customer.Customer_email
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Admin_Invoice {
+        as: PERMISSIVE
+        entity: Billing.Invoice
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Admin_Customer {
+        as: PERMISSIVE
+        entity: Customer.Customer
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Admin_Admin_contact {
+        as: PERMISSIVE
+        entity: Customer.Customer_contact
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Admin_Booking {
+        as: PERMISSIVE
+        entity: Booking.Booking
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Admin_Payment {
+        as: PERMISSIVE
+        entity: Billing.Payment
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Admin_Provider {
+        as: PERMISSIVE
+        entity: Provider.Provider
+        expression: "TRUE"
+        for: ALL
+    }
+}

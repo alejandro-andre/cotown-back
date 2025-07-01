@@ -1,0 +1,538 @@
+entity Provider.Provider {
+    attribute Create_user {
+        label es_ES: "Crear usuario"
+        label en_US: "Create user"
+        length: 100
+        type: TEXT
+    }
+    attribute Bill_line {
+        group: Billing_info
+        label es_ES: "Texto pie factura"
+        label en_US: "Invoice footer text"
+        length: 200
+        order: 23
+        sm: 8
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Receipt {
+        defaultValue: "FALSE"
+        group: Billing_info
+        label es_ES: "Emite recibo, no factura"
+        label en_US: "Issue receipt, not invoice"
+        order: 24
+        required
+        sm: 2
+        tab: General
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Pos {
+        enumType: Auxiliar.Pos_type
+        group: Billing_info
+        label es_ES: "TPV"
+        label en_US: "POS"
+        order: 22
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Email {
+        group: Address
+        label es_ES: "Email"
+        label en_US: "Email"
+        length: 200
+        list
+        order: 6
+        orderInList: 7
+        pattern: "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$"
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Phones {
+        group: Address
+        label es_ES: "Teléfonos"
+        label en_US: "Phones"
+        lastInRow
+        length: 100
+        list
+        order: 8
+        orderInList: 8
+        sm: 6
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Bill_pattern {
+        defaultValue: "F-[Y]-[N]"
+        group: Billing_info
+        label es_ES: "Formato nº factura"
+        label en_US: "Invoice # pattern"
+        length: 20
+        order: 16
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute IBAN {
+        group: Billing_info
+        label es_ES: "IBAN"
+        label en_US: "IBAN"
+        order: 25
+        sm: 6
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Credit_pattern {
+        defaultValue: "F-[Y]-[N]R"
+        group: Billing_info
+        label es_ES: "Formato nº factura rectificativa"
+        label en_US: "Credit note #pattern"
+        length: 20
+        order: 17
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute LAU_bill_pattern {
+        defaultValue: "L-[Y]-[N]"
+        group: Billing_info
+        label es_ES: "Formato nº factura LAU"
+        label en_US: "LAU invoice # pattern"
+        length: 20
+        order: 19
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute LAU_credit_pattern {
+        defaultValue: "L-[Y]-[N]R"
+        group: Billing_info
+        label es_ES: "Formato nº factura LAU rectificativa"
+        label en_US: "LAU credit note #pattern"
+        length: 20
+        order: 20
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Receipt_pattern {
+        defaultValue: "R-[Y]-[N]"
+        group: Billing_info
+        label es_ES: "Formato nº recibo"
+        label en_US: "Receipt # pattern"
+        length: 20
+        order: 18
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute SAP_code {
+        group: Billing_info
+        label es_ES: "Código SAP"
+        label en_US: "SAP code"
+        order: 21
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Country_id {
+        group: Address
+        label es_ES: "País"
+        label en_US: "Country"
+        lastInRow
+        order: 13
+        required
+        sm: 3
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Zip {
+        group: Address
+        label es_ES: "Código postal"
+        label en_US: "Zip"
+        length: 20
+        order: 10
+        required
+        sm: 3
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute City {
+        basicFilter
+        group: Address
+        label es_ES: "Ciudad"
+        label en_US: "City"
+        length: 50
+        list
+        order: 11
+        orderInList: 6
+        required
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Province {
+        group: Address
+        label es_ES: "Provincia"
+        label en_US: "Province"
+        length: 50
+        order: 12
+        required
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute User_name {
+        computed
+        group: Identification
+        label en_US: "User"
+        label es_ES: "Usuario"
+        length: 50
+        order: 6
+        sm: 3
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Type {
+        basicFilter
+        enumType: Auxiliar.Person_type
+        group: Identification
+        label en_US: "Person/Company"
+        label es_ES: "Persona/Empresa"
+        order: 2
+        required
+        sm: 3
+        tab: General
+        type: TEXT
+        variantSelector
+        visible
+        xs: 12
+    }
+    attribute Provider_type_id {
+        group: Identification
+        label en_US: "Provider type"
+        label es_ES: "Tipo de proveedor"
+        order: 1
+        required
+        sm: 3
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Id_type_id {
+        group: Identification
+        label es_ES: "Tipo de documento"
+        label en_US: "Id type"
+        order: 3
+        required
+        sm: 3
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Document {
+        group: Identification
+        label es_ES: "Documento de identidad"
+        label en_US: "Id Document"
+        lastInRow
+        list
+        order: 4
+        orderInList: 4
+        required
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        group: Identification
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 5
+        orderInList: 2
+        required
+        sm: 9
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        basicFilter
+        group: Other
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        length: 4000
+        multiline
+        order: 6
+        sm: 12
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Address {
+        basicFilter
+        group: Address
+        label es_ES: "Dirección"
+        label en_US: "Address"
+        length: 200
+        list
+        order: 9
+        orderInList: 5
+        required
+        sm: 12
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Personas físicas o jurídicas que ostentan la propiedad de los recursos gestionados, proporcionan servicios, y pueden emitir facturas."
+    exportToCSVEnabled
+    group Identification {
+        label en_US: "IDENTIFICATION"
+        label es_ES: "IDENTIFICACIÓN"
+        order: 1
+    }
+    group Address {
+        label en_US: "ADDRESS"
+        label es_ES: "DIRECCIÓN"
+        order: 2
+    }
+    group Billing_info {
+        label en_US: "BILLING_INFO"
+        label es_ES: "FACTURACIÓN"
+        order: 3
+    }
+    group Other {
+        label en_US: "OTHER"
+        label es_ES: "OTROS DATOS"
+        order: 4
+    }
+    icon: "account_box"
+    key Provider_Document_uk {
+        attribute Document
+        documentation: "El identificador (CIF/NIF) debe ser único"
+        unique
+    }
+    key Provider_User_name_uk {
+        attribute User_name
+        documentation: "El código de usuario debe ser único"
+        unique
+    }
+    key Provider_Email_uk {
+        attribute Email
+        documentation: "El email debe ser único"
+        unique
+    }
+    key Provider_search_index {
+        attribute Search
+        textSearch
+    }
+    key Provider_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label en_US {
+        plural: "Owners"
+        singular: "Owner"
+    }
+    label es_ES {
+        plural: "Propietarios"
+        singular: "Propietario"
+    }
+    language: es_ES
+    menu
+    order: 10
+    reference Country_id {
+        attribute Country_id
+        documentation: "Country_pkey"
+        group: Address
+        order: 13
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Id_type_id {
+        attribute Id_type_id
+        documentation: "Id_type_pkey"
+        group: Identification
+        order: 3
+        referencedKey: Auxiliar.Id_type.Id_type_pkey
+        sm: 3
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Provider_type_id {
+        attribute Provider_type_id
+        documentation: "Provider_type_pkey"
+        group: Identification
+        order: 1
+        orderInList: 1
+        referencedKey: Provider.Provider_type.Provider_type_pkey
+        sm: 3
+        tab: General
+        visible
+        xs: 12
+    }
+    tab Resources {
+        label en_US: "Resources"
+        label es_ES: "Recursos"
+        order: 4
+    }
+    tab Invoices {
+        label en_US: "Invoices"
+        label es_ES: "Facturas"
+        order: 5
+    }
+    tab General {
+        label en_US: "General"
+        label es_ES: "General"
+        order: 1
+    }
+    tab Contacts {
+        label en_US: "Contacts"
+        label es_ES: "Contactos"
+        order: 2
+    }
+    tab Documents {
+        label en_US: "Documents"
+        label es_ES: "Documentos"
+        order: 3
+    }
+    trigger Provider_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Provider_B3_validate_iban {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.validate_iban
+        moment: BEFORE
+    }
+    trigger Provider_D1_delete_user {
+        each: ROW
+        events: DELETE
+        function: Provider.Provider_D1_delete_user
+        moment: AFTER
+    }
+    trigger Provider_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Provider.Provider_B0_search
+        moment: BEFORE
+    }
+    trigger Provider_A1_create_user {
+        each: ROW
+        events: INSERT UPDATE
+        function: Provider.Provider_A1_create_user
+        moment: AFTER
+    }
+    trigger Provider_B1_validate_id {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.validate_NIF_NIE
+        moment: BEFORE
+    }
+    trigger Provider_B2_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Provider.Provider_B2_validate
+        moment: BEFORE
+    }
+}

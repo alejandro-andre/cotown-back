@@ -1,0 +1,175 @@
+entity Marketing.Faq_question {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Topic_id {
+        computed
+        label es_ES: "Tema"
+        label en_US: "Topic"
+        order: 1
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Question {
+        basicFilter
+        label
+        label es_ES: "Pregunta (español)"
+        label en_US: "Question (spanish)"
+        labelLanguage: es_ES
+        length: 300
+        list
+        order: 3
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Question_en {
+        basicFilter
+        label
+        label es_ES: "Pregunta (inglés)"
+        label en_US: "Question (english)"
+        labelLanguage: en_US
+        length: 300
+        list
+        order: 5
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Response {
+        basicFilter
+        label es_ES: "Respuesta (español)"
+        label en_US: "Response (spanish)"
+        labelLanguage: es_ES
+        length: 4000
+        multiline
+        order: 4
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Response_en {
+        basicFilter
+        label es_ES: "Respuesta (inglés)"
+        label en_US: "Response (english)"
+        labelLanguage: en_US
+        length: 4000
+        multiline
+        order: 6
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Order {
+        label es_ES: "Posición"
+        label en_US: "Order"
+        lastInRow
+        list
+        order: 2
+        required
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Preguntas frecuentes para la web."
+    exportToCSVEnabled
+    icon: "speaker_notes"
+    key Faq_question_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Faq_question_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Preguntas frecuentes"
+        singular: "Pregunta frecuente"
+    }
+    label en_US {
+        plural: "Questions"
+        singular: "Question"
+    }
+    language: es_ES
+    order: 20
+    reference Topic_id {
+        attribute Topic_id
+        documentation: "Faq_topic_pkey"
+        list
+        listIsVisible
+        listSm: 12
+        listXs: 12
+        order: 1
+        referencedKey: Marketing.Faq_topic.Faq_topic_pkey
+        sm: 2
+        visible
+        xs: 12
+    }
+    trigger Faq_question_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Faq_question_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Marketing.Faq_question_B0_search
+        moment: BEFORE
+    }
+}

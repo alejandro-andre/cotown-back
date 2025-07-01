@@ -1,0 +1,399 @@
+entity Billing.Payment {
+    attribute id {
+        computed
+        label
+        label es_ES: "Nº de pago"
+        label en_US: "Payment Id"
+        list
+        order: 2
+        orderInList: 1
+        required
+        sm: 2
+        type: SERIAL
+        xs: 12
+    }
+    attribute Customer_id {
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        order: 11
+        required
+        sm: 8
+        type: INTEGER
+        xs: 12
+    }
+    attribute Booking_id {
+        label es_ES: "Reserva B2C"
+        label en_US: "B2C booking"
+        order: 10
+        orderInList: 10
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Booking_group_id {
+        label es_ES: "Reserva B2B"
+        label en_US: "B2B booking"
+        order: 12
+        orderInList: 11
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Payment_auth {
+        basicFilter
+        computed
+        label es_ES: "Código de autorización"
+        label en_US: "Payment auth code"
+        length: 50
+        order: 10
+        sm: 2
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Concept {
+        basicFilter
+        label es_ES: "Concepto"
+        label en_US: "Concept"
+        length: 200
+        list
+        order: 14
+        orderInList: 3
+        required
+        sm: 8
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        basicFilter
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        length: 4000
+        multiline
+        order: 16
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Pay {
+        action
+        actionVisibleInForm
+        addAccessToken
+        computed
+        label es_ES: "Pagar"
+        label en_US: "Pay"
+        length: 500
+        list
+        order: 99
+        sm: 3
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Pos {
+        enumType: Auxiliar.Pos_type
+        label es_ES: "TPV"
+        label en_US: "POS"
+        order: 9
+        sm: 2
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Booking_other_id {
+        label es_ES: "Reserva LAU/Otros"
+        label en_US: "LAU booking"
+        order: 15
+        orderInList: 12
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Amount_payed {
+        label es_ES: "Importe pagado"
+        label en_US: "Amount payed"
+        list
+        order: 7
+        orderInList: 5
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Warning_1 {
+        label es_ES: "Aviso 1"
+        label en_US: "Warning 1"
+        order: 20
+        sm: 2
+        type: DATE
+        visible
+        xs: 4
+    }
+    attribute Warning_2 {
+        label es_ES: "Aviso 2"
+        label en_US: "Warning 2"
+        order: 21
+        sm: 2
+        type: DATE
+        visible
+        xs: 4
+    }
+    attribute Warning_3 {
+        label es_ES: "Aviso 3"
+        label en_US: "Warning 3"
+        order: 22
+        sm: 2
+        type: DATE
+        visible
+        xs: 4
+    }
+    attribute Payment_type {
+        enumType: Auxiliar.Payment_type
+        label es_ES: "Tipo de pago"
+        label en_US: "Payment type"
+        list
+        order: 1
+        orderInList: 2
+        required
+        sm: 2
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Payment_method_id {
+        label es_ES: "Medio de pago"
+        label en_US: "Payment method"
+        order: 8
+        orderInList: 8
+        required
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Amount {
+        label es_ES: "Importe"
+        label en_US: "Amount"
+        list
+        order: 3
+        orderInList: 4
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Issued_date {
+        basicFilter
+        label es_ES: "Fecha emisiòn"
+        label en_US: "Issued date"
+        list
+        order: 5
+        orderInList: 6
+        required
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Payment_date {
+        basicFilter
+        label es_ES: "Fecha de pago"
+        label en_US: "Payment date"
+        list
+        order: 6
+        orderInList: 7
+        sm: 2
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute Payment_order {
+        basicFilter
+        computed
+        label
+        label es_ES: "Nº de orden TPV"
+        label en_US: "Payment order"
+        length: 20
+        order: 4
+        sm: 2
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Pagos realizados, asociados a las facturas emitidas"
+    exportToCSVEnabled
+    icon: "local_atm"
+    key Payment_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Payment_search_index {
+        attribute Search
+        textSearch
+    }
+    label en_US {
+        plural: "Payment"
+        singular: "Payment"
+    }
+    label es_ES {
+        plural: "Pagos"
+        singular: "Pago"
+    }
+    language: es_ES
+    menu
+    order: 20
+    reference Customer_id {
+        attribute Customer_id
+        basicFilter
+        documentation: "Customer_pkey"
+        list
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 11
+        orderInList: 5
+        referencedKey: Customer.Customer.Customer_pkey
+        sm: 8
+        visible
+        xs: 12
+    }
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        documentation: "Booking_pkey"
+        list
+        listIsVisible
+        listOrder: 41
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 10
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Booking_group_id {
+        attribute Booking_group_id
+        basicFilter
+        documentation: "Booking_group_pkey"
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 12
+        orderInList: 6
+        referencedKey: Booking.Booking_group.Booking_group_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Booking_other_id {
+        attribute Booking_other_id
+        basicFilter
+        documentation: "Booking_other_pkey"
+        list
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 15
+        referencedKey: Booking.Booking_other.Booking_other_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Payment_method_id {
+        attribute Payment_method_id
+        basicFilter
+        documentation: "Payment_method_pkey"
+        list
+        order: 8
+        referencedKey: Billing.Payment_method.Payment_method_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    trigger Payment_A1_insert {
+        each: ROW
+        events: INSERT
+        function: Billing.Payment_A1_insert
+        moment: AFTER
+    }
+    trigger Payment_B1_process_payment {
+        each: ROW
+        events: UPDATE
+        function: Billing.Payment_B1_process_payment
+        moment: BEFORE
+    }
+    trigger Payment_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Payment_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Billing.Payment_B0_search
+        moment: BEFORE
+    }
+}

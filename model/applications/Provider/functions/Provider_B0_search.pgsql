@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Document"::text,'')||' '||COALESCE(NEW."Name"::text,'')||' '||COALESCE(NEW."Comments"::text,'')||' '||COALESCE(NEW."Address"::text,'')||' '||COALESCE(NEW."City"::text,'')||' '||COALESCE(NEW."Province"::text,'')||' '||COALESCE(NEW."Email"::text,''); RETURN NEW; END;

@@ -1,0 +1,202 @@
+entity Geo.Location {
+    attribute Description {
+        label es_ES: "Entradilla (español)"
+        label en_US: "Intro (spanish)"
+        length: 4000
+        type: TEXT
+    }
+    attribute Description_en {
+        label es_ES: "Entradilla (inglés)"
+        label en_US: "Intro (english)"
+        length: 4000
+        type: TEXT
+    }
+    attribute Details {
+        label es_ES: "Detalles (español)"
+        label en_US: "Details (spanish)"
+        length: 8000
+        type: TEXT
+    }
+    attribute Details_en {
+        label es_ES: "Detalles (inglés)"
+        label en_US: "Details (english)"
+        length: 8000
+        type: TEXT
+    }
+    attribute Province_id {
+        label es_ES: "Provincia"
+        label en_US: "Province"
+        order: 1
+        orderInList: 3
+        required
+        tab: General
+        type: INTEGER
+    }
+    attribute Published {
+        defaultValue: "FALSE"
+        label es_ES: "Publicar en web"
+        label en_US: "Publish"
+        list
+        order: 3
+        orderInList: 4
+        required
+        sm: 3
+        tab: General
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Code {
+        label es_ES: "Código"
+        label en_US: "Code"
+        list
+        order: 2
+        orderInList: 1
+        sm: 3
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        tab: General
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre (español)"
+        label en_US: "Name (spanish)"
+        labelLanguage: es_ES
+        length: 100
+        list
+        order: 4
+        orderInList: 2
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name_en {
+        basicFilter
+        label
+        label es_ES: "Nombre (inglés)"
+        label en_US: "Name (english)"
+        labelLanguage: en_US
+        length: 100
+        list
+        order: 5
+        orderInList: 3
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    documentation: "Diferentes ubicaciones donde pueden encontrarse activos."
+    exportToCSVEnabled
+    icon: "location_city"
+    key Location_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Location_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Localidades"
+        singular: "Localidad"
+    }
+    label en_US {
+        plural: "Locations"
+        singular: "Location"
+    }
+    language: es_ES
+    menu
+    order: 30
+    reference Province_id {
+        attribute Province_id
+        documentation: "Province_pkey"
+        list
+        listIsVisible
+        listSm: 12
+        listTab: General
+        listXs: 12
+        order: 1
+        orderInList: 3
+        referencedKey: Geo.Province.Province_pkey
+        sm: 6
+        tab: General
+        visible
+        xs: 12
+    }
+    tab General {
+        label es_ES: "General"
+        label en_US: "General"
+        order: 1
+    }
+    tab Images {
+        label es_ES: "Imagenes"
+        label en_US: "Images"
+        order: 2
+    }
+    trigger Location_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Location_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Geo.Location_B0_search
+        moment: BEFORE
+    }
+}

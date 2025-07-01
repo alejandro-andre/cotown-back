@@ -1,0 +1,129 @@
+entity Admin.Notificaton {
+    attribute id {
+        computed
+        label
+        required
+        type: SERIAL
+    }
+    attribute Role_id {
+        label es_ES: "Rol"
+        label en_US: "Role"
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Text {
+        basicFilter
+        label es_ES: "Texto"
+        label en_US: "Text"
+        length: 4000
+        list
+        multiline
+        order: 3
+        required
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Sent_at {
+        basicFilter
+        computed
+        label es_ES: "Enviado"
+        label en_US: "Sent at"
+        lastInRow
+        list
+        order: 2
+        orderInList: 3
+        sm: 3
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Notificaciones del sistema"
+    exportToCSVEnabled
+    icon: "wifi_tethering"
+    key Notificaton_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Notificaton_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Notificaciones"
+        singular: "Notificación"
+    }
+    label en_US {
+        plural: "Notifications"
+        singular: "Notification"
+    }
+    language: es_ES
+    menu
+    order: 100
+    reference Role_id {
+        attribute Role_id
+        basicFilter
+        documentation: "Role_pkey"
+        list
+        order: 1
+        referencedKey: Admin.Role.Role_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Notificaton_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Notificaton_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Admin.Notificaton_B0_search
+        moment: BEFORE
+    }
+}

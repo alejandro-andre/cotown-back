@@ -1,0 +1,6 @@
+function Resource.Resource_CRON_history {
+    cronExpression: "0 * * * * "
+    documentation: "-- Gestiona la historia de precios de los recursos"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_CRON_history.pgsql"
+}

@@ -1,0 +1,173 @@
+entity Billing.Product {
+    attribute Product_type_id {
+        label es_ES: "Tipo de producto/servcio"
+        label en_US: "Product type"
+        order: 1
+        orderInList: 4
+        required
+        sm: 3
+        type: INTEGER
+        xs: 12
+    }
+    attribute Tax_id {
+        label es_ES: "Impuesto"
+        label en_US: "Tax"
+        order: 2
+        orderInList: 3
+        required
+        sm: 3
+        type: INTEGER
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre (español)"
+        label en_US: "Name (spanish)"
+        labelLanguage: es_ES
+        length: 50
+        list
+        order: 4
+        orderInList: 1
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name_en {
+        basicFilter
+        label
+        label es_ES: "Nombre (inglés)"
+        label en_US: "Name (english)"
+        labelLanguage: en_US
+        length: 50
+        list
+        order: 5
+        orderInList: 2
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute SAP_code {
+        label es_ES: "Código SAP"
+        label en_US: "SAP code"
+        lastInRow
+        length: 10
+        list
+        order: 3
+        sm: 3
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute id {
+        computed
+        label es_ES: "Tipo de producto/servcio"
+        required
+        type: SERIAL
+    }
+    documentation: "Inventario de los posibles servicios ofrecidos y facturados. "
+    exportToCSVEnabled
+    icon: "select_all"
+    key Product_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Product_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Productos"
+        singular: "Producto"
+    }
+    label en_US {
+        plural: "Product"
+        singular: "Product"
+    }
+    language: es_ES
+    menu
+    order: 70
+    reference Product_type_id {
+        attribute Product_type_id
+        basicFilter
+        documentation: "Product_type_pkey"
+        list
+        listIsVisible
+        listSm: 12
+        listXs: 12
+        order: 1
+        referencedKey: Billing.Product_type.Product_type_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Tax_id {
+        attribute Tax_id
+        basicFilter
+        documentation: "Tax_pkey"
+        list
+        order: 1
+        referencedKey: Billing.Tax.Tax_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    trigger Product_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Product_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Billing.Product_B0_search
+        moment: BEFORE
+    }
+}

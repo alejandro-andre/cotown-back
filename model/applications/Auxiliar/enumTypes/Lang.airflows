@@ -1,0 +1,5 @@
+enumType Auxiliar.Lang {
+    labels en_US: "Spanish" "English"
+    labels es_ES: "Español" "Inglés"
+    values: "es" "en"
+}

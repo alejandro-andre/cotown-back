@@ -1,0 +1,5 @@
+application Provider {
+    label es_ES: "Propietarios"
+    label en_US: "Owners"
+    order: 1
+}

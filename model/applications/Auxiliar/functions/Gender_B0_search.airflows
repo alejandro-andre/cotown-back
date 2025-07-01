@@ -1,0 +1,4 @@
+function Auxiliar.Gender_B0_search {
+    language: plpgsql
+    path: "applications/Auxiliar/functions/Gender_B0_search.pgsql"
+}

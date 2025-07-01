@@ -1,0 +1,5 @@
+application Marketing {
+    label es_ES: "Marketing"
+    label en_US: "Marketing"
+    order: 11
+}

@@ -1,0 +1,5 @@
+function Admin.User_role_A1_add_role {
+    documentation: "-- Asignacion de rol"
+    language: plpgsql
+    path: "applications/Admin/functions/User_role_A1_add_role.pgsql"
+}

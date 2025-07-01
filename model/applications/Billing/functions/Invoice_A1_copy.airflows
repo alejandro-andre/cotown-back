@@ -1,0 +1,5 @@
+function Billing.Invoice_A1_copy {
+    documentation: "-- Copia las lineas de factura de otra"
+    language: plpgsql
+    path: "applications/Billing/functions/Invoice_A1_copy.pgsql"
+}

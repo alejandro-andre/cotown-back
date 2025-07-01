@@ -1,0 +1,4 @@
+function Building.Building_service_B0_search {
+    language: plpgsql
+    path: "applications/Building/functions/Building_service_B0_search.pgsql"
+}

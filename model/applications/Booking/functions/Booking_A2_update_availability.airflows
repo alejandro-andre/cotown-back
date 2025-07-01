@@ -1,0 +1,5 @@
+function Booking.Booking_A2_update_availability {
+    documentation: "-- Almacena las reservas en tabla auxiliar"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_A2_update_availability.pgsql"
+}

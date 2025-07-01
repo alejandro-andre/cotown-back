@@ -1,0 +1,5 @@
+enumType Auxiliar.Billing_type {
+    labels en_US: "Monthly" "Biweekly" "Daily" "Doesn't apply"
+    labels es_ES: "Por meses" "Por quincenas" "Por días" "No aplica"
+    values: "mes" "quincena" "proporcional" "na"
+}

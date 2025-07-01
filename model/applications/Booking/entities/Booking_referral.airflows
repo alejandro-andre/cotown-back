@@ -1,0 +1,108 @@
+entity Booking.Booking_referral {
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre (español)"
+        label en_US: "Name (spanish)"
+        labelLanguage: es_ES
+        length: 50
+        list
+        order: 1
+        required
+        textFilter
+        type: TEXT
+        visible
+    }
+    attribute Name_en {
+        basicFilter
+        label
+        label es_ES: "Nombre (inglés)"
+        label en_US: "Name (english)"
+        labelLanguage: en_US
+        length: 50
+        list
+        order: 2
+        required
+        textFilter
+        type: TEXT
+        visible
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    documentation: "Cómo nos han conocido"
+    exportToCSVEnabled
+    icon: "question_answer"
+    key Booking_referral_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_referral_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Tipos de referencia"
+        singular: "Tipo de referencia"
+    }
+    label en_US {
+        plural: "Referral types"
+        singular: "Referral type"
+    }
+    language: es_ES
+    menu
+    order: 40
+    trigger Booking_referral_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_referral_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_referral_B0_search
+        moment: BEFORE
+    }
+}

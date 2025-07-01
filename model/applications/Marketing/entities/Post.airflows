@@ -1,0 +1,319 @@
+entity Marketing.Post {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Segment_id {
+        label es_ES: "Web"
+        label en_US: "Web"
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Publish_date {
+        basicFilter
+        label es_ES: "Fecha de publicación"
+        label en_US: "Publish date"
+        list
+        order: 2
+        required
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Published {
+        basicFilter
+        defaultValue: "FALSE"
+        label es_ES: "Publicado"
+        label en_US: "Published"
+        list
+        order: 3
+        required
+        sm: 2
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Title {
+        basicFilter
+        label
+        label es_ES: "Título (español)"
+        label en_US: "Title (spanish)"
+        labelLanguage: es_ES
+        length: 100
+        list
+        order: 8
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Title_en {
+        basicFilter
+        label
+        label es_ES: "Título (inglés)"
+        label en_US: "Title (english)"
+        labelLanguage: en_US
+        length: 100
+        list
+        order: 9
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Content {
+        label es_ES: "Contenido (español)"
+        label en_US: "Content (spanish)"
+        length: 8000
+        type: TEXT
+    }
+    attribute Content_en {
+        label es_ES: "Contenido (inglés)"
+        label en_US: "Content (english)"
+        length: 8000
+        type: TEXT
+    }
+    attribute Image {
+        label es_ES: "Imagen"
+        label en_US: "Image"
+        order: 20
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Slug {
+        basicFilter
+        label es_ES: "URL (español)"
+        label en_US: "Slug (spanish)"
+        labelLanguage: es_ES
+        length: 100
+        order: 6
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Slug_en {
+        basicFilter
+        label es_ES: "URL (inglés)"
+        label en_US: "Slug (english)"
+        labelLanguage: en_US
+        length: 100
+        order: 7
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Featured {
+        basicFilter
+        defaultValue: "FALSE"
+        label es_ES: "Destacado"
+        label en_US: "Featured"
+        lastInRow
+        list
+        order: 4
+        required
+        sm: 2
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Subtitle {
+        basicFilter
+        label es_ES: "Resumen (español)"
+        label en_US: "Summary (spanish)"
+        labelLanguage: es_ES
+        length: 100
+        order: 10
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Subtitle_en {
+        basicFilter
+        label es_ES: "Resumen (inglés)"
+        label en_US: "Summary (english)"
+        labelLanguage: en_US
+        length: 100
+        order: 11
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Rich_content {
+        basicFilter
+        label es_ES: "Contenido (español)"
+        label en_US: "Content (spanish)"
+        labelLanguage: es_ES
+        length: 16000
+        multiline
+        order: 14
+        rich
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Author_id {
+        label es_ES: "Autor"
+        label en_US: "Autor"
+        labelLanguage: en_US
+        lastInRow
+        multiline
+        order: 5
+        rich
+        sm: 6
+        textFilter
+        type: INTEGER
+        xs: 12
+    }
+    attribute Rich_content_en {
+        basicFilter
+        label es_ES: "Contenido (inglés)"
+        label en_US: "Content (english)"
+        labelLanguage: en_US
+        length: 16000
+        multiline
+        order: 15
+        rich
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Contenido del blog"
+    exportToCSVEnabled
+    icon: "assignment"
+    key Post_Slug_uk {
+        attribute Segment_id
+        attribute Slug
+        documentation: "No puede haber dos URLs repetidas"
+        unique
+    }
+    key Post_Slug_en_uk {
+        attribute Segment_id
+        attribute Slug_en
+        documentation: "No puede haber dos URLs repetidas"
+        unique
+    }
+    key Post_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Post_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Posts"
+        singular: "Post"
+    }
+    label en_US {
+        plural: "Post"
+        singular: "Post"
+    }
+    language: es_ES
+    menu
+    order: 30
+    reference Author_id {
+        additionalFilter: "Segment_id: {EQ: $Segment_id}"
+        attribute Author_id
+        basicFilter
+        documentation: "Team_pkey"
+        list
+        order: 5
+        referencedKey: Marketing.Team.Team_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Segment_id {
+        attribute Segment_id
+        basicFilter
+        documentation: "Segment_pkey"
+        list
+        order: 1
+        referencedKey: Auxiliar.Segment.Segment_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Post_imagecheck {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Auxiliar.validate_image
+        moment: BEFORE
+    }
+    trigger Post_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Post_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Marketing.Post_B0_search
+        moment: BEFORE
+    }
+}

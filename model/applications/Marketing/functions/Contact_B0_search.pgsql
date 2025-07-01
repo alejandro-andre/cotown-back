@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Contact_type"::text,'')||' '||COALESCE(NEW."Name"::text,'')||' '||COALESCE(NEW."Email"::text,'')||' '||COALESCE(NEW."Phone"::text,'')||' '||COALESCE(NEW."Message"::text,''); RETURN NEW; END;

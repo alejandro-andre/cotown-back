@@ -1,0 +1,404 @@
+entity Billing.Invoice {
+    attribute Issued {
+        defaultValue: "FALSE"
+        label es_ES: "Emitida"
+        label en_US: "Issued"
+        order: 33
+        required
+        sm: 1
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        label es_ES: "Nº interno"
+        label en_US: "Internal Id"
+        list
+        order: 4
+        orderInList: 1
+        required
+        sm: 2
+        type: SERIAL
+        xs: 12
+    }
+    attribute Bill_type {
+        basicFilter
+        enumType: Auxiliar.Bill_type
+        label es_ES: "Tipo"
+        label en_US: "Bill type"
+        order: 1
+        sm: 2
+        textFilter
+        type: TEXT
+        variantSelector
+        visible
+        xs: 12
+    }
+    attribute Code {
+        basicFilter
+        computed
+        label
+        label es_ES: "Nº factura/recibo"
+        label en_US: "Code"
+        length: 20
+        list
+        order: 2
+        orderInList: 3
+        sm: 2
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Issued_date {
+        basicFilter
+        defaultValue: "now()"
+        label es_ES: "Fecha de emisión"
+        label en_US: "Issued date"
+        list
+        order: 32
+        orderInList: 2
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Provider_id {
+        label es_ES: "Emisor"
+        label en_US: "Provider"
+        order: 41
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Customer_id {
+        computed
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        order: 40
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Booking_id {
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 20
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Booking_group_id {
+        label es_ES: "Reserva de grupo"
+        label en_US: "Group booking"
+        order: 21
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute SAP_code {
+        documentation: "BORRAR"
+        label es_ES: "Código SAP"
+        label en_US: "SAP code"
+        length: 20
+        type: TEXT
+    }
+    attribute Rectified {
+        defaultValue: "FALSE"
+        label es_ES: "Rectificar"
+        label en_US: "Rectified"
+        order: 34
+        required
+        sm: 1
+        type: BOOLEAN
+        variants: "factura"
+        visible
+        xs: 12
+    }
+    attribute Duplicate_id {
+        label es_ES: "Copìar de"
+        label en_US: "Copy from"
+        order: 5
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Booking_other_id {
+        label es_ES: "Reserva LAU/Otros"
+        label en_US: "LAU booking"
+        order: 22
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Concept {
+        basicFilter
+        label es_ES: "Concepto"
+        label en_US: "Concept"
+        length: 300
+        list
+        order: 50
+        orderInList: 5
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        basicFilter
+        label es_ES: "Comentarios (interno)"
+        label en_US: "Comments (internal)"
+        lastInRow
+        length: 4000
+        multiline
+        order: 61
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Payment_method_id {
+        label es_ES: "Medio de pago"
+        label en_US: "Payment method"
+        order: 30
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Payment_id {
+        computed
+        label es_ES: "Pago"
+        label en_US: "Payment"
+        order: 6
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Total {
+        basicFilter
+        computed
+        label es_ES: "Importe"
+        label en_US: "Total"
+        list
+        order: 31
+        orderInList: 4
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Document {
+        label es_ES: "Factura/Recibo PDF"
+        label en_US: "Invoice/Receipt PDF"
+        order: 60
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    documentation: "Facturas emitidas."
+    exportToCSVEnabled
+    icon: "receipt"
+    key Invoice_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Invoice_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Facturas"
+        singular: "Factura"
+    }
+    label en_US {
+        plural: "Invoice"
+        singular: "Invoice"
+    }
+    language: es_ES
+    menu
+    order: 10
+    reference Provider_id {
+        attribute Provider_id
+        basicFilter
+        documentation: "Provider_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 41
+        orderInList: 6
+        referencedKey: Provider.Provider.Provider_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Customer_id {
+        attribute Customer_id
+        basicFilter
+        documentation: "Customer_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 40
+        orderInList: 7
+        referencedKey: Customer.Customer.Customer_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        documentation: "Booking_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 20
+        orderInList: 8
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Booking_group_id {
+        attribute Booking_group_id
+        basicFilter
+        documentation: "Booking_group_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 21
+        orderInList: 9
+        referencedKey: Booking.Booking_group.Booking_group_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Booking_other_id {
+        attribute Booking_other_id
+        basicFilter
+        documentation: "Booking_other_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Invoices
+        listXs: 12
+        order: 22
+        referencedKey: Booking.Booking_other.Booking_other_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Payment_id {
+        attribute Payment_id
+        documentation: "Payment_pkey"
+        listIsVisible
+        listSm: 12
+        listXs: 12
+        order: 6
+        referencedKey: Billing.Payment.Payment_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    reference Payment_method_id {
+        attribute Payment_method_id
+        basicFilter
+        documentation: "Payment_method_pkey"
+        order: 30
+        referencedKey: Billing.Payment_method.Payment_method_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    trigger Invoice_A1_copy {
+        each: ROW
+        events: INSERT
+        function: Billing.Invoice_A1_copy
+        moment: AFTER
+    }
+    trigger Invoice_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Invoice_B1_copy {
+        each: ROW
+        events: INSERT
+        function: Billing.Invoice_B1_copy
+        moment: BEFORE
+    }
+    trigger Invoice_B2_validate {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Billing.Invoice_B2_validate
+        moment: BEFORE
+    }
+    trigger Invoice_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Billing.Invoice_B0_search
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,4 @@
+function Auxiliar.Ipc_B0_search {
+    language: plpgsql
+    path: "applications/Auxiliar/functions/Ipc_B0_search.pgsql"
+}

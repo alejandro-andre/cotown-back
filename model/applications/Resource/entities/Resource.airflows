@@ -1,0 +1,964 @@
+entity Resource.Resource {
+    attribute Interior {
+        enumType: Auxiliar.Interior_type
+        group: Amenities
+        label es_ES: "Interior/Exterior"
+        label en_US: "Interior"
+        order: 23
+        orderInList: 9
+        sm: 3
+        tab: Amenities
+        type: TEXT
+        variants: "habitacion" "plaza"
+        visible
+        xs: 12
+    }
+    attribute Flat_type_id {
+        group: Identification
+        label es_ES: "Tipo de piso"
+        label en_US: "Flat type"
+        order: 7
+        required
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "piso" "habitacion" "plaza"
+        xs: 12
+    }
+    attribute Contract_electricity {
+        group: Other
+        label es_ES: "Contrato de luz"
+        label en_US: "Contract electicity"
+        length: 50
+        order: 34
+        sm: 3
+        tab: Amenities
+        textFilter
+        type: TEXT
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Contract_water {
+        group: Other
+        label es_ES: "Contrato de agua"
+        label en_US: "Contract water"
+        length: 50
+        order: 35
+        sm: 3
+        tab: Amenities
+        textFilter
+        type: TEXT
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Place_type_id {
+        group: Identification
+        label es_ES: "Tipo de plaza"
+        label en_US: "Place type"
+        lastInRow
+        order: 9
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "habitacion" "plaza"
+        xs: 12
+    }
+    attribute Owner_id {
+        group: Identification
+        label es_ES: "Propietario"
+        label en_US: "Owner"
+        order: 10
+        required
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "piso" "comun" "local" "parking" "trastero"
+        xs: 12
+    }
+    attribute Post_capex_residential {
+        group: Value
+        label es_ES: "Valor residencial"
+        label en_US: "Residiential Value post conversion"
+        order: 40
+        precision: 10
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "€"
+        tab: Amenities
+        type: DECIMAL
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Service_id {
+        group: Identification
+        label es_ES: "Empresa de servicios"
+        label en_US: "Services company"
+        order: 11
+        required
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "piso" "comun" "local" "parking" "trastero"
+        xs: 12
+    }
+    attribute Area {
+        group: Amenities
+        label es_ES: "Superficie (m²)"
+        label en_US: "Area"
+        lastInRow
+        order: 25
+        precision: 6
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "m²"
+        tab: Amenities
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Billing_type {
+        enumType: Auxiliar.Billing_type
+        group: Identification
+        label es_ES: "Tipo de facturación"
+        label en_US: "Billing type"
+        order: 13
+        required
+        sm: 4
+        tab: General
+        type: TEXT
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Rate_id {
+        group: Identification
+        label en_US: "Rate"
+        label es_ES: "Tarifa"
+        order: 15
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "piso" "habitacion" "plaza"
+        xs: 12
+    }
+    attribute Management_fee {
+        group: Identification
+        label es_ES: "Management fee"
+        label en_US: "Management fee"
+        order: 9
+        precision: 8
+        scale: 2
+        sm: 4
+        step: 0.01
+        suffix: "%"
+        tab: General
+        type: DECIMAL
+        variants: "piso"
+        visible
+        xs: 12
+    }
+    attribute Places {
+        group: Amenities
+        label es_ES: "Nº máximo/potencial de plazas"
+        label en_US: "Max/Potential places"
+        order: 21
+        sm: 3
+        tab: Amenities
+        type: INTEGER
+        variants: "piso"
+        visible
+        xs: 12
+    }
+    attribute Part {
+        group: Amenities
+        label es_ES: "Partes"
+        label en_US: "Part"
+        length: 10
+        order: 24
+        sm: 3
+        tab: Amenities
+        type: TEXT
+        variants: "habitacion" "plaza"
+        visible
+        xs: 12
+    }
+    attribute Flat_id {
+        group: Identification
+        label es_ES: "Piso"
+        label en_US: "Flat"
+        order: 5
+        required
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "habitacion" "plaza"
+        xs: 12
+    }
+    attribute Room_id {
+        group: Identification
+        label es_ES: "Habitación"
+        label en_US: "Room"
+        lastInRow
+        order: 6
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "plaza"
+        xs: 12
+    }
+    attribute Wifi_ssid {
+        group: Access
+        label es_ES: "WiFi SSID"
+        label en_US: "Wifi SSID"
+        length: 50
+        order: 26
+        sm: 3
+        tab: Amenities
+        type: TEXT
+        variants: "piso" "comun"
+        visible
+        xs: 12
+    }
+    attribute Wifi_key {
+        group: Access
+        label es_ES: "WiFi Clave"
+        label en_US: "Wifi Key"
+        length: 50
+        order: 27
+        sm: 9
+        tab: Amenities
+        type: TEXT
+        variants: "piso" "comun"
+        visible
+        xs: 12
+    }
+    attribute Gate_mac {
+        group: Access
+        label es_ES: "Puerta - MAC"
+        label en_US: "Gate - MAC"
+        length: 50
+        order: 31
+        sm: 3
+        tab: Amenities
+        type: TEXT
+        variants: "piso" "comun"
+        visible
+        xs: 12
+    }
+    attribute Gate_phone {
+        group: Access
+        label es_ES: "Puerta - Teléfono"
+        label en_US: "Gate - Phone"
+        length: 50
+        order: 33
+        sm: 3
+        tab: Amenities
+        type: TEXT
+        variants: "piso" "comun"
+        visible
+        xs: 12
+    }
+    attribute Street {
+        group: Details
+        label es_ES: "Calle, nº"
+        label en_US: "Street address"
+        length: 200
+        order: 12
+        orderInList: 9
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Flat_subtype_id {
+        group: Identification
+        label es_ES: "Subtipo de piso"
+        label en_US: "Flat subtype"
+        order: 8
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "piso"
+        xs: 12
+    }
+    attribute Usage_id {
+        group: Other
+        label es_ES: "Uso catastral"
+        label en_US: "Usage"
+        order: 31
+        sm: 6
+        tab: Amenities
+        type: INTEGER
+        variants: "piso" "comun" "local" "parking" "trastero"
+        xs: 12
+    }
+    attribute Contract_gas {
+        group: Other
+        label es_ES: "Contrato de gas"
+        label en_US: "Contract gas"
+        length: 50
+        order: 33
+        sm: 3
+        tab: Amenities
+        textFilter
+        type: TEXT
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Notes {
+        label es_ES: "Notas (limpieza, tipo de suelo…)"
+        label en_US: "Notes"
+        length: 4000
+        multiline
+        order: 30
+        sm: 12
+        tab: Notes
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Orientation {
+        group: Amenities
+        label es_ES: "Orientación"
+        label en_US: "Orientation"
+        order: 22
+        orderInList: 9
+        sm: 3
+        tab: Amenities
+        type: TEXT
+        variants: "habitacion" "plaza"
+        visible
+        xs: 12
+    }
+    attribute Description_en {
+        group: Details
+        label es_ES: "Detalles (inglés)"
+        label en_US: "Details (english)"
+        length: 4000
+        multiline
+        order: 15
+        sm: 12
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Sale_type {
+        enumType: Auxiliar.Sale_type
+        group: Identification
+        label es_ES: "Tipo de venta"
+        label en_US: "Sale type"
+        order: 14
+        required
+        sm: 4
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Gate_url {
+        group: Access
+        label es_ES: "Puerta - URL"
+        label en_US: "Gate - URL"
+        length: 50
+        order: 32
+        sm: 6
+        tab: Amenities
+        type: TEXT
+        variants: "piso" "comun"
+        visible
+        xs: 12
+    }
+    attribute Baths {
+        group: Amenities
+        label es_ES: "Nº de baños compartidos"
+        label en_US: "Shared baths"
+        order: 20
+        sm: 3
+        tab: Amenities
+        type: INTEGER
+        variants: "piso"
+        visible
+        xs: 12
+    }
+    attribute Registry_code {
+        group: Other
+        label es_ES: "Referencia catastral"
+        label en_US: "Land registry code"
+        length: 20
+        order: 30
+        sm: 3
+        tab: Amenities
+        textFilter
+        type: TEXT
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Pre_capex_long_term {
+        group: Value
+        label es_ES: "Valor pre-capex renta antigua"
+        label en_US: "Long Term Value Pre-Capex"
+        order: 37
+        precision: 10
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "€"
+        tab: Amenities
+        type: DECIMAL
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute SAP_code {
+        group: Identification
+        label es_ES: "Código SAP"
+        label en_US: "SAP Code"
+        length: 20
+        order: 11
+        sm: 4
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Resource_type {
+        basicFilter
+        enumType: Auxiliar.Resource_type
+        group: Identification
+        label es_ES: "Tipo de recurso"
+        label en_US: "Resource type"
+        list
+        order: 1
+        orderInList: 1
+        sm: 4
+        tab: General
+        type: TEXT
+        variantSelector
+        visible
+        xs: 12
+    }
+    attribute Code {
+        basicFilter
+        group: Identification
+        label
+        label es_ES: "Código"
+        label en_US: "Code"
+        length: 20
+        list
+        order: 2
+        orderInList: 2
+        required
+        sm: 4
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Building_id {
+        group: Identification
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 4
+        required
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "piso" "comun" "local" "parking" "trastero"
+        xs: 12
+    }
+    attribute Address {
+        group: Details
+        label es_ES: "Dirección"
+        label en_US: "Address"
+        length: 200
+        list
+        order: 12
+        orderInList: 9
+        required
+        sm: 4
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Description {
+        group: Details
+        label es_ES: "Detalles (español)"
+        label en_US: "Details (spanish)"
+        length: 4000
+        multiline
+        order: 14
+        sm: 12
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Post_capex {
+        group: Value
+        label es_ES: "Valor cosharing convertido"
+        label en_US: "Cosharing Value post conversion"
+        order: 39
+        precision: 10
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "€"
+        tab: Amenities
+        type: DECIMAL
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Pre_capex_vacant {
+        group: Value
+        label es_ES: "Valor pre-capex vacío"
+        label en_US: "Vacant Value Pre-Capex"
+        order: 38
+        precision: 10
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "€"
+        tab: Amenities
+        type: DECIMAL
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Status_id {
+        computed
+        group: Identification
+        label es_ES: "Status"
+        label en_US: "Status"
+        lastInRow
+        order: 3
+        sm: 4
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Weigth {
+        group: Other
+        label es_ES: "Coeficiente"
+        label en_US: "Weigth"
+        lastInRow
+        order: 32
+        precision: 10
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "%"
+        tab: Amenities
+        type: DECIMAL
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Capex {
+        group: Other
+        label es_ES: "CAPEX previsto"
+        label en_US: "Estimated CAPEX"
+        order: 36
+        precision: 10
+        scale: 2
+        sm: 3
+        step: 0.01
+        suffix: "€"
+        tab: Amenities
+        type: DECIMAL
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Registry_date {
+        group: Identification
+        label es_ES: "Fecha de registro"
+        label en_US: "Registry date"
+        order: 21
+        sm: 2
+        tab: General
+        type: DATE
+        variants: "piso" "habitacion"
+        visible
+        xs: 12
+    }
+    attribute Registry_num {
+        group: Identification
+        label es_ES: "Nº de registro"
+        label en_US: "Registry number"
+        length: 200
+        order: 20
+        sm: 4
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "piso" "habitacion"
+        visible
+        xs: 12
+    }
+    documentation: "Recursos de los que dispone Cotown para su alquiler. Pueden ser pisos, habitaciones o camas/plazas."
+    exportToCSVEnabled
+    group Prices {
+        label es_ES: "HISTORICO DE PRECIOS"
+        label en_US: "PRICE HISTORY"
+        order: 7
+    }
+    group Identification {
+        label es_ES: "IDENTIFICACIÓN"
+        label en_US: "IDENTIFICATION"
+        order: 1
+    }
+    group Basic_data {
+        label es_ES: "DATOS PRINCIPALES"
+        label en_US: "BASIC INFO"
+        order: 2
+    }
+    group Details {
+        label es_ES: "DETALLES"
+        label en_US: "DETAILS"
+        order: 4
+    }
+    group Access {
+        label es_ES: "ACCESO"
+        label en_US: "ACCESS"
+        order: 5
+    }
+    group Other {
+        label es_ES: "OTROS DATOS"
+        label en_US: "OTHER"
+        order: 6
+    }
+    group Amenities {
+        label es_ES: "CARACTERÍSTICAS"
+        label en_US: "AMENITIES"
+        order: 9
+    }
+    group Status {
+        label es_ES: "ESTADOS"
+        label en_US: "STATUS"
+        order: 9
+    }
+    group Value {
+        label es_ES: "VALOR RESIDENCIAL"
+        label en_US: "RESIDENTIAL VALUE"
+        order: 8
+    }
+    icon: "hotel"
+    key Resource_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Resource_Code_uk {
+        attribute Code
+        documentation: "El código de recurso debe ser único"
+        unique
+    }
+    key Resource_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Recursos"
+        singular: "Recurso"
+    }
+    label en_US {
+        plural: "Resources"
+        singular: "Resource"
+    }
+    language: es_ES
+    menu
+    order: 10
+    reference Owner_id {
+        additionalFilter: "Provider_type_id:{EQ:1}"
+        attribute Owner_id
+        basicFilter
+        documentation: "Provider_pkey"
+        group: Identification
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Resources
+        listXs: 12
+        order: 10
+        referencedKey: Provider.Provider.Provider_pkey
+        sm: 4
+        tab: General
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        group: Identification
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Resources
+        listXs: 12
+        order: 4
+        orderInList: 3
+        referencedKey: Building.Building.Building_pkey
+        sm: 4
+        tab: General
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    reference Usage_id {
+        attribute Usage_id
+        basicFilter
+        documentation: "Resource_usage_pkey"
+        group: Other
+        list
+        order: 31
+        referencedKey: Resource.Resource_usage.Resource_usage_pkey
+        sm: 6
+        tab: Amenities
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    reference Flat_id {
+        additionalFilter: "Resource_type:{EQ:piso}"
+        attribute Flat_id
+        documentation: "Resource_pkey"
+        group: Identification
+        order: 5
+        orderInList: 4
+        referencedKey: Resource.Resource.Resource_pkey
+        sm: 4
+        tab: General
+        variants: "habitacion" "plaza"
+        visible
+        xs: 12
+    }
+    reference Flat_subtype_id {
+        attribute Flat_subtype_id
+        basicFilter
+        documentation: "Resource_flat_subtype_pkey"
+        group: Identification
+        list
+        listIsVisible
+        listOrder: 12
+        listSm: 12
+        listXs: 12
+        order: 8
+        referencedKey: Resource.Resource_flat_subtype.Resource_flat_subtype_pkey
+        sm: 4
+        tab: General
+        variants: "piso"
+        visible
+        xs: 12
+    }
+    reference Flat_type_id {
+        attribute Flat_type_id
+        basicFilter
+        documentation: "Resource_flat_type_pkey"
+        group: Identification
+        list
+        order: 7
+        orderInList: 7
+        referencedKey: Resource.Resource_flat_type.Resource_flat_type_pkey
+        sm: 4
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Place_type_id {
+        attribute Place_type_id
+        basicFilter
+        documentation: "Resource_place_type_pkey"
+        group: Identification
+        list
+        order: 9
+        orderInList: 8
+        referencedKey: Resource.Resource_place_type.Resource_place_type_pkey
+        sm: 4
+        tab: General
+        variants: "habitacion" "plaza"
+        visible
+        xs: 12
+    }
+    reference Rate_id {
+        attribute Rate_id
+        basicFilter
+        documentation: "Pricing_rate_pkey"
+        group: Identification
+        list
+        order: 15
+        orderInList: 6
+        referencedKey: Billing.Pricing_rate.Pricing_rate_pkey
+        sm: 4
+        tab: General
+        variants: "piso" "habitacion" "plaza"
+        visible
+        xs: 12
+    }
+    reference Room_id {
+        additionalFilter: "AND:[{Flat_id:{EQ:$Flat_id}},{Resource_type:{EQ:habitacion}}]"
+        attribute Room_id
+        documentation: "Resource_pkey"
+        group: Identification
+        order: 6
+        orderInList: 5
+        referencedKey: Resource.Resource.Resource_pkey
+        sm: 4
+        tab: General
+        variants: "plaza"
+        visible
+        xs: 12
+    }
+    reference Service_id {
+        attribute Service_id
+        basicFilter
+        documentation: "Provider_pkey"
+        group: Identification
+        list
+        order: 11
+        referencedKey: Provider.Provider.Provider_pkey
+        sm: 4
+        tab: General
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    reference Status_id {
+        attribute Status_id
+        basicFilter
+        documentation: "Resource_status_pkey"
+        group: Identification
+        list
+        order: 3
+        referencedKey: Resource.Resource_status.Resource_status_pkey
+        sm: 4
+        tab: General
+        variants: "piso" "comun" "local" "parking" "trastero"
+        visible
+        xs: 12
+    }
+    tab General {
+        label es_ES: "General"
+        label en_US: "General"
+        order: 1
+    }
+    tab Amenities {
+        label es_ES: "Características"
+        label en_US: "Amenities"
+        order: 3
+    }
+    tab Inventory {
+        label es_ES: "Inventario"
+        label en_US: "Inventory"
+        order: 4
+    }
+    tab Files {
+        label es_ES: "Documentos"
+        label en_US: "Files"
+        order: 5
+    }
+    tab Notes {
+        label es_ES: "Notas"
+        label en_US: "Notes"
+        order: 6
+    }
+    tab Bookings {
+        label es_ES: "Reservas"
+        label en_US: "Bookings"
+        order: 7
+    }
+    tab Status {
+        label es_ES: "Estados"
+        label en_US: "Status"
+        order: 8
+    }
+    trigger Resource_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Resource_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Resource.Resource_B0_search
+        moment: BEFORE
+    }
+    trigger Resource_A1_calc_part {
+        each: ROW
+        events: INSERT DELETE
+        function: Resource.Resource_A1_calc_part
+        moment: AFTER
+    }
+    trigger Resource_B1_flat_data {
+        each: ROW
+        events: INSERT UPDATE
+        function: Resource.Resource_B1_flat_data
+        moment: BEFORE
+    }
+}

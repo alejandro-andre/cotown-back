@@ -1,0 +1,5 @@
+application Dashboards {
+    label es_ES: "Dashboards"
+    label en_US: "Dashboards"
+    order: 7
+}

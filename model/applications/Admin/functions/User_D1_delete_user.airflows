@@ -1,0 +1,5 @@
+function Admin.User_D1_delete_user {
+    documentation: "-- Borra el usuario y rol de BD"
+    language: plpgsql
+    path: "applications/Admin/functions/User_D1_delete_user.pgsql"
+}

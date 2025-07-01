@@ -1,0 +1,4 @@
+function Marketing.Social_network_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Social_network_B0_search.pgsql"
+}

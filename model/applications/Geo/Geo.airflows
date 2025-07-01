@@ -1,0 +1,5 @@
+application Geo {
+    label es_ES: "Ubicaciones"
+    label en_US: "Locations"
+    order: 3
+}

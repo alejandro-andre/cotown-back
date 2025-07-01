@@ -1,0 +1,5 @@
+enumType Auxiliar.Interior_type {
+    labels en_US: "Interior" "Outward"
+    labels es_ES: "Interior" "Exterior"
+    values: "interior" "exterior"
+}

@@ -1,0 +1,544 @@
+entity Building.Building {
+    attribute Active {
+        defaultValue: "FALSE"
+        group: Basic_data
+        label es_ES: "Activo"
+        label en_US: "Active"
+        order: 2
+        required
+        sm: 2
+        tab: General
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Estabilised_date {
+        group: Basic_data
+        label es_ES: "Fecha ramp-up a estabilised"
+        label en_US: "Date ramp-up to estabilised"
+        order: 21
+        sm: 2
+        tab: General
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Code {
+        basicFilter
+        group: Basic_data
+        label
+        label es_ES: "Código"
+        label en_US: "Code"
+        length: 20
+        list
+        order: 1
+        required
+        sm: 4
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Segment_id {
+        label es_ES: "Marca"
+        label en_US: "Brand"
+        required
+        type: INTEGER
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        group: Basic_data
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        lastInRow
+        length: 100
+        list
+        order: 3
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Address {
+        basicFilter
+        group: Address
+        label es_ES: "Dirección"
+        label en_US: "Address"
+        length: 200
+        list
+        order: 6
+        required
+        sm: 9
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Zip {
+        basicFilter
+        group: Address
+        label es_ES: "Código postal"
+        label en_US: "Zip"
+        length: 20
+        list
+        order: 7
+        required
+        sm: 3
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute District_id {
+        label es_ES: "Barrio"
+        label en_US: "District"
+        required
+        type: INTEGER
+    }
+    attribute Building_type_id {
+        label es_ES: "Tipo de venta"
+        label en_US: "Sell type"
+        required
+        type: INTEGER
+    }
+    attribute Lat_lon {
+        group: Address
+        label es_ES: "Posición geográfica"
+        label en_US: "Geoposition"
+        lastInRow
+        order: 9
+        pointInMap
+        sm: 6
+        tab: General
+        type: POINT
+        visible
+        xs: 12
+    }
+    attribute Description {
+        group: Details
+        label es_ES: "Descripción piso compartido (español)"
+        label en_US: "Description shared flat (spanish)"
+        length: 500
+        order: 10
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Details_private_en {
+        group: Details
+        label es_ES: "Detalles apartamento privado (inglés)"
+        label en_US: "Details private apartment (english)"
+        length: 4000
+        multiline
+        order: 18
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Tour {
+        group: Details
+        label es_ES: "Tour virtual piso compartido"
+        label en_US: "Virtual tour shared flat"
+        lastInRow
+        length: 1000
+        order: 14
+        sm: 6
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Tour_private {
+        group: Details
+        label es_ES: "Tour virtual apartamento privado"
+        label en_US: "Virtual tour private apartment"
+        lastInRow
+        length: 1000
+        order: 19
+        sm: 6
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Wifi_ssid {
+        label es_ES: "WiFi SSID"
+        label en_US: "Wifi SSID"
+        length: 50
+        order: 12
+        sm: 3
+        tab: Access
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Wifi_key {
+        label es_ES: "WiFi Clave"
+        label en_US: "Wifi Key"
+        length: 50
+        order: 13
+        sm: 9
+        tab: Access
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Gate_mac {
+        label es_ES: "Puerta - MAC"
+        label en_US: "Gate - MAC"
+        length: 50
+        order: 14
+        sm: 3
+        tab: Access
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Gate_url {
+        label es_ES: "Puerta - URL"
+        label en_US: "Gate - URL"
+        length: 50
+        order: 15
+        sm: 6
+        tab: Access
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Gate_phone {
+        label es_ES: "Puerta - Teléfono"
+        label en_US: "Gate - Phone"
+        length: 50
+        order: 15
+        sm: 3
+        tab: Access
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Notes {
+        label es_ES: "Notas (contactos de mantenimiento, emergencias 24h/llaves, asset manager…)"
+        label en_US: "Notes"
+        length: 4000
+        multiline
+        order: 20
+        sm: 12
+        tab: Notes
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Management_fee {
+        documentation: "BORRAR"
+        label es_ES: "Management Fee"
+        label en_US: "Management fee"
+        precision: 8
+        scale: 2
+        step: 0.01
+        type: DECIMAL
+    }
+    attribute Order {
+        group: Details
+        label es_ES: "Orden"
+        label en_US: "Order"
+        order: 20
+        sm: 3
+        tab: General
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Start_date {
+        group: Basic_data
+        label es_ES: "Fecha inicio/compra"
+        label en_US: "Start/Acquire date"
+        order: 20
+        sm: 2
+        tab: General
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Description_en {
+        group: Details
+        label es_ES: "Descripción piso compartido (inglés)"
+        label en_US: "Description shared flat (english)"
+        length: 500
+        order: 11
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Description_private {
+        group: Details
+        label es_ES: "Descripción apartamento privado (español)"
+        label en_US: "Description private apartment (spanish)"
+        length: 500
+        order: 15
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Description_private_en {
+        group: Details
+        label es_ES: "Descripción apartamento privado (inglés)"
+        label en_US: "Description private apartment (english)"
+        length: 500
+        order: 16
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Details {
+        group: Details
+        label es_ES: "Detalles piso compartido (español)"
+        label en_US: "Details shared flat (spanish)"
+        length: 4000
+        multiline
+        order: 12
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Details_en {
+        group: Details
+        label es_ES: "Detalles piso compartido (inglés)"
+        label en_US: "Details shared flat (english)"
+        length: 4000
+        multiline
+        order: 13
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Details_private {
+        group: Details
+        label es_ES: "Detalles apartamento privado (español)"
+        label en_US: "Details private apartment (english)"
+        length: 4000
+        multiline
+        order: 17
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Dirección en la que se encuentran recursos de tipo piso, habitación o plaza."
+    exportToCSVEnabled
+    group Basic_data {
+        label es_ES: "DATOS BÁSICOS"
+        label en_US: "BASIC_DATA"
+        order: 1
+    }
+    group Address {
+        label es_ES: "DIRECCIÓN"
+        label en_US: "ADDRESS"
+        order: 2
+    }
+    group Details {
+        label es_ES: "DETALLES"
+        label en_US: "DETAILS"
+        order: 3
+    }
+    icon: "business"
+    key Building_Code_uk {
+        attribute Code
+        documentation: "El código de edificio debe ser único"
+        unique
+    }
+    key Building_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Building_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Edificios"
+        singular: "Edificio"
+    }
+    label en_US {
+        plural: "Buildings"
+        singular: "Building"
+    }
+    language: es_ES
+    menu
+    order: 10
+    reference District_id {
+        attribute District_id
+        documentation: "District_pkey"
+        group: Address
+        list
+        listIsVisible
+        listOrder: 7
+        listSm: 12
+        listTab: General
+        listXs: 12
+        order: 8
+        referencedKey: Geo.District.District_pkey
+        sm: 6
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Building_type_id {
+        attribute Building_type_id
+        documentation: "Building_type_pkey"
+        group: Basic_data
+        list
+        listIsVisible
+        listSm: 12
+        listXs: 12
+        order: 3
+        referencedKey: Building.Building_type.Building_type_pkey
+        sm: 6
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Segment_id {
+        attribute Segment_id
+        basicFilter
+        documentation: "Segment_pkey"
+        group: Basic_data
+        order: 4
+        referencedKey: Auxiliar.Segment.Segment_pkey
+        sm: 6
+        tab: General
+        visible
+        xs: 12
+    }
+    tab General {
+        label es_ES: "General"
+        label en_US: "General"
+        order: 1
+    }
+    tab Services {
+        label es_ES: "Servicios"
+        label en_US: "Services"
+        order: 2
+    }
+    tab Access {
+        label es_ES: "Acceso"
+        label en_US: "Access"
+        order: 3
+    }
+    tab Fees {
+        label es_ES: "Facturación"
+        label en_US: "Fees"
+        order: 4
+    }
+    tab Files {
+        label es_ES: "Documentos"
+        label en_US: "Files"
+        order: 5
+    }
+    tab Resources {
+        label es_ES: "Recursos"
+        label en_US: "Resources"
+        order: 6
+    }
+    tab Prices {
+        label es_ES: "Precios"
+        label en_US: "Prices"
+        order: 7
+    }
+    tab Notes {
+        label es_ES: "Notas"
+        label en_US: "Notes"
+        order: 8
+    }
+    trigger Building_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Building_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Building.Building_B0_search
+        moment: BEFORE
+    }
+    trigger Building_B1_update {
+        each: ROW
+        events: UPDATE
+        function: Building.Building_B1_update
+        moment: BEFORE
+    }
+}

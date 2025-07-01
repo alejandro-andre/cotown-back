@@ -1,0 +1,5 @@
+function Auxiliar.validate_iban {
+    documentation: "# Validate IBAN"
+    language: plpython3u
+    path: "applications/Auxiliar/functions/validate_iban.py"
+}

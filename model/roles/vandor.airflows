@@ -1,0 +1,68 @@
+role vandor {
+    entityPermission Provider.Provider_bill {
+        types: INSERT UPDATE
+    }
+    entityPermission Provider.Provider_template {
+        types: INSERT UPDATE
+    }
+    entityPermission Provider.Provider_contract {
+        types: INSERT UPDATE
+    }
+    entityPermission Building.Building {
+        types: MENU
+    }
+    entityPermission Billing.Invoice {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Customer.Customer {
+        types: INSERT UPDATE MENU
+    }
+    entityPermission Customer.Customer_contact {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking {
+        types: MENU
+    }
+    entityPermission Booking.Booking_group {
+        types: MENU
+    }
+    entityPermission Billing.Product {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Billing.Product_type {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_other {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_subtype {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Booking.Booking_other_doc {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_other_resource {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Booking.Booking_other_service {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Invoice_line {
+        types: INSERT UPDATE DELETE
+    }
+    entityPermission Billing.Payment {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Provider.Provider {
+        types: UPDATE MENU
+    }
+    entityPermission Admin.Email {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Ipc {
+        types: INSERT UPDATE DELETE MENU
+    }
+    entityPermission Auxiliar.Sequence {
+        types: INSERT UPDATE DELETE
+    }
+}

@@ -1,0 +1,4 @@
+function Marketing.Advantages_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Advantages_B0_search.pgsql"
+}

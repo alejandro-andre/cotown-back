@@ -1,0 +1,213 @@
+entity Marketing.Media_resource_type {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Building_id {
+        computed
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Flat_subtype_id {
+        label es_ES: "Subtipo de piso"
+        label en_US: "Flat subtype"
+        order: 2
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Place_type_id {
+        label es_ES: "Tipo de plaza"
+        label en_US: "Place type"
+        order: 3
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Order {
+        basicFilter
+        label es_ES: "Posición"
+        label en_US: "Order"
+        list
+        order: 4
+        required
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Image {
+        label es_ES: "Imagen"
+        label en_US: "Image"
+        list
+        order: 7
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Alt {
+        basicFilter
+        label es_ES: "Alt (español)"
+        label en_US: "Alt (spanish)"
+        labelLanguage: es_ES
+        length: 200
+        order: 5
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Alt_en {
+        basicFilter
+        label es_ES: "Alt (inglés)"
+        label en_US: "Alt (english)"
+        labelLanguage: en_US
+        length: 200
+        order: 6
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        labelLanguage: es_ES
+        length: 100
+        list
+        order: 5
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Fotos para la web para cada recurso. Un recurso puede tener varias fotos."
+    exportToCSVEnabled
+    icon: "image"
+    key Media_resource_type_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Media_resource_type_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Imágenes por tipología"
+        singular: "Imagen"
+    }
+    label en_US {
+        plural: "Typology images"
+        singular: "Image"
+    }
+    language: es_ES
+    order: 200
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        list
+        listIsVisible
+        listOrder: 3
+        listSm: 12
+        listTab: Files
+        listXs: 12
+        order: 1
+        referencedKey: Building.Building.Building_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Flat_subtype_id {
+        attribute Flat_subtype_id
+        basicFilter
+        documentation: "Resource_flat_subtype_pkey"
+        list
+        order: 2
+        referencedKey: Resource.Resource_flat_subtype.Resource_flat_subtype_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Place_type_id {
+        attribute Place_type_id
+        basicFilter
+        documentation: "Resource_place_type_pkey"
+        list
+        order: 3
+        referencedKey: Resource.Resource_place_type.Resource_place_type_pkey
+        sm: 2
+        visible
+        xs: 12
+    }
+    trigger Media_resource_type_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Media_resource_type_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Marketing.Media_resource_type_B0_search
+        moment: BEFORE
+    }
+    trigger Media_resource_type_imagecheck {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Auxiliar.validate_image
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+function Admin.User_role_D1_delete_role {
+    documentation: "-- Desasignacion de rol"
+    language: plpgsql
+    path: "applications/Admin/functions/User_role_D1_delete_role.pgsql"
+}

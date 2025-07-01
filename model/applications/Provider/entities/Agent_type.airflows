@@ -1,0 +1,110 @@
+entity Provider.Agent_type {
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre (español)"
+        label en_US: "Name (spanish)"
+        labelLanguage: es_ES
+        length: 100
+        list
+        order: 1
+        required
+        textFilter
+        type: TEXT
+        visible
+    }
+    attribute Name_en {
+        basicFilter
+        label
+        label es_ES: "Nombre (inglés)"
+        label en_US: "Name (english)"
+        labelLanguage: en_US
+        length: 100
+        list
+        order: 2
+        required
+        textFilter
+        type: TEXT
+        visible
+    }
+    attribute Created_at {
+        computed
+        length: 100
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 97
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    documentation: "Tipos de marketplaces"
+    exportToCSVEnabled
+    icon: "more"
+    key Agent_type_search_index {
+        attribute Search
+        textSearch
+    }
+    key Agent_type_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label en_US {
+        plural: "Agent types"
+        singular: "Agent type"
+    }
+    label es_ES {
+        plural: "Tipos de marketplace"
+        singular: "Tipo de marketplace"
+    }
+    language: es_ES
+    menu
+    order: 70
+    trigger Agent_type_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Agent_type_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Provider.Agent_type_B0_search
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+enumType Auxiliar.Banner_type {
+    labels en_US: "Home" "Team" "Advantages"
+    labels es_ES: "Home" "Equipo" "Ventajas"
+    values: "home" "equipo" "ventajas"
+}

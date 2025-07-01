@@ -1,0 +1,5 @@
+function Booking.Booking_other_A1_locks {
+    documentation: "-- Crea/Actualiza los bloqueos"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_other_A1_locks.pgsql"
+}

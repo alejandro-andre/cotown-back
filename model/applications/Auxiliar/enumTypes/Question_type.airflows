@@ -1,0 +1,5 @@
+enumType Auxiliar.Question_type {
+    labels en_US: "Points" "Yes/No" "Free text"
+    labels es_ES: "Puntuación" "Sí/No" "Texto libre"
+    values: "puntos" "check" "texto"
+}

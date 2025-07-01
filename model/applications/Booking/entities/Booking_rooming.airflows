@@ -1,0 +1,349 @@
+entity Booking.Booking_rooming {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Booking_id {
+        computed
+        group: Booking
+        label
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        lastInRow
+        order: 1
+        required
+        sm: 3
+        type: INTEGER
+        xs: 12
+    }
+    attribute Id_type_id {
+        group: Resident
+        label es_ES: "Tipo de documento"
+        label en_US: "Id type"
+        order: 2
+        sm: 3
+        type: INTEGER
+        xs: 12
+    }
+    attribute Document {
+        basicFilter
+        group: Resident
+        label es_ES: "Documento de identidad"
+        label en_US: "Id Document"
+        list
+        order: 3
+        orderInList: 2
+        sm: 3
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        group: Resident
+        label es_ES: "Nombre y apellidos"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 4
+        orderInList: 3
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Email {
+        group: Resident
+        label es_ES: "Email"
+        label en_US: "Email"
+        length: 200
+        order: 10
+        pattern: "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$"
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Phones {
+        group: Resident
+        label es_ES: "Teléfonos"
+        label en_US: "Phones"
+        length: 100
+        order: 11
+        sm: 6
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Address {
+        basicFilter
+        group: Resident
+        label es_ES: "Dirección"
+        label en_US: "Address"
+        length: 200
+        list
+        order: 5
+        orderInList: 4
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Zip {
+        group: Resident
+        label es_ES: "Código postal"
+        label en_US: "Zip"
+        length: 20
+        list
+        order: 6
+        orderInList: 5
+        sm: 3
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute City {
+        basicFilter
+        group: Resident
+        label es_ES: "Ciudad"
+        label en_US: "City"
+        length: 50
+        list
+        order: 7
+        orderInList: 6
+        sm: 3
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Province {
+        group: Resident
+        label es_ES: "Provincia"
+        label en_US: "Province"
+        length: 50
+        order: 8
+        sm: 3
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Country_id {
+        group: Resident
+        label es_ES: "Pais"
+        label en_US: "Country"
+        order: 9
+        sm: 3
+        type: INTEGER
+        xs: 12
+    }
+    attribute Gender_id {
+        group: Resident
+        label es_ES: "Género"
+        label en_US: "Gender"
+        order: 12
+        sm: 3
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Language_id {
+        group: Resident
+        label es_ES: "Idioma"
+        label en_US: "Language"
+        length: 2
+        order: 13
+        sm: 3
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Nationality_id {
+        group: Resident
+        label es_ES: "Nacionalidad"
+        label en_US: "Nationality"
+        order: 14
+        sm: 3
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Country_origin_id {
+        group: Resident
+        label es_ES: "País de origen"
+        label en_US: "Country origin"
+        order: 15
+        sm: 3
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Rooming list B2C"
+    exportToCSVEnabled
+    group Booking {
+        label es_ES: "RESERVA"
+        label en_US: "BOOKING"
+        order: 1
+    }
+    group Resident {
+        label es_ES: "RESIDENTE ADICIONAL"
+        label en_US: "ADDITIONAL RESIDENT"
+        order: 2
+    }
+    icon: "local_hotel"
+    key Booking_rooming_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_rooming_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Rooming list"
+        singular: "Rooming list"
+    }
+    label en_US {
+        plural: "Rooming list"
+        singular: "Rooming list"
+    }
+    language: es_ES
+    order: 70
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        documentation: "Booking_pkey"
+        group: Booking
+        list
+        listIsVisible
+        listSm: 12
+        listTab: Contracts
+        listXs: 12
+        order: 1
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Country_id {
+        attribute Country_id
+        basicFilter
+        documentation: "Country_pkey"
+        group: Resident
+        list
+        order: 9
+        orderInList: 7
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Country_origin_id {
+        attribute Country_origin_id
+        documentation: "Country_pkey"
+        group: Resident
+        order: 15
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Gender_id {
+        attribute Gender_id
+        documentation: "Gender_pkey"
+        group: Resident
+        order: 12
+        referencedKey: Auxiliar.Gender.Gender_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Id_type_id {
+        attribute Id_type_id
+        basicFilter
+        documentation: "Id_type_pkey"
+        group: Resident
+        order: 2
+        referencedKey: Auxiliar.Id_type.Id_type_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Language_id {
+        attribute Language_id
+        documentation: "Language_pkey"
+        group: Resident
+        order: 13
+        referencedKey: Auxiliar.Language.Language_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    reference Nationality_id {
+        attribute Nationality_id
+        documentation: "Country_pkey"
+        group: Resident
+        order: 14
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    trigger Booking_rooming_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_rooming_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_rooming_B0_search
+        moment: BEFORE
+    }
+}

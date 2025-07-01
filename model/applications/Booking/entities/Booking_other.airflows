@@ -1,0 +1,930 @@
+entity Booking.Booking_other {
+    attribute id {
+        computed
+        label
+        label es_ES: "#"
+        label en_US: "#"
+        list
+        orderInList: 1
+        required
+        type: SERIAL
+    }
+    attribute Resource_id {
+        group: Contract
+        label es_ES: "Recurso"
+        label en_US: "Resource"
+        order: 3
+        orderInList: 3
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Substatus_id {
+        group: Contract
+        label es_ES: "Status"
+        label en_US: "Status"
+        order: 4
+        orderInList: 4
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Customer_id {
+        group: Contract
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        lastInRow
+        order: 3
+        required
+        sm: 8
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Date_from {
+        basicFilter
+        group: Contract
+        label es_ES: "Fecha inicio"
+        label en_US: "Date from"
+        list
+        order: 6
+        orderInList: 6
+        required
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute IPC_updated {
+        computed
+        defaultValue: "now()"
+        group: Prices
+        label es_ES: "Último incremento"
+        label en_US: "Last IPC increment"
+        order: 27
+        sm: 2
+        tab: Concepts
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Extras {
+        group: Prices
+        label es_ES: "Otros"
+        label en_US: "Others"
+        order: 24
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Extras_concept {
+        group: Prices
+        label es_ES: "Otros, concepto"
+        label en_US: "Others, concept"
+        labelLanguage: es_ES
+        length: 100
+        order: 25
+        sm: 8
+        tab: Concepts
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Deposit {
+        group: Deposit
+        label es_ES: "Fianza depositada"
+        label en_US: "Deposit"
+        order: 40
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_required {
+        group: Deposit
+        label es_ES: "Fianza a devolver"
+        label en_US: "Deposit to return"
+        order: 41
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_returned {
+        group: Deposit
+        label es_ES: "Fianza devuelta"
+        label en_US: "Deposit returned"
+        order: 43
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_return_date {
+        group: Deposit
+        label es_ES: "Devolución efectiva"
+        label en_US: "Date efective deposit return"
+        lastInRow
+        order: 44
+        sm: 2
+        tab: Concepts
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Compensation {
+        group: Indemnization
+        label es_ES: "Indemnizaciones"
+        label en_US: "Compensations"
+        order: 52
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Compensation_date {
+        group: Indemnization
+        label es_ES: "Indemnización efectiva"
+        label en_US: "Date efective compensation"
+        order: 54
+        sm: 2
+        tab: Concepts
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Include_electricity {
+        defaultValue: "FALSE"
+        group: Utilities
+        label es_ES: "Luz incluida"
+        label en_US: "Electricity included"
+        order: 61
+        required
+        sm: 2
+        tab: Concepts
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Include_water {
+        defaultValue: "FALSE"
+        group: Utilities
+        label es_ES: "Agua incluida"
+        label en_US: "Water included"
+        lastInRow
+        order: 62
+        required
+        sm: 4
+        tab: Concepts
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        group: Other
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        length: 4000
+        multiline
+        order: 40
+        sm: 12
+        tab: Booking
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Contribution_recommended {
+        group: Contribution
+        label es_ES: "MAC"
+        label en_US: "MAC"
+        order: 34
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Contribution_asking {
+        group: Contribution
+        label es_ES: "Solicitud inquilino"
+        label en_US: "Tenant expectation"
+        order: 35
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Contribution_proposal {
+        group: Contribution
+        label es_ES: "Propuesta Vandor"
+        label en_US: "Vandor proposal"
+        order: 36
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Contribution_percent {
+        group: Contribution
+        label es_ES: "% Contribución"
+        label en_US: "% of Contibution"
+        order: 33
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 1.0E-4
+        suffix: "%"
+        tab: Booking
+        type: DECIMAL
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Contribution_comments {
+        label es_ES: "Status"
+        label en_US: "Status"
+        length: 200
+        textFilter
+        type: TEXT
+        variants: "lau"
+    }
+    attribute Unlawful {
+        group: Contract
+        label es_ES: "Ocupación inconsentida"
+        label en_US: "Unlawful detainer"
+        list
+        order: 13
+        orderInList: 9
+        required
+        sm: 3
+        tab: Booking
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Payment_method_id {
+        group: Prices
+        label es_ES: "Medio de pago"
+        label en_US: "Payment method"
+        order: 21
+        required
+        sm: 6
+        tab: Concepts
+        type: INTEGER
+        xs: 12
+    }
+    attribute Bill_unlawful {
+        group: Contract
+        label es_ES: "Facturar inconsentida"
+        label en_US: "Bill unlawful"
+        list
+        order: 14
+        required
+        sm: 3
+        tab: Booking
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute End_1_month {
+        label es_ES: "Aviso fin contrato - 1 mes"
+        label en_US: "Check end contract - 1 month"
+        type: BOOLEAN
+    }
+    attribute IPC_1_month {
+        label es_ES: "Aviso subida IPC - 1 mes"
+        label en_US: "Check IPC increment - 1 month"
+        type: BOOLEAN
+    }
+    attribute Contribution_chance {
+        label es_ES: "Posibilidad de negociación"
+        label en_US: "Chance to negotiate"
+        type: BOOLEAN
+        variants: "lau"
+    }
+    attribute Contribution_proposed_date {
+        group: Contribution
+        label es_ES: "Fecha de propuesta"
+        label en_US: "Vandor proposal date"
+        order: 37
+        sm: 2
+        tab: Booking
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Pending_subrogation {
+        defaultValue: "no"
+        enumType: Auxiliar.Subrogation_type
+        group: Contract
+        label es_ES: "Subrogación pendiente"
+        label en_US: "Pending subrogation"
+        order: 12
+        sm: 4
+        tab: Booking
+        textFilter
+        type: TEXT
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Date_precapex {
+        group: Contract
+        label es_ES: "Fecha fin pre-capex"
+        label en_US: "Date end pre-capex"
+        order: 8
+        sm: 2
+        tab: Booking
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Date_capex {
+        group: Contract
+        label es_ES: "Fecha fin capex"
+        label en_US: "Date end capex"
+        order: 9
+        sm: 2
+        tab: Booking
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Compensation_required_date {
+        group: Indemnization
+        label es_ES: "Indemnización prevista"
+        label en_US: "Date required compensation"
+        order: 53
+        sm: 2
+        tab: Concepts
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute ITP_required_date {
+        group: Indemnization
+        label es_ES: "Pago ITP previsto"
+        label en_US: "Date required ITP"
+        order: 55
+        sm: 2
+        tab: Concepts
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute ITP_date {
+        group: Indemnization
+        label es_ES: "Pago ITP efectivo"
+        label en_US: "Date efective ITP"
+        lastInRow
+        order: 56
+        sm: 2
+        tab: Concepts
+        type: DATE
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Burofax_date {
+        group: Contract
+        label es_ES: "Burofax fin contrato"
+        label en_US: "Date burofax end contract"
+        lastInRow
+        order: 15
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Business_type {
+        group: Contract
+        label es_ES: "Tipo de negocio"
+        label en_US: "Business type"
+        length: 200
+        order: 11
+        sm: 4
+        tab: Booking
+        textFilter
+        type: TEXT
+        variants: "retail"
+        visible
+        xs: 12
+    }
+    attribute Date_bill_from {
+        group: Contract
+        label es_ES: "Facturar desde"
+        label en_US: "Bill since"
+        lastInRow
+        order: 10
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Send_bill {
+        defaultValue: "FALSE"
+        group: Prices
+        label es_ES: "Enviar factura"
+        label en_US: "Send invoice"
+        lastInRow
+        order: 26
+        required
+        sm: 2
+        tab: Concepts
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Send_IPC {
+        defaultValue: "FALSE"
+        group: Prices
+        label es_ES: "Enviar incremento IPC"
+        label en_US: "Send IPC"
+        lastInRow
+        order: 31
+        required
+        sm: 2
+        tab: Concepts
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Applied_IPC {
+        group: Prices
+        label es_ES: "IPC aplicado"
+        label en_US: "Applied IPC"
+        order: 29
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "%"
+        tab: Concepts
+        type: DECIMAL
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Date_estimated {
+        basicFilter
+        group: Contract
+        label es_ES: "Fecha estimada fin"
+        label en_US: "Date to estimated"
+        list
+        order: 8
+        orderInList: 8
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Rent {
+        group: Prices
+        label es_ES: "Renta"
+        label en_US: "Rent"
+        order: 20
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Warrants {
+        group: Prices
+        label es_ES: "Garantías extra"
+        label en_US: "Additional warrants"
+        order: 23
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Include_gas {
+        defaultValue: "FALSE"
+        group: Utilities
+        label es_ES: "Gas incluido"
+        label en_US: "Gas included"
+        order: 60
+        required
+        sm: 2
+        tab: Concepts
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Debts {
+        group: Prices
+        label es_ES: "Deudas anteriores"
+        label en_US: "Previous debts"
+        order: 22
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute IPC_month {
+        group: Prices
+        label es_ES: "Mes incremento IPC"
+        label en_US: "Month IPC increment"
+        labelLanguage: es_ES
+        order: 30
+        required
+        sm: 4
+        tab: Concepts
+        textFilter
+        type: INTEGER
+        xs: 12
+    }
+    attribute Deposit_required_date {
+        group: Deposit
+        label es_ES: "Devolución prevista"
+        label en_US: "Date required deposit return"
+        order: 42
+        sm: 2
+        tab: Concepts
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Date_to {
+        basicFilter
+        group: Contract
+        label es_ES: "Fecha fin"
+        label en_US: "Date to"
+        list
+        order: 7
+        orderInList: 7
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Negotiation {
+        enumType: Auxiliar.Negotiation_type
+        group: Contribution
+        label es_ES: "Estado negociación"
+        label en_US: "Negotiation status"
+        length: 20
+        order: 30
+        sm: 2
+        tab: Booking
+        textFilter
+        type: TEXT
+        variants: "lau"
+        visible
+        xs: 12
+    }
+    attribute Prev_rent {
+        computed
+        group: Prices
+        label es_ES: "Renta anterior"
+        label en_US: "Previous rent"
+        order: 28
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Concepts
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Product_id {
+        group: Contract
+        label es_ES: "Producto a facturar"
+        label en_US: "Product to bill"
+        order: 5
+        orderInList: 2
+        required
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Booking_type {
+        basicFilter
+        enumType: Auxiliar.Other_booking_type
+        group: Contract
+        label
+        label es_ES: "Tipo de contrato"
+        label en_US: "Contract type"
+        list
+        order: 1
+        required
+        sm: 4
+        tab: Booking
+        textFilter
+        type: TEXT
+        variantSelector
+        visible
+        xs: 12
+    }
+    documentation: "Reservas de otros activos"
+    exportToCSVEnabled
+    group Contract {
+        label es_ES: "CONTRATO"
+        label en_US: "CONTRACT"
+        order: 1
+    }
+    group Prices {
+        label es_ES: "PRECIOS"
+        label en_US: "PRICES"
+        order: 2
+    }
+    group Contribution {
+        label es_ES: "PROPUESTA FINALIZACIÓN CONTRATO"
+        label en_US: "CONTRACT EXTINTION PROPOSAL"
+        order: 4
+    }
+    group Other {
+        label es_ES: "OTROS DATOS"
+        label en_US: "OTHER DATA"
+        order: 5
+    }
+    group Customer {
+        label es_ES: "CLIENTE"
+        label en_US: "CUSTOMER"
+        order: 3
+    }
+    group Deposit {
+        label es_ES: "FIANZA"
+        label en_US: "DEPOSIT"
+        order: 3
+    }
+    group Indemnization {
+        label es_ES: "INDEMNIZACIÓN"
+        label en_US: "COMPENSATION"
+        order: 4
+    }
+    group Utilities {
+        label es_ES: "CONTRATOS"
+        label en_US: "UTILITIES"
+        order: 5
+    }
+    icon: "event_busy"
+    key Booking_other_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_other_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Reservas LAU y otros"
+        singular: "Reserva LAU y otros"
+    }
+    label en_US {
+        plural: "Other bookings"
+        singular: "Other booking"
+    }
+    language: es_ES
+    menu
+    order: 16
+    reference Customer_id {
+        attribute Customer_id
+        basicFilter
+        documentation: "Customer_pkey"
+        group: Contract
+        list
+        listIsVisible
+        listOrder: 3
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 3
+        orderInList: 5
+        referencedKey: Customer.Customer.Customer_pkey
+        sm: 8
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Resource_id {
+        additionalFilter: "NOT:{Resource_type:{IN:[habitacion,plaza]}}"
+        attribute Resource_id
+        basicFilter
+        documentation: "Resource_pkey"
+        group: Contract
+        list
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 3
+        orderInList: 3
+        referencedKey: Resource.Resource.Resource_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference IPC_month {
+        attribute IPC_month
+        documentation: "Monthname_pkey"
+        group: Prices
+        order: 30
+        referencedKey: Auxiliar.Monthname.Monthname_pkey
+        sm: 4
+        tab: Concepts
+        visible
+        xs: 12
+    }
+    reference Payment_method_id {
+        attribute Payment_method_id
+        basicFilter
+        documentation: "Payment_method_pkey"
+        group: Prices
+        order: 21
+        referencedKey: Billing.Payment_method.Payment_method_pkey
+        sm: 6
+        tab: Concepts
+        visible
+        xs: 12
+    }
+    reference Product_id {
+        additionalFilter: "Product_type_id:{EQ:3}"
+        attribute Product_id
+        basicFilter
+        documentation: "Product_pkey"
+        group: Contract
+        order: 5
+        orderInList: 2
+        referencedKey: Billing.Product.Product_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Substatus_id {
+        attribute Substatus_id
+        documentation: "Booking_subtype_pkey"
+        group: Contract
+        list
+        order: 4
+        orderInList: 4
+        referencedKey: Booking.Booking_subtype.Booking_subtype_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    tab Booking {
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 1
+    }
+    tab Invoices {
+        label es_ES: "Facturas"
+        label en_US: "Invoices"
+        order: 3
+    }
+    tab Documents {
+        label es_ES: "Documentos"
+        label en_US: "Documents"
+        order: 4
+    }
+    tab Concepts {
+        label es_ES: "Conceptos"
+        label en_US: "Concepts"
+        order: 2
+    }
+    trigger Booking_other_B1_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_other_B1_validate
+        moment: BEFORE
+    }
+    trigger Booking_other_A1_locks {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Booking.Booking_other_A1_locks
+        moment: AFTER
+    }
+    trigger Booking_other_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_other_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_other_B0_search
+        moment: BEFORE
+    }
+}

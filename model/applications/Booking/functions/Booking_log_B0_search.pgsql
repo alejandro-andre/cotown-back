@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Log"::text,''); RETURN NEW; END;

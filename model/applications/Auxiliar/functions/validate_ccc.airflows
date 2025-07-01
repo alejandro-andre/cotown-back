@@ -1,0 +1,5 @@
+function Auxiliar.validate_ccc {
+    documentation: "# Validate IBAN/SWIFT"
+    language: plpython3u
+    path: "applications/Auxiliar/functions/validate_ccc.py"
+}

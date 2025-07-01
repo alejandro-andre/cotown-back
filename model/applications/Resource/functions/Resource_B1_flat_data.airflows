@@ -1,0 +1,5 @@
+function Resource.Resource_B1_flat_data {
+    documentation: "-- Calcula y valida los campos del recurso"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_B1_flat_data.pgsql"
+}

@@ -1,0 +1,4 @@
+function Billing.Pricing_rate_B0_search {
+    language: plpgsql
+    path: "applications/Billing/functions/Pricing_rate_B0_search.pgsql"
+}

@@ -1,0 +1,5 @@
+enumType Auxiliar.Media_type {
+    labels en_US: "Main" "Landing" "Gallery" "Icon"
+    labels es_ES: "Principal" "Landing" "Galería" "Icono"
+    values: "principal" "landing" "galeria" "icono"
+}

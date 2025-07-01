@@ -1,0 +1,5 @@
+function Resource.Resource_availability_B1_validate {
+    documentation: "-- Valida las fechas"
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_availability_B1_validate.pgsql"
+}

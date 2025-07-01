@@ -1,0 +1,5 @@
+application Auxiliar {
+    label es_ES: "Auxiliares"
+    label en_US: "Auxiliary"
+    order: 9
+}

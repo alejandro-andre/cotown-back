@@ -1,0 +1,305 @@
+role provider {
+    entityPermission Provider.Provider_contact_type {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_bill {
+        types: SELECT
+    }
+    entityPermission Building.Building_service_type {
+        types: SELECT
+    }
+    entityPermission Building.Building_transport_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_flat_type {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_template {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_contract {
+        types: SELECT
+    }
+    entityPermission Geo.Location {
+        types: SELECT
+    }
+    entityPermission Geo.District {
+        types: SELECT
+    }
+    entityPermission Building.Building {
+        types: SELECT
+    }
+    entityPermission Building.Building_type {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_contact {
+        types: SELECT INSERT UPDATE
+    }
+    entityPermission Provider.Provider_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_doc_type {
+        types: SELECT
+    }
+    entityPermission Billing.Pricing_rate {
+        types: SELECT
+    }
+    entityPermission Billing.Pricing_detail {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_price {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_detail {
+        types: SELECT
+    }
+    entityPermission Billing.Invoice {
+        types: SELECT MENU
+    }
+    entityPermission Customer.Customer {
+        types: SELECT MENU
+    }
+    entityPermission Booking.Customer_reason {
+        types: SELECT
+    }
+    entityPermission Provider.Agent {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_amenity_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_amenity {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_inventory_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_inventory_zone {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_inventory {
+        types: SELECT
+    }
+    entityPermission Building.Building_doc_type {
+        types: SELECT
+    }
+    entityPermission Building.Building_doc {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_availability {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_flat_subtype {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_place_type {
+        types: SELECT
+    }
+    entityPermission Resource.Resource_status {
+        types: SELECT
+    }
+    entityPermission Booking.Booking {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_who {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_channel {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_referral {
+        types: SELECT
+    }
+    entityPermission Booking.Checkin_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_questionnaire {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_discount_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_rooming {
+        types: SELECT
+    }
+    entityPermission Billing.Product {
+        types: SELECT
+    }
+    entityPermission Billing.Product_type {
+        types: SELECT
+    }
+    entityPermission Billing.Tax {
+        types: SELECT
+    }
+    entityPermission Billing.Tax_type {
+        types: SELECT
+    }
+    entityPermission Booking.Booking_group_price {
+        types: SELECT
+    }
+    entityPermission Geo.Province {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Segment {
+        types: SELECT
+    }
+    entityPermission Auxiliar.School {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Gender {
+        types: SELECT
+    }
+    entityPermission Geo.Country {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_doc {
+        types: SELECT
+    }
+    entityPermission Customer.Customer_doc_type {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_doc {
+        types: SELECT
+    }
+    entityPermission Provider.Provider_doc_type {
+        types: SELECT
+    }
+    entityPermission Billing.Invoice_line {
+        types: SELECT
+    }
+    entityPermission Billing.Payment_method {
+        types: SELECT
+    }
+    entityPermission Billing.Payment {
+        types: SELECT MENU
+    }
+    entityPermission Provider.Provider {
+        types: SELECT MENU
+    }
+    entityPermission Auxiliar.Language {
+        types: SELECT
+    }
+    entityPermission Auxiliar.Id_type {
+        types: SELECT
+    }
+    rowLevelPermission Provider_Resource {
+        as: PERMISSIVE
+        entity: Resource.Resource
+        expression: "\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Provider_Provider_template {
+        as: PERMISSIVE
+        entity: Provider.Provider_template
+        expression: "\"Provider_id\" = (SELECT id FROM \"Provider\".\"Provider\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Provider_Building {
+        as: PERMISSIVE
+        entity: Building.Building
+        expression: "id IN (SELECT DISTINCT \"Building_id\" FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Provider_contact {
+        as: PERMISSIVE
+        entity: Provider.Provider_contact
+        expression: "\"Provider_id\" = (SELECT id FROM \"Provider\".\"Provider\" WHERE \"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Provider_Resource_doc {
+        as: PERMISSIVE
+        entity: Resource.Resource_doc
+        expression: "\"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Pricing_detail {
+        as: PERMISSIVE
+        entity: Billing.Pricing_detail
+        expression: "\"Building_id\" IN (SELECT DISTINCT \"Building_id\" FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Booking_price {
+        as: PERMISSIVE
+        entity: Booking.Booking_price
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking\" WHERE \"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER)))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Invoice {
+        as: PERMISSIVE
+        entity: Billing.Invoice
+        expression: "\"Provider_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER)"
+        for: ALL
+    }
+    rowLevelPermission Provider_Customer {
+        as: PERMISSIVE
+        entity: Customer.Customer
+        expression: "id IN (SELECT DISTINCT \"Customer_id\" FROM \"Booking\".\"Booking\" WHERE \"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER)))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Resource_amenity {
+        as: PERMISSIVE
+        entity: Resource.Resource_amenity
+        expression: "\"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Resource_inventory {
+        as: PERMISSIVE
+        entity: Resource.Resource_inventory
+        expression: "\"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Resource_availability {
+        as: PERMISSIVE
+        entity: Resource.Resource_availability
+        expression: "\"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Booking {
+        as: PERMISSIVE
+        entity: Booking.Booking
+        expression: "\"Resource_id\" IN (SELECT id FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Booking_group {
+        as: PERMISSIVE
+        entity: Booking.Booking_group
+        expression: "\"Building_id\" IN (SELECT DISTINCT \"Building_id\" FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Booking_rooming {
+        as: PERMISSIVE
+        entity: Booking.Booking_group_rooming
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking_group\" WHERE \"Building_id\" IN (SELECT DISTINCT \"Building_id\" FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER)))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Booking_group_price {
+        as: PERMISSIVE
+        entity: Booking.Booking_group_price
+        expression: "\"Booking_id\" IN (SELECT id FROM \"Booking\".\"Booking_group\" WHERE \"Building_id\" IN (SELECT DISTINCT \"Building_id\" FROM \"Resource\".\"Resource\" r WHERE r.\"Owner_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER)))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Invoice_line {
+        as: PERMISSIVE
+        entity: Billing.Invoice_line
+        expression: "\"Invoice_id\" IN (SELECT id FROM \"Billing\".\"Invoice\" WHERE \"Provider_id\" = (SELECT id FROM \"Provider\".\"Provider\" p WHERE p.\"User_name\" = CURRENT_USER))"
+        for: ALL
+    }
+    rowLevelPermission Provider_Payment {
+        as: PERMISSIVE
+        entity: Billing.Payment
+        expression: "TRUE"
+        for: ALL
+    }
+    rowLevelPermission Provider_Provider {
+        as: PERMISSIVE
+        entity: Provider.Provider
+        expression: "\"User_name\" = CURRENT_USER"
+        for: ALL
+    }
+}

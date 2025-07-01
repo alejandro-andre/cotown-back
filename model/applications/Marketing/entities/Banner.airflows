@@ -1,0 +1,174 @@
+entity Marketing.Banner {
+    attribute Segment_id {
+        label es_ES: "Web"
+        label en_US: "Web"
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Page {
+        basicFilter
+        enumType: Auxiliar.Banner_type
+        label
+        label es_ES: "Página"
+        label en_US: "Page"
+        list
+        order: 2
+        required
+        sm: 4
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Text {
+        basicFilter
+        label es_ES: "Texto (español)"
+        label en_US: "Text (spanish)"
+        length: 200
+        list
+        order: 4
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Text_en {
+        basicFilter
+        label es_ES: "Texto (inglés)"
+        label en_US: "Text (english)"
+        length: 200
+        list
+        order: 5
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Published {
+        basicFilter
+        defaultValue: "FALSE"
+        label es_ES: "Publicado"
+        label en_US: "Published"
+        list
+        order: 3
+        required
+        sm: 2
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Link {
+        label es_ES: "Enlace (español)"
+        label en_US: "Link (spanish)"
+        length: 200
+        order: 6
+        sm: 6
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Link_en {
+        label es_ES: "Enlace (inglés)"
+        label en_US: "Link (english)"
+        length: 200
+        order: 7
+        sm: 6
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Redes sociales"
+    exportToCSVEnabled
+    icon: "art_track"
+    key Banner_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Banner_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Banners"
+        singular: "Banner"
+    }
+    label en_US {
+        plural: "Banners"
+        singular: "Banner"
+    }
+    language: es_ES
+    menu
+    order: 110
+    reference Segment_id {
+        attribute Segment_id
+        basicFilter
+        documentation: "Segment_pkey"
+        list
+        order: 1
+        referencedKey: Auxiliar.Segment.Segment_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Banner_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Banner_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Marketing.Banner_B0_search
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,997 @@
+entity Customer.Customer {
+    attribute Bank_city {
+        group: Bank_info
+        label es_ES: "Ciudad del titular"
+        label en_US: "Holder city"
+        order: 45
+        sm: 3
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Bank_country_id {
+        group: Bank_info
+        label es_ES: "País del titular"
+        label en_US: "Holder country"
+        order: 46
+        orderInList: 8
+        sm: 3
+        tab: Billing
+        type: INTEGER
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute IBAN {
+        group: Bank_info
+        label es_ES: "IBAN para domiciliación"
+        label en_US: "IBAN for direct debit"
+        order: 31
+        sm: 6
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute User_name {
+        computed
+        group: Identification
+        label es_ES: "Usuario"
+        label en_US: "User"
+        length: 50
+        order: 7
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Type {
+        basicFilter
+        enumType: Auxiliar.Person_type
+        group: Identification
+        label es_ES: "Persona/Empresa"
+        label en_US: "Person/Company"
+        order: 1
+        required
+        sm: 6
+        tab: General
+        type: TEXT
+        variantSelector
+        visible
+        xs: 12
+    }
+    attribute Photo {
+        label es_ES: "Foto"
+        label en_US: "Photo"
+        order: 1
+        sm: 4
+        tab: Documents
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Same_account {
+        defaultValue: "FALSE"
+        group: Bank_info
+        label es_ES: "Misma cuenta para devolución"
+        label en_US: "Same account for deposit return"
+        lastInRow
+        order: 32
+        required
+        sm: 3
+        tab: Billing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Lang {
+        defaultValue: "es"
+        enumType: Auxiliar.Lang
+        group: Identification
+        label es_ES: "Idioma preferido"
+        label en_US: "Preferred language"
+        order: 5
+        required
+        sm: 2
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Id_type_id {
+        group: Identification
+        label es_ES: "Tipo de documento"
+        label en_US: "Id type"
+        order: 2
+        sm: 4
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Create_user {
+        defaultValue: "TRUE"
+        group: Identification
+        label es_ES: "Crear usuario"
+        label en_US: "Create user"
+        order: 8
+        sm: 2
+        tab: General
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Document {
+        basicFilter
+        group: Identification
+        label es_ES: "Documento de identidad"
+        label en_US: "Id Document"
+        list
+        order: 3
+        orderInList: 3
+        sm: 2
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        group: Identification
+        label
+        label es_ES: "Nombre y apellidos o Razón social"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 4
+        orderInList: 1
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        basicFilter
+        group: Basic_data
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        length: 4000
+        multiline
+        order: 34
+        sm: 12
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Address {
+        group: Address
+        label es_ES: "Dirección"
+        label en_US: "Address"
+        length: 200
+        order: 22
+        orderInList: 6
+        sm: 12
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Zip {
+        group: Address
+        label es_ES: "Código postal"
+        label en_US: "Zip"
+        length: 20
+        order: 23
+        sm: 3
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute City {
+        group: Address
+        label es_ES: "Ciudad"
+        label en_US: "City"
+        length: 50
+        order: 24
+        orderInList: 7
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Province {
+        group: Address
+        label es_ES: "Provincia"
+        label en_US: "Province"
+        length: 50
+        order: 25
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Country_id {
+        group: Address
+        label es_ES: "País"
+        label en_US: "Country"
+        order: 26
+        orderInList: 8
+        sm: 3
+        tab: General
+        type: INTEGER
+        xs: 12
+    }
+    attribute Email {
+        group: Address
+        label
+        label es_ES: "Email"
+        label en_US: "Email"
+        length: 200
+        list
+        order: 20
+        orderInList: 4
+        pattern: "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$"
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute GDPR {
+        basicFilter
+        group: Basic_data
+        label es_ES: "GDPR"
+        label en_US: "GDPR"
+        order: 33
+        sm: 2
+        tab: General
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Swift {
+        group: Bank_info
+        label es_ES: "Swift/BIC"
+        label en_US: "Swift/BIC"
+        length: 200
+        order: 41
+        sm: 3
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_name {
+        basicFilter
+        group: Billing_info
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        order: 60
+        sm: 6
+        tab: Billing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_address {
+        group: Billing_info
+        label es_ES: "Dirección"
+        label en_US: "Address"
+        length: 200
+        order: 61
+        sm: 6
+        tab: Billing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_zip {
+        group: Billing_info
+        label es_ES: "Código postal"
+        label en_US: "Zip"
+        length: 20
+        order: 62
+        sm: 3
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_city {
+        group: Billing_info
+        label es_ES: "Ciudad"
+        label en_US: "City"
+        length: 50
+        order: 63
+        sm: 3
+        tab: Billing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_id_type_id {
+        group: Billing_info
+        label es_ES: "Tipo de documento"
+        label en_US: "Id type"
+        order: 51
+        sm: 3
+        tab: Billing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Billing_document {
+        group: Billing_info
+        label es_ES: "Documento de identidad"
+        label en_US: "Id Document"
+        order: 52
+        sm: 3
+        tab: Billing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Bank_holder {
+        group: Bank_info
+        label es_ES: "Titular"
+        label en_US: "Account holder"
+        order: 42
+        sm: 6
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Bank_name {
+        group: Bank_info
+        label es_ES: "Nombre del banco"
+        label en_US: "Bank name"
+        order: 43
+        sm: 6
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Bank_address {
+        group: Bank_info
+        label es_ES: "Dirección del titular"
+        label en_US: "Holder address"
+        order: 44
+        sm: 6
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Phones {
+        group: Address
+        label es_ES: "Teléfonos"
+        label en_US: "Phones"
+        length: 100
+        list
+        order: 21
+        orderInList: 5
+        sm: 6
+        tab: General
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Gender_id {
+        group: Basic_data
+        label es_ES: "Género"
+        label en_US: "Gender"
+        order: 27
+        sm: 3
+        tab: General
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Language_id {
+        group: Basic_data
+        label es_ES: "Idioma"
+        label en_US: "Language"
+        length: 2
+        order: 28
+        sm: 3
+        tab: General
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Nationality_id {
+        group: Basic_data
+        label es_ES: "Nacionalidad"
+        label en_US: "Nationality"
+        order: 29
+        sm: 3
+        tab: General
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Country_origin_id {
+        group: Basic_data
+        label es_ES: "País de origen"
+        label en_US: "Country origin"
+        order: 30
+        sm: 3
+        tab: General
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute Birth_date {
+        group: Basic_data
+        label es_ES: "Fecha de nacimiento"
+        label en_US: "Birth date"
+        order: 31
+        sm: 3
+        tab: General
+        type: DATE
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    attribute Tutor_id_type_id {
+        group: Tutor
+        label es_ES: "Tipo de documento"
+        label en_US: "Id type"
+        order: 36
+        sm: 3
+        tab: General
+        type: INTEGER
+        variants: "persona"
+        xs: 12
+    }
+    attribute School_id {
+        label es_ES: "Escuela"
+        label en_US: "School"
+        type: INTEGER
+    }
+    attribute Bank_account {
+        group: Bank_info
+        label es_ES: "IBAN/Cuenta para devolución de depósito"
+        label en_US: "IBAN/Bank account for deposit return"
+        length: 200
+        order: 40
+        sm: 6
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Signer_name {
+        group: Identification
+        label es_ES: "Firmante"
+        label en_US: "Signer"
+        length: 100
+        order: 9
+        required
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "empresa"
+        visible
+        xs: 12
+    }
+    attribute Signer_id_type_id {
+        group: Identification
+        label es_ES: "Tipo de documento"
+        label en_US: "Id type"
+        order: 10
+        sm: 4
+        tab: General
+        type: INTEGER
+        variants: "empresa"
+        xs: 12
+    }
+    attribute Signer_document {
+        group: Identification
+        label es_ES: "Documento de identidad"
+        label en_US: "Id Document"
+        length: 100
+        order: 11
+        sm: 2
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "empresa"
+        visible
+        xs: 12
+    }
+    attribute Tutor_document {
+        group: Tutor
+        label es_ES: "Documento de identidad"
+        label en_US: "Id Document"
+        order: 37
+        orderInList: 3
+        sm: 3
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    attribute Tutor_name {
+        group: Tutor
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        order: 38
+        orderInList: 1
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    attribute Tutor_email {
+        group: Tutor
+        label es_ES: "Email"
+        label en_US: "Email"
+        length: 200
+        order: 39
+        orderInList: 4
+        pattern: "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$"
+        sm: 6
+        tab: General
+        textFilter
+        type: TEXT
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    attribute Tutor_phones {
+        group: Tutor
+        label es_ES: "Teléfonos"
+        label en_US: "Phones"
+        length: 100
+        order: 40
+        orderInList: 5
+        sm: 6
+        tab: General
+        type: TEXT
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    attribute Black_list {
+        basicFilter
+        defaultValue: "FALSE"
+        group: Other
+        label es_ES: "Lista negra"
+        label en_US: "Black listed"
+        order: 70
+        required
+        sm: 3
+        tab: Billing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Black_reason {
+        group: Other
+        label es_ES: "Motivo"
+        label en_US: "Reason"
+        length: 200
+        order: 71
+        sm: 9
+        tab: Billing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Payment_method_id {
+        group: Bank_info
+        label es_ES: "Medio de pago"
+        label en_US: "Payment method"
+        lastInRow
+        order: 30
+        sm: 3
+        tab: Billing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Billing_province {
+        group: Billing_info
+        label es_ES: "Provincia"
+        label en_US: "Province"
+        length: 50
+        order: 64
+        sm: 3
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_country_id {
+        group: Billing_info
+        label es_ES: "País"
+        label en_US: "Country"
+        order: 65
+        sm: 3
+        tab: Billing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Billing_type {
+        enumType: Auxiliar.Person_type
+        group: Billing_info
+        label es_ES: "Persona/Empresa"
+        label en_US: "Person/Company"
+        order: 50
+        sm: 6
+        tab: Billing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Personas físicas o jurídicas que contratan, pagan o utilizan, los servicios de Cotown"
+    exportToCSVEnabled
+    group Identification {
+        label en_US: "IDENTIFICATION"
+        label es_ES: "IDENTIFICACIÓN"
+        order: 1
+    }
+    group Address {
+        label es_ES: "DIRECCIÓN"
+        label en_US: "ADDRESS"
+        order: 2
+    }
+    group Basic_data {
+        label es_ES: "DATOS BÁSICOS"
+        label en_US: "BASIC INFO"
+        order: 3
+    }
+    group Tutor {
+        label es_ES: "TUTOR"
+        label en_US: "TUTOR"
+        order: 5
+    }
+    group Billing_info {
+        label es_ES: "DATOS FACTURACIÓN"
+        label en_US: "BILLING INFO"
+        order: 4
+    }
+    group Bank_info {
+        label es_ES: "DATOS BANCARIOS"
+        label en_US: "BANK INFO"
+        order: 5
+    }
+    group Other {
+        label es_ES: "OTROS DATOS"
+        label en_US: "OTHER INFO"
+        order: 6
+    }
+    icon: "person"
+    key Customer_Document_uk {
+        attribute Document
+        documentation: "El identificador (CIF/NIF) debe ser único"
+        unique
+    }
+    key Customer_search_index {
+        attribute Search
+        textSearch
+    }
+    key Customer_Email_uk {
+        attribute Email
+        documentation: "El email debe ser único"
+        unique
+    }
+    key Customer_User_name_uk {
+        attribute User_name
+        documentation: "El código de usuario debe ser único"
+        unique
+    }
+    key Customer_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label en_US {
+        plural: "Customers"
+        singular: "Customer"
+    }
+    label es_ES {
+        plural: "Clientes"
+        singular: "Cliente"
+    }
+    language: es_ES
+    menu
+    order: 10
+    reference School_id {
+        attribute School_id
+        documentation: "School_pkey"
+        referencedKey: Auxiliar.School.School_pkey
+    }
+    reference Bank_country_id {
+        attribute Bank_country_id
+        documentation: "Country_pkey"
+        group: Bank_info
+        order: 46
+        orderInList: 8
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        tab: Billing
+        visible
+        xs: 12
+    }
+    reference Payment_method_id {
+        attribute Payment_method_id
+        documentation: "Payment_method_pkey"
+        group: Bank_info
+        order: 30
+        referencedKey: Billing.Payment_method.Payment_method_pkey
+        sm: 3
+        tab: Billing
+        visible
+        xs: 12
+    }
+    reference Billing_country_id {
+        attribute Billing_country_id
+        basicFilter
+        documentation: "Country_pkey"
+        group: Billing_info
+        order: 65
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        tab: Billing
+        visible
+        xs: 12
+    }
+    reference Billing_id_type_id {
+        attribute Billing_id_type_id
+        documentation: "Id_type_pkey"
+        group: Billing_info
+        order: 51
+        referencedKey: Auxiliar.Id_type.Id_type_pkey
+        sm: 3
+        tab: Billing
+        visible
+        xs: 12
+    }
+    reference Tutor_id_type_id {
+        attribute Tutor_id_type_id
+        documentation: "Id_type_pkey"
+        group: Tutor
+        order: 36
+        orderInList: 9
+        referencedKey: Auxiliar.Id_type.Id_type_pkey
+        sm: 3
+        tab: General
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    reference Country_origin_id {
+        attribute Country_origin_id
+        documentation: "Country_pkey"
+        group: Basic_data
+        order: 30
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        tab: General
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    reference Gender_id {
+        attribute Gender_id
+        documentation: "Gender_pkey"
+        group: Basic_data
+        order: 27
+        orderInList: 10
+        referencedKey: Auxiliar.Gender.Gender_pkey
+        sm: 3
+        tab: General
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    reference Language_id {
+        attribute Language_id
+        documentation: "Language_pkey"
+        group: Basic_data
+        order: 28
+        referencedKey: Auxiliar.Language.Language_pkey
+        sm: 3
+        tab: General
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    reference Nationality_id {
+        attribute Nationality_id
+        documentation: "Country_pkey"
+        group: Basic_data
+        order: 29
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        tab: General
+        variants: "persona"
+        visible
+        xs: 12
+    }
+    reference Country_id {
+        attribute Country_id
+        basicFilter
+        documentation: "Country_pkey"
+        group: Address
+        order: 26
+        orderInList: 8
+        referencedKey: Geo.Country.Country_pkey
+        sm: 3
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Id_type_id {
+        attribute Id_type_id
+        documentation: "Id_type_pkey"
+        group: Identification
+        order: 2
+        referencedKey: Auxiliar.Id_type.Id_type_pkey
+        sm: 4
+        tab: General
+        visible
+        xs: 12
+    }
+    reference Signer_id_type_id {
+        attribute Signer_id_type_id
+        documentation: "Id_type_pkey"
+        group: Identification
+        order: 10
+        referencedKey: Auxiliar.Id_type.Id_type_pkey
+        sm: 4
+        tab: General
+        variants: "empresa"
+        visible
+        xs: 12
+    }
+    tab General {
+        label en_US: "General"
+        label es_ES: "General"
+        order: 1
+    }
+    tab Contacts {
+        label en_US: "Contacts"
+        label es_ES: "Contactos"
+        order: 3
+    }
+    tab Documents {
+        label en_US: "Documents"
+        label es_ES: "Documentos"
+        order: 4
+    }
+    tab Bookings {
+        label es_ES: "Reservas"
+        label en_US: "Bookings"
+        order: 5
+    }
+    tab Invoices {
+        label es_ES: "Facturas"
+        label en_US: "Invoices"
+        order: 6
+    }
+    tab Billing {
+        label es_ES: "Facturación"
+        label en_US: "Billing"
+        order: 2
+    }
+    trigger Customer_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Customer_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Customer.Customer_B0_search
+        moment: BEFORE
+    }
+    trigger Customer_B1_validate_id {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.validate_NIF_NIE
+        moment: BEFORE
+    }
+    trigger Customer_B2_validate_ccc {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.validate_ccc
+        moment: BEFORE
+    }
+    trigger Customer_A1_create_user {
+        each: ROW
+        events: INSERT UPDATE
+        function: Customer.Customer_A1_create_user
+        moment: AFTER
+    }
+    trigger Customer_B3_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Customer.Customer_B3_validate
+        moment: BEFORE
+    }
+    trigger Customer_D1_delete_user {
+        each: ROW
+        events: DELETE
+        function: Customer.Customer_D1_delete_user
+        moment: AFTER
+    }
+    trigger Customer_B2_validate_iban {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.validate_iban
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+enumType Auxiliar.Booking_status {
+    labels en_US: "Request" "Request paid" "Alternatives" "Alternatives paid" "Discarded" "Discarded paid" "Accepted" "Expired" "Preconfirmed" "Canceled" "Confirmed" "Contract signed" "Check-in confirmed" "Check-in" "In house" "Check-out" "Return deposit" "Completed" "Revision"
+    labels es_ES: "Solicitud" "Solicitud pagada" "Alternativas" "Alternativas pagada" "Descartada" "Descartada pagada" "Aceptada" "Caducada" "Preconfirmada" "Cancelada" "Confirmada" "Contrato firmado" "Check-in confirmado" "Check-in" "In house" "Check-out" "Devolver garantia" "Finalizada" "Revision"
+    values: "solicitud" "solicitudpagada" "alternativas" "alternativaspagada" "descartada" "descartadapagada" "pendientepago" "caducada" "confirmada" "cancelada" "firmacontrato" "contrato" "checkinconfirmado" "checkin" "inhouse" "checkout" "devolvergarantia" "finalizada" "revision"
+}

@@ -1,0 +1,5 @@
+enumType Auxiliar.Sale_type {
+    labels en_US: "Private apartment" "By rooms" "Both" "Doesn't apply"
+    labels es_ES: "Apartamento privado" "Por habitaciones" "Ambos" "No aplica"
+    values: "completo" "plazas" "ambos" "na"
+}

@@ -1,0 +1,4 @@
+function Marketing.Post_tag_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Post_tag_B0_search.pgsql"
+}

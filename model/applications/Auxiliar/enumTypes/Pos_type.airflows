@@ -1,0 +1,5 @@
+enumType Auxiliar.Pos_type {
+    labels en_US: "Default" "Cotown" "Vandor"
+    labels es_ES: "Por defecto" "Cotown" "Vandor"
+    values: "delegado" "cotown" "vandor"
+}

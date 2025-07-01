@@ -1,0 +1,145 @@
+entity Booking.Booking_other_doc {
+    attribute Booking_id {
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 1
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 200
+        order: 2
+        orderInList: 1
+        required
+        sm: 10
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Description {
+        basicFilter
+        label es_ES: "Descripción"
+        label en_US: "Description"
+        length: 1000
+        list
+        multiline
+        order: 3
+        orderInList: 2
+        required
+        sm: 12
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Document {
+        basicFilter
+        label es_ES: "Documento"
+        label en_US: "Document"
+        length: 50
+        order: 4
+        required
+        sm: 12
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    documentation: "Documentos de reservas de otros activos"
+    exportToCSVEnabled
+    icon: "filter_none"
+    key Booking_other_doc_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_other_doc_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Documentos"
+        singular: "Documento"
+    }
+    label en_US {
+        plural: "Documents"
+        singular: "Document"
+    }
+    language: es_ES
+    order: 16
+    reference Booking_id {
+        attribute Booking_id
+        documentation: "Booking_other_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Documents
+        listXs: 12
+        order: 1
+        referencedKey: Booking.Booking_other.Booking_other_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    trigger Booking_other_doc_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_other_doc_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_other_doc_B0_search
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+function Billing.Invoice_B2_validate {
+    documentation: "-- Genera el nº de factura o recibo cuando la factura es definitiva"
+    language: plpgsql
+    path: "applications/Billing/functions/Invoice_B2_validate.pgsql"
+}

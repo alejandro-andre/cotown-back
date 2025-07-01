@@ -1,0 +1,5 @@
+enumType Auxiliar.Person_type {
+    labels en_US: "Person" "Company"
+    labels es_ES: "Persona" "Empresa"
+    values: "persona" "empresa"
+}

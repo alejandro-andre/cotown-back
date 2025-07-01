@@ -1,0 +1,5 @@
+enumType Auxiliar.Reason_type {
+    labels es_ES: "Estudios" "Trabajo beca" "Trabajo laboral" "Estudios y trabajo"
+    labels en_US: "Study" "Work internship" "Work laboral" "Study & Work"
+    values: "study" "internship" "work" "studywork"
+}

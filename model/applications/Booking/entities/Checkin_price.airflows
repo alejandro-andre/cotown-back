@@ -1,0 +1,177 @@
+entity Booking.Checkin_price {
+    attribute id {
+        required
+        type: SERIAL
+    }
+    attribute Checkin_type_id {
+        label es_ES: "Opcón de check-in"
+        label en_US: "Check-in option"
+        order: 1
+        sm: 5
+        type: INTEGER
+        xs: 12
+    }
+    attribute Location_id {
+        label es_ES: "Localidad"
+        label en_US: "Location"
+        order: 2
+        sm: 5
+        type: INTEGER
+        xs: 12
+    }
+    attribute Timetable_id {
+        label es_ES: "Horario"
+        label en_US: "Timetable"
+        order: 3
+        sm: 5
+        type: INTEGER
+        xs: 12
+    }
+    attribute Price {
+        label es_ES: "Precio"
+        label en_US: "Price"
+        list
+        order: 6
+        orderInList: 6
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Date_from {
+        basicFilter
+        label es_ES: "Fecha desde"
+        label en_US: "Date from"
+        list
+        order: 4
+        orderInList: 4
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Date_to {
+        basicFilter
+        label es_ES: "Fecha hasta"
+        label en_US: "Date to"
+        list
+        order: 5
+        orderInList: 5
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Precios y horarios de las opciones de checkin"
+    exportToCSVEnabled
+    icon: "monetization_on"
+    key Checkin_price_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Checkin_price_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Precios"
+        singular: "Precio"
+    }
+    label en_US {
+        plural: "Prices"
+        singular: "Price"
+    }
+    language: es_ES
+    order: 10
+    reference Checkin_type_id {
+        attribute Checkin_type_id
+        basicFilter
+        documentation: "Checkin_type_pkey"
+        list
+        listIsVisible
+        listSm: 12
+        listXs: 12
+        order: 1
+        referencedKey: Booking.Checkin_type.Checkin_type_pkey
+        sm: 5
+        visible
+        xs: 12
+    }
+    reference Location_id {
+        attribute Location_id
+        basicFilter
+        documentation: "Location_pkey"
+        list
+        order: 2
+        referencedKey: Geo.Location.Location_pkey
+        sm: 5
+        visible
+        xs: 12
+    }
+    reference Timetable_id {
+        attribute Timetable_id
+        basicFilter
+        documentation: "Timetable_pkey"
+        list
+        order: 3
+        referencedKey: Auxiliar.Timetable.Timetable_pkey
+        sm: 5
+        visible
+        xs: 12
+    }
+    trigger Checkin_price_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Checkin_price_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Checkin_price_B0_search
+        moment: BEFORE
+    }
+}

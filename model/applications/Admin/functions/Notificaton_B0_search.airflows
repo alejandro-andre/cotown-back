@@ -1,0 +1,4 @@
+function Admin.Notificaton_B0_search {
+    language: plpgsql
+    path: "applications/Admin/functions/Notificaton_B0_search.pgsql"
+}

@@ -1,0 +1,5 @@
+enumType Auxiliar.Contract_type {
+    labels en_US: "Room/Place" "Flat" "Group" "Residence" "Other"
+    labels es_ES: "Habitación/Plaza" "Piso" "Grupo" "Residencia" "Otros"
+    values: "habitacion" "piso" "grupo" "residencia" "otro"
+}

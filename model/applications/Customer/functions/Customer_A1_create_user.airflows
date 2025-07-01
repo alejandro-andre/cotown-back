@@ -1,0 +1,5 @@
+function Customer.Customer_A1_create_user {
+    documentation: "-- Creación de usuario"
+    language: plpgsql
+    path: "applications/Customer/functions/Customer_A1_create_user.pgsql"
+}

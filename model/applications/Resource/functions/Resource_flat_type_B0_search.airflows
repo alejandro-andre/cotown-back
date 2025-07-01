@@ -1,0 +1,4 @@
+function Resource.Resource_flat_type_B0_search {
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_flat_type_B0_search.pgsql"
+}

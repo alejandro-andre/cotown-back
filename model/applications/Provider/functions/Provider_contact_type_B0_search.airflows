@@ -1,0 +1,4 @@
+function Provider.Provider_contact_type_B0_search {
+    language: plpgsql
+    path: "applications/Provider/functions/Provider_contact_type_B0_search.pgsql"
+}

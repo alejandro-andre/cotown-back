@@ -1,0 +1,344 @@
+entity Billing.Pricing_detail {
+    attribute Deposit {
+        label es_ES: "Garantía"
+        label en_US: "Deposit"
+        list
+        order: 10
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Limit {
+        label es_ES: "Límite consumo"
+        label en_US: "Consumption limit"
+        lastInRow
+        list
+        order: 11
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Second_resident {
+        label es_ES: "Segundo residente"
+        label en_US: "Second resident"
+        order: 12
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        variants: "piso"
+        visible
+        xs: 12
+    }
+    attribute Cleaning_price {
+        label es_ES: "Precio limpieza"
+        label en_US: "Cleaning price"
+        order: 13
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        variants: "piso"
+        visible
+        xs: 12
+    }
+    attribute Final_cleaning {
+        label es_ES: "Precio limpieza final"
+        label en_US: "Final cleaning price"
+        lastInRow
+        order: 14
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Resource_type {
+        enumType: Auxiliar.Flat_room_type
+        label es_ES: "Tipo de recurso"
+        label en_US: "Resource type"
+        list
+        order: 3
+        orderInList: 3
+        required
+        sm: 2
+        type: TEXT
+        variantSelector
+        visible
+        xs: 12
+    }
+    attribute Flat_type_id {
+        label es_ES: "Tipo de piso"
+        label en_US: "Flat type"
+        order: 4
+        orderInList: 4
+        required
+        sm: 5
+        type: INTEGER
+        xs: 12
+    }
+    attribute Place_type_id {
+        label es_ES: "Tipo de plaza"
+        label en_US: "Place type"
+        lastInRow
+        order: 5
+        orderInList: 5
+        sm: 5
+        type: INTEGER
+        xs: 12
+    }
+    attribute Rent_short {
+        label es_ES: "Corta estancia"
+        label en_US: "Short stay"
+        list
+        order: 6
+        orderInList: 6
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Rent_medium {
+        label es_ES: "Media estancia"
+        label en_US: "Medium stay"
+        list
+        order: 7
+        orderInList: 7
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Rent_long {
+        label es_ES: "Larga estancia"
+        label en_US: "Long stay"
+        lastInRow
+        list
+        order: 8
+        orderInList: 8
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services {
+        label es_ES: "Servicios"
+        label en_US: "Services"
+        list
+        order: 9
+        orderInList: 9
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Booking_fee {
+        label es_ES: "Membership fee"
+        label en_US: "Membership fee"
+        lastInRow
+        order: 15
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Year {
+        basicFilter
+        disableThousandsSeparator
+        label
+        label es_ES: "Año"
+        label en_US: "Year"
+        list
+        order: 1
+        orderInList: 2
+        required
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Building_id {
+        computed
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        lastInRow
+        order: 2
+        orderInList: 1
+        required
+        sm: 5
+        type: INTEGER
+        xs: 12
+    }
+    documentation: "Precios base de los activos por cada tipología"
+    exportToCSVEnabled
+    icon: "monetization_on"
+    key Pricing_detail_search_index {
+        attribute Search
+        textSearch
+    }
+    key Pricing_detail_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Pricing_detail_uk {
+        attribute Year
+        attribute Building_id
+        attribute Flat_type_id
+        attribute Place_type_id
+        documentation: "Precios"
+        nullsNotDistinct
+        unique
+    }
+    label es_ES {
+        plural: "Precios base"
+        singular: "Precio base"
+    }
+    label en_US {
+        plural: "Base prices"
+        singular: "Base price"
+    }
+    language: es_ES
+    menu
+    order: 40
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        list
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Prices
+        listXs: 12
+        order: 2
+        orderInList: 1
+        referencedKey: Building.Building.Building_pkey
+        sm: 5
+        visible
+        xs: 12
+    }
+    reference Flat_type_id {
+        attribute Flat_type_id
+        basicFilter
+        documentation: "Resource_flat_type_pkey"
+        list
+        order: 3
+        orderInList: 4
+        referencedKey: Resource.Resource_flat_type.Resource_flat_type_pkey
+        sm: 5
+        visible
+        xs: 12
+    }
+    reference Place_type_id {
+        attribute Place_type_id
+        basicFilter
+        documentation: "Resource_place_type_pkey"
+        list
+        order: 4
+        orderInList: 5
+        referencedKey: Resource.Resource_place_type.Resource_place_type_pkey
+        sm: 5
+        variants: "habitacion"
+        visible
+        xs: 12
+    }
+    trigger Pricing_detail_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Pricing_detail_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Billing.Pricing_detail_B0_search
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+function Building.Building_B1_update {
+    documentation: "-- Actualiza el código de los recursos de un edificio"
+    language: plpgsql
+    path: "applications/Building/functions/Building_B1_update.pgsql"
+}

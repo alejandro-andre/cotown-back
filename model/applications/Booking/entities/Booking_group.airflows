@@ -1,0 +1,614 @@
+entity Booking.Booking_group {
+    attribute id {
+        computed
+        label
+        label en_US: "#"
+        list
+        orderInList: 1
+        required
+        type: SERIAL
+    }
+    attribute Status {
+        basicFilter
+        defaultValue: "grupobloqueado"
+        enumType: Auxiliar.Group_status
+        group: General
+        label es_ES: "Status"
+        label en_US: "Status"
+        list
+        order: 1
+        orderInList: 4
+        required
+        sm: 2
+        tab: Booking
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Request_date {
+        defaultValue: "now()"
+        group: Dates
+        label es_ES: "Fecha de solicitud"
+        label en_US: "Request date"
+        order: 6
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Building_id {
+        group: General
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 2
+        required
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Rent {
+        group: Prices
+        label es_ES: "Renta"
+        label en_US: "Rent"
+        order: 20
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services {
+        group: Prices
+        label es_ES: "Servicios"
+        label en_US: "Services"
+        order: 21
+        precision: 8
+        required
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Limit {
+        group: Prices
+        label es_ES: "Límite consumo"
+        label en_US: "Consumption limit"
+        order: 22
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit {
+        group: Prices
+        label es_ES: "Garantía"
+        label en_US: "Deposit"
+        order: 30
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Rooms {
+        group: Prices
+        label es_ES: "Nº plazas"
+        label en_US: "Nº rooms"
+        order: 10
+        sm: 2
+        tab: Booking
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Room_ids {
+        addAccessToken
+        array
+        externalSelectorTarget: "planning"
+        externalSelectorUrl: "https://core.cotown.com/cotown/#/planning?sel=n"
+        externalSelectorWindowFeatures: "popup,width=1280,height=800"
+        group: Prices
+        label es_ES: "Plazas"
+        label en_US: "Rooms"
+        length: 4000
+        multiline
+        order: 11
+        sm: 10
+        tab: Booking
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        basicFilter
+        group: Other
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        lastInRow
+        length: 4000
+        multiline
+        order: 17
+        sm: 12
+        tab: Booking
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Contract_rent {
+        label es_ES: "Contrato de renta"
+        label en_US: "Rent contract"
+        order: 18
+        sm: 6
+        suffix: "€"
+        tab: Contracts
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Contract_services {
+        label es_ES: "Contrato de servicios"
+        label en_US: "Contract services"
+        order: 19
+        sm: 6
+        tab: Contracts
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Contract_signed {
+        label es_ES: "Fecha de firma"
+        label en_US: "Contract signed"
+        order: 20
+        sm: 3
+        tab: Contracts
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute Final_cleaning {
+        group: Prices
+        label es_ES: "Limpieza final"
+        label en_US: "Final cleaning price"
+        order: 40
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Cleaning_freq {
+        basicFilter
+        defaultValue: "semanal"
+        enumType: Auxiliar.Cleaning
+        group: Prices
+        label es_ES: "Frecuencia de limpieza"
+        label en_US: "Cleaning frequency"
+        order: 41
+        sm: 4
+        tab: Booking
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Customer {
+        computed
+        label
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        length: 200
+        type: TEXT
+    }
+    attribute Payer_id {
+        group: General
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        lastInRow
+        order: 3
+        required
+        sm: 6
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Date_to {
+        basicFilter
+        group: Dates
+        label es_ES: "Fecha hasta"
+        label en_US: "Date to"
+        list
+        order: 5
+        orderInList: 6
+        required
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Date_from {
+        basicFilter
+        group: Dates
+        label es_ES: "Fecha desde"
+        label en_US: "Date from"
+        list
+        order: 4
+        orderInList: 5
+        required
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Tax {
+        defaultValue: "FALSE"
+        group: Prices
+        label es_ES: "No aplica IVA (indicar inquilinos en la rooming list)"
+        label en_US: "Tax"
+        lastInRow
+        order: 24
+        required
+        sm: 4
+        tab: Booking
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Billing_type_last {
+        enumType: Auxiliar.Billing_type
+        group: Dates
+        label es_ES: "Tipo de facturación último mes"
+        label en_US: "Billing type last month"
+        lastInRow
+        order: 9
+        sm: 4
+        tab: Booking
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Confirmation_date {
+        basicFilter
+        group: Dates
+        label es_ES: "Fecha de confirmación"
+        label en_US: "Confirmation date"
+        lastInRow
+        list
+        order: 7
+        orderInList: 4
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Booking_fee {
+        group: Prices
+        label es_ES: "Membership fee"
+        label en_US: "Membership fee"
+        order: 23
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_actual {
+        group: Prices
+        label es_ES: "Garantía depositada"
+        label en_US: "Deposit actual"
+        order: 31
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_returned {
+        group: Prices
+        label es_ES: "Garantía devuelta"
+        label en_US: "Deposit returned"
+        order: 34
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_required {
+        group: Prices
+        label es_ES: "Garantía a devolver"
+        label en_US: "Deposit return required"
+        order: 32
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Date_deposit_required {
+        group: Prices
+        label es_ES: "Fecha a devolver"
+        label en_US: "Date returned"
+        order: 33
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Date_deposit_returned {
+        group: Prices
+        label es_ES: "Fecha devuelta"
+        label en_US: "Date required"
+        lastInRow
+        order: 35
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Billing_type {
+        enumType: Auxiliar.Billing_type
+        group: Dates
+        label es_ES: "Tipo de facturación primer mes"
+        label en_US: "Billing type first month"
+        order: 8
+        sm: 4
+        tab: Booking
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Agent_id {
+        group: General
+        label es_ES: "Marketplace"
+        label en_US: "Marketplace"
+        order: 4
+        sm: 6
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Commision {
+        group: General
+        label es_ES: "Comisión"
+        label en_US: "Commision"
+        order: 5
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Reservas de grupo de los activos de Cotown."
+    exportToCSVEnabled
+    group General {
+        label es_ES: "GENERAL"
+        label en_US: "GENERAL"
+        order: 1
+    }
+    group Dates {
+        label es_ES: "FECHAS"
+        label en_US: "DATES"
+        order: 2
+    }
+    group Prices {
+        label es_ES: "PLAZAS Y PRECIOS"
+        label en_US: "ROOMS & PRICES"
+        order: 3
+    }
+    group Other {
+        label es_ES: "OTROS DATOS"
+        label en_US: "OTHER"
+        order: 4
+    }
+    icon: "event_note"
+    key Booking_group_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_group_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Reservas B2B"
+        singular: "Reserva B2B"
+    }
+    label en_US {
+        plural: "B2B bookings"
+        singular: "B2B booking"
+    }
+    language: es_ES
+    menu
+    order: 15
+    reference Agent_id {
+        additionalFilter: "Active:{EQ:true}"
+        attribute Agent_id
+        basicFilter
+        documentation: "Agent_pkey"
+        group: General
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 4
+        referencedKey: Provider.Agent.Agent_pkey
+        sm: 6
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Payer_id {
+        attribute Payer_id
+        basicFilter
+        documentation: "Customer_pkey"
+        group: General
+        list
+        listIsVisible
+        listOrder: 2
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 3
+        orderInList: 3
+        referencedKey: Customer.Customer.Customer_pkey
+        sm: 6
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        group: General
+        list
+        order: 2
+        orderInList: 2
+        referencedKey: Building.Building.Building_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    tab Booking {
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 1
+    }
+    tab Rooming {
+        label es_ES: "Rooming list"
+        label en_US: "Rooming"
+        order: 2
+    }
+    tab Invoices {
+        label es_ES: "Facturas"
+        order: 3
+    }
+    tab Contracts {
+        label es_ES: "Contratos"
+        label en_US: "Contracts"
+        order: 4
+    }
+    trigger Booking_group_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_group_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_B0_search
+        moment: BEFORE
+    }
+    trigger Booking_group_A1_create_prices {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_A1_create_prices
+        moment: AFTER
+    }
+    trigger Booking_group_A2_create_rooms {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_A2_create_rooms
+        moment: AFTER
+    }
+    trigger Booking_group_B1_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_B1_validate
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,5 @@
+function Booking.Booking_B5_buttons {
+    documentation: "-- Botones de reserva"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_B5_buttons.pgsql"
+}

@@ -1,0 +1,4 @@
+function Booking.Customer_reason_B0_search {
+    language: plpgsql
+    path: "applications/Booking/functions/Customer_reason_B0_search.pgsql"
+}

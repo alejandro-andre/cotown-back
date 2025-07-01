@@ -1,0 +1,167 @@
+entity Provider.Provider_bill {
+    attribute LAU_bill_number {
+        computed
+        label es_ES: "Nº de factura LAU"
+        label en_US: "LAU bill number"
+        list
+        order: 5
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute LAU_credit_number {
+        computed
+        label es_ES: "Nº de factura rectificativa LAU"
+        label en_US: "LAU credit note number"
+        list
+        order: 5
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        length: 100
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 97
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Provider_id {
+        computed
+        label es_ES: "Proveedor"
+        label en_US: "Provider"
+        order: 1
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Year {
+        computed
+        disableThousandsSeparator
+        label es_ES: "Año"
+        label en_US: "Year"
+        list
+        order: 2
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Credit_number {
+        computed
+        label es_ES: "Nº de factura rectificativa"
+        label en_US: "Credit note number"
+        list
+        order: 4
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute Receipt_number {
+        computed
+        label es_ES: "Nº de recibo"
+        label en_US: "Receipt number"
+        list
+        order: 5
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Bill_number {
+        computed
+        label es_ES: "Nº de factura"
+        label en_US: "Bill number"
+        list
+        order: 3
+        sm: 2
+        type: INTEGER
+        visible
+        xs: 12
+    }
+    documentation: "Numeración de facturas por emisor y año"
+    exportToCSVEnabled
+    icon: "receipt"
+    key Provider_bill_search_index {
+        attribute Search
+        textSearch
+    }
+    key Provider_bill_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label en_US {
+        plural: "Bill numbers"
+        singular: "Bill numbers"
+    }
+    label es_ES {
+        plural: "Números de factura"
+        singular: "Numero de factura"
+    }
+    language: es_ES
+    order: 10
+    reference Provider_id {
+        attribute Provider_id
+        documentation: "Provider_pkey"
+        list
+        order: 1
+        referencedKey: Provider.Provider.Provider_pkey
+        sm: 4
+        visible
+        xs: 12
+    }
+    trigger Provider_bill_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Provider_bill_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Provider.Provider_bill_B0_search
+        moment: BEFORE
+    }
+}

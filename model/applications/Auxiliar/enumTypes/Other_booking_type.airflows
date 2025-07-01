@@ -1,0 +1,5 @@
+enumType Auxiliar.Other_booking_type {
+    labels es_ES: "LAU" "Local" "Parking" "Coworking"
+    labels en_US: "LAU" "Retail" "Parking" "Coworking"
+    values: "lau" "retail" "parking" "coworking"
+}

@@ -1,0 +1,5 @@
+function Booking.Booking_option_A1_workflow {
+    documentation: "-- Gestiona las alternativas y modifica la solicitud"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_option_A1_workflow.pgsql"
+}

@@ -1,0 +1,172 @@
+entity Customer.Customer_contact {
+    attribute Customer_id {
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        lastInRow
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Email {
+        basicFilter
+        label es_ES: "Email"
+        label en_US: "Email"
+        length: 200
+        list
+        order: 5
+        pattern: "^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$"
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Customer_contact_type_id {
+        label es_ES: "Tipo de contacto"
+        label en_US: "Contact type"
+        lastInRow
+        order: 2
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Name {
+        basicFilter
+        label
+        label es_ES: "Nombre y apellidos"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 3
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Phones {
+        basicFilter
+        label es_ES: "Teléfonos"
+        label en_US: "Phones"
+        length: 100
+        list
+        order: 6
+        sm: 6
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Personas físicas de contacto de un cliente, si es persona jurídica. Un cliente puede tener varios contactos,"
+    exportToCSVEnabled
+    icon: "person_outline"
+    key Customer_contact_search_index {
+        attribute Search
+        textSearch
+    }
+    key Customer_contact_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label en_US {
+        plural: "Contacts"
+        singular: "Contact"
+    }
+    label es_ES {
+        plural: "Contactos"
+        singular: "Contacto"
+    }
+    language: es_ES
+    order: 10
+    reference Customer_id {
+        attribute Customer_id
+        documentation: "Customer_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Contacts
+        listXs: 12
+        order: 1
+        referencedKey: Customer.Customer.Customer_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    reference Customer_contact_type_id {
+        attribute Customer_contact_type_id
+        basicFilter
+        documentation: "Customer_contact_type_pkey"
+        list
+        order: 2
+        referencedKey: Customer.Customer_contact_type.Customer_contact_type_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Customer_contact_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Customer_contact_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Customer.Customer_contact_B0_search
+        moment: BEFORE
+    }
+    trigger Customer_contact_B1_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.validate_contact
+        moment: BEFORE
+    }
+}

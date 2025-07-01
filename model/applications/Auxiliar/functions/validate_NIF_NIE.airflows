@@ -1,0 +1,5 @@
+function Auxiliar.validate_NIF_NIE {
+    documentation: "-- Valida el DNI/NIE"
+    language: plpgsql
+    path: "applications/Auxiliar/functions/validate_NIF_NIE.pgsql"
+}

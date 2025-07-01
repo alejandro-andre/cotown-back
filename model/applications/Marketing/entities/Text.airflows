@@ -1,0 +1,154 @@
+entity Marketing.Text {
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Segment_id {
+        label
+        label es_ES: "Web"
+        label en_US: "Web"
+        order: 1
+        required
+        sm: 6
+        type: INTEGER
+        xs: 12
+    }
+    attribute Code {
+        basicFilter
+        label
+        label es_ES: "Código"
+        label en_US: "Code"
+        length: 40
+        list
+        order: 2
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Value {
+        basicFilter
+        label es_ES: "Valor (español)"
+        label en_US: "Value (spanish)"
+        length: 8000
+        multiline
+        order: 3
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Value_en {
+        basicFilter
+        label es_ES: "Valor (inglés)"
+        label en_US: "Value (english)"
+        length: 8000
+        multiline
+        order: 4
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Summary {
+        label es_ES: "Valor"
+        label en_US: "Value"
+        length: 1000
+        list
+        order: 5
+        sm: 12
+        type: TEXT
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    documentation: "Textos"
+    exportToCSVEnabled
+    icon: "text_fields"
+    key Text_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Text_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Textos"
+        singular: "Texto"
+    }
+    label en_US {
+        plural: "Texts"
+        singular: "Text"
+    }
+    language: es_ES
+    menu
+    order: 210
+    reference Segment_id {
+        attribute Segment_id
+        basicFilter
+        documentation: "Segment_pkey"
+        list
+        order: 1
+        referencedKey: Auxiliar.Segment.Segment_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Text_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Text_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Marketing.Text_B0_search
+        moment: BEFORE
+    }
+}

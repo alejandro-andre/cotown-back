@@ -1,0 +1,5 @@
+function Provider.Provider_template_B1_active_contract {
+    documentation: "-- Selecciona un solo contrato activo"
+    language: plpgsql
+    path: "applications/Provider/functions/Provider_template_B1_active_contract.pgsql"
+}

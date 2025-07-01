@@ -1,0 +1,5 @@
+enumType Auxiliar.Rooming_status {
+    labels en_US: "Check-in" "In house" "Check-out" "Revised"
+    labels es_ES: "Check-in" "In house" "Check-out" "Revisada"
+    values: "checkin" "inhouse" "checkout" "revisada"
+}

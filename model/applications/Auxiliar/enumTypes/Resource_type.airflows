@@ -1,0 +1,5 @@
+enumType Auxiliar.Resource_type {
+    labels en_US: "Flat" "Room" "Place" "Common area" "Retail" "Parking" "Storage" "Space"
+    labels es_ES: "Piso" "Habitación" "Plaza" "Zona común" "Local" "Parking" "Trastero" "Sala"
+    values: "piso" "habitacion" "plaza" "comun" "local" "parking" "trastero" "sala"
+}

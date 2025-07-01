@@ -1,0 +1,104 @@
+entity Admin.Log {
+    attribute Changes {
+        computed
+        label es_ES: "Cambios"
+        label en_US: "Changes"
+        length: 16000
+        multiline
+        order: 6
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        label
+        required
+        type: SERIAL
+    }
+    attribute Table {
+        computed
+        label es_ES: "Tabla"
+        label en_US: "Table"
+        length: 100
+        list
+        order: 1
+        sm: 3
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Action {
+        computed
+        label es_ES: "Acción"
+        label en_US: "Action"
+        length: 50
+        list
+        order: 2
+        sm: 3
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute When {
+        computed
+        label es_ES: "Fecha/Hora"
+        label en_US: "Changed at"
+        list
+        order: 3
+        sm: 3
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute User {
+        computed
+        label es_ES: "Usuario"
+        label en_US: "Changed by"
+        length: 50
+        list
+        order: 4
+        sm: 3
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Record {
+        computed
+        label es_ES: "Datos"
+        label en_US: "Record"
+        length: 16000
+        multiline
+        order: 5
+        sm: 12
+        type: TEXT
+        visible
+        xs: 12
+    }
+    documentation: "Logs de cambios"
+    exportToCSVEnabled
+    icon: "reorder"
+    key Log_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label es_ES {
+        plural: "Logs"
+        singular: "Log"
+    }
+    label en_US {
+        plural: "Logs"
+        singular: "Log"
+    }
+    language: es_ES
+    order: 100
+    trigger Log_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+}

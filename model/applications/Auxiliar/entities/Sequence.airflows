@@ -1,0 +1,75 @@
+entity Auxiliar.Sequence {
+    attribute id {
+        computed
+        label
+        required
+        type: SERIAL
+    }
+    attribute Payment_order {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Secuencias"
+    exportToCSVEnabled
+    icon: "short_text"
+    key Sequence_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    label es_ES {
+        plural: "Secuencias"
+        singular: "Secuencia"
+    }
+    label en_US {
+        plural: "Sequences"
+        singular: "Sequence"
+    }
+    language: es_ES
+    order: 90
+    trigger Sequence_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+}

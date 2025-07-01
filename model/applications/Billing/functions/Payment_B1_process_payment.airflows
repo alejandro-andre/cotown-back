@@ -1,0 +1,5 @@
+function Billing.Payment_B1_process_payment {
+    documentation: "-- Procesa los pagos"
+    language: plpgsql
+    path: "applications/Billing/functions/Payment_B1_process_payment.pgsql"
+}

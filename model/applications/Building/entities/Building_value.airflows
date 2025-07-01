@@ -1,0 +1,226 @@
+entity Building.Building_value {
+    attribute ECO_rent_update {
+        label es_ES: "ECO Act. de rentas"
+        label en_US: "ECO Rent updated"
+        list
+        order: 11
+        orderInList: 6
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute ECO_refinance {
+        label es_ES: "ECO Residencial"
+        label en_US: "ECO Refinance"
+        lastInRow
+        list
+        order: 12
+        orderInList: 7
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute RICS_valuation {
+        label es_ES: "RICS"
+        label en_US: "RICS"
+        list
+        order: 20
+        orderInList: 8
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Building_id {
+        computed
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 1
+        required
+        sm: 4
+        type: INTEGER
+        xs: 12
+    }
+    attribute Valuation_date {
+        defaultValue: "now()"
+        label es_ES: "Fecha tasación"
+        label en_US: "Valuation date"
+        lastInRow
+        list
+        order: 2
+        orderInList: 1
+        required
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Pre_capex_long_term {
+        label es_ES: "Pre-capex indefinidos"
+        label en_US: "Long Term pre-capex"
+        list
+        order: 3
+        orderInList: 2
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Pre_capex_vacant {
+        label es_ES: "Pre-capex vacío"
+        label en_US: "Vacant pre-capex"
+        list
+        order: 4
+        orderInList: 3
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Post_capex {
+        label es_ES: "Post-capex "
+        label en_US: "Post-capex"
+        lastInRow
+        list
+        order: 5
+        orderInList: 4
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute ECO_valuation {
+        label es_ES: "ECO Tasación"
+        label en_US: "ECO Valuation"
+        list
+        order: 10
+        orderInList: 5
+        precision: 10
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    documentation: "Valoración histórica de edificios"
+    exportToCSVEnabled
+    icon: "monetization_on"
+    key Building_value_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Building_value_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Valoraciones"
+        singular: "Valoración"
+    }
+    label en_US {
+        plural: "Valuations"
+        singular: "Valuation"
+    }
+    language: es_ES
+    order: 11
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Prices
+        listXs: 12
+        order: 1
+        referencedKey: Building.Building.Building_pkey
+        sm: 6
+        visible
+        xs: 12
+    }
+    trigger Building_value_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Building_value_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Building.Building_value_B0_search
+        moment: BEFORE
+    }
+}

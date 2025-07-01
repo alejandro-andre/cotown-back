@@ -1,0 +1,126 @@
+entity Auxiliar.Holiday {
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Text {
+        basicFilter
+        label
+        label es_ES: "Nombre"
+        label en_US: "Name"
+        length: 100
+        list
+        order: 1
+        required
+        sm: 6
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Day {
+        basicFilter
+        label
+        label es_ES: "Fecha"
+        label en_US: "Date"
+        list
+        order: 2
+        required
+        sm: 3
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Location_id {
+        label es_ES: "Localidad"
+        label en_US: "Location"
+        order: 3
+        sm: 3
+        type: INTEGER
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Festivos"
+    exportToCSVEnabled
+    icon: "alarm_add"
+    key Holiday_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Holiday_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Festivos"
+        singular: "Festivo"
+    }
+    label en_US {
+        plural: "Holidays"
+        singular: "Holiday"
+    }
+    language: es_ES
+    menu
+    order: 60
+    reference Location_id {
+        attribute Location_id
+        basicFilter
+        documentation: "Location_pkey"
+        list
+        order: 3
+        referencedKey: Geo.Location.Location_pkey
+        sm: 3
+        visible
+        xs: 12
+    }
+    trigger Holiday_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Holiday_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Auxiliar.Holiday_B0_search
+        moment: BEFORE
+    }
+}

@@ -1,0 +1,4 @@
+function Resource.Resource_availability_B0_search {
+    language: plpgsql
+    path: "applications/Resource/functions/Resource_availability_B0_search.pgsql"
+}

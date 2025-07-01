@@ -1,0 +1,4 @@
+function Booking.Booking_discount_type_B0_search {
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_discount_type_B0_search.pgsql"
+}

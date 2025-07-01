@@ -1,0 +1,1 @@
+BEGIN NEW."Search":=COALESCE(NEW."Description"::text,''); RETURN NEW; END;

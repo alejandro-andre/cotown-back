@@ -1,0 +1,4 @@
+function Auxiliar.School_B0_search {
+    language: plpgsql
+    path: "applications/Auxiliar/functions/School_B0_search.pgsql"
+}

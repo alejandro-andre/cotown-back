@@ -1,0 +1,5 @@
+enumType Auxiliar.Contact_type {
+    labels en_US: "Contact" "Resume"
+    labels es_ES: "Contacto" "CV"
+    values: "contacto" "cv"
+}

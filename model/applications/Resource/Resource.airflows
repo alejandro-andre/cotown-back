@@ -1,0 +1,5 @@
+application Resource {
+    label es_ES: "Activos"
+    label en_US: "Assets"
+    order: 5
+}

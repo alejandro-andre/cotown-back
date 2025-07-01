@@ -1,0 +1,5 @@
+function Booking.Booking_service_B1_validate {
+    documentation: "-- Servicios adicionales"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_service_B1_validate.pgsql"
+}

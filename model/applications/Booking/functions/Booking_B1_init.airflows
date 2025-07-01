@@ -1,0 +1,5 @@
+function Booking.Booking_B1_init {
+    documentation: "-- Inicializa la solicitud"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_B1_init.pgsql"
+}

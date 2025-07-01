@@ -1,0 +1,143 @@
+entity Booking.Booking_group_rooms {
+    attribute Code {
+        basicFilter
+        label
+        label es_ES: "Código postal"
+        label en_US: "Code"
+        list
+        order: 3
+        orderInList: 1
+        required
+        sm: 4
+        suffix: "€"
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Resource_id {
+        computed
+        label es_ES: "Recurso"
+        label en_US: "REsource"
+        order: 2
+        required
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute id {
+        computed
+        required
+        type: SERIAL
+    }
+    attribute Booking_id {
+        computed
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 1
+        required
+        sm: 2
+        type: INTEGER
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    documentation: "Habitaciones de una reserva de grupo (expansión de Room_ids)"
+    exportToCSVEnabled
+    icon: "event_note"
+    key Booking_rooms_Booking_id_uk {
+        attribute Booking_id
+        attribute Resource_id
+        documentation: "No puede repetirse un recurso en una reserva de grupo"
+        unique
+    }
+    key Booking_group_rooms_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_group_rooms_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Habitaciones"
+        singular: "Habitación"
+    }
+    label en_US {
+        plural: "Rooms"
+        singular: "Room"
+    }
+    language: es_ES
+    order: 15
+    reference Booking_id {
+        attribute Booking_id
+        basicFilter
+        documentation: "Booking_group_pkey"
+        list
+        order: 1
+        referencedKey: Booking.Booking_group.Booking_group_pkey
+        sm: 2
+        visible
+        xs: 12
+    }
+    reference Resource_id {
+        attribute Resource_id
+        basicFilter
+        documentation: "Resource_pkey"
+        list
+        order: 2
+        orderInList: 1
+        referencedKey: Resource.Resource.Resource_pkey
+        sm: 2
+        visible
+        xs: 12
+    }
+    trigger Booking_group_rooms_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_group_rooms_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_group_rooms_B0_search
+        moment: BEFORE
+    }
+}

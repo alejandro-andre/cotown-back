@@ -1,0 +1,4 @@
+function Marketing.Media_resource_type_B0_search {
+    language: plpgsql
+    path: "applications/Marketing/functions/Media_resource_type_B0_search.pgsql"
+}

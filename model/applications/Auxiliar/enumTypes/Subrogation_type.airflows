@@ -1,0 +1,5 @@
+enumType Auxiliar.Subrogation_type {
+    labels en_US: "No" "Yes" "2" "LT"
+    labels es_ES: "No" "Sí" "Sí-2 años" "Sí-Indefinido"
+    values: "no" "si" "dosanios" "indefinido"
+}

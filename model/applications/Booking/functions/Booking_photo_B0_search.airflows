@@ -1,0 +1,4 @@
+function Booking.Booking_photo_B0_search {
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_photo_B0_search.pgsql"
+}

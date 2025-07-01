@@ -1,0 +1,5 @@
+function Booking.Booking_group_A2_create_rooms {
+    documentation: "-- Crea/Actualiza la rooming list"
+    language: plpgsql
+    path: "applications/Booking/functions/Booking_group_A2_create_rooms.pgsql"
+}

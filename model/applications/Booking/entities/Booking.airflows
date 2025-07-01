@@ -1,0 +1,1543 @@
+entity Booking.Booking {
+    attribute School_id {
+        group: Request
+        label es_ES: "Escuela"
+        label en_US: "School"
+        order: 46
+        sm: 6
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Resource_id {
+        addAccessToken
+        externalSelectorTarget: "planning"
+        externalSelectorUrl: "https://core.cotown.com/cotown/#/planning?sel=1"
+        externalSelectorWindowFeatures: "popup,width=1280,height=800"
+        group: Resource
+        label es_ES: "Recurso"
+        label en_US: "Resource"
+        order: 81
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Second_resident {
+        defaultValue: "FALSE"
+        group: Resource
+        label es_ES: "Segundo residente"
+        label en_US: "Second resident"
+        order: 87
+        required
+        sm: 2
+        tab: Booking
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Origin_id {
+        group: Change
+        label es_ES: "Reserva origen"
+        label en_US: "Origin booking"
+        order: 122
+        sm: 5
+        tab: Housing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Promotion_id {
+        group: Request
+        label es_ES: "Promoción"
+        label en_US: "Promotion"
+        order: 49
+        sm: 4
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Tax_id {
+        defaultValue: "2"
+        group: Resource
+        label en_US: "Tax"
+        label es_ES: "IVA"
+        order: 84
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Building_id {
+        group: Request
+        label es_ES: "Edificio"
+        label en_US: "Building"
+        order: 41
+        required
+        sm: 6
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Date_to {
+        basicFilter
+        group: Status
+        label es_ES: "Fecha hasta"
+        label en_US: "Date to"
+        list
+        order: 16
+        orderInList: 6
+        required
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Expiry_date {
+        group: Status
+        label es_ES: "Valida hasta"
+        label en_US: "Valid until"
+        order: 19
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Flat_type_id {
+        group: Request
+        label es_ES: "Tipología de piso"
+        label en_US: "Flat type"
+        order: 43
+        required
+        sm: 6
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Place_type_id {
+        group: Request
+        label es_ES: "Tipología de plaza"
+        label en_US: "Place type"
+        lastInRow
+        order: 44
+        sm: 6
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Deposit {
+        group: Prices
+        label es_ES: "Garantía teórica"
+        label en_US: "Deposit standard"
+        order: 110
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Contract_services {
+        label es_ES: "Contrato de servicios"
+        label en_US: "Contract services"
+        order: 41
+        sm: 6
+        tab: Contracts
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Check_in_time {
+        group: Check_in
+        label es_ES: "Hora de check-in"
+        label en_US: "Check-in time"
+        order: 102
+        sm: 2
+        tab: Housing
+        type: TIME
+        visible
+        xs: 12
+    }
+    attribute Final_cleaning {
+        group: Prices
+        label es_ES: "Limpieza final"
+        label en_US: "Final cleaning price"
+        lastInRow
+        order: 94
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Request_date {
+        computed
+        defaultValue: "now()"
+        group: Status
+        label es_ES: "Fecha de solicitud"
+        label en_US: "Request date"
+        order: 17
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Confirmation_date {
+        basicFilter
+        computed
+        group: Status
+        label es_ES: "Fecha de confirmación"
+        label en_US: "Confirmation date"
+        list
+        order: 18
+        orderInList: 4
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Check_out_keyless_ok {
+        defaultValue: "FALSE"
+        group: Check_out
+        label es_ES: "Llave móvil off"
+        label en_US: "Mobile key off"
+        order: 116
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Eco_ext_change_ok {
+        defaultValue: "FALSE"
+        group: Eco_ext
+        label es_ES: "Cambio gestionado"
+        label en_US: "Change managed"
+        order: 24
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 2
+    }
+    attribute Eco_ext_keyless_ok {
+        defaultValue: "FALSE"
+        group: Eco_ext
+        label es_ES: "Llave móvil actualizada"
+        label en_US: "Mobile key updated"
+        order: 25
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Booking_fee_calc {
+        group: Prices
+        label es_ES: "Membership fee teórico"
+        label en_US: "Membership fee standard"
+        order: 100
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Booking_discount_type_id {
+        group: Prices
+        label es_ES: "Motivo suplemento/descuento"
+        label en_US: "Reason"
+        lastInRow
+        order: 104
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Damages_ok {
+        defaultValue: "FALSE"
+        group: Check_out
+        label es_ES: "Desperfectos gestionados"
+        label en_US: "Damages managed"
+        order: 119
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Deposit_required {
+        group: Prices
+        label es_ES: "Garantía devolución requerida"
+        label en_US: "Deposit return required"
+        order: 112
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Date_deposit_required {
+        group: Prices
+        label es_ES: "Fecha requerida"
+        label en_US: "Date required"
+        order: 113
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Date_deposit_returned {
+        group: Prices
+        label es_ES: "Fecha devuelta"
+        label en_US: "Date returned"
+        order: 115
+        sm: 2
+        tab: Booking
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Check_out_option_id {
+        group: Check_out
+        label es_ES: "Opción"
+        label en_US: "Option"
+        order: 114
+        sm: 4
+        tab: Housing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Flight_out {
+        group: Check_out
+        label es_ES: "Vuelo/Tren"
+        label en_US: "Flight/Train"
+        length: 100
+        order: 113
+        sm: 2
+        tab: Housing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_type {
+        enumType: Auxiliar.Billing_type
+        group: Resource
+        label es_ES: "Tipo de facturación primer mes"
+        label en_US: "Billing type first month"
+        order: 82
+        sm: 2
+        tab: Booking
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Contract_id {
+        label es_ES: "Id Contrato"
+        label en_US: "Contract Id"
+        length: 50
+        order: 42
+        sm: 6
+        tab: Contracts
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Contract_status {
+        enumType: Auxiliar.Contract_status
+        label es_ES: "Estado del contrato"
+        label en_US: "Contract status"
+        length: 20
+        order: 43
+        sm: 3
+        tab: Contracts
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Other_school {
+        group: Request
+        label es_ES: "Escuela (otro)"
+        label en_US: "School (other)"
+        length: 100
+        order: 48
+        sm: 6
+        tab: Request
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute id {
+        computed
+        label
+        label es_ES: "#"
+        label en_US: "#"
+        list
+        orderInList: 1
+        required
+        type: SERIAL
+    }
+    attribute Status {
+        basicFilter
+        defaultValue: "solicitud"
+        enumType: Auxiliar.Booking_status
+        group: Status
+        label es_ES: "Estado"
+        label en_US: "Status"
+        list
+        order: 11
+        orderInList: 2
+        required
+        sm: 6
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Booking_who_id {
+        group: Info
+        label es_ES: "Quién hizo la reserva"
+        label en_US: "Who did the reservation"
+        order: 63
+        sm: 4
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Customer_id {
+        group: People
+        label es_ES: "Residente"
+        label en_US: "Resident"
+        order: 31
+        required
+        sm: 6
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Issues {
+        group: Check_in
+        label es_ES: "Incidencias entrada"
+        label en_US: "Check-in issues"
+        length: 500
+        order: 109
+        sm: 6
+        tab: Housing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Date_from {
+        basicFilter
+        group: Status
+        label es_ES: "Fecha desde"
+        label en_US: "Date from"
+        list
+        order: 15
+        orderInList: 5
+        required
+        sm: 2
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Check_out_revision_ok {
+        defaultValue: "FALSE"
+        group: Check_out
+        label es_ES: "Habitación revisada ok"
+        label en_US: "Room check ok"
+        lastInRow
+        order: 117
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Old_check_out {
+        group: Eco_ext
+        label es_ES: "Fecha original de check-ou"
+        label en_US: "Old check-out date"
+        order: 22
+        sm: 2
+        tab: Housing
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Eco_ext_fee {
+        group: Eco_ext
+        label es_ES: "Penalización ECO"
+        label en_US: "ECO fee"
+        length: 50
+        order: 23
+        sm: 3
+        tab: Housing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Customer {
+        computed
+        label
+        label es_ES: "Cliente"
+        label en_US: "Customer"
+        length: 200
+        type: TEXT
+    }
+    attribute Cha_ext {
+        enumType: Auxiliar.Rel_type
+        group: Change
+        label es_ES: "Tipo de relación"
+        label en_US: "Relation type"
+        length: 20
+        order: 124
+        sm: 2
+        tab: Housing
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Check_out_time {
+        group: Check_out
+        label es_ES: "Hora de recogida"
+        label en_US: "Pickup time"
+        order: 112
+        sm: 2
+        tab: Housing
+        type: TIME
+        visible
+        xs: 12
+    }
+    attribute Booking_channel_id {
+        group: Info
+        label es_ES: "Canal"
+        label en_US: "Channel"
+        order: 61
+        required
+        sm: 4
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Booking_referral_id {
+        group: Info
+        label es_ES: "Cómo nos conoció"
+        label en_US: "How did he knew us"
+        order: 62
+        sm: 4
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Reason_id {
+        group: Request
+        label es_ES: "Motivo de estancia"
+        label en_US: "Reason"
+        order: 45
+        sm: 6
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Issues_ok {
+        defaultValue: "FALSE"
+        group: Check_in
+        label es_ES: "Incidencias gestionadas"
+        label en_US: "Issues managed"
+        lastInRow
+        order: 110
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Resource_type {
+        enumType: Auxiliar.Flat_room_type
+        group: Request
+        label es_ES: "Tipo de recurso"
+        label en_US: "Resource type"
+        lastInRow
+        list
+        order: 42
+        orderInList: 7
+        required
+        sm: 6
+        tab: Request
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Billing_type_last {
+        enumType: Auxiliar.Billing_type
+        group: Resource
+        label es_ES: "Tipo de facturación último mes"
+        label en_US: "Billing type last month"
+        order: 83
+        sm: 2
+        tab: Booking
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Company {
+        group: Request
+        label es_ES: "Empresa"
+        label en_US: "Company"
+        length: 100
+        order: 47
+        sm: 6
+        tab: Request
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Commision {
+        group: Info
+        label es_ES: "Comisión"
+        label en_US: "Commision"
+        order: 65
+        precision: 8
+        scale: 2
+        sm: 4
+        step: 0.01
+        suffix: "€"
+        tab: Request
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Ignore_black_list {
+        defaultValue: "FALSE"
+        group: People
+        label es_ES: "Ignorar lista negra"
+        label en_US: "Ignore black list"
+        order: 32
+        sm: 6
+        tab: Request
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Commision_bill_status {
+        group: Info
+        label es_ES: "Estado factura"
+        label en_US: "Commision billl status"
+        length: 100
+        order: 66
+        sm: 4
+        tab: Request
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Created_at {
+        computed
+        order: 96
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Updated_at {
+        computed
+        order: 97
+        sm: 3
+        type: TIMESTAMP
+        xs: 12
+    }
+    attribute Created_by {
+        computed
+        length: 100
+        order: 98
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Updated_by {
+        computed
+        length: 100
+        order: 99
+        sm: 3
+        type: TEXT
+        xs: 12
+    }
+    attribute Search {
+        order: 100
+        sm: 12
+        textSearch
+        type: TEXT
+        xs: 12
+    }
+    attribute Rent {
+        group: Prices
+        label es_ES: "Renta"
+        label en_US: "Rent"
+        order: 91
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Services {
+        group: Prices
+        label es_ES: "Servicios"
+        label en_US: "Services"
+        order: 92
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Limit {
+        group: Prices
+        label es_ES: "Límite consumo"
+        label en_US: "Consumption limit"
+        order: 93
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Booking_fee {
+        group: Prices
+        label es_ES: "Membership fee a pagar"
+        label en_US: "Membership fee to pay"
+        order: 101
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Booking_fee_actual {
+        group: Prices
+        label es_ES: "Membership fee pagado"
+        label en_US: "Membership fee payed"
+        order: 102
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Booking_fee_returned {
+        group: Prices
+        label es_ES: "Membership fee devuelto"
+        label en_US: "Membership fee returned"
+        order: 103
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_actual {
+        group: Prices
+        label es_ES: "Garantía depositada"
+        label en_US: "Deposit actual"
+        order: 111
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Deposit_returned {
+        group: Prices
+        label es_ES: "Garantía devuelta"
+        label en_US: "Deposit returned"
+        order: 114
+        precision: 8
+        scale: 2
+        sm: 2
+        step: 0.01
+        suffix: "€"
+        tab: Booking
+        type: DECIMAL
+        visible
+        xs: 12
+    }
+    attribute Contract_signed {
+        label es_ES: "Fecha de estado"
+        label en_US: "Contract status date"
+        order: 44
+        sm: 3
+        tab: Contracts
+        type: TIMESTAMP
+        visible
+        xs: 12
+    }
+    attribute New_check_out {
+        group: Eco_ext
+        label es_ES: "Nueva fecha de salida"
+        label en_US: "New check out"
+        order: 21
+        sm: 2
+        tab: Housing
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Damages {
+        group: Check_out
+        label es_ES: "Desperfectos"
+        label en_US: "Damages"
+        length: 1000
+        order: 118
+        sm: 6
+        tab: Housing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Comments {
+        group: Resource
+        label es_ES: "Comentarios"
+        label en_US: "Comments"
+        lastInRow
+        length: 4000
+        multiline
+        order: 80
+        sm: 12
+        tab: Request
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Link_id {
+        group: Resource
+        label es_ES: "Reserva relacionada"
+        label en_US: "Related booking"
+        order: 85
+        sm: 4
+        tab: Booking
+        type: INTEGER
+        xs: 12
+    }
+    attribute Info {
+        computed
+        group: People
+        label es_ES: "Residente"
+        label en_US: "Resident"
+        length: 4000
+        order: 33
+        sm: 12
+        tab: Booking
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Lock {
+        defaultValue: "FALSE"
+        group: Resource
+        label es_ES: "No cambiar asignación"
+        label en_US: "Do not change assignment"
+        order: 86
+        required
+        sm: 2
+        tab: Booking
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Check_in {
+        basicFilter
+        group: Check_in
+        label es_ES: "Check in"
+        label en_US: "Check in"
+        order: 100
+        sm: 2
+        tab: Housing
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Arrival {
+        group: Check_in
+        label es_ES: "Hora de llegada"
+        label en_US: "Arrival time"
+        order: 101
+        sm: 2
+        tab: Housing
+        type: TIME
+        visible
+        xs: 12
+    }
+    attribute Flight {
+        group: Check_in
+        label es_ES: "Vuelo/Tren"
+        label en_US: "Flight/Train"
+        length: 100
+        order: 103
+        sm: 2
+        tab: Housing
+        textFilter
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Check_in_option_id {
+        group: Check_in
+        label es_ES: "Opción"
+        label en_US: "Option"
+        lastInRow
+        order: 104
+        sm: 4
+        tab: Housing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Check_out {
+        basicFilter
+        group: Check_out
+        label es_ES: "Check out"
+        label en_US: "Check out"
+        order: 111
+        sm: 4
+        tab: Housing
+        type: DATE
+        visible
+        xs: 12
+    }
+    attribute Contract_rent {
+        label es_ES: "Contrato de renta"
+        label en_US: "Rent contract"
+        order: 40
+        sm: 6
+        tab: Contracts
+        type: DOCUMENT
+        visible
+        xs: 12
+    }
+    attribute Button_discard {
+        action
+        actionVisibleInForm
+        group: Status
+        label es_ES: "Descartar"
+        label en_US: "Discard"
+        length: 200
+        order: 12
+        sm: 2
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Button_checkin {
+        action
+        actionVisibleInForm
+        group: Status
+        label es_ES: "Check in OK"
+        label en_US: "Check in OK"
+        length: 200
+        order: 13
+        sm: 2
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Button_checkout {
+        action
+        actionVisibleInForm
+        group: Status
+        label es_ES: "Check out OK"
+        label en_US: "Check out OK"
+        lastInRow
+        length: 200
+        order: 14
+        sm: 2
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Agent_id {
+        group: Info
+        label es_ES: "Marketplace"
+        label en_US: "Marketplace"
+        order: 64
+        sm: 4
+        tab: Request
+        type: INTEGER
+        xs: 12
+    }
+    attribute Button_options {
+        action
+        actionVisibleInForm
+        group: Options
+        label es_ES: "Enviar alternativas"
+        label en_US: "Send options"
+        length: 200
+        order: 51
+        sm: 3
+        tab: Request
+        type: TEXT
+        visible
+        xs: 12
+    }
+    attribute Destination_id {
+        group: Change
+        label es_ES: "Reserva destino"
+        label en_US: "Destination booking"
+        order: 123
+        sm: 5
+        tab: Housing
+        type: INTEGER
+        xs: 12
+    }
+    attribute Check_in_keys_ok {
+        defaultValue: "FALSE"
+        group: Check_in
+        label es_ES: "Llaves ok"
+        label en_US: "Keys ok"
+        order: 106
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Check_in_room_ok {
+        defaultValue: "FALSE"
+        group: Check_in
+        label es_ES: "Habitación ok"
+        label en_US: "Room ok"
+        order: 105
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Check_in_keyless_ok {
+        defaultValue: "FALSE"
+        group: Check_in
+        label es_ES: "Llaves keyless ok"
+        label en_US: "Keyless ok"
+        order: 107
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Check_in_notice_ok {
+        basicFilter
+        defaultValue: "FALSE"
+        group: Check_in
+        label es_ES: "Aviso compañeros ok"
+        label en_US: "Roomates notice ok"
+        order: 108
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    attribute Check_out_keys_ok {
+        defaultValue: "FALSE"
+        group: Check_out
+        label es_ES: "Llaves devueltas"
+        label en_US: "Keys returned"
+        order: 115
+        required
+        sm: 2
+        tab: Housing
+        type: BOOLEAN
+        visible
+        xs: 12
+    }
+    documentation: "Reservas y peticiones de reserva de los activos de Cotown."
+    exportToCSVEnabled
+    group Other {
+        label es_ES: "OTRA INFORMACIÓN"
+        label en_US: "OTHER INFO"
+        order: 6
+    }
+    group Resource {
+        label es_ES: "RESERVA"
+        label en_US: "RESERVATION"
+        order: 7
+    }
+    group Prices {
+        label es_ES: "PRECIOS"
+        label en_US: "PRICES"
+        order: 8
+    }
+    group Check_in {
+        label es_ES: "CHECK-IN"
+        label en_US: "CHECK-IN"
+        order: 9
+    }
+    group Check_out {
+        label es_ES: "CHECK-OUT"
+        label en_US: "CHECK-OUT"
+        order: 10
+    }
+    group Change {
+        label es_ES: "RESERVA RELACIONADA (CHA/EXT)"
+        label en_US: "RELATED BOOKING (CHA/EXT)"
+        order: 11
+    }
+    group Status {
+        label es_ES: "ESTADO Y FECHAS"
+        label en_US: "STATUS & DATES"
+        order: 1
+    }
+    group Eco_ext {
+        label es_ES: "EXTENSIÓN O EARLY CHECKOUT  (ECO / EXT)"
+        label en_US: "EXTENSION OR EARLY CHECKOUT (ECO / EXT)"
+        order: 12
+    }
+    group People {
+        label es_ES: "RESIDENTE"
+        label en_US: "RESIDENT"
+        order: 2
+    }
+    group Request {
+        label es_ES: "SOLICITUD"
+        label en_US: "REQUEST"
+        order: 3
+    }
+    group Options {
+        label es_ES: "ALTERNATIVAS"
+        label en_US: "OPTION"
+        order: 5
+    }
+    group Info {
+        label es_ES: "INFORMACIÓN ADICIONAL"
+        label en_US: "ADDITIONAL INFO"
+        order: 4
+    }
+    icon: "event"
+    key Booking_pkey {
+        attribute id
+        documentation: "Primary key"
+        primaryKey
+        unique
+    }
+    key Booking_search_index {
+        attribute Search
+        textSearch
+    }
+    label es_ES {
+        plural: "Reservas B2C"
+        singular: "Reserva B2C"
+    }
+    label en_US {
+        plural: "B2C Bookings"
+        singular: "B2C Booking"
+    }
+    language: es_ES
+    menu
+    order: 10
+    reference Agent_id {
+        additionalFilter: "Active:{EQ:true}"
+        attribute Agent_id
+        basicFilter
+        documentation: "Agent_pkey"
+        group: Info
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 64
+        referencedKey: Provider.Agent.Agent_pkey
+        sm: 4
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Customer_id {
+        attribute Customer_id
+        basicFilter
+        documentation: "Customer_pkey"
+        group: People
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 31
+        orderInList: 3
+        referencedKey: Customer.Customer.Customer_pkey
+        sm: 6
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Resource_id {
+        attribute Resource_id
+        basicFilter
+        documentation: "Resource_pkey"
+        group: Resource
+        list
+        listIsVisible
+        listOrder: 1
+        listSm: 12
+        listTab: Bookings
+        listXs: 12
+        order: 81
+        orderInList: 7
+        referencedKey: Resource.Resource.Resource_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Destination_id {
+        attribute Destination_id
+        documentation: "Booking_pkey"
+        group: Change
+        order: 123
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 5
+        tab: Housing
+        visible
+        xs: 12
+    }
+    reference Origin_id {
+        attribute Origin_id
+        documentation: "Booking_pkey"
+        group: Change
+        order: 122
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 5
+        tab: Housing
+        visible
+        xs: 12
+    }
+    reference Check_out_option_id {
+        additionalFilter: "Type:{EQ:checkout}"
+        attribute Check_out_option_id
+        basicFilter
+        documentation: "Checkin_type_pkey"
+        group: Check_out
+        order: 114
+        referencedKey: Booking.Checkin_type.Checkin_type_pkey
+        sm: 4
+        tab: Housing
+        visible
+        xs: 12
+    }
+    reference Check_in_option_id {
+        additionalFilter: "Type:{EQ:checkin}"
+        attribute Check_in_option_id
+        basicFilter
+        documentation: "Checkin_type_pkey"
+        group: Check_in
+        order: 104
+        referencedKey: Booking.Checkin_type.Checkin_type_pkey
+        sm: 4
+        tab: Housing
+        visible
+        xs: 12
+    }
+    reference Booking_discount_type_id {
+        attribute Booking_discount_type_id
+        basicFilter
+        documentation: "Booking_discount_type_pkey"
+        group: Prices
+        order: 104
+        referencedKey: Booking.Booking_discount_type.Booking_discount_type_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Link_id {
+        attribute Link_id
+        documentation: "Booking_pkey"
+        group: Resource
+        order: 85
+        referencedKey: Booking.Booking.Booking_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Tax_id {
+        attribute Tax_id
+        documentation: "Tax_pkey"
+        group: Resource
+        list
+        order: 84
+        referencedKey: Billing.Tax.Tax_pkey
+        sm: 4
+        tab: Booking
+        visible
+        xs: 12
+    }
+    reference Booking_channel_id {
+        attribute Booking_channel_id
+        documentation: "Booking_channel_pkey"
+        group: Info
+        order: 61
+        referencedKey: Booking.Booking_channel.Booking_channel_pkey
+        sm: 4
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Booking_referral_id {
+        attribute Booking_referral_id
+        documentation: "Booking_referral_pkey"
+        group: Info
+        order: 62
+        referencedKey: Booking.Booking_referral.Booking_referral_pkey
+        sm: 4
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Booking_who_id {
+        attribute Booking_who_id
+        documentation: "Booking_who_pkey"
+        group: Info
+        order: 63
+        referencedKey: Booking.Booking_who.Booking_who_pkey
+        sm: 4
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Building_id {
+        attribute Building_id
+        basicFilter
+        documentation: "Building_pkey"
+        group: Request
+        list
+        order: 41
+        orderInList: 8
+        referencedKey: Building.Building.Building_pkey
+        sm: 6
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Flat_type_id {
+        attribute Flat_type_id
+        basicFilter
+        documentation: "Resource_flat_type_pkey"
+        group: Request
+        order: 43
+        referencedKey: Resource.Resource_flat_type.Resource_flat_type_pkey
+        sm: 6
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Place_type_id {
+        attribute Place_type_id
+        basicFilter
+        documentation: "Resource_place_type_pkey"
+        group: Request
+        order: 44
+        referencedKey: Resource.Resource_place_type.Resource_place_type_pkey
+        sm: 6
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Promotion_id {
+        attribute Promotion_id
+        basicFilter
+        documentation: "Promotion_pkey"
+        group: Request
+        order: 49
+        referencedKey: Billing.Promotion.Promotion_pkey
+        sm: 4
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference Reason_id {
+        attribute Reason_id
+        documentation: "Customer_reason_pkey"
+        group: Request
+        order: 45
+        referencedKey: Booking.Customer_reason.Customer_reason_pkey
+        sm: 6
+        tab: Request
+        visible
+        xs: 12
+    }
+    reference School_id {
+        attribute School_id
+        documentation: "School_pkey"
+        group: Request
+        order: 46
+        referencedKey: Auxiliar.School.School_pkey
+        sm: 6
+        tab: Request
+        visible
+        xs: 12
+    }
+    tab Request {
+        label es_ES: "Solicitud"
+        label en_US: "Request"
+        order: 1
+    }
+    tab Booking {
+        label es_ES: "Reserva"
+        label en_US: "Booking"
+        order: 2
+    }
+    tab Housing {
+        label es_ES: "Housing"
+        label en_US: "Housing"
+        order: 3
+    }
+    tab Contracts {
+        label es_ES: "Contratos"
+        label en_US: "Contracts"
+        order: 4
+    }
+    tab Invoices {
+        label es_ES: "Facturas"
+        label en_US: "Invoices"
+        order: 5
+    }
+    tab Log {
+        label es_ES: "Log"
+        label en_US: "Log"
+        order: 7
+    }
+    tab Questionnaires {
+        label es_ES: "Cuestionarios"
+        label en_US: "Questionnaires"
+        order: 6
+    }
+    trigger Booking_B6_checkout {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_B6_checkout
+        moment: BEFORE
+    }
+    trigger Booking_B0_audit_insert {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Admin.audit
+        moment: BEFORE
+    }
+    trigger Booking_A1_init {
+        each: ROW
+        events: INSERT
+        function: Booking.Booking_A1_init
+        moment: AFTER
+    }
+    trigger Booking_A2_update_availability {
+        each: ROW
+        events: INSERT UPDATE DELETE
+        function: Booking.Booking_A2_update_availability
+        moment: AFTER
+    }
+    trigger Booking_B1_init {
+        each: ROW
+        events: INSERT
+        function: Booking.Booking_B1_init
+        moment: BEFORE
+    }
+    trigger Booking_B2_validate {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_B2_validate
+        moment: BEFORE
+    }
+    trigger Booking_B3_calc_prices {
+        each: ROW
+        events: UPDATE
+        function: Booking.Booking_B3_calc_prices
+        moment: BEFORE
+    }
+    trigger Booking_B4_workflow {
+        each: ROW
+        events: UPDATE
+        function: Booking.Booking_B4_workflow
+        moment: BEFORE
+    }
+    trigger Booking_B5_buttons {
+        each: ROW
+        events: UPDATE
+        function: Booking.Booking_B5_buttons
+        moment: BEFORE
+    }
+    trigger Booking_B6_checkin {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_B6_checkin
+        moment: BEFORE
+    }
+    trigger Booking_B7_final_cleaning {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_B7_final_cleaning
+        moment: BEFORE
+    }
+    trigger Booking_B0_search {
+        each: ROW
+        events: INSERT UPDATE
+        function: Booking.Booking_B0_search
+        moment: BEFORE
+    }
+}
