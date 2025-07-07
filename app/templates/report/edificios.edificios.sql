@@ -1,5 +1,5 @@
 SELECT 
-  b."Code", bt."Name" AS "Type", b."Name", s."Name" AS "Segment", b."Start_date", 
+  b."Code", bt."Name" AS "Type", b."Name", s."Name" AS "Segment", b."Start_date", b."Estabilised_date", 
   b."Address", b."Zip", b."Lat_lon", b."Order", 
   b."Description", b."Description_en",
   b."Details", b."Details_en",
