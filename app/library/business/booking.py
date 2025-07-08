@@ -34,11 +34,11 @@ def month_dates(date_from, date_to, price):
   df = datetime.strptime(date_from, "%Y-%m-%d")
   dt = datetime.strptime(date_to, "%Y-%m-%d") + timedelta(days=1)
   d = month(df.month).capitalize()[:3] + ' ' + str(df.year)
-  dates = [{'date': d, 'price': 0}]
+  dates = [{'date': d, 'd':df.date(), 'price': 0, 'rack': 0}]
   next = (df.replace(day=1) + relativedelta(months=1))
   while next <= dt:
     d = month(next.month).capitalize()[:3] + ' ' + str(next.year)
-    dates.append({ 'date': d, 'price': price })
+    dates.append({ 'date': d, 'd': next.date(), 'price': price, 'rack': price })
     next += relativedelta(months=1)
   return dates
 
@@ -411,13 +411,31 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     # Details
     months = month_dates(date_from, date_to, float(data['Rent']) + float(data['Services']))
     months[0]['price'] = float(data['Rent_first']) + float(data['Services'])
+    months[0]['rack'] = float(data['Rent_first']) + float(data['Services'])
     months[-1]['price'] = float(data['Rent_last']) + float(data['Services'])
-    total = 0
-    for m in months:
-      total += m['price']
+    months[-1]['rack'] = float(data['Rent_last']) + float(data['Services'])
+
+    # Get promotion
+    sql = '''
+      SELECT *
+      FROM "Billing"."Promotion" p
+      WHERE p."Building_id" = %s
+        AND (p."Flat_type_id" IS NULL OR p."Flat_type_id" = %s)
+        AND (p."Place_type_id" IS NULL OR p."Place_type_id" = %s)
+        AND p."Date_from" <= %s 
+        AND p."Date_to" >= %s
+        --AND p."Active_from" <= CURRENT_DATE
+        --AND p."Active_to" >= CURRENT_DATE
+      ORDER BY id DESC
+      LIMIT 1;
+    '''
+    cur = dbClient.execute(con, sql, (building_id, flat_type_id, place_type_id, date_to, date_from))
+    promos = [dict(row) for row in cur.fetchall()]
+    cur.close()
 
     # Convert and return data
     data['Booking_fee'] = float(data['Booking_fee'])
+    data['Booking_fee_rack'] = float(data['Booking_fee'])
     data['Deposit'] = float(data['Deposit'])
     data['Rent'] = float(data['Rent'])
     data['Rent_first'] = float(data['Rent_first'])
@@ -425,7 +443,29 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     data['Services'] = float(data['Services'])
     data['Final_cleaning'] = float(data['Final_cleaning'])
     data['Months'] = months
+
+    # Apply promotion
+    if len(promos):
+      promo = promos[0]
+      if promo['Value_fee']:
+        data['Booking_fee'] += float(promo['Value_fee'])
+      elif promo['Value_fee_pct']:
+        data['Booking_fee'] *= (1.0 + float(promo['Value_fee_pct'] / 100))
+      for m in months:
+        print(m['d'])
+        if promo['Date_from'] <= m['d'] <= promo['Date_to']:
+          if promo['Value_rent']:
+            m['price'] += float(promo['Value_rent'])
+          elif promo['Value_rent_pct']:
+            m['price'] *= (1.0 + float(promo['Value_rent_pct'] / 100))
+
+    # Total
+    total = 0
+    for m in months:
+      total += m['price']
     data['Total'] = total
+
+    # Returl
     dbClient.putconn(con)
     return data
  

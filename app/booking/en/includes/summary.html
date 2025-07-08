@@ -33,7 +33,10 @@
 
       <div class="prices">
         <p>Membership fee</p>
-        <p>[[data.summary.Booking_fee | number]] €</p>
+        <p>
+        [% if data.summary.Booking_fee < data.summary.Booking_fee_rack %]<span style="width: 100px; text-decoration: line-through; color: red;">[[data.summary.Booking_fee_rack | number]] €</span>[% endif %]
+        [[data.summary.Booking_fee | number]] €
+        </p>
       </div>
 
       <div class="prices">
@@ -72,7 +75,10 @@
       [% for month in data.summary.Months %]
         <div class="prices">
           <p>[[month.date]]</p>
-          <p>[[month.price | number]] €</p>
+          <p>
+          [% if month.price < month.rack %]<span style="width: 100px; text-decoration: line-through; color: red;">[[month.rack | number]] €</span>[% endif %]
+          [[month.price | number]] €
+          </p>
         </div>
       [% endfor %]
 
