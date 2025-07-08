@@ -424,8 +424,8 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         AND (p."Place_type_id" IS NULL OR p."Place_type_id" = %s)
         AND p."Date_from" <= %s 
         AND p."Date_to" >= %s
-        --AND p."Active_from" <= CURRENT_DATE
-        --AND p."Active_to" >= CURRENT_DATE
+        AND p."Active_from" <= CURRENT_DATE
+        AND p."Active_to" >= CURRENT_DATE
       ORDER BY id DESC
       LIMIT 1;
     '''
