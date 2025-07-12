@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS gold.owner CASCADE;
 DROP TABLE IF EXISTS gold.location CASCADE;
 DROP TABLE IF EXISTS gold.resource_history CASCADE;
 DROP TABLE IF EXISTS gold.resource CASCADE;
+DROP TABLE IF EXISTS gold.building_value CASCADE;
 DROP TABLE IF EXISTS gold.building CASCADE;
 DROP TABLE IF EXISTS gold.income CASCADE;
 DROP TABLE IF EXISTS gold.occupancy CASCADE;
@@ -132,6 +133,23 @@ CREATE TABLE gold.building (
   "start_date" date DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT building_pk PRIMARY KEY ("id")
+);
+
+-- Create buildings value table
+CREATE TABLE gold.building_value (
+	"id" varchar NOT NULL,
+	"building_id" varchar NOT NULL,
+	"valuation_date" date NOT NULL,
+	"valuation_type" varchar NOT NULL,
+	"pre_capex_long_term" numeric(10, 2) NULL,
+	"pre_capex_vacant" numeric(10, 2) NULL,
+	"post_capex" numeric(10, 2) NULL,
+	"eco_valuation" numeric(10, 2) NULL,
+	"eco_rent_update" numeric(10, 2) NULL,
+	"eco_refinance" numeric(10, 2) NULL,
+	"rics_valuation" numeric(10, 2) NULL,
+  "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT building_value_pk PRIMARY KEY ("id")
 );
 
 -- Create resources table
