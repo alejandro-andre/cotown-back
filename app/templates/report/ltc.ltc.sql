@@ -5,7 +5,7 @@ SELECT
   r."Pre_capex_long_term", r."Pre_capex_vacant", r."Post_capex", r."Post_capex_residential", r."Capex",
   r."SAP_code",
   g."Name_en" AS "Gender", 
-  c."Birth_date",
+  c."Birth_date", c."Name" AS "Customer",
   etsl.labels[array_position(ets.values, bo."Pending_subrogation"::text)]::text AS "Pending_subrogation",
   etnl.labels[array_position(etn.values, bo."Negotiation"::text)]::text AS "Negotiation",
   bo."Date_to",
