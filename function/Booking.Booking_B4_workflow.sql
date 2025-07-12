@@ -175,7 +175,7 @@ BEGIN
 
   -- DEVOLVER GARANTIA a FINALIZADA
   -- Actualiza el estado a "finalizada" cuando se devuelve la garantía
-  IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL) THEN
+  IF (NEW."Status" = 'devolvergarantia' AND NEW."Deposit_returned" IS NOT NULL AND (NEW."Deposit_locked" = FALSE OR NEW."Deposit_locked" IS NULL)) THEN
     NEW."Status" := 'finalizada';
   END IF;
 
@@ -375,7 +375,7 @@ BEGIN
     change := CONCAT('El checkout ha sido correcto. Se puede devolver la garantia de la reserva ', NEW."Deposit_returned");
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW.id, change);
    
-    IF (NEW."Deposit_returned" IS NOT NULL) THEN
+    IF (NEW."Deposit_returned" IS NOT NULL AND NEW."Deposit_locked" <> TRUE) THEN
         NEW."Status" := 'finalizada';
     END IF;
 
@@ -383,7 +383,7 @@ BEGIN
 
   -- A FINALIZADA
   -- Se confirma que el usuario abandona el alojamiento en perfectas condiciones
-  IF (NEW."Status" = 'finalizada') THEN
+  IF (NEW."Status" = 'finalizada' AND (NEW."Deposit_locked" = FALSE OR NEW."Deposit_locked" IS NULL)) THEN
     -- Log
     change := CONCAT('Reserva finalizada ', CURRENT_DATE);  
   END IF;
