@@ -16,7 +16,19 @@ BEGIN
 
   -- Iterar todos los recursos
   FOR res IN
-    SELECT * FROM "Resource"."Resource"
+    SELECT 
+      r.id, 
+      r."Code",
+	  r."Building_id",
+	  r."Flat_type_id",
+	  r."Place_type_id",
+      r."Rate_id",
+      CASE 
+        WHEN pr."Multiplier" <= 0 THEN 1
+        ELSE pr."Multiplier" 
+      END AS "Multiplier"
+    FROM "Resource"."Resource" r 
+      INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id"
   LOOP
     -- Obtener precios base desde Pricing_detail
     SELECT *
@@ -40,18 +52,22 @@ BEGIN
 
     IF NOT FOUND 
        OR res."Rate_id" IS DISTINCT FROM cur."Rate_id"
-       OR rec."Rent_short" IS DISTINCT FROM cur."Rent_short"
-       OR rec."Rent_medium" IS DISTINCT FROM cur."Rent_medium"
-       OR rec."Rent_long" IS DISTINCT FROM cur."Rent_long" THEN
+       OR ROUND(rec."Rent_short" * res."Multiplier", 2) IS DISTINCT FROM cur."Rent_short"
+       OR ROUND(rec."Rent_medium" * res."Multiplier", 2) IS DISTINCT FROM cur."Rent_medium"
+       OR ROUND(rec."Rent_long" * res."Multiplier", 2) IS DISTINCT FROM cur."Rent_long"
+       OR ROUND(rec."Rent_group" * res."Multiplier", 2) IS DISTINCT FROM cur."Rent_group" THEN
 
       INSERT INTO "Resource"."Resource_price" (
         "Resource_id", "Date_price", "Rate_id",
-        "Rent_short", "Rent_medium", "Rent_long",
+        "Rent_short", "Rent_medium", "Rent_long", "Rent_group",
         "Services", "Deposit", "Limit", "Final_cleaning", "Booking_fee"
       )
       VALUES (
         res.id, CURRENT_DATE, res."Rate_id",
-        rec."Rent_short", rec."Rent_medium", rec."Rent_long",
+        ROUND(rec."Rent_short" * res."Multiplier", 2), 
+        ROUND(rec."Rent_medium" * res."Multiplier", 2), 
+        ROUND(rec."Rent_long" * res."Multiplier", 2), 
+        ROUND(rec."Rent_group" * res."Multiplier", 2),
         rec."Services", rec."Deposit", rec."Limit",
         rec."Final_cleaning", rec."Booking_fee"
       )
@@ -60,6 +76,7 @@ BEGIN
         "Rent_short" = EXCLUDED."Rent_short",
         "Rent_medium" = EXCLUDED."Rent_medium",
         "Rent_long" = EXCLUDED."Rent_long",
+        "Rent_group" = EXCLUDED."Rent_group",
         "Services" = EXCLUDED."Services",
         "Deposit" = EXCLUDED."Deposit",
         "Limit" = EXCLUDED."Limit",
