@@ -7,5 +7,6 @@
   "Deposit_required", 
   "Date_deposit_required", 
   "Deposit_returned", 
-  "Date_deposit_returned"
+  "Date_deposit_returned",
+  "Deposit_locked"
 ]

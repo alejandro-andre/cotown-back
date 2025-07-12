@@ -374,7 +374,11 @@ def sql_dashboard_deposits(vars):
     SELECT 
       b.id AS "Booking_id",
       b."Date_from", b."Date_to",
-      b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned",
+      b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned", 
+      CASE 
+        WHEN b."Deposit_locked" THEN 1
+        ELSE 0
+      END AS "Deposit_locked",
       c."Name" AS "Customer",
       c."Email" AS "Email",
       r."Code" AS "Resource",
@@ -387,6 +391,7 @@ def sql_dashboard_deposits(vars):
     WHERE b."Status" = 'devolvergarantia' 
       AND (b."Date_deposit_required" BETWEEN '{date_from}' AND '{date_to}' OR b."Date_deposit_required" IS NULL)
       {where}
+    ORDER BY 1
   '''   
 
   # SQL
