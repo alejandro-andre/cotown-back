@@ -172,7 +172,7 @@ def beds(dbClient):
 
   # Availability each month
   sql = '''
-  SELECT "Resource_id", "Date_from", "Date_to", "Status_id", "Convertible"
+  SELECT "Resource_id", "Date_from", "Date_to", "Status_id", "Convertible", "Not_flat"
   FROM "Resource"."Resource_availability" ra
   INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
   WHERE NOT rs."Available"
@@ -222,7 +222,13 @@ def occupancy(dbClient):
     days  = calendar.monthrange(date.year, date.month)[1]
     mfrom = date.replace(day=1)
     mto   = date + relativedelta(days=days-1)
-   
+
+    # Special locks?
+    availability = df_avail[df_avail['Resource_id'] == row['id']]
+    for _, r in availability.iterrows():
+      if (mfrom <= r['Date_to'] and mto >= r['Date_from']):
+        return [0, 0, 0, 0]
+
     # Calc booked nights
     xfrom = max(mfrom, row['Date_from'])
     xto   = min(mto, row['Date_to'])
@@ -264,6 +270,7 @@ def occupancy(dbClient):
     )
     SELECT
         COALESCE(b."Booking_id", b."Booking_group_id", b.id) AS "booking",
+        r.id,
         r."Code" AS "resource",
         dr.date,
         b."Date_from",
@@ -305,6 +312,29 @@ def occupancy(dbClient):
   finally:
     cur.close()
   logger.info('- Bookings x month retrieved')
+
+  # Special locks
+  sql = '''
+  SELECT bd."Resource_id", bd."Date_from", bd."Date_to"
+  FROM "Booking"."Booking_detail" bd
+    INNER JOIN "Resource"."Resource" r ON r.id = bd."Resource_id"
+    INNER JOIN "Resource"."Resource_availability" ra ON r.id = ra."Resource_id"
+    INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
+  WHERE rs."Not_flat"
+  ORDER BY 1
+  '''
+  try:
+    cur = dbClient.execute(con, sql)
+    columns = [desc[0] for desc in cur.description]
+    df_avail = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+  except Exception as e:
+    logger.error(e)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+  finally:
+    cur.close()
+  logger.info('- Special locks retrieved')
 
   # Ocuppied and sold nights
   df_books[['occupied', 'occupied_t', 'sold', 'sold_t']] = df_books.apply(nights, axis=1, result_type='expand')

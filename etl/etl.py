@@ -202,8 +202,8 @@ def main(interfaces):
     if 'occupancy' in interfaces:
       occupancy(dbOrigin)
       execute(dbDestination, '_clear_occupancy')
-      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
 
   except Exception as e:
     # Error
