@@ -239,7 +239,7 @@ def occupancy(dbClient):
     # Special locks?
     availability = df_avail[df_avail['id'] == row['id']]
     for _, r in availability.iterrows():
-      if (mfrom > r['Date_to'] or mto < r['Date_from']):
+      if (r['Date_from'] <= mfrom <= mto <= r['Date_to']):
         #print(row['resource'], r['Date_to'], r['Date_from'], row['Date_to'], row['Date_from'])
         return [0, 0, 0, 0]
 
