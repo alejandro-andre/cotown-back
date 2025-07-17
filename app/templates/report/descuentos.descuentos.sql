@@ -24,5 +24,6 @@ FROM "Booking"."Booking_price" bp
   LEFT JOIN "Booking"."Booking_discount_type" bdt ON bdt.id = bp."Discount_type_id"
   LEFT JOIN "Billing"."Promotion" pr ON pr.id = b."Promotion_id"
 WHERE bp."Rent_total" <> bp."Rent"
+  AND bp."Rent_date" >= %(fdesde)s AND bp."Rent_date" < %(fhasta)s
 ORDER BY 1, 3
 ;
