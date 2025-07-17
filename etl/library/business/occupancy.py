@@ -82,9 +82,22 @@ def beds(dbClient):
 
     # Bed is available (and convertible, and potential)
     beds     = 1.0
+    beds_c   = 1.0
     beds_pot = 1.0
     beds_cnv = 1.0
     avail = calendar.monthrange(date.year, date.month)[1]
+
+    # Consolidated date
+    c_date = date
+    if date.month >= 11: 
+      c_date = date.replace(month=10)
+    elif date.month >= 3: 
+      c_date = date.replace(month=2)
+
+    # Not available on consolidated date?
+    for _, r in availability.iterrows():
+      if r['Date_from'] <= c_date <= r['Date_to']:
+        beds_c = 0.5
 
     # Return values
     return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
