@@ -237,9 +237,10 @@ def occupancy(dbClient):
     mto   = date + relativedelta(days=days-1)
 
     # Special locks?
-    availability = df_avail[df_avail['Resource_id'] == row['id']]
+    availability = df_avail[df_avail['id'] == row['id']]
     for _, r in availability.iterrows():
-      if (mfrom <= r['Date_to'] and mto >= r['Date_from']):
+      if (mfrom > r['Date_to'] or mto < r['Date_from']):
+        #print(row['resource'], r['Date_to'], r['Date_from'], row['Date_to'], row['Date_from'])
         return [0, 0, 0, 0]
 
     # Calc booked nights
@@ -282,7 +283,7 @@ def occupancy(dbClient):
       SELECT generate_series('{START_DATE}', '{END_DATE}', interval '1 month')::date AS "date"
     )
     SELECT
-        COALESCE(b."Booking_id", b."Booking_group_id", b.id) AS "booking",
+        COALESCE(b."Booking_id", b."Booking_group_id") AS "booking",
         r.id,
         r."Code" AS "resource",
         dr.date,
@@ -307,11 +308,11 @@ def occupancy(dbClient):
         WHERE NOT EXISTS ( SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%') )
     ) AS r ON r.id = b."Resource_id"
     INNER JOIN date_range dr ON dr.date BETWEEN DATE_TRUNC('month', b."Date_from") AND b."Date_to"
-    WHERE b."Availability_id" IS NULL
+    WHERE (b."Booking_id" IS NOT NULL OR b."Booking_group_id" IS NOT NULL)
       AND b."Status" NOT IN ('pendientepago')
       AND b."Date_from" <= '{END_DATE}'
       AND b."Date_to" >= '{START_DATE}'
-    ORDER BY 1 DESC, 3
+    ORDER BY 3, 1
   '''
   try:
     cur = dbClient.execute(con, sql)
@@ -328,10 +329,10 @@ def occupancy(dbClient):
 
   # Special locks
   sql = '''
-  SELECT bd."Resource_id", bd."Date_from", bd."Date_to"
+  SELECT r.id, r."Code", bd."Date_from", bd."Date_to"
   FROM "Booking"."Booking_detail" bd
     INNER JOIN "Resource"."Resource" r ON r.id = bd."Resource_id"
-    INNER JOIN "Resource"."Resource_availability" ra ON r.id = ra."Resource_id"
+    INNER JOIN "Resource"."Resource_availability" ra ON ra.id = bd."Availability_id"
     INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
   WHERE rs."Not_flat"
   ORDER BY 1
