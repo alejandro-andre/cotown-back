@@ -61,6 +61,7 @@ SELECT
     WHEN b."Status" = 'revision' THEN 'Revision'
     ELSE 'Devolucion fianza'
   END AS "Status",
+  CASE WHEN b."Deposit_locked" THEN 'Si' ELSE 'No' END as "Deposit_locked",
   CASE 
     WHEN b."Destination_id" IS NOT NULL THEN 'CHA'   
   END AS "Substatus",

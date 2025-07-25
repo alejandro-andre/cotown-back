@@ -131,10 +131,15 @@ p { margin: 0.3em; }
     {% endfor %}
   </table>
 
-  <div class="company">{{Provider_bill_line}}</div>
+  <div class="company">
+  {% if Taxes | selectattr('Tax_value', 'equalto', 0) | list | length > 0 %}
+  Operación exenta en virtud del artículo 20.Uno.23º de la Ley 37/1992 del IVA<br>
+  {{Provider_bill_line}}
+  {% endif %}
+  </div>
   {% endif %}
 
-</div> <!-- container -->
+</div>
 <div style="page-break-after: always;"></div>
 {% endfor %}
 

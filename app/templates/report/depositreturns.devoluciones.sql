@@ -9,6 +9,7 @@ bookings AS (
   SELECT 
     b.id,
     etlb.labels[array_position(etb.values, b."Status"::text)] AS "Status",
+    CASE WHEN b."Deposit_locked" THEN 'Si' ELSE 'No' END as "Deposit_locked",
     c."Name" AS "Customer",
     r."Code" AS "Resource",
     p."Name" AS "Owner",
@@ -34,6 +35,7 @@ bookings AS (
 SELECT 
   b.id,
   b."Status",
+  b."Deposit_locked",
   b."Customer",
   b."Resource",
   b."Owner",

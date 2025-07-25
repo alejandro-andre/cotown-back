@@ -1,5 +1,5 @@
 *.zip
-**/__pycache__/*
+__pycache__
 **/log
 **/migration/*
 app/download/
