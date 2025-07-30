@@ -131,6 +131,7 @@ query BookingById ($id: Int) {
       Building: BuildingViaBuilding_id {
         Resource_building_code: Code
         Resource_building_address: Address
+        Resource_building_contract: Contract
         SegmentViaSegment_id {
             Segment_name: Name
             Segment_url: Url
@@ -800,8 +801,10 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    eid, status = do_send_contract(file_rent, file_svcs, context)
-    #eid, status = 'n/a', 'sent'
+    if context['Resource_building_contract']:
+      eid, status = do_send_contract(file_rent, file_svcs, context)
+    else:
+      eid, status = 'n/a', 'other'
 
     # Update query
     query = '''

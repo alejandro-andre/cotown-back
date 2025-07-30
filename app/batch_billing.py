@@ -479,7 +479,7 @@ def bill_group_month(dbClient, con):
     LEFT JOIN "Provider"."Provider" sv ON sv.id = r."Service_id"
     INNER JOIN "Building"."Building" bu ON bu.id = bg."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
-  WHERE bg."Status" IN ('grupoconfirmado','inhouse')
+  WHERE bg."Status" IN ('grupoconfirmado', 'inhouse')
     AND bgp."Invoice_rent_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
     AND bgp."Rent_date" >= %s
@@ -771,7 +771,7 @@ def bill_concepts(dbClient, con):
       INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
       INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
       INNER JOIN "Provider"."Provider" pr ON pr.id = s."Provider_id"
-    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato', 'checkin', 'inhouse', 'checkout', 'revision', 'finalizada')
+    WHERE b."Status" IN ('firmacontrato', 'checkinconfirmado', 'contrato', 'checkin', 'inhouse', 'checkout', 'revision', 'devolvergarantia', 'finalizada')
       AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Extra_type" = 'puntual'
@@ -900,7 +900,7 @@ def bill_group_concepts(dbClient, con):
       INNER JOIN "Provider"."Provider" pr ON pr.id = s."Provider_id"
       INNER JOIN "Customer"."Customer" c ON b."Payer_id" = c.id
       INNER JOIN "Billing"."Product" p ON p.id = s."Product_id"
-    WHERE b."Status" IN ('grupoconfirmado','inhouse')
+    WHERE b."Status" IN ('grupoconfirmado', 'inhouse')
       AND b."Date_from" <= CURRENT_DATE
       AND s."Invoice_services_id" IS NULL
       AND s."Billing_date_to" IS NULL
