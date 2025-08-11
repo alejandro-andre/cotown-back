@@ -4,7 +4,6 @@ SELECT
   b."Description", b."Description_en",
   b."Details", b."Details_en",
   d."Name" AS "District", l."Name" AS "City", p."Name" AS "Province", c."Name" AS "Country",
-  b."Management_fee",
   b."Gate_mac", b."Gate_phone", b."Gate_url",
   b."Wifi_key", b."Wifi_ssid",
   (SELECT bv."Valuation_date"
