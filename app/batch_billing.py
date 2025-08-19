@@ -480,7 +480,8 @@ def bill_group_month(dbClient, con):
     INNER JOIN "Building"."Building" bu ON bu.id = bg."Building_id"
     INNER JOIN "Building"."Building_type" st ON st.id = bu."Building_type_id"
   WHERE bg."Status" IN ('grupoconfirmado', 'inhouse')
-    AND bgp."Invoice_rent_id" IS NULL
+    AND (bgp."Rent" > 0 AND bgp."Invoice_rent_id" IS NULL)
+    AND (bgp."Services" > 0 AND bgp."Invoice_services_id" IS NULL)
     AND bgp."Rent_date" <= CURRENT_DATE
     AND bgp."Rent_date" >= %s
   GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id", pr."Pos", sv."Pos"
