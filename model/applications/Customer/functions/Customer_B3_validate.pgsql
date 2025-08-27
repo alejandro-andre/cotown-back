@@ -39,19 +39,6 @@ BEGIN
     END IF;
   END IF;
 
-  -- Same account
-  IF NEW."IBAN" IS NOT NULL AND NEW."IBAN" <> '' AND NEW."Same_account" THEN
-    NEW."Bank_account"    = NEW."IBAN";
-    NEW."Swift"           = NULL;
-    NEW."Bank_holder"     = NULL;
-    NEW."Bank_name"       = NULL;
-    NEW."Bank_address"    = NULL;
-    NEW."Bank_city"       = NULL;
-    NEW."Bank_country_id" = NULL;
-  ELSE
-    NEW."Same_account" = FALSE;
-  END IF;
-
   -- Bank account mandatory fields
   IF NEW."Bank_account" IS NOT NULL THEN
     IF NEW."Bank_holder" IS NULL THEN
