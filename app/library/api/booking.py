@@ -34,13 +34,19 @@ logger = logging.getLogger('COTOWN')
 # ---------------------------------------------------
 
 def format_number(value):
-  return locale.format_string("%d", value, grouping=True)
+  if value:
+    return locale.format_string("%d", value, grouping=True)
+  return ''
 
 def format_date_es(value):
-  return value[8:10] + '/' + value[5:7] + '/' + value[0:4]
+  if value:
+    return value[8:10] + '/' + value[5:7] + '/' + value[0:4]
+  return ''
 
 def format_date_en(value):
-  return value[5:7] + '/' + value[8:10] + '/' + value[0:4]
+  if value:
+    return value[5:7] + '/' + value[8:10] + '/' + value[0:4]
+  return ''
 
 # ---------------------------------------------------
 # Get int or 0
