@@ -8,7 +8,7 @@ DECLARE
   ipc_notify CURSOR FOR
   SELECT *
   FROM "Booking"."Booking_other"
-  WHERE ("Date_to" > CURRENT_DATE OR "Date_to" IS NULL)
+  WHERE ("Date_estimated" > CURRENT_DATE OR "Date_estimated" IS NULL)
     AND EXTRACT(MONTH FROM CURRENT_DATE + INTERVAL '2 month') = "IPC_month"
     AND ("IPC_notified" IS NULL OR EXTRACT(YEAR FROM "IPC_notified") < EXTRACT(YEAR FROM CURRENT_DATE + INTERVAL '2 month'));
 
@@ -16,7 +16,7 @@ DECLARE
   ipc_update CURSOR FOR
   SELECT *
   FROM "Booking"."Booking_other"
-  WHERE ("Date_to" > CURRENT_DATE OR "Date_to" IS NULL)
+  WHERE ("Date_estimated" > CURRENT_DATE OR "Date_estimated" IS NULL)
     AND EXTRACT(MONTH FROM CURRENT_DATE + INTERVAL '1 month') = "IPC_month"
     AND ("IPC_updated" IS NULL OR EXTRACT(YEAR FROM "IPC_updated") < EXTRACT(YEAR FROM CURRENT_DATE + INTERVAL '1 month'));
 
