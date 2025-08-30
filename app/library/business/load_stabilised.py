@@ -64,7 +64,7 @@ def load_stabilised(dbClient, con, data):
         else:
           record[column] = cell.value
 
-      # Percentages
+      # Fix values
       record['Occupancy'] = (record['Occupancy']  or 0) * 100
       record['Rent_long'] = (record['Rent_long'] or 0) * 100
       record['Rent_medium'] = (record['Rent_medium'] or 0) * 100
