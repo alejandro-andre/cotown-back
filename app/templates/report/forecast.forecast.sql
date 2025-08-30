@@ -1,9 +1,7 @@
 -- Forecast
 WITH months AS (
   SELECT generate_series(
-    DATE '2026-01-01', 
-    DATE '2026-12-01', 
-    interval '1 month'
+    %(fdesde)s::date, %(fhasta)s::date - '1 day'::interval, '1 month'::interval
   ) AS month_date
 )
 SELECT
