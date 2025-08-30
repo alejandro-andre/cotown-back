@@ -64,6 +64,12 @@ def load_forecast(dbClient, con, data):
         else:
           record[column] = cell.value
 
+      # Percentages
+      record['Occupancy'] = (record['Occupancy']  or 0) * 100
+      record['Rent_long'] = (record['Rent_long'] or 0) * 100
+      record['Rent_medium'] = (record['Rent_medium'] or 0) * 100
+      record['Rent_short'] = (record['Rent_short'] or 0) * 100
+
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
       update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
