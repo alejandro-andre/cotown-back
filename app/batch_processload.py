@@ -19,6 +19,8 @@ from library.services.apiclient import APIClient
 from library.business.load_prices import load_prices
 from library.business.load_resources import load_resources
 from library.business.load_status import load_status
+from library.business.load_forecast import load_forecast
+from library.business.load_stabilised import load_stabilised
 from library.business.load_values import load_values
 from library.business.load_rooming import load_rooming
 from library.business.load_inventory import load_inventory
@@ -130,6 +132,16 @@ def main():
       elif sheet == 'Valoraciones':
         log += sheet + '\n'
         ok, l = load_values(dbClient, con, workbook[sheet])
+
+      # Forecast
+      elif sheet == 'Forecast':
+        log += sheet + '\n'
+        ok, l = load_forecast(dbClient, con, workbook[sheet])
+
+      # Stabilised
+      elif sheet == 'Stabilised':
+        log += sheet + '\n'
+        ok, l = load_stabilised(dbClient, con, workbook[sheet])
 
       # Prices
       elif sheet == 'Precios':
