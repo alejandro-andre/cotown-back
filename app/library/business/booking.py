@@ -419,17 +419,32 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     sql = '''
       SELECT *
       FROM "Billing"."Promotion" p
-      WHERE p."Building_id" = %s
-        AND (p."Flat_type_id" IS NULL OR p."Flat_type_id" = %s)
-        AND (p."Place_type_id" IS NULL OR p."Place_type_id" = %s)
-        AND p."Date_from" <= %s 
+      WHERE p."Date_from" <= %s 
         AND p."Date_to" >= %s
         AND p."Active_from" <= CURRENT_DATE
         AND p."Active_to" >= CURRENT_DATE
+        AND EXISTS (
+          SELECT 1
+          FROM "Billing"."Promotion_building" pb
+          WHERE pb."Promotion_id" = p.id
+            AND pb."Building_id"  = %s"
+        )
+        AND EXISTS (
+            SELECT 1
+            FROM "Billing"."Promotion_place" pft
+            WHERE pft."Promotion_id" = p.id
+              AND (pft."Flat_type_id" IS NULL OR pft."Flat_type_id" = %s)
+          )
+        AND EXISTS (
+            SELECT 1
+            FROM "Billing"."Promotion_place" ppt
+            WHERE ppt."Promotion_id" = p.id
+              AND (ppt."Place_type_id" IS NULL OR ppt."Place_type_id" = %s)
+        )
       ORDER BY id DESC
       LIMIT 1;
     '''
-    cur = dbClient.execute(con, sql, (building_id, flat_type_id, place_type_id, date_to, date_from))
+    cur = dbClient.execute(con, sql, (date_to, date_from, building_id, flat_type_id, place_type_id))
     promos = [dict(row) for row in cur.fetchall()]
     cur.close()
 

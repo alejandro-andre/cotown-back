@@ -24,13 +24,30 @@ BEGIN
   SELECT *
   INTO promotion
   FROM "Billing"."Promotion" p
-  WHERE p."Building_id" = NEW."Building_id"
-    AND (p."Flat_type_id" IS NULL OR p."Flat_type_id" = NEW."Flat_type_id")
-    AND (p."Place_type_id" IS NULL OR p."Place_type_id" = NEW."Place_type_id")
-    AND p."Date_from" <= NEW."Date_to" 
+  WHERE p."Date_from" <= NEW."Date_to" 
     AND p."Date_to" >= NEW."Date_from"
     AND p."Active_from" <= CURRENT_DATE
     AND p."Active_to" >= CURRENT_DATE
+    -- (1) Debe haber al menos un edificio coincidente
+    AND EXISTS (
+      SELECT 1
+      FROM "Billing"."Promotion_building" pb
+      WHERE pb."Promotion_id" = p.id
+        AND pb."Building_id"  = NEW."Building_id"
+    )
+    -- (2) Debe haber al menos un tipo coincidente (piso o plaza)
+    AND EXISTS (
+        SELECT 1
+        FROM "Billing"."Promotion_place" pft
+        WHERE pft."Promotion_id" = p.id
+          AND (pft."Flat_type_id" IS NULL OR pft."Flat_type_id" = NEW."Flat_type_id")
+      )
+    AND EXISTS (
+        SELECT 1
+        FROM "Billing"."Promotion_place" ppt
+        WHERE ppt."Promotion_id" = p.id
+          AND (ppt."Place_type_id" IS NULL OR ppt."Place_type_id" = NEW."Place_type_id")
+    )
   ORDER BY id DESC
   LIMIT 1;
   NEW."Promotion_id" = promotion.id;
