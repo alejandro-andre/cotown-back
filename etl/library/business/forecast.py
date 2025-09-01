@@ -60,9 +60,9 @@ def budget(apiClient):
         # Data
         budget = to_float(row[ 2].value)
         uw     = to_float(row[ 3].value)
-        line = ['BUD' + str(c), '-', '-', '(budget)', month, '', '', row[1].value, 'Monthly rent', budget, 0, None, 'Budget', '', '' ]
+        line = ['BUD' + str(c), '-', '-', '(budget)', month, '', '', row[1].value, 'Retail', budget, budget, None, 'Budget', 'RETAIL', '' ]
         budget_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['BUW' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Monthly rent', uw, 0, None, 'UW', '', '' ]
+        line = ['BUW' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Retail', uw, uw, None, 'UW', 'RETAIL', '' ]
         budget_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
