@@ -47,6 +47,7 @@ WITH
     pd."Rent_short" * pr."Multiplier" AS "Rent_short",
     pd."Rent_medium" * pr."Multiplier" AS "Rent_medium",
     pd."Rent_long" * pr."Multiplier" AS "Rent_long",
+    pd."Rent_group" * pr."Multiplier" AS "Rent_group",
     r."Management_fee"
   FROM "Resource"."Resource" r
     CROSS JOIN "Dates" d
@@ -68,9 +69,12 @@ WITH
 SELECT
   p."Date" AS "Date_price",
   p."Resource" AS "Code",
-  rf."Rent_long" / 100 AS "Rent_long",
-  rf."Rent_medium" / 100 AS "Rent_medium",
-  rf."Rent_short" / 100 AS "Rent_short",
+  rf."Rent_long",
+  rf."Rent_medium",
+  rf."Rent_short",
+  rf."Pct_long" / 100 AS "Pct_long",
+  rf."Pct_medium" / 100 AS "Pct_medium",
+  rf."Pct_short" / 100 AS "Pct_short",
   rf."Discount" / 100 AS "Discount",
   rf."Services",
   rf."Final_cleaning",
@@ -80,9 +84,10 @@ SELECT
   ROUND(AVG(p."Rent_short" * e."Extra"), 2) AS "Short",
   ROUND(AVG(p."Rent_medium" * e."Extra"), 2) AS "Medium",
   ROUND(AVG(p."Rent_long" * e."Extra"), 2) AS "Long",
-  AVG(p."Management_fee") / 100.0 AS "Management_fee"
+  ROUND(AVG(p."Rent_group"), 2) AS "Group",
+  MAX(p."Management_fee") / 100.0 AS "Management_fee"
 FROM "Details" p
   LEFT JOIN "Extras" e ON p.id = e.id
   LEFT JOIN "Resource"."Resource_forecast" rf ON rf."Resource_id" = p."Flat_id" AND rf."Date_price" = p."Date"
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 ORDER BY 2, 1;
