@@ -29,12 +29,13 @@ BEGIN
   END; 
 
   -- Actualiza el estado a 'descartada' de todas las solicitudes que no hayan pagado el deposito y falte menos de un
-  -- mes para la fecha de entrada, con periodo de gracia de 48h desde la creación del pago
+  -- mes para la fecha de entrada, con periodo de gracia de 4d desde la confirmación y la creación del pago
   BEGIN
     UPDATE "Booking"."Booking" b
     SET "Status" = 'descartadapagada'
     WHERE b."Status" = 'confirmada'
     AND b."Date_from" < (CURRENT_DATE + INTERVAL '30 days')
+    AND b."Confirmation_date" < (CURRENT_DATE - INTERVAL '4 days')
     AND EXISTS (
       SELECT id
       FROM "Billing"."Payment" p
