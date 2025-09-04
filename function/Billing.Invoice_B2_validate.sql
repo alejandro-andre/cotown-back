@@ -67,7 +67,8 @@ BEGIN
     END IF;
 
     -- No se puede cambiar
-    IF OLD."Issued"            <> NEW."Issued"           OR
+    IF OLD."Bill_type"         <> NEW."Bill_type"        OR
+       OLD."Issued"            <> NEW."Issued"           OR
        OLD."Bill_type"         <> NEW."Bill_type"        OR
        OLD."Booking_id"        <> NEW."Booking_id"       OR
        OLD."Booking_group_id"  <> NEW."Booking_group_id" OR
