@@ -423,23 +423,32 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         AND p."Date_to" >= %s
         AND p."Active_from" <= CURRENT_DATE
         AND p."Active_to" >= CURRENT_DATE
-        AND EXISTS (
-          SELECT 1
-          FROM "Billing"."Promotion_building" pb
-          WHERE pb."Promotion_id" = p.id
-            AND pb."Building_id"  = %s"
-        )
-        AND EXISTS (
+        AND (
+          NOT EXISTS (
             SELECT 1
-            FROM "Billing"."Promotion_place" pft
-            WHERE pft."Promotion_id" = p.id
-              AND (pft."Flat_type_id" IS NULL OR pft."Flat_type_id" = %s)
+            FROM "Billing"."Promotion_building" pb0
+            WHERE pb0."Promotion_id" = p.id
           )
-        AND EXISTS (
+          OR EXISTS (
             SELECT 1
-            FROM "Billing"."Promotion_place" ppt
-            WHERE ppt."Promotion_id" = p.id
-              AND (ppt."Place_type_id" IS NULL OR ppt."Place_type_id" = %s)
+            FROM "Billing"."Promotion_building" pb
+            WHERE pb."Promotion_id" = p.id
+              AND pb."Building_id"  = %s
+          )
+        )
+        AND (
+          NOT EXISTS (
+            SELECT 1
+            FROM "Billing"."Promotion_place" pp0
+            WHERE pp0."Promotion_id" = p.id
+          )
+          OR EXISTS (
+            SELECT 1
+            FROM "Billing"."Promotion_place" pp
+            WHERE pp."Promotion_id" = p.id
+              AND (pp."Flat_type_id"  IS NULL OR pp."Flat_type_id"  = %s)
+              AND (pp."Place_type_id" IS NULL OR pp."Place_type_id" = %s)
+          )
         )
       ORDER BY id DESC
       LIMIT 1;

@@ -28,25 +28,34 @@ BEGIN
     AND p."Date_to" >= NEW."Date_from"
     AND p."Active_from" <= CURRENT_DATE
     AND p."Active_to" >= CURRENT_DATE
-    -- (1) Debe haber al menos un edificio coincidente
-    AND EXISTS (
-      SELECT 1
-      FROM "Billing"."Promotion_building" pb
-      WHERE pb."Promotion_id" = p.id
-        AND pb."Building_id"  = NEW."Building_id"
-    )
-    -- (2) Debe haber al menos un tipo coincidente (piso o plaza)
-    AND EXISTS (
+    -- Edificio: si no hay filas para la promo -> aplica a todos.
+    AND (
+      NOT EXISTS (
         SELECT 1
-        FROM "Billing"."Promotion_place" pft
-        WHERE pft."Promotion_id" = p.id
-          AND (pft."Flat_type_id" IS NULL OR pft."Flat_type_id" = NEW."Flat_type_id")
+        FROM "Billing"."Promotion_building" pb0
+        WHERE pb0."Promotion_id" = p.id
       )
-    AND EXISTS (
+      OR EXISTS (
         SELECT 1
-        FROM "Billing"."Promotion_place" ppt
-        WHERE ppt."Promotion_id" = p.id
-          AND (ppt."Place_type_id" IS NULL OR ppt."Place_type_id" = NEW."Place_type_id")
+        FROM "Billing"."Promotion_building" pb
+        WHERE pb."Promotion_id" = p.id
+          AND pb."Building_id"  = %s
+      )
+    )
+    -- Tipos de piso/plaza: Si no hay filas -> aplica a todos.
+    AND (
+      NOT EXISTS (
+        SELECT 1
+        FROM "Billing"."Promotion_place" pp0
+        WHERE pp0."Promotion_id" = p.id
+      )
+      OR EXISTS (
+        SELECT 1
+        FROM "Billing"."Promotion_place" pp
+        WHERE pp."Promotion_id" = p.id
+          AND (pp."Flat_type_id"  IS NULL OR pp."Flat_type_id"  = %s)
+          AND (pp."Place_type_id" IS NULL OR pp."Place_type_id" = %s)
+      )
     )
   ORDER BY id DESC
   LIMIT 1;
