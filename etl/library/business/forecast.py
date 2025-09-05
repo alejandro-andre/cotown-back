@@ -214,8 +214,6 @@ def forecast(apiClient):
   # Save all results to CSV
   with open('csv/income_forecast.csv', 'w') as f:
     f.write(forecast_result)
-
-  # Save all results to CSV
   with open('csv/occupancy_forecast.csv', 'w') as f:
     f.write(occupancy_result)
   with open('csv/beds_forecast.csv', 'w') as f:

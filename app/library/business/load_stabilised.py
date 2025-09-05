@@ -69,6 +69,7 @@ def load_stabilised(dbClient, con, data):
       record['Pct_long']   = (record['Pct_long'] or 0) * 100
       record['Pct_medium'] = (record['Pct_medium'] or 0) * 100
       record['Pct_short']  = (record['Pct_short'] or 0) * 100
+      record['Leakage']    = (record['Leakage'] or 0) * 100
 
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
