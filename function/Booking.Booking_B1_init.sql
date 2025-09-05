@@ -39,7 +39,7 @@ BEGIN
         SELECT 1
         FROM "Billing"."Promotion_building" pb
         WHERE pb."Promotion_id" = p.id
-          AND pb."Building_id"  = %s
+          AND pb."Building_id"  = NEW."Building_id"
       )
     )
     -- Tipos de piso/plaza: Si no hay filas -> aplica a todos.
@@ -53,8 +53,8 @@ BEGIN
         SELECT 1
         FROM "Billing"."Promotion_place" pp
         WHERE pp."Promotion_id" = p.id
-          AND (pp."Flat_type_id"  IS NULL OR pp."Flat_type_id"  = %s)
-          AND (pp."Place_type_id" IS NULL OR pp."Place_type_id" = %s)
+          AND (pp."Flat_type_id"  IS NULL OR pp."Flat_type_id"  = NEW."Flat_type_id")
+          AND (pp."Place_type_id" IS NULL OR pp."Place_type_id" = NEW."Place_type_id")
       )
     )
   ORDER BY id DESC
