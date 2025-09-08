@@ -2,9 +2,9 @@
 "Date_price",
 "Code",
 "Occupancy",
-"Rent_long",
-"Rent_medium",
-"Rent_short",
+"Pct_long",
+"Pct_medium",
+"Pct_short",
 "",
 "Leakage"
 ]

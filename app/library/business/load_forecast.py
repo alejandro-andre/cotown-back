@@ -8,6 +8,24 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
+# Utils
+# ###################################################
+
+def to_int(x):
+  try:
+    return int(x)
+  except:
+    return 0
+  
+
+def to_float(x):
+  try:
+    return float(x)
+  except:
+    return 0.0
+
+
+# ###################################################
 # Load resources
 # ###################################################
 
@@ -65,19 +83,19 @@ def load_forecast(dbClient, con, data):
           record[column] = cell.value
 
       # Fix values
-      record['Occupancy']      = (record['Occupancy']  or 0) * 100
-      record['Rent_long']      = record['Rent_long'] or 0
-      record['Rent_medium']    = record['Rent_medium'] or 0
-      record['Rent_short']     = record['Rent_short'] or 0
-      record['Rent_group']     = record['Rent_group'] or 0
-      record['Pct_medium']     = (record['Pct_medium'] or 0) * 100
-      record['Pct_short']      = (record['Pct_short'] or 0) * 100
-      record['Pct_long']       = (record['Pct_long'] or 0) * 100
-      record['Discount']       = (record['Discount'] or 0) * 100
-      record['Services']       = record['Services'] or 0
-      record['Final_cleaning'] = record['Final_cleaning'] or 0
-      record['Booking_fee']    = record['Booking_fee'] or 0
-      record['Reinvoices']     = record['Reinvoices'] or 0
+      record['Occupancy']      = to_float(record['Occupancy']) * 100
+      record['Rent_long']      = to_float(record['Rent_long'])
+      record['Rent_short']     = to_float(record['Rent_short'])
+      record['Rent_medium']    = to_float(record['Rent_medium'])
+      record['Rent_group']     = to_float(record['Rent_group'])
+      record['Pct_short']      = to_float(record['Pct_short']) * 100
+      record['Pct_medium']     = to_float(record['Pct_medium']) * 100
+      record['Pct_long']       = to_float(record['Pct_long']) * 100
+      record['Discount']       = to_float(record['Discount']) * 100
+      record['Services']       = to_float(record['Services'])
+      record['Final_cleaning'] = to_float(record['Final_cleaning'])
+      record['Booking_fee']    = to_float(record['Booking_fee'])
+      record['Reinvoices']     = to_float(record['Reinvoices'])
 
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))

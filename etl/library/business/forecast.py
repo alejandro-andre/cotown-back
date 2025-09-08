@@ -12,6 +12,10 @@ import logging
 logger = logging.getLogger('COTOWN')
 
 
+# ###################################################
+# Utils
+# ###################################################
+
 def to_int(x):
   try:
     return int(x)
@@ -26,6 +30,9 @@ def to_float(x):
     return 0.0
 
 
+# ###################################################
+# Lambda functions
+# ###################################################
 
 def budget(apiClient):
 

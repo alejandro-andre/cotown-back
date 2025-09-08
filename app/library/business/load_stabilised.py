@@ -8,6 +8,24 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
+# Utils
+# ###################################################
+
+def to_int(x):
+  try:
+    return int(x)
+  except:
+    return 0
+  
+
+def to_float(x):
+  try:
+    return float(x)
+  except:
+    return 0.0
+
+
+# ###################################################
 # Load resources
 # ###################################################
 
@@ -65,11 +83,11 @@ def load_stabilised(dbClient, con, data):
           record[column] = cell.value
 
       # Fix values
-      record['Occupancy']  = (record['Occupancy']  or 0) * 100
-      record['Pct_long']   = (record['Pct_long'] or 0) * 100
-      record['Pct_medium'] = (record['Pct_medium'] or 0) * 100
-      record['Pct_short']  = (record['Pct_short'] or 0) * 100
-      record['Leakage']    = (record['Leakage'] or 0) * 100
+      record['Occupancy']  = to_float(record['Occupancy']) * 100
+      record['Pct_long']   = to_float(record['Pct_long']) * 100
+      record['Pct_medium'] = to_float(record['Pct_medium']) * 100
+      record['Pct_short']  = to_float(record['Pct_short']) * 100
+      record['Leakage']    = to_float(record['Leakage']) * 100
 
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
