@@ -8,7 +8,7 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   'Management fee' AS "product",
-  il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "amount",
+  il."Amount" / (1 + t."Value" / 100) * COALESCE(r."Management_fee", 0) / 100 AS "amount",
   0 AS "rate",
   CASE
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
@@ -43,7 +43,7 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   'Management fee' AS "product",
-  il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "amount",
+  il."Amount" / (1 + t."Value" / 100) * COALESCE(r."Management_fee", 0) / 100 AS "amount",
   0 AS "rate",
   'GROUP' AS "stay_length",
   NULL AS "price",
