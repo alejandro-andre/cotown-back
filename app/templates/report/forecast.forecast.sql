@@ -82,7 +82,7 @@ SELECT
   COALESCE(rf."Final_cleaning", 0) AS "Final_cleaning",
   COALESCE(rf."Booking_fee", 0) AS "Booking_fee",
   COALESCE(rf."Reinvoices", 0) AS "Reinvoices",
-  SUM(p."Beds") AS "Beds",
+  COALESCE(rf."Beds", 0) AS "Beds",
   ROUND(AVG(p."Rent_short" * e."Extra"), 2) AS "Short",
   ROUND(AVG(p."Rent_medium" * e."Extra"), 2) AS "Medium",
   ROUND(AVG(p."Rent_long" * e."Extra"), 2) AS "Long",
@@ -91,5 +91,5 @@ SELECT
 FROM "Details" p
   LEFT JOIN "Extras" e ON p.id = e.id
   LEFT JOIN "Resource"."Resource_forecast" rf ON rf."Resource_id" = p."Flat_id" AND rf."Date_price" = p."Date"
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 ORDER BY 2, 1;
