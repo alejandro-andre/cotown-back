@@ -85,6 +85,9 @@ def generate_email(apiClient, email):
       return 'ERROR', 'ERROR'
   template = flatten(result['data'][0])
 
+  # From
+  from_type = template['From_type'] or 'cotown'
+
   # Context
   context = email
 
@@ -119,14 +122,14 @@ def generate_email(apiClient, email):
 
   # Return
   #return subject, body
-  return subject, rich_body
+  return subject, rich_body, from_type
 
 
 # ###################################################
 # Send email thru SMTP
 # ###################################################
 
-def smtp_mail(to, subject, body, cc=None, bcc=None, file=None):
+def smtp_mail(to, subject, body, cc=None, bcc=None, file=None, from_type='cotown'):
 
   # Receivers
   if settings.SMTPSEND != 1:
@@ -139,7 +142,7 @@ def smtp_mail(to, subject, body, cc=None, bcc=None, file=None):
 
   # Prepare mail
   msg = MIMEMultipart()
-  msg['From']    = settings.SMTPFROM
+  msg['From']    = settings.SMTPFROM if from_type != 'vandor' else settings.SMTPFROMVANDOR
   msg['To']      = to
   msg['Subject'] = subject
   if cc:
@@ -160,8 +163,11 @@ def smtp_mail(to, subject, body, cc=None, bcc=None, file=None):
   with smtplib.SMTP(settings.SMTPHOST, settings.SMTPPORT) as session:
     session.ehlo()
     session.starttls(context=context)
-    session.login(settings.SMTPUSER, settings.SMTPPASS)
-    errors = session.sendmail(settings.SMTPFROM, receivers, msg.as_string())
+    session.login(
+      settings.SMTPUSER if from_type != 'vandor' else settings.SMTPUSERVANDOR, 
+      settings.SMTPPASS if from_type != 'vandor' else settings.SMTPPASSVANDOR
+    )
+    errors = session.sendmail(msg['From'], receivers, msg.as_string())
   return errors
 
 
@@ -180,12 +186,13 @@ def do_email(apiClient, email):
     
   # Template? generate email body
   if email['Template'] is not None:
-    subject, body = generate_email(apiClient, email)
+    subject, body, from_type = generate_email(apiClient, email)
     
   # Manual email?
   else:
     subject = email['Subject']
-    body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list']) 
+    body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list'])
+    from_type = email['From_type']
 
   # Send email
   if subject != 'ERROR':
@@ -195,7 +202,7 @@ def do_email(apiClient, email):
     logger.debug(subject)
 
     # ¡¡¡ Send email !!!
-    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'], bcc=email['Cco'])
+    smtp_mail(email['Customer']['Email'], subject, body, cc=email['Cc'], bcc=email['Cco'], from_type=from_type)
 
     # Update query
     query = '''
@@ -205,6 +212,7 @@ def do_email(apiClient, email):
         entity: {
           Subject: $subject
           Body: $body
+          From_type: $from
           Sent_at: $sent
         }
       ) { id }
@@ -216,6 +224,7 @@ def do_email(apiClient, email):
       'id': email['id'],
       'subject': subject,
       'body': body,
+      'from': from_type,
       'sent': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
     }
 

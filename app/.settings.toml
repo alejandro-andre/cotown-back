@@ -16,7 +16,9 @@ LOGLEVEL=10
 SMTPHOST='smtp.office365.com'
 SMTPPORT='587'
 SMTPFROM='Cotown <no-reply@cotown.com>'
+SMTPFROMVANDOR='Vandor Real Estate<no-reply@vandor.es>'
 SMTPUSER='no-reply@cotown.com'
+SMTPUSERVANDOR='no-reply@vandor.es'
 
 # App parameters
 BILLDATE='2023-11-01'
