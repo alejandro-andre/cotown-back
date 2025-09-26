@@ -4,6 +4,7 @@
   "Date_to",
   "Resource",
   "Customer",
+  "Email",
   "id",
   "Issued_date",
   "Amount",
