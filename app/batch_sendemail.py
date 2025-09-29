@@ -70,6 +70,7 @@ def main():
       }
       Template
       Entity_id
+      From_type
       Subject
       Body
       Cc

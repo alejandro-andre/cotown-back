@@ -40,6 +40,7 @@ query EmailByCode ($code: String!) {
       Body_en
       Rich_body
       Rich_body_en
+      From_type
       Query
     }
 }'''
@@ -192,7 +193,7 @@ def do_email(apiClient, email):
   else:
     subject = email['Subject']
     body = markdown.markdown(email['Body'], extensions=['tables', 'attr_list'])
-    from_type = email['From_type']
+    from_type = email.get('From_type') or 'cotown'
 
   # Send email
   if subject != 'ERROR':
@@ -206,7 +207,7 @@ def do_email(apiClient, email):
 
     # Update query
     query = '''
-    mutation ($id: Int! $subject: String! $body: String! $sent: String!) {
+    mutation ($id: Int! $subject: String! $body: String! $from: Auxiliar_From_typeEnumType $sent: String!) {
       Customer_Customer_emailUpdate (
         where:  { id: {EQ: $id} }
         entity: {
