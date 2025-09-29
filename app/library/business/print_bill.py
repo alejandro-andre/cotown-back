@@ -182,7 +182,8 @@ def do_bill(apiClient, id):
         context['Customer_email'],
         context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
         'Adjuntamos factura ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
-        file=file
+        file=file,
+        from_type='vandor'
       )
 
     # Update query
