@@ -10,6 +10,16 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE; 
 
+  -- Is there another LAU contract after this?
+  IF EXISTS (
+    SELECT 1 
+    FROM "Booking"."Booking_other" bo
+    WHERE bo."Resource_id" = NEW."Resource_id"
+    AND "Date_from" > NEW."Date_from"
+  ) THEN
+    RETURN OLD;
+  END IF;
+
   -- Delete pre capex & capex locks
   DELETE 
   FROM "Resource"."Resource_availability" 
