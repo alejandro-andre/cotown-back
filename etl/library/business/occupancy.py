@@ -29,7 +29,6 @@ def beds(dbClient):
   def count(row):
     # Counters
     beds     = 0.0 # Total beds
-    beds_c   = 0.0 # Consolidated beds
     beds_cnv = 0.0 # Convertible beds
     beds_pot = 0.0 # Potential beds
     beds_pre = 0.0 # Pre capex beds
@@ -42,12 +41,12 @@ def beds(dbClient):
 
     # Building not active
     if date < row['Start_date']:
-      return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
 
     # Resource not existent
     if row['Date_from'] and row['Date_to']:
       if row['Date_from'] <= date <= row['Date_to']:
-        return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
 
     # All flat non availability rows
     availability = df_avail[df_avail['Resource_id'] == row['flat']]
@@ -61,7 +60,7 @@ def beds(dbClient):
         # Potential
         if r['Status_id'] == 2:
           beds_pot = 1.0
-          if convert in ('LTC', 'FTC'):
+          if convert in ('N/D', 'LTC', 'FTC'):
             beds_cnv = 1.0
 
         # Pre capex
@@ -78,11 +77,10 @@ def beds(dbClient):
           beds_cnv = 1.0
           beds_cap = 1.0
 
-        return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
 
     # Bed is available (and convertible, and potential)
     beds     = 1.0
-    beds_c   = 1.0
     beds_pot = 1.0
     beds_cnv = 1.0
     avail = calendar.monthrange(date.year, date.month)[1]
@@ -94,13 +92,8 @@ def beds(dbClient):
     elif date.month >= 3: 
       c_date = date.replace(month=2)
 
-    # Not available on consolidated date?
-    for _, r in availability.iterrows():
-      if r['Date_from'] <= c_date <= r['Date_to']:
-        beds_c = 0.5
-
     # Return values
-    return [beds, beds_c, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+    return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
   
 
   # Log
@@ -213,13 +206,13 @@ def beds(dbClient):
   df_beds = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
   # Beds and available nights
-  df_beds[['beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df_beds.apply(count, axis=1, result_type='expand')
+  df_beds[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df_beds.apply(count, axis=1, result_type='expand')
   logger.info('- Beds and available nights calculated')
 
   # To CSV
   df_beds['id'] = range(1, 1 + len(df_beds))
   df_beds['data_type'] = 'Real'
-  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_c', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
+  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')
 
 
