@@ -206,7 +206,6 @@ CREATE TABLE gold.beds (
 
   "available" int NOT NULL,
   "beds" int NOT NULL,                  -- Converted beds
-  "beds_c" numeric NOT NULL,            -- Consolidated beds
   "beds_cnv" numeric NOT NULL,          -- Convertible beds
   "beds_pot" numeric NOT NULL,          -- Potential beds
   "beds_cap" numeric NOT NULL,          -- Capex beds

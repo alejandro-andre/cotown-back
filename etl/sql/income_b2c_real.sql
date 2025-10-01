@@ -37,7 +37,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id" 
   INNER JOIN "Billing"."Product_type" pt ON pt.id = pr."Product_type_id" 
   INNER JOIN "Booking"."Booking" b ON b.id = i."Booking_id" 
-  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id" 
   LEFT JOIN "Booking"."Booking_price" bp ON bp."Invoice_rent_id" = i.id 
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
