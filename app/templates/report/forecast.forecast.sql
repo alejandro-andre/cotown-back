@@ -83,6 +83,7 @@ SELECT
   COALESCE(rf."Booking_fee", 0) AS "Booking_fee",
   COALESCE(rf."Reinvoices", 0) AS "Reinvoices",
   COALESCE(rf."Beds", 0) AS "Beds",
+  COALESCE(p."Beds", 0) AS "Available_beds",
   ROUND(AVG(p."Rent_short" * e."Extra"), 2) AS "Short",
   ROUND(AVG(p."Rent_medium" * e."Extra"), 2) AS "Medium",
   ROUND(AVG(p."Rent_long" * e."Extra"), 2) AS "Long",
