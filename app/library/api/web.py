@@ -12,7 +12,7 @@
 from flask import g, request
 
 # Cotown includes - business functions
-from library.business.queries import q_flat_prices, q_room_prices, q_room_amenities
+from library.business.queries import q_flat_prices, q_room_prices, q_room_amenities, q_promo
 
 # Logging
 import logging
@@ -37,3 +37,11 @@ def req_rooms(segment, year):
 def req_amenities(segment):
 
     return q_room_amenities(g.dbClient, segment)
+
+# Get promos
+def req_promo(segment):
+    return q_promo(g.dbClient, segment, 'total')
+def req_promo_building(segment):
+    return q_promo(g.dbClient, segment, 'building')
+def req_promo_type(segment):
+    return q_promo(g.dbClient, segment, 'type')
