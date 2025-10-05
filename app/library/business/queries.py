@@ -638,50 +638,25 @@ def q_room_amenities(dbClient, segment):
 # Web - Promos
 # ######################################################
 
-def q_promo(dbClient, segment, type):
+def q_promo(dbClient, segment):
 
   # Connect
   con = dbClient.getconn()
 
   # Get highest promo
-  if type == 'total':
-    sql = '''
-      SELECT ROUND(MIN(p."Value_rent_pct"), 0) AS "Value_rent_pct", ROUND(MIN(p."Value_fee_pct"), 0) AS "Value_fee_pct"
-      FROM "Billing"."Promotion" p
-        LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
-        LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
-      WHERE p."Active_from" <= CURRENT_DATE
-        AND p."Active_to" >= CURRENT_DATE
-        AND b."Segment_id" = %s
-    '''
-  if type == 'building':
-    sql = '''
-      SELECT b.id, 
-        ROUND(MIN(p."Value_rent_pct"), 0) AS "Value_rent_pct", ROUND(MIN(p."Value_fee_pct"), 0) AS "Value_fee_pct"
-      FROM "Billing"."Promotion" p
-        LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
-        LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
-      WHERE p."Active_from" <= CURRENT_DATE
-        AND p."Active_to" >= CURRENT_DATE
-        AND b."Segment_id" = %s
-      GROUP BY 1
-      ORDER BY 1
-    '''
-  if type == 'type':
-    sql = '''
-      SELECT b.id, substring(rpt."Code", 1, 1) AS "type", 
-          ROUND(MIN(p."Value_rent_pct"), 0) AS "Value_rent_pct", ROUND(MIN(p."Value_fee_pct"), 0) AS "Value_fee_pct"
-        FROM "Billing"."Promotion" p
-          LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
-          LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
-          LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pp."Place_type_id" 
-          LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
-        WHERE p."Active_from" <= CURRENT_DATE
-          AND p."Active_to" >= CURRENT_DATE
-          AND b."Segment_id" = %s
-        GROUP BY 1, 2
-        ORDER BY 1, 2
-    '''
+  sql = '''
+    SELECT b.id, rft."Code" AS "flat_type", rpt."Code" AS "place_type",
+      COALESCE(p."Value_rent_pct", 0) AS "Value_rent_pct", COALESCE(p."Value_fee_pct", 0) AS "Value_fee_pct"
+    FROM "Billing"."Promotion" p
+      LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
+      LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
+      LEFT JOIN "Resource"."Resource_flat_type" rft ON rft."id" = pp."Flat_type_id" 
+      LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt."id" = pp."Place_type_id" 
+      LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
+    WHERE b."Segment_id" = %s
+      AND p."Active_from" <= CURRENT_DATE
+      AND p."Active_to" >= CURRENT_DATE
+  '''
   cur = dbClient.execute(con, sql, (segment, ))
 
   # To JSON

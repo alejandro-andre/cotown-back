@@ -40,8 +40,5 @@ def req_amenities(segment):
 
 # Get promos
 def req_promo(segment):
-    return q_promo(g.dbClient, segment, 'total')
-def req_promo_building(segment):
-    return q_promo(g.dbClient, segment, 'building')
-def req_promo_type(segment):
-    return q_promo(g.dbClient, segment, 'type')
+
+    return q_promo(g.dbClient, segment)
