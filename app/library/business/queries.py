@@ -665,19 +665,22 @@ def q_promo(dbClient, segment, type):
         AND p."Active_to" >= CURRENT_DATE
         AND b."Segment_id" = %s
       GROUP BY 1
+      ORDER BY 1
     '''
   if type == 'type':
     sql = '''
-      SELECT b.id, COALESCE(pp."Flat_type_id", 0) AS "Flat_type_id", COALESCE(pp."Place_type_id", 0) AS "Place_type_id",
-        ROUND(MIN(p."Value_rent_pct"), 0) AS "Value_rent_pct", ROUND(MIN(p."Value_fee_pct"), 0) AS "Value_fee_pct"
-      FROM "Billing"."Promotion" p
-        LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
-        LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
-        LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
-      WHERE p."Active_from" <= CURRENT_DATE
-        AND p."Active_to" >= CURRENT_DATE
-        AND b."Segment_id" = %s
-      GROUP BY 1, 2, 3
+      SELECT b.id, substring(rpt."Code", 1, 1) AS "type", 
+          ROUND(MIN(p."Value_rent_pct"), 0) AS "Value_rent_pct", ROUND(MIN(p."Value_fee_pct"), 0) AS "Value_fee_pct"
+        FROM "Billing"."Promotion" p
+          LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
+          LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
+          LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pp."Place_type_id" 
+          LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
+        WHERE p."Active_from" <= CURRENT_DATE
+          AND p."Active_to" >= CURRENT_DATE
+          AND b."Segment_id" = %s
+        GROUP BY 1, 2
+        ORDER BY 1, 2
     '''
   cur = dbClient.execute(con, sql, (segment, ))
 
