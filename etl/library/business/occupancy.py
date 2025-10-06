@@ -34,7 +34,7 @@ def beds(dbClient):
     beds_pre = 0.0 # Pre capex beds
     beds_cap = 0.0 # Capex beds
     avail    = 0.0 # Available room nights
-    convert  = ''
+    convert  = 0.0 # Convertibñe room nights
 
     # Date
     date = row['date']
@@ -55,7 +55,7 @@ def beds(dbClient):
       # Bed is not available?
       if r['Date_from'] <= date <= r['Date_to']:
         # Convertible
-        convert = r['Convertible'] or 'N/D'
+        convert  = calendar.monthrange(date.year, date.month)[1]
 
         # Potential
         if r['Status_id'] == 2:
@@ -83,7 +83,8 @@ def beds(dbClient):
     beds     = 1.0
     beds_pot = 1.0
     beds_cnv = 1.0
-    avail = calendar.monthrange(date.year, date.month)[1]
+    avail    = calendar.monthrange(date.year, date.month)[1]
+    convert  = calendar.monthrange(date.year, date.month)[1]
 
     # Consolidated date
     c_date = date
