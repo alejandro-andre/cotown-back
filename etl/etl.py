@@ -19,7 +19,8 @@ from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.history import history
-from library.business.occupancy import occupancy, beds
+from library.business.beds import beds_real, beds_forecast
+from library.business.occupancy import occupancy
 from library.business.forecast import forecast, budget
 from library.business.gl import glSAP, glExcel
 
@@ -65,7 +66,6 @@ def dbConnect():
     readonly=True
   )
   dbOrigin.connect()
-
 
 # ---------------------------------------------------
 # Open destination DB
@@ -166,7 +166,7 @@ def main(interfaces):
       load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
 
     # Forecast
-    if 'income' in interfaces or 'beds' in interfaces  or 'occupancy' in interfaces:
+    if 'income' in interfaces or 'occupancy' in interfaces:
       forecast(apiClient)
 
     # Income
@@ -193,7 +193,8 @@ def main(interfaces):
 
     # Beds
     if 'beds' in interfaces:
-      beds(dbOrigin)
+      beds_real(dbOrigin)
+      beds_forecast(dbOrigin)
       execute(dbDestination, '_clear_beds')
       load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
       load(dbOrigin, dbDestination, 'beds', 'beds_real')
