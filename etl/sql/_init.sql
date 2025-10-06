@@ -70,7 +70,7 @@ SELECT
   TO_CHAR(d, 'YYYY-MM') AS "yearmonth",
   TO_CHAR(d, 'YYYY-WW') AS "yearweek"
 FROM
-  generate_series('2024-01-01'::DATE, '2029-12-31'::DATE, '1 day') AS d;
+  generate_series('2024-01-01'::DATE, '2029-01-01'::DATE, '1 day') AS d;
 
 
 -- -------------------------------------
