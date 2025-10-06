@@ -121,8 +121,6 @@ def forecast(apiClient):
         beds      = to_float(row[ 3].value)
         beds_c    = to_float(row[ 4].value)
         beds_ad   = to_float(row[ 5].value)
-        beds_st   = to_float(row[ 6].value)
-        beds_pot  = to_float(row[ 7].value)
         occu      = to_float(row[ 8].value)
         occ_l     = to_float(row[15].value)
         occ_m     = to_float(row[16].value)
@@ -193,8 +191,13 @@ def forecast(apiClient):
         line = ['SPP' + str(c), '-', '-', '(Stabilised potential)', month, '', '', row[1].value, 'Monthly rent', mpr_pot * occ_stab, 0, None, 'Stabilised Potential', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
-        # Occupancy forecast
+        # Beds forecast
         if beds > 0:
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
+          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Occupancy forecast
+        if beds_c > 0:
           line = ['FOL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, '', 'LONG']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['FOM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, '', 'MEDIUM']
@@ -203,17 +206,14 @@ def forecast(apiClient):
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
           line = ['FOG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds_st, beds_pot, 0, 0, days * beds, '', 0, 0, 0]
-          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Occupancy stabilised
+        if beds > 0:
           line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, days * beds * occ_stab, days * beds * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, beds, beds, beds_pot, 0, 0, days * beds, '', 0, 0, 0]
-          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        if beds_st > 0:
-          line = ['SOC' + str(c), 'Stabilised Convertible', row[1].value, month, days * beds_st * occ_stab, days * beds_st * occ_stab, 0, 0, '', '']
+        if beds_c > 0:
+          line = ['SOC' + str(c), 'Stabilised Convertible', row[1].value, month, days * beds_c * occ_stab, days * beds_c * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['SOC' + str(c), 'Stabilised Convertible', row[1].value, month, beds_st, beds_st, beds_pot, 0, 0, days * beds_st, '', 0, 0, 0]
-          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
     workbook.close()
