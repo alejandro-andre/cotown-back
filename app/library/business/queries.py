@@ -647,7 +647,7 @@ def q_promo(dbClient, segment):
   sql = '''
     SELECT b.id AS "building", rft."Code" AS "flat_type", rpt."Code" AS "place_type",
       ROUND(p."Value_rent_pct", 0) AS "Value_rent_pct", ROUND(p."Value_fee_pct", 0) AS "Value_fee_pct",
-      p."Active_from", p."Active_to", p."Date_from", p."Date_to", p."Name", p."Name_en", p. 
+      p."Active_from", p."Active_to", p."Date_from", p."Date_to", p."Name", p."Name_en"
     FROM "Billing"."Promotion" p
       LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
       LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
