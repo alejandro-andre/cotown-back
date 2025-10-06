@@ -33,20 +33,21 @@ def beds(dbClient):
     beds_pot = 0.0 # Potential beds
     beds_pre = 0.0 # Pre capex beds
     beds_cap = 0.0 # Capex beds
-    avail    = 0.0 # Available room nights
-    convert  = 0.0 # Convertibñe room nights
+    rn_avail = 0.0 # Available room nights
+    rn_conv  = 0.0 # Convertible  room nights
+    convert  = ''
 
     # Date
     date = row['date']
 
     # Building not active
     if date < row['Start_date']:
-      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
 
     # Resource not existent
     if row['Date_from'] and row['Date_to']:
       if row['Date_from'] <= date <= row['Date_to']:
-        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
 
     # All flat non availability rows
     availability = df_avail[df_avail['Resource_id'] == row['flat']]
@@ -55,13 +56,14 @@ def beds(dbClient):
       # Bed is not available?
       if r['Date_from'] <= date <= r['Date_to']:
         # Convertible
-        convert  = calendar.monthrange(date.year, date.month)[1]
+        convert = r['Convertible'] or 'N/D'
 
         # Potential
         if r['Status_id'] == 2:
           beds_pot = 1.0
           if convert in ('N/D', 'LTC', 'FTC'):
             beds_cnv = 1.0
+            rn_conv = calendar.monthrange(date.year, date.month)[1]
 
         # Pre capex
         if r['Status_id'] == 3:
@@ -69,6 +71,7 @@ def beds(dbClient):
           beds_pot = 1.0
           beds_cnv = 1.0
           beds_pre = 1.0
+          rn_conv = calendar.monthrange(date.year, date.month)[1]
 
         # Capex
         if r['Status_id'] == 4:
@@ -76,25 +79,19 @@ def beds(dbClient):
           beds_pot = 1.0
           beds_cnv = 1.0
           beds_cap = 1.0
+          rn_conv = calendar.monthrange(date.year, date.month)[1]
 
-        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
 
     # Bed is available (and convertible, and potential)
     beds     = 1.0
     beds_pot = 1.0
     beds_cnv = 1.0
-    avail    = calendar.monthrange(date.year, date.month)[1]
-    convert  = calendar.monthrange(date.year, date.month)[1]
-
-    # Consolidated date
-    c_date = date
-    if date.month >= 11: 
-      c_date = date.replace(month=10)
-    elif date.month >= 3: 
-      c_date = date.replace(month=2)
+    rn_avail = calendar.monthrange(date.year, date.month)[1]
+    rn_conv  = calendar.monthrange(date.year, date.month)[1]
 
     # Return values
-    return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, avail, convert, 0, 0, 0]
+    return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
   
 
   # Log
