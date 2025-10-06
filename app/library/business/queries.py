@@ -645,8 +645,9 @@ def q_promo(dbClient, segment):
 
   # Get highest promo
   sql = '''
-    SELECT b.id, rft."Code" AS "flat_type", rpt."Code" AS "place_type",
-      COALESCE(p."Value_rent_pct", 0) AS "Value_rent_pct", COALESCE(p."Value_fee_pct", 0) AS "Value_fee_pct"
+    SELECT b.id AS "building", rft."Code" AS "flat_type", rpt."Code" AS "place_type",
+      ROUND(p."Value_rent_pct", 0) AS "Value_rent_pct", ROUND(p."Value_fee_pct", 0) AS "Value_fee_pct",
+      p."Active_from", p."Active_to", p."Date_from", p."Date_to", p."Name", p."Name_en", p. 
     FROM "Billing"."Promotion" p
       LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
       LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
