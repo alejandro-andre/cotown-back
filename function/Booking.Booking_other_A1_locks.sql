@@ -21,8 +21,7 @@ BEGIN
   END IF;
 
   -- Delete pre capex & capex locks
-  DELETE 
-  FROM "Resource"."Resource_availability" 
+  DELETE FROM "Resource"."Resource_availability" 
   WHERE "Resource_id" = NEW."Resource_id"
     AND "Status_id" IN (2, 3, 4);
 

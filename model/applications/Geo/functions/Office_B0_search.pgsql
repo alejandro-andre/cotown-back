@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Location"::text,'')||' '||COALESCE(NEW."Address"::text,'')||' '||COALESCE(NEW."Email"::text,'')||' '||COALESCE(NEW."Phone"::text,''); RETURN NEW; END;

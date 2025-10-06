@@ -1,5 +1,0 @@
-function Provider.Provider_A1_create_user {
-    documentation: "-- Creación de usuario"
-    language: plpgsql
-    path: "applications/Provider/functions/Provider_A1_create_user.pgsql"
-}

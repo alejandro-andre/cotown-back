@@ -1,5 +1,0 @@
-enumType Auxiliar.Rel_type {
-    labels en_US: "CHAnge" "EXTension"
-    labels es_ES: "CHA-Cambio" "EXT-Extensión"
-    values: "cha" "ext"
-}

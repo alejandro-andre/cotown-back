@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Group_id"::text,'')||' '||COALESCE(NEW."Question"::text,'')||' '||COALESCE(NEW."Question_en"::text,''); RETURN NEW; END;

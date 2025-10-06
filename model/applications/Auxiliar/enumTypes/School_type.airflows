@@ -1,5 +1,0 @@
-enumType Auxiliar.School_type {
-    labels es_ES: "Pública" "Privada" "Escuela de idiomas" "Otros" "Profesional"
-    labels en_US: "Public" "Private" "Language school" "Other" "Professional"
-    values: "public" "private" "language" "other" "professional"
-}

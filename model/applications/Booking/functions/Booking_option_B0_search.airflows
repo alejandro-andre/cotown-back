@@ -1,4 +1,0 @@
-function Booking.Booking_option_B0_search {
-    language: plpgsql
-    path: "applications/Booking/functions/Booking_option_B0_search.pgsql"
-}

@@ -1,5 +1,0 @@
-enumType Auxiliar.Negotiation_type {
-    labels es_ES: "No iniciado" "En progreso" "Fallido" "Sin opción" "Aceptado"
-    labels en_US: "Not started" "In progress" "Failed" "No option" "Accepted"
-    values: "notstarted" "inprogress" "failed" "nooption" "accepted"
-}

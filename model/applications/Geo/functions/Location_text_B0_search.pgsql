@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Description"::text,'')||' '||COALESCE(NEW."Description_en"::text,'')||' '||COALESCE(NEW."Title"::text,'')||' '||COALESCE(NEW."Title_en"::text,'')||' '||COALESCE(NEW."Title_flat"::text,'')||' '||COALESCE(NEW."Title_flat_en"::text,''); RETURN NEW; END;

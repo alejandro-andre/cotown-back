@@ -1,5 +1,0 @@
-enumType Auxiliar.Extra_type {
-    labels en_US: "Next month" "Fixed date" "Recurrent"
-    labels es_ES: "Próxima mensualidad" "Fecha fija" "Recurrente"
-    values: "asap" "puntual" "recurrente"
-}

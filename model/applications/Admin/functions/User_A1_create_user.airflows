@@ -1,5 +1,0 @@
-function Admin.User_A1_create_user {
-    documentation: "-- Creación de usuario"
-    language: plpgsql
-    path: "applications/Admin/functions/User_A1_create_user.pgsql"
-}

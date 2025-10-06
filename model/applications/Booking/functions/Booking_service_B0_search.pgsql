@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Concept"::text,'')||' '||COALESCE(NEW."Comments"::text,'')||' '||COALESCE(NEW."Extra_type"::text,''); RETURN NEW; END;

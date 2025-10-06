@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Description"::text,'')||' '||COALESCE(NEW."Brand"::text,'')||' '||COALESCE(NEW."Model"::text,'')||' '||COALESCE(NEW."Comments"::text,'')||' '||COALESCE(NEW."Bill"::text,''); RETURN NEW; END;

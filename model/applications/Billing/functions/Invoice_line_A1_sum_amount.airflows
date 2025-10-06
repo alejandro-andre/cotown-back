@@ -1,5 +1,0 @@
-function Billing.Invoice_line_A1_sum_amount {
-    documentation: "-- Calcula el importe de la factura, sumando sus líneas"
-    language: plpgsql
-    path: "applications/Billing/functions/Invoice_line_A1_sum_amount.pgsql"
-}

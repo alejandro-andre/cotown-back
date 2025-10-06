@@ -1,4 +1,0 @@
-function Geo.Location_B0_search {
-    language: plpgsql
-    path: "applications/Geo/functions/Location_B0_search.pgsql"
-}

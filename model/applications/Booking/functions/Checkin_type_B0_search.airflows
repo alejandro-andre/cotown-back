@@ -1,4 +1,0 @@
-function Booking.Checkin_type_B0_search {
-    language: plpgsql
-    path: "applications/Booking/functions/Checkin_type_B0_search.pgsql"
-}

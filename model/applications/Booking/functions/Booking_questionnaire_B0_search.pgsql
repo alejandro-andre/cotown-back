@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Questionnaire_type"::text,'')||' '||COALESCE(NEW."Booking_id"::text,''); RETURN NEW; END;

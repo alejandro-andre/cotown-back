@@ -1,5 +1,0 @@
-application Building {
-    label es_ES: "Edificios"
-    label en_US: "Buildings"
-    order: 4
-}

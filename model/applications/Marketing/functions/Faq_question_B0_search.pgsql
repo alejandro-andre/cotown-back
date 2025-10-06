@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Question"::text,'')||' '||COALESCE(NEW."Question_en"::text,'')||' '||COALESCE(NEW."Response"::text,'')||' '||COALESCE(NEW."Response_en"::text,''); RETURN NEW; END;

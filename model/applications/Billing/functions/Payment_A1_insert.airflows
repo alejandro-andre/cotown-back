@@ -1,5 +1,0 @@
-function Billing.Payment_A1_insert {
-    documentation: "-- Creación del pago"
-    language: plpgsql
-    path: "applications/Billing/functions/Payment_A1_insert.pgsql"
-}

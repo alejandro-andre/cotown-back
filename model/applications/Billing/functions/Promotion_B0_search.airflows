@@ -1,4 +1,0 @@
-function Billing.Promotion_B0_search {
-    language: plpgsql
-    path: "applications/Billing/functions/Promotion_B0_search.pgsql"
-}

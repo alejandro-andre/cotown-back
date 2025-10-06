@@ -1,4 +1,0 @@
-function Geo.Province_B0_search {
-    language: plpgsql
-    path: "applications/Geo/functions/Province_B0_search.pgsql"
-}

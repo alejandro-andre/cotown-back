@@ -1,4 +1,0 @@
-function Billing.Invoice_line_B0_search {
-    language: plpgsql
-    path: "applications/Billing/functions/Invoice_line_B0_search.pgsql"
-}

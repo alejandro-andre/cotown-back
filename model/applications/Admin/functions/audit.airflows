@@ -1,5 +1,0 @@
-function Admin.audit {
-    documentation: "-- Audit"
-    language: plpgsql
-    path: "applications/Admin/functions/audit.pgsql"
-}

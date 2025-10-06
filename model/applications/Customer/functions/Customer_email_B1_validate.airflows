@@ -1,5 +1,0 @@
-function Customer.Customer_email_B1_validate {
-    documentation: "-- Creación de email"
-    language: plpgsql
-    path: "applications/Customer/functions/Customer_email_B1_validate.pgsql"
-}

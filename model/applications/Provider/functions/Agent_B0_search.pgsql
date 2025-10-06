@@ -1,1 +1,0 @@
-BEGIN NEW."Search":=COALESCE(NEW."Name"::text,'')||' '||COALESCE(NEW."Comments"::text,'')||' '||COALESCE(NEW."Contact"::text,'')||' '||COALESCE(NEW."Web"::text,'')||' '||COALESCE(NEW."Email"::text,'')||' '||COALESCE(NEW."Phones"::text,'')||' '||COALESCE(NEW."Payment_method"::text,''); RETURN NEW; END;

@@ -1,5 +1,0 @@
-application Admin {
-    label es_ES: "Administración"
-    label en_US: "Admin"
-    order: 12
-}
