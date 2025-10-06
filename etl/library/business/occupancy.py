@@ -4,6 +4,7 @@
 
 # System includes
 import calendar
+import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
@@ -21,10 +22,10 @@ END_DATE   = '2029-01-01'
 
 
 # ###################################################
-# Calculate occupancy
+# Calculate real occupancy
 # ###################################################
 
-def occupancy(dbClient):
+def occupancy_real(dbClient):
 
   def nights(row):
     # First and last days of the month
@@ -67,9 +68,8 @@ def occupancy(dbClient):
       sold if row['data_type'] == 'Tentative' else 0
     ]
 
-
   # Log
-  logger.info('Calculating occupancy...')
+  logger.info('Calculating real occupancy...')
 
   # Connection
   con = dbClient.getconn()
@@ -149,7 +149,6 @@ def occupancy(dbClient):
 
   # Ocuppied and sold nights
   df_books[['occupied', 'occupied_t', 'sold', 'sold_t']] = df_books.apply(nights, axis=1, result_type='expand')
-  logger.info('- Occupied and sold nights calculated')
 
   # Additional columns
   df_books = df_books.reset_index(drop=True)
@@ -157,5 +156,93 @@ def occupancy(dbClient):
   df_books['data_type'] = 'Real'
 
   # To CSV
+  logger.info('- Occupied and sold nights calculated')
   df_books.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
   logger.info('- Occupancy saved')
+
+
+# ###################################################
+# Calculate forecast occupancy
+# ###################################################
+
+def occupancy_forecast(dbClient):
+
+  # Log
+  logger.info('Calculating forecast occupancy...')
+
+  # Connection
+  con = dbClient.getconn()
+
+  # Bookings
+  sql = f'''
+    SELECT 
+      r."Code" as "resource", rf."Date_price" as "date", rf."Beds" as "beds", rf."Occupancy" as "occupancy",
+      rf."Pct_long", rf."Pct_medium", rf."Pct_short", 100 - rf."Pct_long" - rf."Pct_medium" - rf."Pct_short" as "Pct_group"
+    FROM "Resource"."Resource_forecast" rf
+      INNER JOIN "Resource"."Resource" r ON r.id = rf."Resource_id"
+    WHERE rf."Beds" > 0
+      AND rf."Occupancy" > 0
+  '''
+  try:
+    cur = dbClient.execute(con, sql)
+    columns = [desc[0] for desc in cur.description]
+    df_occup = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+  except Exception as e:
+    logger.error(e)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+  finally:
+    cur.close()
+  logger.info('- Forecast occupancy retrieved')
+
+  # Stack by stay types
+  df_occup = df_occup.rename(
+    columns = {
+      'Pct_long': 'LONG',
+      'Pct_medium': 'MEDIUM',
+      'Pct_short': 'SHORT',
+      'Pct_group': 'GROUP',
+    }
+  )
+  base_cols = ['resource', 'date', 'beds', 'occupancy']
+  df_occup = (
+    df_occup[base_cols + ['LONG', 'MEDIUM', 'SHORT', 'GROUP']]
+      .set_index(base_cols)
+      .stack()
+      .reset_index()
+  )
+  df_occup.columns = ['resource', 'date', 'beds', 'occupancy', 'stay_length', 'pct']
+
+  # Ocuppied and sold nights
+  df_occup['date'] = pd.to_datetime(df_occup['date'], errors='coerce')
+  df_occup['days_in_month'] = df_occup['date'].dt.days_in_month.fillna(0).astype(int)
+  df_occup['occupied'] = df_occup['beds'] * df_occup['occupancy'] * df_occup['pct'] * df_occup['days_in_month'] / 10000
+  df_occup['sold'] = df_occup['occupied']
+  df_occup = df_occup[df_occup['occupied'] > 0].reset_index(drop=True)
+
+  # Additional columns
+  df_occup['occupied_t'] = 0
+  df_occup['sold_t']     = 0
+  df_occup['booking']    = 0
+  df_occup['data_type']  = 'Forecast'
+
+  # Id
+  df_occup = df_occup.reset_index(drop=True)
+  df_occup['id'] = (df_occup.index + 1).astype(str).str.zfill(6)
+  df_occup['id'] = 'FOC' + df_occup['id'].astype(str)
+
+
+  # To CSV
+  logger.info('- Occupied and sold nights calculated')
+  df_occup.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  logger.info('- Occupancy saved')
+
+
+# ###################################################
+# Calculate stabilised occupancy
+# ###################################################
+
+def occupancy_stabilised(dbClient):
+
+  pass

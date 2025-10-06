@@ -20,7 +20,7 @@ from library.services.apiclient import APIClient
 from library.business.load import load, execute
 from library.business.history import history
 from library.business.beds import beds_real, beds_forecast
-from library.business.occupancy import occupancy
+from library.business.occupancy import occupancy_real, occupancy_forecast, occupancy_stabilised
 from library.business.forecast import forecast, budget
 from library.business.gl import glSAP, glExcel
 
@@ -201,10 +201,14 @@ def main(interfaces):
 
     # Occupancy
     if 'occupancy' in interfaces:
-      occupancy(dbOrigin)
+      occupancy_real(dbOrigin)
+      occupancy_forecast(dbOrigin)
+      occupancy_stabilised(dbOrigin)
       execute(dbDestination, '_clear_occupancy')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecastnew')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised')
 
   except Exception as e:
     # Error
