@@ -10,13 +10,8 @@ import pandas as pd
 import logging
 logger = logging.getLogger('COTOWN')
 
-
-# ###################################################
-# Constants
-# ###################################################
-
-START_DATE = '2024-01-01'
-END_DATE   = '2029-01-01'
+# Custom includes
+from library.business.constants import START_DATE, END_DATE
 
 
 # ###################################################
@@ -115,11 +110,13 @@ def beds_real_calc(dbClient):
       WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
     END AS "type",
     rft."Code" AS "flat_type",
-    rpt."Code" AS "place_type"
+    rpt."Code" AS "place_type",
+    pr."Multiplier" as "multiplier"
   FROM "Resource"."Resource" r 
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
     INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Billing"."Pricing_rate" pr on pr.id = r."Rate_id"
     LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE r."Resource_type" = 'plaza'
   
@@ -139,11 +136,13 @@ def beds_real_calc(dbClient):
       WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
     END AS "type",
     rft."Code" AS "flat_type",
-    rpt."Code" AS "place_type"
+    rpt."Code" AS "place_type",
+    pr."Multiplier" as "multiplier"
   FROM "Resource"."Resource" r 
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
     INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Billing"."Pricing_rate" pr on pr.id = r."Rate_id"
     LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE "Resource_type" = 'habitacion' 
     AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Room_id" = r.id)
@@ -164,11 +163,13 @@ def beds_real_calc(dbClient):
       WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
     END AS "type",
     rft."Code" AS "flat_type",
-    rpt."Code" AS "place_type"
+    rpt."Code" AS "place_type",
+    pr."Multiplier" as "multiplier"
   FROM "Resource"."Resource" r 
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
     LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Billing"."Pricing_rate" pr on pr.id = r."Rate_id"
     LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE "Resource_type" = 'piso' 
     AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)

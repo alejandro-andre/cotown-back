@@ -13,14 +13,7 @@ logger = logging.getLogger('COTOWN')
 
 # Custom includes
 from library.business.beds import beds_real_calc
-
-
-# ###################################################
-# Constants
-# ###################################################
-
-START_DATE = '2024-01-01'
-END_DATE   = '2029-01-01'
+from library.business.constants import START_DATE, END_DATE
 
 
 # ###################################################
@@ -286,13 +279,13 @@ def occupancy_stabilised_calc(dbClient):
   df_beds['flat'] = df_beds['resource'].str.slice(0, 12)
   df_beds['date'] = pd.to_datetime(df_beds['date'])
   df_beds['month'] = df_beds['date'].dt.month
+  df_beds['days_in_month'] = df_beds['date'].dt.days_in_month.fillna(0).astype(int)
   df_sta = df_beds.merge(
     df_occ,
     left_on=['flat', 'month'],
     right_on=['flat', 'month'],
     how='left'
   )
-  df_sta['days_in_month'] = df_sta['date'].dt.days_in_month.fillna(0).astype(int)
 
   # Duplicate DF
   df_stc = df_sta.copy()   

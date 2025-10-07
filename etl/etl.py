@@ -21,6 +21,7 @@ from library.business.load import load, execute
 from library.business.history import history
 from library.business.beds import beds_real, beds_forecast
 from library.business.occupancy import occupancy_real, occupancy_forecast, occupancy_stabilised
+from library.business.income import income_stabilised
 from library.business.forecast import forecast, budget
 from library.business.gl import glSAP, glExcel
 
@@ -100,127 +101,118 @@ def main(interfaces):
     logger.error(e)
     return
 
-  # Process
-  try:
 
-    # ------------------------------------
-    # Init destination
-    # ------------------------------------
+  # ------------------------------------
+  # Init destination
+  # ------------------------------------
 
-    if 'init' in interfaces:
-      execute(dbDestination, '_init')
-    
-    # ------------------------------------
-    # General
-    # ------------------------------------
-
-    # Load dimensions
-    if 'general' in interfaces:
-      execute(dbDestination, '_clear_general')
-      load(dbOrigin, dbDestination, 'owner', 'owner')
-      load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
-      load(dbOrigin, dbDestination, 'place_type', 'place_type')
-      load(dbOrigin, dbDestination, 'location', 'location')
-      load(dbOrigin, dbDestination, 'product', 'product')
-      load(dbOrigin, dbDestination, 'building', 'building')
-      load(dbOrigin, dbDestination, 'building_value', 'building_value')
-      load(dbOrigin, dbDestination, 'resource', 'resource')
-
-    # ------------------------------------
-    # SAP
-    # ------------------------------------
-
-    # Load dimensions
-    if 'gl' in interfaces:
-      # Clear
-      execute(dbDestination, '_clear_gl')
-
-      # Convert historic data
-      #glExcel('CTS00-2023-00', 2023)
-      #glExcel('CTS00-2024-00', 2024)
-      
-      # Extract current periods
-      periods = []
-      today = datetime.today()
-      if today.day < 20:
-        periods.append((today.replace(day=1) - timedelta(days=1)).strftime("%Y-%m-01"))
-      periods.append(today.strftime("%Y-%m-01"))
-
-      # Get periods data
-      for period in periods:
-        glSAP(period,'ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
-
-      # Load CSV files
-      for file in os.listdir('csv'):
-        if file.startswith('CTS00-') and file.endswith('.csv'):
-          load(dbOrigin, dbDestination, 'gl', file[:-4])
-
-    # ------------------------------------
-    # Core
-    # ------------------------------------
-
-    # booking
-    if 'booking' in interfaces:
-      execute(dbDestination, '_clear_booking')
-      load(dbOrigin, dbDestination, 'booking', 'booking')
-      load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
-
-    # Forecast
-    if 'income' in interfaces or 'occupancy' in interfaces:
-      forecast(apiClient)
-
-    # Income
-    if 'income' in interfaces:
-      budget(apiClient)
-      execute(dbDestination, '_clear_income')
-      load(dbOrigin, dbDestination, 'income', 'income_budget')
-      load(dbOrigin, dbDestination, 'income', 'income_forecast')
-      load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
-      load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
-      load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
-      load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
-      load(dbOrigin, dbDestination, 'income', 'income_lau_real')
-      load(dbOrigin, dbDestination, 'income', 'income_lau_otb')
-      load(dbOrigin, dbDestination, 'income', 'mf_real')
-      load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
-      load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
-
-    # History
-    if 'history' in interfaces:
-      history(dbOrigin)
-      execute(dbDestination, '_clear_history')
-      load(dbOrigin, dbDestination, 'resource_history', 'history_real')
-
-    # Beds
-    if 'beds' in interfaces:
-      beds_real(dbOrigin)
-      beds_forecast(dbOrigin)
-      execute(dbDestination, '_clear_beds')
-      load(dbOrigin, dbDestination, 'beds', 'beds_real')
-      load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
-      #load(dbOrigin, dbDestination, 'beds', 'beds_forecast_new')
-
-    # Occupancy
-    if 'occupancy' in interfaces:
-      occupancy_real(dbOrigin)
-      occupancy_forecast(dbOrigin)
-      occupancy_stabilised(dbOrigin)
-      execute(dbDestination, '_clear_occupancy')
-      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
-      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
-      #load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
-      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_a')
-      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_c')
-
-    # Test
-    if 'test' in interfaces:
-      pass
-
-  except Exception as e:
-    # Error
-    logger.error(e)
+  if 'init' in interfaces:
+    execute(dbDestination, '_init')
   
-  finally:
+  # ------------------------------------
+  # General
+  # ------------------------------------
+
+  # Load dimensions
+  if 'general' in interfaces:
+    execute(dbDestination, '_clear_general')
+    load(dbOrigin, dbDestination, 'owner', 'owner')
+    load(dbOrigin, dbDestination, 'flat_type', 'flat_type')
+    load(dbOrigin, dbDestination, 'place_type', 'place_type')
+    load(dbOrigin, dbDestination, 'location', 'location')
+    load(dbOrigin, dbDestination, 'product', 'product')
+    load(dbOrigin, dbDestination, 'building', 'building')
+    load(dbOrigin, dbDestination, 'building_value', 'building_value')
+    load(dbOrigin, dbDestination, 'resource', 'resource')
+
+  # ------------------------------------
+  # SAP
+  # ------------------------------------
+
+  # Load dimensions
+  if 'gl' in interfaces:
+    # Clear
+    execute(dbDestination, '_clear_gl')
+
+    # Convert historic data
+    #glExcel('CTS00-2023-00', 2023)
+    #glExcel('CTS00-2024-00', 2024)
+    
+    # Extract current periods
+    periods = []
+    today = datetime.today()
+    if today.day < 20:
+      periods.append((today.replace(day=1) - timedelta(days=1)).strftime("%Y-%m-01"))
+    periods.append(today.strftime("%Y-%m-01"))
+
+    # Get periods data
+    for period in periods:
+      glSAP(period,'ES02', 'CTS00', 'gl') # 'ES01', 'VDS0000001'
+
+    # Load CSV files
+    for file in os.listdir('csv'):
+      if file.startswith('CTS00-') and file.endswith('.csv'):
+        load(dbOrigin, dbDestination, 'gl', file[:-4])
+
+  # ------------------------------------
+  # Core
+  # ------------------------------------
+
+  # booking
+  if 'booking' in interfaces:
+    execute(dbDestination, '_clear_booking')
+    load(dbOrigin, dbDestination, 'booking', 'booking')
+    load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
+
+  # Forecast
+  if 'income' in interfaces or 'occupancy' in interfaces:
+    forecast(apiClient)
+
+  # Income
+  if 'income' in interfaces:
+    budget(apiClient)
+    income_stabilised(dbOrigin)
+    execute(dbDestination, '_clear_income')
+    load(dbOrigin, dbDestination, 'income', 'income_budget')
+    load(dbOrigin, dbDestination, 'income', 'income_forecast')
+    load(dbOrigin, dbDestination, 'income', 'income_stabilised')
+    load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
+    load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
+    load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
+    load(dbOrigin, dbDestination, 'income', 'income_b2c_otb')
+    load(dbOrigin, dbDestination, 'income', 'income_lau_real')
+    load(dbOrigin, dbDestination, 'income', 'income_lau_otb')
+    load(dbOrigin, dbDestination, 'income', 'mf_real')
+    load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
+    load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
+
+  # History
+  if 'history' in interfaces:
+    history(dbOrigin)
+    execute(dbDestination, '_clear_history')
+    load(dbOrigin, dbDestination, 'resource_history', 'history_real')
+
+  # Beds
+  if 'beds' in interfaces:
+    beds_real(dbOrigin)
+    beds_forecast(dbOrigin)
+    execute(dbDestination, '_clear_beds')
+    load(dbOrigin, dbDestination, 'beds', 'beds_real')
+    load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
+    #load(dbOrigin, dbDestination, 'beds', 'beds_forecast_new')
+
+  # Occupancy
+  if 'occupancy' in interfaces:
+    occupancy_real(dbOrigin)
+    occupancy_forecast(dbOrigin)
+    occupancy_stabilised(dbOrigin)
+    execute(dbDestination, '_clear_occupancy')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
+    #load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_a')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_c')
+
     # Disconnect
     dbDestination.disconnect()
     dbOrigin.disconnect()

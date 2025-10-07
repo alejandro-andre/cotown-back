@@ -11,13 +11,8 @@ from dateutil.relativedelta import relativedelta
 import logging
 logger = logging.getLogger('COTOWN')
 
-
-# ###################################################
-# Constants
-# ###################################################
-
-START_DATE = '2024-01-01'
-END_DATE   = '2029-01-01'
+# Custom includes
+from library.business.constants import START_DATE, END_DATE
 
 
 # ###################################################

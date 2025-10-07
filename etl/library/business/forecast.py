@@ -162,10 +162,12 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Income stabilised
+        '''
         line = ['SPA' + str(c), '-', '-', '(Stabilised available)', month, '', '', row[1].value, 'Monthly rent', mpr * occ_stab, 0, None, 'Stabilised Available', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['SPC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, 0, None, 'Stabilised Convertible', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        '''
 
         # Beds forecast
         if beds > 0:
