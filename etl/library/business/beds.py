@@ -168,7 +168,7 @@ def beds_real_calc(dbClient):
   FROM "Resource"."Resource" r 
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
-    INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
     LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE "Resource_type" = 'piso' 
     AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
