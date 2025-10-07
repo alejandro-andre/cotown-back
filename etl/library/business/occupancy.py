@@ -4,13 +4,15 @@
 
 # System includes
 import calendar
-import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
+
+# Custom includes
+from library.business.beds import beds_real_calc
 
 
 # ###################################################
@@ -25,7 +27,7 @@ END_DATE   = '2029-01-01'
 # Calculate real occupancy
 # ###################################################
 
-def occupancy_real(dbClient):
+def occupancy_real_calc(dbClient):
 
   def nights(row):
     # First and last days of the month
@@ -114,7 +116,7 @@ def occupancy_real(dbClient):
   try:
     cur = dbClient.execute(con, sql)
     columns = [desc[0] for desc in cur.description]
-    df_books = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+    df = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
   except Exception as e:
     logger.error(e)
     con.rollback()
@@ -148,17 +150,21 @@ def occupancy_real(dbClient):
   logger.info('- Special locks retrieved')
 
   # Ocuppied and sold nights
-  df_books[['occupied', 'occupied_t', 'sold', 'sold_t']] = df_books.apply(nights, axis=1, result_type='expand')
+  df[['occupied', 'occupied_t', 'sold', 'sold_t']] = df.apply(nights, axis=1, result_type='expand')
 
   # Additional columns
-  df_books = df_books.reset_index(drop=True)
-  df_books['id'] = (df_books.index + 1).astype(str).str.zfill(7)
-  df_books['id'] = 'OCR' + df_books['id'].astype(str)
-  df_books['data_type'] = 'Real'
-
-  # To CSV
+  df = df.reset_index(drop=True)
+  df['id'] = (df.index + 1).astype(str).str.zfill(7)
+  df['id'] = 'OCR' + df['id'].astype(str)
+  df['data_type'] = 'Real'
   logger.info('- Occupied and sold nights calculated')
-  df_books.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  return df
+
+
+def occupancy_real(dbClient):
+
+  df = occupancy_real_calc(dbClient)
+  df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
   logger.info('- Occupancy saved')
 
 
@@ -166,7 +172,7 @@ def occupancy_real(dbClient):
 # Calculate forecast occupancy
 # ###################################################
 
-def occupancy_forecast(dbClient):
+def occupancy_forecast_calc(dbClient):
 
   # Log
   logger.info('Calculating forecast occupancy...')
@@ -187,7 +193,7 @@ def occupancy_forecast(dbClient):
   try:
     cur = dbClient.execute(con, sql)
     columns = [desc[0] for desc in cur.description]
-    df_occup = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+    df = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
   except Exception as e:
     logger.error(e)
     con.rollback()
@@ -198,7 +204,7 @@ def occupancy_forecast(dbClient):
   logger.info('- Forecast occupancy retrieved')
 
   # Stack by stay types
-  df_occup = df_occup.rename(
+  df = df.rename(
     columns = {
       'Pct_long': 'LONG',
       'Pct_medium': 'MEDIUM',
@@ -207,36 +213,39 @@ def occupancy_forecast(dbClient):
     }
   )
   base_cols = ['resource', 'date', 'beds', 'occupancy']
-  df_occup = (
-    df_occup[base_cols + ['LONG', 'MEDIUM', 'SHORT', 'GROUP']]
+  df = (
+    df[base_cols + ['LONG', 'MEDIUM', 'SHORT', 'GROUP']]
       .set_index(base_cols)
       .stack()
       .reset_index()
   )
-  df_occup.columns = ['resource', 'date', 'beds', 'occupancy', 'stay_length', 'pct']
+  df.columns = ['resource', 'date', 'beds', 'occupancy', 'stay_length', 'pct']
 
   # Ocuppied and sold nights
-  df_occup['date'] = pd.to_datetime(df_occup['date'], errors='coerce')
-  df_occup['days_in_month'] = df_occup['date'].dt.days_in_month.fillna(0).astype(int)
-  df_occup['occupied'] = df_occup['beds'] * df_occup['occupancy'] * df_occup['pct'] * df_occup['days_in_month'] / 10000
-  df_occup['sold'] = df_occup['occupied']
-  df_occup = df_occup[df_occup['occupied'] > 0].reset_index(drop=True)
+  df['date'] = pd.to_datetime(df['date'], errors='coerce')
+  df['days_in_month'] = df['date'].dt.days_in_month.fillna(0).astype(int)
+  df['occupied'] = df['beds'] * df['occupancy'] * df['pct'] * df['days_in_month'] / 10000
+  df['sold'] = df['occupied']
+  df = df[df['occupied'] > 0].reset_index(drop=True)
 
   # Additional columns
-  df_occup['occupied_t'] = 0
-  df_occup['sold_t']     = 0
-  df_occup['booking']    = 0
-  df_occup['data_type']  = 'Forecast'
+  df['occupied_t'] = 0
+  df['sold_t']     = 0
+  df['booking']    = 0
+  df['data_type']  = 'Forecast'
 
   # Id
-  df_occup = df_occup.reset_index(drop=True)
-  df_occup['id'] = (df_occup.index + 1).astype(str).str.zfill(6)
-  df_occup['id'] = 'OCF' + df_occup['id'].astype(str)
-
-
-  # To CSV
+  df = df.reset_index(drop=True)
+  df['id'] = (df.index + 1).astype(str).str.zfill(6)
+  df['id'] = 'OCF' + df['id'].astype(str)
   logger.info('- Occupied and sold nights calculated')
-  df_occup.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  return df
+
+
+def occupancy_forecast(dbClient):
+
+  df = occupancy_forecast_calc(dbClient)
+  df.to_csv('csv/occupancy_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
   logger.info('- Occupancy saved')
 
 
@@ -246,4 +255,35 @@ def occupancy_forecast(dbClient):
 
 def occupancy_stabilised(dbClient):
 
-  pass
+  # Log
+  logger.info('Calculating stabilised occupancy...')
+
+  # Connection
+  con = dbClient.getconn()
+
+  # Stabilised hypotesis
+  sql = f'''
+    SELECT *
+    FROM "Resource"."Resource_stabilised" rs 
+  '''
+  try:
+    cur = dbClient.execute(con, sql)
+    columns = [desc[0] for desc in cur.description]
+    df_occ = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+  except Exception as e:
+    logger.error(e)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+  finally:
+    cur.close()
+  logger.info('- Stabilised occupancy retrieved')
+
+  # Calculate beds
+  df_beds = beds_real_calc(dbClient)
+
+  # Month
+  df_beds['date'] = pd.to_datetime(df_beds['date'])
+  df_beds['month'] = df_beds['date'].dt.month
+  print(df_beds)
+  print(df_occ)

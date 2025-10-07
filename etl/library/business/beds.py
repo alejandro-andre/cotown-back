@@ -23,7 +23,7 @@ END_DATE   = '2029-01-01'
 # Calculate real beds
 # ###################################################
 
-def beds_real(dbClient):
+def beds_real_calc(dbClient):
 
   def count_real(row):
     # Counters
@@ -82,6 +82,7 @@ def beds_real(dbClient):
 
         return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
 
+
     # Bed is available (and convertible, and potential)
     beds     = 1.0
     beds_pot = 1.0
@@ -92,7 +93,6 @@ def beds_real(dbClient):
     # Return values
     return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
   
-
   # Log
   logger.info('Calculating real beds...')
 
@@ -200,16 +200,21 @@ def beds_real(dbClient):
   # Resources x dates Cross table
   df_dates['key'] = 1
   df_res['key'] = 1
-  df_beds = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
+  df = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
   # Beds and available nights
-  df_beds[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df_beds.apply(count_real, axis=1, result_type='expand')
+  df[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df.apply(count_real, axis=1, result_type='expand')
   logger.info('- Real beds and nights calculated')
+  return df
 
-  # To CSV
-  df_beds['id'] = range(1, 1 + len(df_beds))
-  df_beds['data_type'] = 'Real'
-  df_beds.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
+
+def beds_real(dbClient):
+
+  df = beds_real_calc(dbClient)
+  df['id'] = range(1, 1 + len(df))
+  df['id'] = 'BDR' + df['id'].astype(str)
+  df['data_type'] = 'Real'
+  df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')
 
 
@@ -217,7 +222,7 @@ def beds_real(dbClient):
 # Calculate forecast beds
 # ###################################################
 
-def beds_forecast(dbClient):
+def beds_forecast_calc(dbClient):
 
   # Log
   logger.info('Calculating forecast beds...')
@@ -236,7 +241,7 @@ def beds_forecast(dbClient):
   try:
     cur = dbClient.execute(con, sql)
     columns = [desc[0] for desc in cur.description]
-    df_beds = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+    df = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
   except Exception as e:
     logger.error(e)
     con.rollback()
@@ -247,23 +252,27 @@ def beds_forecast(dbClient):
   logger.info('- Resources retrieved')
 
   # Beds and available nights
-  df_beds['date'] = pd.to_datetime(df_beds['date'], errors='coerce')
-  df_beds['available'] = df_beds['beds'] * df_beds['date'].dt.days_in_month.fillna(0).astype(int)
+  df['date'] = pd.to_datetime(df['date'], errors='coerce')
+  df['available'] = df['beds'] * df['date'].dt.days_in_month.fillna(0).astype(int)
   logger.info('- Forecast beds and nights calculated')
   
   # Empty values
-  df_beds['convertible']     = 0 
-  df_beds['beds_cnv']        = 0
-  df_beds['beds_pot']        = 0
-  df_beds['beds_pre']        = 0
-  df_beds['beds_cap']        = 0
-  df_beds['val_current']     = 0
-  df_beds['val_residential'] = 0
-  df_beds['val_cosharing']   = 0 
+  df['convertible']     = 0 
+  df['beds_cnv']        = 0
+  df['beds_pot']        = 0
+  df['beds_pre']        = 0
+  df['beds_cap']        = 0
+  df['val_current']     = 0
+  df['val_residential'] = 0
+  df['val_cosharing']   = 0 
+  return df
 
-  # To CSV
-  df_beds['id'] = range(1, 1 + len(df_beds))
-  df_beds['id'] = 'FOC' + df_beds['id'].astype(str)
-  df_beds['data_type'] = 'Forecast'
-  df_beds.to_csv('csv/beds_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
+
+def beds_forecast(dbClient):
+
+  df = beds_forecast_calc(dbClient)
+  df['id'] = range(1, 1 + len(df))
+  df['id'] = 'BDF' + df['id'].astype(str)
+  df['data_type'] = 'Forecast'
+  df.to_csv('csv/beds_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')

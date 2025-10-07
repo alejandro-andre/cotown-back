@@ -92,6 +92,7 @@ def forecast(apiClient):
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","price","data_type","stay_length","discount_type"\n' 
   occupancy_result = '"id","data_type","resource","date","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
+  beds_result = '"id","data_type","resource","date","beds","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible","val_current","val_residential","val_cosharing"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -166,6 +167,22 @@ def forecast(apiClient):
         line = ['SPC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, 0, None, 'Stabilised Convertible', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
+        # Beds forecast
+        if beds > 0:
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
+          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
+        # Occupancy forecast
+        if beds_c > 0:
+          line = ['FOL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, '', 'LONG']
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['FOM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, '', 'MEDIUM']
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['FOS' + str(c), 'Forecast', row[1].value, month, occ_s * days * occu * beds_c, occ_s * days * occu * beds_c, 0, 0, '', 'SHORT']
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+          line = ['FOG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
+          occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
+
         # Occupancy stabilised
         if beds > 0:
           line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, days * beds * occ_stab, days * beds * occ_stab, 0, 0, '', '']
@@ -180,8 +197,10 @@ def forecast(apiClient):
   # Save all results to CSV
   with open('csv/income_forecast.csv', 'w') as f:
     f.write(forecast_result)
-  with open('csv/occupancy_stabilised.csv', 'w') as f:
+  with open('csv/occupancy_forecast.csv', 'w') as f:
     f.write(occupancy_result)
+  with open('csv/beds_forecast.csv', 'w') as f:
+    f.write(beds_result)
 
   # Log
   logger.info('Done')
