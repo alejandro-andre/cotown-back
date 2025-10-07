@@ -79,7 +79,6 @@ def income_stabilised_calc(dbClient):
   df_beds['date'] = pd.to_datetime(df_beds['date'])
   df_beds['year'] = np.where(df_beds['date'].dt.month >= 9, df_beds['date'].dt.year + 1, df_beds['date'].dt.year)
   df_beds['month'] = df_beds['date'].dt.month
-  df_beds['days_in_month'] = df_beds['date'].dt.days_in_month.fillna(0).astype(int)
   df_beds['building'] = df_beds['resource'].str.slice(0, 6)
   df_beds['flat'] = df_beds['resource'].str.slice(0, 12)
 
@@ -105,7 +104,7 @@ def income_stabilised_calc(dbClient):
   df['stay_length'] = ''
 
   # Amounts
-  df['amount'] = df['beds'].astype(float) * df['days_in_month'].astype(float) * df['occupancy'].astype(float) * (df['pct_long'] * df['long'] + df['pct_medium'] * df['medium'] + df['pct_short'] * df['short'] + df['pct_group'] * df['group']).astype(float) / 10000
+  df['amount'] = df['beds'].astype(float) * df['occupancy'].astype(float) * (df['pct_long'] * df['long'] + df['pct_medium'] * df['medium'] + df['pct_short'] * df['short'] + df['pct_group'] * df['group']).astype(float) / 10000
   df['rate'] = df['amount']
   df = df[df['amount'].notna() & (df['amount'] != 0)]
                   
