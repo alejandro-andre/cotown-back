@@ -4,7 +4,9 @@
 
 # System includes
 import os
+import numpy as np
 import pandas as pd
+from psycopg2.extras import execute_values
 
 # Logging
 import logging
@@ -15,7 +17,7 @@ logger = logging.getLogger('COTOWN')
 # Constants
 # ###################################################
 
-BATCH = 1000
+BATCH = 2500
 
 
 # ###################################################
@@ -54,11 +56,13 @@ def get_data(dbClient, script):
   # Get CSV
   file = 'csv/' + script + '.csv'
   if os.path.exists(file):
+    logger.info('Loading ' + file + '...')
     return pd.read_csv(file)
 
   # Or get from SQL
   file = 'sql/' + script + '.sql'
   if os.path.exists(file):
+    logger.info('Executing SQL...')
 
     # Load file
     fi = open(file, 'r')
@@ -97,64 +101,70 @@ def load(dbOrigin, dbDestination, table, query):
   # Log
   logger.info('Loading ' + query + '...')
 
+  # Get connection
+  con = dbDestination.getconn()
+
   # Get data
   data = get_data(dbOrigin, query)
   if data is None or data.empty:
     return
 
-  # Get connection
-  con = dbDestination.getconn()
-
-  # Get table columns
-  sql = 'SELECT * FROM gold.' + table + ' LIMIT 0;'
-  cur = dbDestination.execute(con, sql)
-  columns = [desc[0] for desc in cur.description if desc[0] != 'ts']
-  cur.close()
-
-  # Get data columns
-  data.columns = [col.lower() for col in data.columns]
-
-  # Compare columns
-  if list(set(columns) - set(data.columns)):
-    logger.info(f"Columnas en DESTINO pero no en ORIGEN: {list(set(columns) - set(data.columns))}")
-  if list(set(data.columns) - set(columns)):
-    logger.info(f"Columnas en ORIGEN pero no en DESTINO: {list(set(data.columns) - set(columns))}")
-
-  # Insert sentence
-  markers = ['%s'] * len(columns)
-  fields = list(map(lambda key: '"' + key + '"', columns))
-  #update = list(map(lambda key: '"' + key + '"=EXCLUDED."' + key + '"', columns))
-  #sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({}) ON CONFLICT (id) DO UPDATE SET {}'.format(','.join(fields), ','.join(markers), ','.join(update))
-  sql = 'INSERT INTO gold.' + table + ' ({}) VALUES ({})'.format(','.join(fields), ','.join(markers))
-
   try:
+    # Get table columns
+    sql = 'SELECT * FROM gold.' + table + ' LIMIT 0;'
+    cur = dbDestination.execute(con, sql)
+    columns = [desc[0] for desc in cur.description if desc[0] != 'ts']
+    cur.close()
+
+    # Get data columns
+    data.columns = [col.lower() for col in data.columns]
+    data = data.reindex(columns=columns)
+    data = data.astype(object).where(pd.notnull(data), None)
+
+    # Compare columns
+    if list(set(columns) - set(data.columns)):
+      logger.info(f"Columnas en DESTINO pero no en ORIGEN: {list(set(columns) - set(data.columns))}")
+    if list(set(data.columns) - set(columns)):
+      logger.info(f"Columnas en ORIGEN pero no en DESTINO: {list(set(data.columns) - set(columns))}")
+
+    # Insert sentence
+    fields = ','.join(f'"{c}"' for c in columns)
+    sql = f'INSERT INTO gold.{table} ({fields}) VALUES %s'
+
+    # Cursor
+    total = 0
+    cur = con.cursor()
+
+    # Generate tuples
+    def row_gen():
+      for tpl in data.itertuples(index=False, name=None):
+        yield tpl
+      
     # Loop thru all rows
-    records = []
-    for _, row in data.iterrows():
-      # Append record
-      record = {col.lower(): (None if pd.isna(row[col]) else row[col]) for col in columns}
-      records.append(list(record.values()))
+    batch = []
+    for row in row_gen():
+      batch.append(row)
 
       # Insert block
-      if len(records) >= BATCH:
-        cur = dbDestination.executemany(con, sql, records)
-        cur.close()
-        logger.info('Loaded ' + str(len(records)) + ' record(s)...')
-        records = []
+      if len(batch) >= BATCH:
+        execute_values(cur, sql, batch, page_size=BATCH)
+        total += len(batch)
+        logger.info('Loaded ' + str(len(batch)) + ' record(s)...')
+        batch.clear()
           
     # Insert last block
-    if len(records):
-      cur = dbDestination.executemany(con, sql, records)
-      cur.close()
+    if batch:
+      execute_values(cur, sql, batch, page_size=BATCH)
+      total += len(batch)
+
+    # Commit
+    con.commit()
+    logger.info('Loaded ' + str(total) + ' record(s) ok')
 
   except Exception as error:
     logger.error(error)
-    logger.info('No data has been loaded\n')
     con.rollback()
-    dbDestination.putconn(con)
-    return
+    logger.info('No data has been loaded\n')
 
-  # Commit
-  logger.info('Loaded ' + str(len(data)) + ' record(s) ok')
-  con.commit()
-  dbDestination.putconn(con)
+  finally:
+    dbDestination.putconn(con)

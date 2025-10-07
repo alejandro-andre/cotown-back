@@ -153,6 +153,7 @@ def occupancy_real(dbClient):
   # Additional columns
   df_books = df_books.reset_index(drop=True)
   df_books['id'] = (df_books.index + 1).astype(str).str.zfill(7)
+  df_books['id'] = 'OCR' + df_books['id'].astype(str)
   df_books['data_type'] = 'Real'
 
   # To CSV
@@ -230,7 +231,7 @@ def occupancy_forecast(dbClient):
   # Id
   df_occup = df_occup.reset_index(drop=True)
   df_occup['id'] = (df_occup.index + 1).astype(str).str.zfill(6)
-  df_occup['id'] = 'FOC' + df_occup['id'].astype(str)
+  df_occup['id'] = 'OCF' + df_occup['id'].astype(str)
 
 
   # To CSV
