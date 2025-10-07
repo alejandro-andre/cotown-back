@@ -102,61 +102,76 @@ def beds_real_calc(dbClient):
   # Existing resources
   sql = '''
   -- All places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date",
-  r."Pre_capex_long_term" AS "val_current",
-  r."Post_capex" AS "val_residential",
-  r."Post_capex" AS "val_cosharing",
-  ra."Date_from",
-  ra."Date_to",
-  CASE
-    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
-    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
-    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
-  END AS "type"
+  SELECT 
+    r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date",
+    r."Pre_capex_long_term" AS "val_current",
+    r."Post_capex" AS "val_residential",
+    r."Post_capex" AS "val_cosharing",
+    ra."Date_from",
+    ra."Date_to",
+    CASE
+      WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+      WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+      WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+    END AS "type",
+    rft."Code" AS "flat_type",
+    rpt."Code" AS "place_type"
   FROM "Resource"."Resource" r 
-  INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-  LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
+    INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+    INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+    INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE r."Resource_type" = 'plaza'
   
   UNION
   
   -- All rooms without places
-  SELECT r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date", 
-  r."Pre_capex_long_term" AS "val_current",
-  r."Post_capex" AS "val_residential",
-  r."Post_capex" AS "val_cosharing",
-  ra."Date_from",
-  ra."Date_to",
-  CASE
-    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
-    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
-    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
-  END AS "type"
+  SELECT 
+    r.id, r."Code" AS "resource", r."Flat_id" AS "flat", b."Start_date", 
+    r."Pre_capex_long_term" AS "val_current",
+    r."Post_capex" AS "val_residential",
+    r."Post_capex" AS "val_cosharing",
+    ra."Date_from",
+    ra."Date_to",
+    CASE
+      WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+      WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+      WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+    END AS "type",
+    rft."Code" AS "flat_type",
+    rpt."Code" AS "place_type"
   FROM "Resource"."Resource" r 
-  INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-  LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
-  WHERE "Resource_type" = 'habitacion' AND 
-  NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Room_id" = r.id)
+    INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+    INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+    INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
+  WHERE "Resource_type" = 'habitacion' 
+    AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Room_id" = r.id)
   
   UNION
   
   -- All Flats without rooms
-  SELECT r.id, r."Code" AS "resource", r.id AS "flat", b."Start_date",
-  r."Pre_capex_long_term" AS "val_current",
-  r."Post_capex" AS "val_residential",
-  r."Post_capex" AS "val_cosharing",
-  ra."Date_from",
-  ra."Date_to",
-  CASE
-    WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
-    WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
-    WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
-  END AS "type"
+  SELECT 
+    r.id, r."Code" AS "resource", r.id AS "flat", b."Start_date",
+    r."Pre_capex_long_term" AS "val_current",
+    r."Post_capex" AS "val_residential",
+    r."Post_capex" AS "val_cosharing",
+    ra."Date_from",
+    ra."Date_to",
+    CASE
+      WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
+      WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
+      WHEN r."Billing_type" = 'proporcional' THEN 'Daily' 
+    END AS "type",
+    rft."Code" AS "flat_type",
+    rpt."Code" AS "place_type"
   FROM "Resource"."Resource" r 
-  LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
-  INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
-  WHERE "Resource_type" = 'piso' AND 
-  NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
+    INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+    INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
+    INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
+    LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
+  WHERE "Resource_type" = 'piso' 
+    AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
 
   ORDER BY 2
   '''
@@ -204,6 +219,7 @@ def beds_real_calc(dbClient):
 
   # Beds and available nights
   df[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df.apply(count_real, axis=1, result_type='expand')
+  df['data_type'] = 'Real'
   logger.info('- Real beds and nights calculated')
   return df
 
@@ -211,9 +227,9 @@ def beds_real_calc(dbClient):
 def beds_real(dbClient):
 
   df = beds_real_calc(dbClient)
+  df = df.reset_index(drop=True)
   df['id'] = range(1, 1 + len(df))
   df['id'] = 'BDR' + df['id'].astype(str)
-  df['data_type'] = 'Real'
   df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')
 
@@ -265,14 +281,15 @@ def beds_forecast_calc(dbClient):
   df['val_current']     = 0
   df['val_residential'] = 0
   df['val_cosharing']   = 0 
+  df['data_type'] = 'Forecast'
   return df
 
 
 def beds_forecast(dbClient):
 
   df = beds_forecast_calc(dbClient)
+  df = df.reset_index(drop=True)
   df['id'] = range(1, 1 + len(df))
   df['id'] = 'BDF' + df['id'].astype(str)
-  df['data_type'] = 'Forecast'
   df.to_csv('csv/beds_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')

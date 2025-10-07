@@ -184,13 +184,15 @@ def forecast(apiClient):
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy stabilised
+        '''
         if beds > 0:
           line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, days * beds * occ_stab, days * beds * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
         if beds_c > 0:
           line = ['SOC' + str(c), 'Stabilised Convertible', row[1].value, month, days * beds_c * occ_stab, days * beds_c * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-
+        '''
+        
     # Close worksheet
     workbook.close()
 

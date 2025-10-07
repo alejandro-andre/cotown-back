@@ -151,11 +151,6 @@ def occupancy_real_calc(dbClient):
 
   # Ocuppied and sold nights
   df[['occupied', 'occupied_t', 'sold', 'sold_t']] = df.apply(nights, axis=1, result_type='expand')
-
-  # Additional columns
-  df = df.reset_index(drop=True)
-  df['id'] = (df.index + 1).astype(str).str.zfill(7)
-  df['id'] = 'OCR' + df['id'].astype(str)
   df['data_type'] = 'Real'
   logger.info('- Occupied and sold nights calculated')
   return df
@@ -164,6 +159,9 @@ def occupancy_real_calc(dbClient):
 def occupancy_real(dbClient):
 
   df = occupancy_real_calc(dbClient)
+  df = df.reset_index(drop=True)
+  df['id'] = (df.index + 1).astype(str).str.zfill(7)
+  df['id'] = 'OCR' + df['id'].astype(str)
   df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
   logger.info('- Occupancy saved')
 
@@ -233,11 +231,6 @@ def occupancy_forecast_calc(dbClient):
   df['sold_t']     = 0
   df['booking']    = 0
   df['data_type']  = 'Forecast'
-
-  # Id
-  df = df.reset_index(drop=True)
-  df['id'] = (df.index + 1).astype(str).str.zfill(6)
-  df['id'] = 'OCF' + df['id'].astype(str)
   logger.info('- Occupied and sold nights calculated')
   return df
 
@@ -245,6 +238,9 @@ def occupancy_forecast_calc(dbClient):
 def occupancy_forecast(dbClient):
 
   df = occupancy_forecast_calc(dbClient)
+  df = df.reset_index(drop=True)
+  df['id'] = (df.index + 1).astype(str).str.zfill(6)
+  df['id'] = 'OCF' + df['id'].astype(str)
   df.to_csv('csv/occupancy_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
   logger.info('- Occupancy saved')
 
@@ -253,7 +249,7 @@ def occupancy_forecast(dbClient):
 # Calculate stabilised occupancy
 # ###################################################
 
-def occupancy_stabilised(dbClient):
+def occupancy_stabilised_calc(dbClient):
 
   # Log
   logger.info('Calculating stabilised occupancy...')
@@ -263,8 +259,11 @@ def occupancy_stabilised(dbClient):
 
   # Stabilised hypotesis
   sql = f'''
-    SELECT *
-    FROM "Resource"."Resource_stabilised" rs 
+    SELECT 
+      r."Code" as "flat", rs."Date_price" as "month", rs."Occupancy" as "occupancy", 
+      rs."Pct_long" as "pct_long", rs."Pct_medium" as "pct_medium", rs."Pct_short" as "pct_short"
+    FROM "Resource"."Resource_stabilised" rs
+      INNER JOIN "Resource"."Resource" r ON r.id = rs."Resource_id"
   '''
   try:
     cur = dbClient.execute(con, sql)
@@ -277,13 +276,58 @@ def occupancy_stabilised(dbClient):
     return None
   finally:
     cur.close()
-  logger.info('- Stabilised occupancy retrieved')
-
+  df_occ['pct_group'] = 100 - df_occ['pct_long'] - df_occ['pct_medium'] - df_occ['pct_short']
+  logger.info('- Stabilised hypotesis retrieved')
+ 
   # Calculate beds
   df_beds = beds_real_calc(dbClient)
 
-  # Month
+  # Merge by resource and month
+  df_beds['flat'] = df_beds['resource'].str.slice(0, 12)
   df_beds['date'] = pd.to_datetime(df_beds['date'])
   df_beds['month'] = df_beds['date'].dt.month
-  print(df_beds)
-  print(df_occ)
+  df_sta = df_beds.merge(
+    df_occ,
+    left_on=['flat', 'month'],
+    right_on=['flat', 'month'],
+    how='left'
+  )
+  df_sta['days_in_month'] = df_sta['date'].dt.days_in_month.fillna(0).astype(int)
+
+  # Duplicate DF
+  df_stc = df_sta.copy()   
+
+  # Occupied and sold nights
+  df_sta['occupied'] = df_sta['beds'].astype(float) * df_sta['occupancy'].astype(float) * df_sta['days_in_month'] / 100
+  df_sta['sold'] = df_sta['occupied']
+  df_sta = df_sta[df_sta['occupied'] > 0].reset_index(drop=True)
+  df_stc['occupied'] = df_stc['beds_cnv'].astype(float) * df_stc['occupancy'].astype(float) * df_stc['days_in_month'] / 100
+  df_stc['sold'] = df_stc['occupied']
+  df_stc = df_stc[df_stc['occupied'] > 0].reset_index(drop=True)
+
+  # Additional columns
+  df_sta['occupied_t']  = 0
+  df_sta['sold_t']      = 0
+  df_sta['booking']     = 0
+  df_sta['stay_length'] = ''
+  df_sta['data_type']   = 'Stabilised Available'
+  df_stc['occupied_t']  = 0
+  df_stc['sold_t']      = 0
+  df_stc['booking']     = 0
+  df_stc['stay_length'] = ''
+  df_stc['data_type']   = 'Stabilised Convertible'
+  logger.info('- Occupied and sold nights calculated')
+  return df_sta, df_stc
+
+def occupancy_stabilised(dbClient):
+
+  df_sta, df_stc = occupancy_stabilised_calc(dbClient)
+  df_sta = df_sta.reset_index(drop=True)
+  df_sta['id'] = (df_sta.index + 1).astype(str).str.zfill(6)
+  df_sta['id'] = 'OCA' + df_sta['id'].astype(str)
+  df_sta.to_csv('csv/occupancy_stabilised_a.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  df_stc = df_stc.reset_index(drop=True)
+  df_stc['id'] = (df_stc.index + 1).astype(str).str.zfill(6)
+  df_stc['id'] = 'OCC' + df_stc['id'].astype(str)
+  df_stc.to_csv('csv/occupancy_stabilised_c.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  logger.info('- Occupancy saved')

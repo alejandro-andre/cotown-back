@@ -1,0 +1,71 @@
+def occupancy_stabilised(dbClient):
+
+  # Log
+  logger.info('Calculating stabilised occupancy...')
+
+  # Connection
+  con = dbClient.getconn()
+
+  # Stabilised hypotesis
+  sql = f'''
+    SELECT 
+      r."Code" as "flat", rs."Date_price" as "month", rs."Occupancy" as "occupancy", 
+      rs."Pct_long" as "pct_long", rs."Pct_medium" as "pct_medium", rs."Pct_short" as "pct_short"
+    FROM "Resource"."Resource_stabilised" rs
+      INNER JOIN "Resource"."Resource" r ON r.id = rs."Resource_id"
+  '''
+  try:
+    cur = dbClient.execute(con, sql)
+    columns = [desc[0] for desc in cur.description]
+    df_occ = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+  except Exception as e:
+    logger.error(e)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+  finally:
+    cur.close()
+  df_occ['pct_group'] = 100 - df_occ['pct_long'] - df_occ['pct_medium'] - df_occ['pct_short']
+  logger.info('- Stabilised occupancy retrieved')
+
+  # Prices
+  sql = f'''
+    SELECT 
+      pd."Year" AS "year", b."Code" AS "building", rft."Code" AS "flat_type", rpt."Code" AS "place_type", 
+      pd."Rent_long" AS "long", pd."Rent_medium" AS "medium", pd."Rent_short" AS "short", COALESCE(pd."Rent_group", 0) AS "group"
+    FROM "Billing"."Pricing_detail" pd
+      INNER JOIN "Building"."Building" b ON b.id = pd."Building_id"
+      INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = pd."Flat_type_id"
+      INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pd."Place_type_id"
+  '''
+  try:
+    cur = dbClient.execute(con, sql)
+    columns = [desc[0] for desc in cur.description]
+    df_price = pd.DataFrame.from_records(cur.fetchall(), columns=columns)
+  except Exception as e:
+    logger.error(e)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+  finally:
+    cur.close()
+  logger.info('- Prices retrieved')
+  
+    # Calculate beds
+  df_beds = beds_real_calc(dbClient)
+
+  # Prepare merge
+  df_beds['flat'] = df_beds['resource'].str.slice(0, 12)
+  df_beds['date'] = pd.to_datetime(df_beds['date'])
+  df_beds['month'] = df_beds['date'].dt.month
+  
+  # Merge by resource and month
+  df_result = df_beds.merge(
+    df_occ,
+    left_on=['flat', 'month'],
+    right_on=['flat', 'month'],
+    how='left'
+  )
+  print(df_occ)
+  print(df_beds)
+  print(df_result)

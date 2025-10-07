@@ -194,7 +194,7 @@ def main(interfaces):
     # Beds
     if 'beds' in interfaces:
       beds_real(dbOrigin)
-      #beds_forecast(dbOrigin)
+      beds_forecast(dbOrigin)
       execute(dbDestination, '_clear_beds')
       load(dbOrigin, dbDestination, 'beds', 'beds_real')
       load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
@@ -203,17 +203,18 @@ def main(interfaces):
     # Occupancy
     if 'occupancy' in interfaces:
       occupancy_real(dbOrigin)
-      #occupancy_forecast(dbOrigin)
-      #occupancy_stabilised(dbOrigin)
+      occupancy_forecast(dbOrigin)
+      occupancy_stabilised(dbOrigin)
       execute(dbDestination, '_clear_occupancy')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
       load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
       #load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
-      #load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_a')
+      load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_c')
 
     # Test
     if 'test' in interfaces:
-      occupancy_stabilised(dbOrigin)
+      pass
 
   except Exception as e:
     # Error
