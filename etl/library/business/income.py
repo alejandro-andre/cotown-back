@@ -34,7 +34,7 @@ def income_forecast_calc(dbClient):
       rf."Pct_long", rf."Pct_medium", rf."Pct_short", 100 - rf."Pct_long" - rf."Pct_medium" - rf."Pct_short" as "Pct_group",
       rf."Rent_short", rf."Rent_medium", rf."Rent_long", rf."Rent_group",
       rf."Discount", rf."Services", rf."Final_cleaning", rf."Booking_fee", rf."Reinvoices",
-      r."Management_fee", b."Building_type_id" as "type"
+      rf."Management_fee", b."Building_type_id" as "type"
     FROM "Resource"."Resource_forecast" rf
       INNER JOIN "Resource"."Resource" r ON r.id = rf."Resource_id"
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 
