@@ -96,6 +96,7 @@ def load_forecast(dbClient, con, data):
       record['Final_cleaning'] = to_float(record['Final_cleaning'])
       record['Booking_fee']    = to_float(record['Booking_fee'])
       record['Reinvoices']     = to_float(record['Reinvoices'])
+      record['Management_fee'] = to_float(record['Management_fee']) * 100
 
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))

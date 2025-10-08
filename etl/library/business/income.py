@@ -79,7 +79,6 @@ def income_forecast_calc(dbClient):
       'Management_fee': 'Management fee',
     }
   )
-  print(df)
   base_cols = ['resource', 'date', 'type']
   df = (
     df[base_cols + ['LONG', 'MEDIUM', 'SHORT', 'GROUP', 'Periodic cleaning service', 'Check-out cleaning services', 'Membership fee', 'Others', 'Management fee']]
