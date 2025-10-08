@@ -84,7 +84,7 @@ WITH
   SELECT
   	r.id,
   	r."Code",
-    r."Management_fee" / 100.0,
+    r."Management_fee" / 100.0 AS "Management_fee",
     d."Date" AS "Date_price"
   FROM "Resource"."Resource" r
     CROSS JOIN "Dates" d
