@@ -1,5 +1,5 @@
 SELECT
-  CONCAT('BRX', il.id) AS "id",
+  CONCAT('IBRX', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   'G' || b.id::text AS "booking",

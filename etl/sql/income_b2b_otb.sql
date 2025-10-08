@@ -7,7 +7,7 @@ WITH
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
 )
 SELECT 
-  CONCAT('BOR', bp.id, r."rid") AS "id",
+  CONCAT('IBOR', bp.id, r."rid") AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
   'G' || bp."Booking_id"::text AS "booking",
@@ -51,7 +51,7 @@ WITH
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
 )
 SELECT 
-  CONCAT('BOS', bp.id, r."rid") AS "id",
+  CONCAT('IBOS', bp.id, r."rid") AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
   'G' || bp."Booking_id"::text AS "booking",

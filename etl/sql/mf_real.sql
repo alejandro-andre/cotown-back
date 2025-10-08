@@ -1,5 +1,5 @@
 SELECT 
-  CONCAT('CRM', il.id) AS "id",
+  CONCAT('ICRM', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   'C' || i."Booking_id"::text AS "booking",
@@ -34,7 +34,7 @@ WHERE i."Issued"
   AND (pr."Product_type_id" <> 2 OR i."Bill_type" <> 'recibo')
 UNION ALL
 SELECT 
-  CONCAT('BRM', il.id) AS "id",
+  CONCAT('IBRM', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   'B' || i."Booking_group_id"::text AS "booking",

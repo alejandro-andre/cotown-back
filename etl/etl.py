@@ -101,7 +101,6 @@ def main(interfaces):
     logger.error(e)
     return
 
-
   # ------------------------------------
   # Init destination
   # ------------------------------------
@@ -165,6 +164,7 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
 
   # Forecast
+  # TO BE REMOVED
   if 'income' in interfaces or 'occupancy' in interfaces:
     forecast(apiClient)
 
@@ -176,6 +176,7 @@ def main(interfaces):
     execute(dbDestination, '_clear_income')
     load(dbOrigin, dbDestination, 'income', 'income_budget')
     load(dbOrigin, dbDestination, 'income', 'income_forecast')
+    load(dbOrigin, dbDestination, 'income', 'income_forecast_new')
     load(dbOrigin, dbDestination, 'income', 'income_stabilised')
     load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
     load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
@@ -203,7 +204,7 @@ def main(interfaces):
     execute(dbDestination, '_clear_occupancy')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
-    #load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised')
 
   # History

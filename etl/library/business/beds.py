@@ -225,7 +225,7 @@ def beds_real_calc(dbClient):
   # Index
   df = df.reset_index(drop=True)
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
-  df['id'] = 'BRE' + df['id'].astype(str)
+  df['id'] = 'BDR' + df['id'].astype(str)
   logger.info('- Real beds and nights calculated')
   return df
 
@@ -273,7 +273,6 @@ def beds_forecast_calc(dbClient):
   # Beds and available nights
   df['date'] = pd.to_datetime(df['date'], errors='coerce')
   df['available'] = df['beds'] * df['date'].dt.days_in_month.fillna(0).astype(int)
-  logger.info('- Forecast beds and nights calculated')
   
   # Empty values
   df['convertible']     = 0 
@@ -289,7 +288,8 @@ def beds_forecast_calc(dbClient):
   # Index
   df = df.reset_index(drop=True)
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
-  df['id'] = 'BFO' + df['id'].astype(str)
+  df['id'] = 'BDF' + df['id'].astype(str)
+  logger.info('- Forecast beds and nights calculated')
   return df
 
 

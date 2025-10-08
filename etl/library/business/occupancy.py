@@ -145,12 +145,12 @@ def occupancy_real_calc(dbClient):
   # Ocuppied and sold nights
   df[['occupied', 'occupied_t', 'sold', 'sold_t']] = df.apply(nights, axis=1, result_type='expand')
   df['data_type'] = 'Real'
-  logger.info('- Occupied and sold nights calculated')
 
   # Index
   df = df.reset_index(drop=True)
   df['id'] = (df.index + 1).astype(str).str.zfill(7)
-  df['id'] = 'OCR' + df['id'].astype(str)
+  df['id'] = 'ORE' + df['id'].astype(str)
+  logger.info('- Occupied and sold nights calculated')
   return df
 
 
@@ -173,7 +173,7 @@ def occupancy_forecast_calc(dbClient):
   # Connection
   con = dbClient.getconn()
 
-  # Bookings
+  # Forecast
   sql = f'''
     SELECT 
       r."Code" as "resource", rf."Date_price" as "date", rf."Beds" as "beds", rf."Occupancy" as "occupancy",
@@ -194,7 +194,7 @@ def occupancy_forecast_calc(dbClient):
     return None
   finally:
     cur.close()
-  logger.info('- Forecast occupancy retrieved')
+  logger.info('- Forecast data retrieved')
 
   # Stack by stay types
   df = df.rename(
@@ -225,13 +225,13 @@ def occupancy_forecast_calc(dbClient):
   df['occupied_t'] = 0
   df['sold_t']     = 0
   df['booking']    = 0
-  df['data_type']  = 'Forecast'
-  logger.info('- Occupied and sold nights calculated')
+  df['data_type']  = 'Forecast new'
 
   # Index
   df = df.reset_index(drop=True)
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
-  df['id'] = 'OCF' + df['id'].astype(str)
+  df['id'] = 'OFO' + df['id'].astype(str)
+  logger.info('- Occupied and sold nights calculated')
   return df
 
 
@@ -274,7 +274,7 @@ def occupancy_stabilised_calc(dbClient):
   finally:
     cur.close()
   df_occ['pct_group'] = 100 - df_occ['pct_long'] - df_occ['pct_medium'] - df_occ['pct_short']
-  logger.info('- Stabilised hypotesis retrieved')
+  logger.info('- Stabilised data retrieved')
  
   # Calculate beds
   df_beds = beds_real_calc(dbClient)
