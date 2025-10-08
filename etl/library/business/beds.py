@@ -221,6 +221,11 @@ def beds_real_calc(dbClient):
   # Beds and available nights
   df[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df.apply(count_real, axis=1, result_type='expand')
   df['data_type'] = 'Real'
+
+  # Index
+  df = df.reset_index(drop=True)
+  df['id'] = (df.index + 1).astype(str).str.zfill(6)
+  df['id'] = 'BRE' + df['id'].astype(str)
   logger.info('- Real beds and nights calculated')
   return df
 
@@ -228,9 +233,6 @@ def beds_real_calc(dbClient):
 def beds_real(dbClient):
 
   df = beds_real_calc(dbClient)
-  df = df.reset_index(drop=True)
-  df['id'] = range(1, 1 + len(df))
-  df['id'] = 'BDR' + df['id'].astype(str)
   df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')
 
@@ -283,14 +285,16 @@ def beds_forecast_calc(dbClient):
   df['val_residential'] = 0
   df['val_cosharing']   = 0 
   df['data_type'] = 'Forecast'
+
+  # Index
+  df = df.reset_index(drop=True)
+  df['id'] = (df.index + 1).astype(str).str.zfill(6)
+  df['id'] = 'BFO' + df['id'].astype(str)
   return df
 
 
 def beds_forecast(dbClient):
 
   df = beds_forecast_calc(dbClient)
-  df = df.reset_index(drop=True)
-  df['id'] = range(1, 1 + len(df))
-  df['id'] = 'BDF' + df['id'].astype(str)
-  df.to_csv('csv/beds_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
+  df.to_csv('csv/beds_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
   logger.info('- Beds saved')

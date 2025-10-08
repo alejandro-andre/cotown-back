@@ -83,7 +83,6 @@ def glExcel(file, year):
   df.to_csv('csv/' + file + '.csv', index=False, quoting=csv.QUOTE_MINIMAL)
 
 
-
 # ###################################################
 # Get GL data from SAP
 # ###################################################

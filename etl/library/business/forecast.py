@@ -67,9 +67,9 @@ def budget(apiClient):
         # Data
         budget = to_float(row[ 2].value)
         uw     = to_float(row[ 3].value)
-        line = ['BUD' + str(c), '-', '-', '(budget)', month, '', '', row[1].value, 'Retail', budget, budget, None, 'Budget', 'RETAIL', '' ]
+        line = ['LUB' + str(c), '-', '-', '(budget)', month, '', '', row[1].value, 'Retail', budget, budget, None, 'Budget', 'RETAIL', '' ]
         budget_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['BUW' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Retail', uw, uw, None, 'UW', 'RETAIL', '' ]
+        line = ['LUW' + str(c), '-', '-', '(uw)', month, '', '', row[1].value, 'Retail', uw, uw, None, 'UW', 'RETAIL', '' ]
         budget_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
     # Close worksheet
@@ -92,7 +92,7 @@ def forecast(apiClient):
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","price","data_type","stay_length","discount_type"\n' 
   occupancy_result = '"id","data_type","resource","date","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
-  beds_result = '"id","data_type","resource","date","beds","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible","val_current","val_residential","val_cosharing"\n'
+  #beds_result = '"id","data_type","resource","date","beds","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible","val_current","val_residential","val_cosharing"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -150,11 +150,11 @@ def forecast(apiClient):
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FRG' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_g, rent_g, None, 'Forecast', 'GROUP', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FST' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Periodic cleaning service', srvs_tot, 0, None, 'Forecast', '', '' ]
+        line = ['FSP' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Periodic cleaning service', srvs_tot, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FSC' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Check-out cleaning services', srvs_cln, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['FRR' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Others', reinv, 0, None, 'Forecast', '', '' ]
+        line = ['FOT' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Others', reinv, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         line = ['FBF' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Membership fee', bfee, 0, None, 'Forecast', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
@@ -163,35 +163,35 @@ def forecast(apiClient):
 
         # Income stabilised
         '''
-        line = ['SPA' + str(c), '-', '-', '(Stabilised available)', month, '', '', row[1].value, 'Monthly rent', mpr * occ_stab, 0, None, 'Stabilised Available', '', '' ]
+        line = ['ISA' + str(c), '-', '-', '(Stabilised available)', month, '', '', row[1].value, 'Monthly rent', mpr * occ_stab, 0, None, 'Stabilised Available', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
-        line = ['SPC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, 0, None, 'Stabilised Convertible', '', '' ]
+        line = ['ISC' + str(c), '-', '-', '(Stabilised convertible)', month, '', '', row[1].value, 'Monthly rent', mpr_st * occ_stab, 0, None, 'Stabilised Convertible', '', '' ]
         forecast_result += ','.join([f'"{e}"' for e in line]) + '\n'
         '''
 
         # Beds forecast
-        if beds > 0:
-          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
-          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        #if beds > 0:
+        #  line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
+        #  beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
         if beds_c > 0:
-          line = ['FOL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, '', 'LONG']
+          line = ['OFL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, '', 'LONG']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, '', 'MEDIUM']
+          line = ['OFM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, '', 'MEDIUM']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOS' + str(c), 'Forecast', row[1].value, month, occ_s * days * occu * beds_c, occ_s * days * occu * beds_c, 0, 0, '', 'SHORT']
+          line = ['OFS' + str(c), 'Forecast', row[1].value, month, occ_s * days * occu * beds_c, occ_s * days * occu * beds_c, 0, 0, '', 'SHORT']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['FOG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
+          line = ['OFG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy stabilised
         '''
         if beds > 0:
-          line = ['AOC' + str(c), 'Stabilised Available', row[1].value, month, days * beds * occ_stab, days * beds * occ_stab, 0, 0, '', '']
+          line = ['OSA' + str(c), 'Stabilised Available', row[1].value, month, days * beds * occ_stab, days * beds * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
         if beds_c > 0:
-          line = ['SOC' + str(c), 'Stabilised Convertible', row[1].value, month, days * beds_c * occ_stab, days * beds_c * occ_stab, 0, 0, '', '']
+          line = ['OSC' + str(c), 'Stabilised Convertible', row[1].value, month, days * beds_c * occ_stab, days * beds_c * occ_stab, 0, 0, '', '']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
         '''
         
@@ -203,8 +203,8 @@ def forecast(apiClient):
     f.write(forecast_result)
   with open('csv/occupancy_forecast.csv', 'w') as f:
     f.write(occupancy_result)
-  with open('csv/beds_forecast.csv', 'w') as f:
-    f.write(beds_result)
+  #with open('csv/beds_forecast.csv', 'w') as f:
+  #  f.write(beds_result)
 
   # Log
   logger.info('Done')

@@ -21,7 +21,7 @@ from library.business.load import load, execute
 from library.business.history import history
 from library.business.beds import beds_real, beds_forecast
 from library.business.occupancy import occupancy_real, occupancy_forecast, occupancy_stabilised
-from library.business.income import income_stabilised
+from library.business.income import income_forecast, income_stabilised
 from library.business.forecast import forecast, budget
 from library.business.gl import glSAP, glExcel
 
@@ -171,6 +171,7 @@ def main(interfaces):
   # Income
   if 'income' in interfaces:
     budget(apiClient)
+    income_forecast(dbOrigin)
     income_stabilised(dbOrigin)
     execute(dbDestination, '_clear_income')
     load(dbOrigin, dbDestination, 'income', 'income_budget')
@@ -186,12 +187,6 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
     load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
 
-  # History
-  if 'history' in interfaces:
-    history(dbOrigin)
-    execute(dbDestination, '_clear_history')
-    load(dbOrigin, dbDestination, 'resource_history', 'history_real')
-
   # Beds
   if 'beds' in interfaces:
     beds_real(dbOrigin)
@@ -199,7 +194,6 @@ def main(interfaces):
     execute(dbDestination, '_clear_beds')
     load(dbOrigin, dbDestination, 'beds', 'beds_real')
     load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
-    #load(dbOrigin, dbDestination, 'beds', 'beds_forecast_new')
 
   # Occupancy
   if 'occupancy' in interfaces:
@@ -210,12 +204,17 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
     #load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
-    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_a')
-    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised_c')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised')
 
-    # Disconnect
-    dbDestination.disconnect()
-    dbOrigin.disconnect()
+  # History
+  if 'history' in interfaces:
+    history(dbOrigin)
+    execute(dbDestination, '_clear_history')
+    load(dbOrigin, dbDestination, 'resource_history', 'history_real')
+
+  # Disconnect
+  dbDestination.disconnect()
+  dbOrigin.disconnect()
 
 
 # ###################################################

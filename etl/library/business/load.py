@@ -149,7 +149,7 @@ def load(dbOrigin, dbDestination, table, query):
       if len(batch) >= BATCH:
         execute_values(cur, sql, batch, page_size=BATCH)
         total += len(batch)
-        logger.info('Loaded ' + str(len(batch)) + ' record(s)...')
+        logger.debug('Loaded ' + str(len(batch)) + ' record(s)...')
         batch.clear()
           
     # Insert last block

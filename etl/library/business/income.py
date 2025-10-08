@@ -16,6 +16,21 @@ from library.business.constants import START_DATE, END_DATE
 
 
 # ###################################################
+# Calculate forecast income
+# ###################################################
+
+def income_forecast_calc(dbClient):
+
+  # Log
+  logger.info('Calculating stabilised income...')
+
+
+def income_forecast(dbClient):
+
+  df = income_forecast_calc
+
+
+# ###################################################
 # Calculate stabilised income
 # ###################################################
 
@@ -83,7 +98,7 @@ def income_stabilised_calc(dbClient):
   df_beds['flat'] = df_beds['resource'].str.slice(0, 12)
 
   # Merge occ by resource and month
-  df = df_beds.merge(
+  df_ina = df_beds.merge(
     df_occ,
     left_on=['flat', 'month'],
     right_on=['flat', 'month'],
@@ -91,7 +106,7 @@ def income_stabilised_calc(dbClient):
   )
 
   # Merge rates by flat and month
-  df = df.merge(
+  df_ina = df_ina.merge(
     df_price,
     left_on=['building', 'year', 'flat_type', 'place_type'],
     right_on=['building', 'year', 'flat_type', 'place_type'],
@@ -99,33 +114,45 @@ def income_stabilised_calc(dbClient):
   )
 
   # Calcs
-  df.fillna(0)
-  df['product'] = 'Monthly rent'
-  df['stay_length'] = ''
+  df_ina.fillna(0)
+  df_ina['product'] = 'Monthly rent'
+  df_ina['stay_length'] = ''
+
+  # Additional columns
+  df_ina['doc_id']        = '-'
+  df_ina['doc_type']      = '-'
+  df_ina['booking']       = '-'
+  df_ina['provider']      = ''
+  df_ina['customer']      = ''
+  df_ina['price']         = ''
+  df_ina['discount_type'] = ''
+
+  # Duplicate DF
+  df_inc = df_ina.copy()   
 
   # Amounts
-  df['amount'] = df['beds'].astype(float) * df['occupancy'].astype(float) * (df['pct_long'] * df['long'] + df['pct_medium'] * df['medium'] + df['pct_short'] * df['short'] + df['pct_group'] * df['group']).astype(float) / 10000
-  df['rate'] = df['amount']
-  df = df[df['amount'].notna() & (df['amount'] != 0)]
-                  
-  # Additional columns
-  df['data_type']     = 'Stabilised Available'
-  df['doc_id']        = '-'
-  df['doc_type']      = '-'
-  df['booking']       = '-'
-  df['provider']      = ''
-  df['customer']      = ''
-  df['price']         = ''
-  df['discount_type'] = ''
+  df_ina['data_type'] = 'Stabilised Available'
+  df_ina['amount'] = df_ina['beds'].astype(float) * df_ina['occupancy'].astype(float) * (df_ina['pct_long'] * df_ina['long'] + df_ina['pct_medium'] * df_ina['medium'] + df_ina['pct_short'] * df_ina['short'] + df_ina['pct_group'] * df_ina['group']).astype(float) / 10000
+  df_ina['rate'] = df_ina['amount']
+  df_ina = df_ina[df_ina['amount'].notna() & (df_ina['amount'] != 0)]
+  df_inc['data_type'] = 'Stabilised Convertible'
+  df_inc['amount'] = df_inc['beds_cnv'].astype(float) * df_inc['occupancy'].astype(float) * (df_inc['pct_long'] * df_inc['long'] + df_inc['pct_medium'] * df_inc['medium'] + df_inc['pct_short'] * df_inc['short'] + df_inc['pct_group'] * df_inc['group']).astype(float) / 10000
+  df_inc['rate'] = df_inc['amount']
+  df_inc = df_inc[df_inc['amount'].notna() & (df_inc['amount'] != 0)]
+
+  # Indexes
+  df_ina = df_ina.reset_index(drop=True)
+  df_ina['id'] = (df_ina.index + 1).astype(str).str.zfill(6)
+  df_ina['id'] = 'ISA' + df_ina['id'].astype(str)
+  df_inc = df_inc.reset_index(drop=True)
+  df_inc['id'] = (df_inc.index + 1).astype(str).str.zfill(6)
+  df_inc['id'] = 'ISC' + df_inc['id'].astype(str)
   logger.info('- Income calculated')
-  return(df)
+  return pd.concat([df_ina, df_inc], ignore_index=True)
 
 
 def income_stabilised(dbClient):
 
   df = income_stabilised_calc(dbClient)
-  df = df.reset_index(drop=True)
-  df['id'] = (df.index + 1).astype(str).str.zfill(6)
-  df['id'] = 'INA' + df['id'].astype(str)
   df.to_csv('csv/income_stabilised.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'doc_id', 'doc_type', 'booking', 'date', 'provider', 'customer', 'resource', 'product', 'amount', 'rate', 'price', 'data_type', 'stay_length', 'discount_type'])
   logger.info('- Income saved')

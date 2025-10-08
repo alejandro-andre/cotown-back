@@ -225,18 +225,21 @@ def history(dbClient):
   # Resources x dates Cross table
   df_dates['key'] = 1
   df_res['key'] = 1
-  df_history = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
+  df = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
   # Status
-  df_history['status'] = df_history.apply(lambda row: status(row, df_avail_by_flat), axis=1)
+  df['status'] = df.apply(lambda row: status(row, df_avail_by_flat), axis=1)
   logger.info('- Status calculated')
 
   # Valuation
-  df_history[['val_current', 'val_residential', 'val_cosharing']] = df_history.apply(lambda row: valuate(row, df_val_by_resource), axis=1)
+  df[['val_current', 'val_residential', 'val_cosharing']] = df.apply(lambda row: valuate(row, df_val_by_resource), axis=1)
   logger.info('- Valuations calculated')
 
+  # Index
+  df['data_type'] = 'Real'
+  df['id'] = (df.index + 1).astype(str).str.zfill(6)
+  df['id'] = 'HIS' + df['id'].astype(str)
+
   # To CSV
-  df_history['id'] = range(1, 1 + len(df_history))
-  df_history['data_type'] = 'Real'
-  df_history.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
+  df.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
   logger.info('- History saved')
