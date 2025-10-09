@@ -138,7 +138,7 @@ def forecast(apiClient):
         mpr       = to_float(row[40].value)
         mpr_st    = to_float(row[41].value)
         mpr_pot   = to_float(row[42].value)
-        mfee      = round((rent_tot + (srvs_tot + srvs_cln) / 1.21) * mgmt_fee, 2)
+        mfee      = round(rent_tot * mgmt_fee, 2)
 
         # Income forecast
         line = ['FRL' + str(c), '-', '-', '(forecast)', month, '', '', row[1].value, 'Monthly rent', rent_l, rent_l, None, 'Forecast', 'LONG', '' ]
