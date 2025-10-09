@@ -62,8 +62,8 @@ def income_forecast_calc(dbClient):
   df['Rent_group']     = df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_group'].astype(float)  * df['Pct_group'].astype(float)  * (100.0 - df['Discount'].astype(float)) / 1000000
   df['Management_fee'] = np.where(
     df['type'] == 3, 
-    df['Management_fee'].astype(float) * (df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 110.0,
-    df['Management_fee'].astype(float) * (df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 100.0
+    df['Management_fee'].astype(float) * ((df['Services'].astype(float) + df['Final_cleaning'].astype(float)) / 1.21 + df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 110.0,
+    df['Management_fee'].astype(float) * ((df['Services'].astype(float) + df['Final_cleaning'].astype(float)) / 1.21 + df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 100.0
   )
   # Stack by stay types
   df = df.rename(
@@ -99,7 +99,7 @@ def income_forecast_calc(dbClient):
   df['stay_length'] = np.where(cond, df['stay_length'], '')
 
   # Additional columns
-  df['data_type']     = 'Forecast new'
+  df['data_type']     = 'Forecast'
   df['booking']       = '-'
   df['doc_type']      = '-'
   df['doc_id']        = '-'
@@ -118,7 +118,7 @@ def income_forecast_calc(dbClient):
 def income_forecast(dbClient):
 
   df = income_forecast_calc(dbClient)
-  df.to_csv('csv/income_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'doc_id', 'doc_type', 'booking', 'date', 'provider', 'customer', 'resource', 'product', 'amount', 'rate', 'price', 'data_type', 'stay_length', 'discount_type'])
+  df.to_csv('csv/income_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'doc_id', 'doc_type', 'booking', 'date', 'provider', 'customer', 'resource', 'product', 'amount', 'rate', 'price', 'data_type', 'stay_length', 'discount_type'])
   logger.info('- Income saved')
 
 

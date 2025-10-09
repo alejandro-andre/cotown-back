@@ -225,7 +225,7 @@ def occupancy_forecast_calc(dbClient):
   df['occupied_t'] = 0
   df['sold_t']     = 0
   df['booking']    = 0
-  df['data_type']  = 'Forecast new'
+  df['data_type']  = 'Forecast'
 
   # Index
   df = df.reset_index(drop=True)
@@ -238,7 +238,7 @@ def occupancy_forecast_calc(dbClient):
 def occupancy_forecast(dbClient):
 
   df = occupancy_forecast_calc(dbClient)
-  df.to_csv('csv/occupancy_forecast_new.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  df.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
   logger.info('- Occupancy saved')
 
 

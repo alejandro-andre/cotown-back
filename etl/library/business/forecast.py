@@ -92,7 +92,7 @@ def forecast(apiClient):
   c = 0
   forecast_result = '"id","doc_id","doc_type","booking","date","provider","customer","resource","product","amount","rate","price","data_type","stay_length","discount_type"\n' 
   occupancy_result = '"id","data_type","resource","date","occupied","sold","occupied_t","sold_t","booking","stay_length"\n'
-  #beds_result = '"id","data_type","resource","date","beds","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible","val_current","val_residential","val_cosharing"\n'
+  beds_result = '"id","data_type","resource","date","beds","beds_cnv","beds_pot","beds_pre","beds_cap","available","convertible","val_current","val_residential","val_cosharing"\n'
 
   # Get files
   files = apiClient.call('{ data: Admin_FilesList ( where: { Name: { LIKE: "Forecast%" } } ) { id File { name } } }')
@@ -120,7 +120,6 @@ def forecast(apiClient):
         mgmt_fee  = to_float(row[ 2].value)
         beds      = to_float(row[ 3].value)
         beds_c    = to_float(row[ 4].value)
-        beds_ad   = to_float(row[ 5].value)
         occu      = to_float(row[ 8].value)
         occ_l     = to_float(row[15].value)
         occ_m     = to_float(row[16].value)
@@ -170,9 +169,9 @@ def forecast(apiClient):
         '''
 
         # Beds forecast
-        #if beds > 0:
-        #  line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
-        #  beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
+        if beds > 0:
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
+          beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
         if beds_c > 0:
@@ -199,12 +198,12 @@ def forecast(apiClient):
     workbook.close()
 
   # Save all results to CSV
-  with open('csv/income_forecast.csv', 'w') as f:
+  with open('csv/income_forecast_xls.csv', 'w') as f:
     f.write(forecast_result)
-  with open('csv/occupancy_forecast.csv', 'w') as f:
+  with open('csv/occupancy_forecast_xls.csv', 'w') as f:
     f.write(occupancy_result)
-  #with open('csv/beds_forecast.csv', 'w') as f:
-  #  f.write(beds_result)
+  with open('csv/beds_forecast_xls.csv', 'w') as f:
+    f.write(beds_result)
 
   # Log
   logger.info('Done')

@@ -175,8 +175,8 @@ def main(interfaces):
     income_stabilised(dbOrigin)
     execute(dbDestination, '_clear_income')
     load(dbOrigin, dbDestination, 'income', 'income_budget')
+    load(dbOrigin, dbDestination, 'income', 'income_forecast_xls')
     load(dbOrigin, dbDestination, 'income', 'income_forecast')
-    load(dbOrigin, dbDestination, 'income', 'income_forecast_new')
     load(dbOrigin, dbDestination, 'income', 'income_stabilised')
     load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
     load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
@@ -194,6 +194,7 @@ def main(interfaces):
     beds_forecast(dbOrigin)
     execute(dbDestination, '_clear_beds')
     load(dbOrigin, dbDestination, 'beds', 'beds_real')
+    load(dbOrigin, dbDestination, 'beds', 'beds_forecast_xls')
     load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
 
   # Occupancy
@@ -203,8 +204,8 @@ def main(interfaces):
     occupancy_stabilised(dbOrigin)
     execute(dbDestination, '_clear_occupancy')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_real')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_xls')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
-    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_new')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised')
 
   # History
