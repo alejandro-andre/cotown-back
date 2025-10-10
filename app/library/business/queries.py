@@ -439,7 +439,7 @@ def q_flat_prices(dbClient, segment, year):
     "Promotions" AS (
       SELECT 
         bpb."Building_id",
-        bp."Flat_type_id",
+        bpp."Flat_type_id",
         1 + bp."Value_rent_pct" / 100.0 AS "Value_rent_pct", 
         1 + bp."Value_fee_pct"  / 100.0 AS "Value_fee_pct"
       FROM "Billing"."Promotion" bp
