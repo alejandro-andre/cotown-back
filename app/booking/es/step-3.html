@@ -184,7 +184,7 @@
                     <div class="campo">
                       <div class="dates">
                         <label class="label">Fecha de nacimiento</label>
-                        <input type="date" name="Birth_date"
+                        <input type="date" id="Birth_date" name="Birth_date"
                                required value="[[data.customer.Birth_date]]" placeholder="Fecha dd/mm/aaaa"/>
                       </div>
                     </div>
@@ -213,6 +213,70 @@
                       </select>
                     </div>
                   </div>
+
+                  <section class="hidden" id="tutor">
+
+                  <p style="color:red;">Los menores de 18 años debe proporcionar los datos de un padre o tutor legal.</p>
+
+                  <div class="pure-u-1-3">
+                    <div class="campo">
+                      <label class="label">Tipo de documento del Tutor</label>
+                      <select name="Tutor_id_type_id" required>
+                        <option value="">Tipo de ID</option> 
+                        [% for c in data.id_types %]
+                        <option value="[[c.id]]">[[c.Name]]</option>
+                        [% endfor %]
+                      </select>
+                    </div>
+                  </div>
+
+                   <div class="pure-u-2-3">
+                    <div class="campo">
+                      <label class="label">Documento del Tutor</label>
+                      <input class="input" type="name" name="Tutor_document" value="[[data.customer.Tutor_document]]"
+                             required placeholder="Id Documento">
+                    </div>
+                  </div>
+
+                   <div class="pure-u-1">
+                    <div class="campo">
+                      <label class="label">Nombre del Tutor</label>
+                      <input class="input" type="name" name="Tutor_name" value="[[data.customer.Tutor_name]]"
+                             required placeholder="Nombre completo">
+                    </div>
+                  </div>
+
+                  <div class="pure-u-1">
+                    <div class="campo">
+                      <label class="label">Email del Tutor</label>
+                      <input class="input" type="email" name="Tutor_email" value="[[data.customer.Tutor_email]]"
+                             required placeholder="Email">
+                    </div>
+                  </div>
+
+                  <div class="pure-u-1-3">
+                    <div class="campo">
+                      <label class="label">Prefijo telefónico del Tutor</label>
+                      <select name="Tutor_prefix" required>
+                        <option value="">Prefix</option>
+                        [% for c in data.countries %]
+                        [% if c.Prefix != null %]
+                        <option value="[[c.Prefix]]"[% if c.Prefix==data.customer.Tutor_prefix %] selected[% endif %]>[[c.Name]] ([[c.Prefix]])</option>
+                        [% endif %]
+                        [% endfor %]
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="pure-u-2-3">
+                    <div class="campo">
+                      <label class="label">Teléfono del tutor</label>
+                      <input class="input" type="name" name="Tutor_phone"
+                             required value="[[data.customer.Tutor_phone]]" placeholder="Telefono">
+                    </div>
+                  </div>
+
+                  </section>
 
                   [% if data.error_register %]
                   <div class="pure-u-1 error-message"><p>[[data.error_register[data.lang]]]</p></div>
@@ -256,7 +320,13 @@
 [% include 'es/includes/footer.html' %]
 
 <script>
-  // Reason change
+  const birthdate = document.getElementById('Birth_date');
+  birthdate.addEventListener('change', () => {
+    const d = new Date(birthdate.value);
+    const age = new Date(Date.now() - d.getTime()).getUTCFullYear() - 1970;
+    document.getElementById("tutor").className = (age < 18) ? "pure-g" : "hidden";
+  });
+
   const reason = document.getElementById("Reason_id");
   if (reason)
     reason.addEventListener("change", () => {
@@ -267,8 +337,8 @@
 
       // Work
       work = (reason.value === "2" || reason.value === "3" || reason.value === "4");
-      document.getElementById("Company_name_div").style.display = work ? "block" : "none";
-      document.getElementById("Company_name").required = work;
+      document.getElementById("Company_div").style.display = work ? "block" : "none";
+      document.getElementById("Company").required = work;
     });
 
   const school = document.getElementById("School_id");

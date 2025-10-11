@@ -227,7 +227,7 @@ def register(segment):
    'Tutor_document':   get_var('Tutor_document', save=False),
    'Tutor_name':       get_var('Tutor_name', save=False),
    'Tutor_email':      get_var('Tutor_email', save=False),
-   'Tutor_phones':     get_var('Tutor_phones', save=False)
+   'Tutor_phones':     get_var('Tutor_prefix', save=False) + ' ' + get_var('Tutor_phone', save=False),
   }
   id, error = q_insert_customer(g.dbClient, customer)
 
@@ -373,6 +373,7 @@ def req_pub_booking(step):
       reasons   = q_reasons(g.dbClient, lang)
       schools   = q_schools(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
+      id_types  = q_id_types(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
       
     # ---------------------------------------------------
@@ -391,6 +392,7 @@ def req_pub_booking(step):
       reasons   = q_reasons(g.dbClient, lang)
       schools   = q_schools(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
+      id_types  = q_id_types(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
     # ---------------------------------------------------
@@ -415,6 +417,7 @@ def req_pub_booking(step):
       reasons   = q_reasons(g.dbClient, lang)
       schools   = q_schools(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
+      id_types  = q_id_types(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
     # ---------------------------------------------------
@@ -432,6 +435,7 @@ def req_pub_booking(step):
       genders   = q_genders(g.dbClient, lang)
       reasons   = q_reasons(g.dbClient, lang)
       countries = q_countries(g.dbClient, lang)
+      id_types  = q_id_types(g.dbClient, lang)
       summary   = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
 
     # ---------------------------------------------------

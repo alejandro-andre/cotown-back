@@ -141,6 +141,17 @@ def q_countries(dbClient, lang):
  
 
 # ------------------------------------------------------
+# Get id types
+# ------------------------------------------------------
+
+def q_id_types(dbClient, lang):
+
+  # Id types query
+  l = '_en' if lang == 'en' else ''
+  return q(dbClient, f'SELECT id, "Name{l}" AS "Name" FROM "Auxiliar"."Id_type"', ())
+ 
+
+# ------------------------------------------------------
 # Get information of existing typologies
 # ------------------------------------------------------
 
