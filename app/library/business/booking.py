@@ -508,8 +508,10 @@ def q_insert_customer(dbClient, customer):
   # SQL
   sql = f'''
     INSERT INTO "Customer"."Customer"
-    ("Type", "Name", "Email", "Phones", "Birth_date", "Nationality_id", "Gender_id", "Black_list", "GDPR")
-    VALUES ('persona', %s, %s, %s, %s, %s, %s, FALSE, TRUE)
+    ("Type", "Name", "Email", "Phones", "Birth_date", "Nationality_id", "Gender_id",
+     "Tutor_id_type_id", "Tutor_document", "Tutor_name", "Tutor_email", "Tutor_phones", 
+     "Black_list", "GDPR")
+    VALUES ('persona', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE, TRUE)
     RETURNING id
     '''
   try:
@@ -521,7 +523,11 @@ def q_insert_customer(dbClient, customer):
       customer['Birth_date'], 
       customer['Nationality_id'], 
       customer['Gender_id'], 
-    ))
+      customer['Tutor_id_type_id'],
+      customer['Tutor_document'],
+      customer['Tutor_name'],
+      customer['Tutor_email'],
+      customer['Tutor_phones']))
     id = cur.fetchone()[0]
     con.commit()
     dbClient.putconn(con)

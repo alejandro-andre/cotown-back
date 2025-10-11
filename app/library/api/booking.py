@@ -215,14 +215,19 @@ def register(segment):
 
   # Insert customer
   customer = {   
-   'Name': get_var('Name', save=False),
-   'Email': get_var('Email', save=False),
-   'Prefix': get_var('Prefix', save=False),
-   'Phone': get_var('Phone', save=False),
-   'Phones': get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
-   'Birth_date': get_var('Birth_date', save=False) ,
-   'Nationality_id': to_int(get_var('Nationality_id', save=False)),
-   'Gender_id': to_int(get_var('Gender_id', save=False)) 
+   'Name':             get_var('Name', save=False),
+   'Email':            get_var('Email', save=False),
+   'Prefix':           get_var('Prefix', save=False),
+   'Phone':            get_var('Phone', save=False),
+   'Phones':           get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
+   'Birth_date':       get_var('Birth_date', save=False) ,
+   'Nationality_id':   to_int(get_var('Nationality_id', save=False)),
+   'Gender_id':        to_int(get_var('Gender_id', save=False)) ,
+   'Tutor_id_type_id': to_int(get_var('Tutor_id_type_id', save=False)) or None,
+   'Tutor_document':   get_var('Tutor_document', save=False),
+   'Tutor_name':       get_var('Tutor_name', save=False),
+   'Tutor_email':      get_var('Tutor_email', save=False),
+   'Tutor_phones':     get_var('Tutor_phones', save=False)
   }
   id, error = q_insert_customer(g.dbClient, customer)
 
