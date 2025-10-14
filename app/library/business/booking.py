@@ -487,18 +487,21 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
       elif promo['Value_fee_pct']:
         data['Booking_fee'] *= (1.0 + float(promo['Value_fee_pct'] / 100))
       for m in months:
-        print(m['d'])
         if promo['Date_from'] <= m['d'] <= promo['Date_to']:
           if promo['Value_rent']:
             m['price'] += float(promo['Value_rent'])
           elif promo['Value_rent_pct']:
             m['price'] *= (1.0 + float(promo['Value_rent_pct'] / 100))
+          m['price'] = round(m['price'])
 
-    # Total
-    total = 0
+    # Totals
+    total_price = 0
+    total_rack  = 0
     for m in months:
-      total += m['price']
-    data['Total'] = total
+      total_price += m['price']
+      total_rack  += m['rack']
+    data['Total']      = total_price
+    data['Total_rack'] = total_rack
 
     # Returl
     dbClient.putconn(con)

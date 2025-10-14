@@ -75,17 +75,32 @@
       [% for month in data.summary.Months %]
         <div class="prices">
           <p>[[month.date]]</p>
-          <p>
-          [% if month.price < month.rack %]<span style="width: 100px; text-decoration: line-through; color: red;">[[month.rack | number]] €</span>[% endif %]
+          [% if month.price < month.rack %]
+          <p style="color: red;">
+          <span style="width: 100px; color: black; text-decoration: line-through;">[[month.rack | number]] €</span>
           [[month.price | number]] €
           </p>
+          [% else %]
+          <p>
+          [[month.price | number]] €
+          </p>
+          [% endif %]
         </div>
       [% endfor %]
 
       <div class="type-summary">
         <div class="total">
           <p>Total rent *</p>
-          <p>[[data.summary.Total | number]] €</p>
+          [% if data.summary.Total < data.summary.Total_rack %]
+          <p style="color: red;">
+          <span style="width: 100px; color: black; text-decoration: line-through;">[[data.summary.Total_rack | number]] €</span>
+          [[data.summary.Total | number]] €
+          </p>
+          [% else %]
+          <p>
+          [[data.summary.Total | number]] €
+          </p>
+          [% endif %]
         </div>
       </div>
 
