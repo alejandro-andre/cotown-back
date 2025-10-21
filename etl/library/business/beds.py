@@ -52,7 +52,7 @@ def beds_real_calc(dbClient):
         # Convertible
         convert = r['Convertible'] or 'N/D'
 
-        # Potential
+        # LAU
         if r['Status_id'] == 2:
           beds_pot = 1.0
           if convert in ('N/D', 'LTC', 'FTC'):
@@ -60,7 +60,7 @@ def beds_real_calc(dbClient):
             rn_conv = calendar.monthrange(date.year, date.month)[1]
 
         # Pre capex
-        if r['Status_id'] == 3:
+        elif r['Status_id'] == 3:
           convert  = 'PRECAPEX'
           beds_pot = 1.0
           beds_cnv = 1.0
@@ -68,8 +68,16 @@ def beds_real_calc(dbClient):
           rn_conv = calendar.monthrange(date.year, date.month)[1]
 
         # Capex
-        if r['Status_id'] == 4:
+        elif r['Status_id'] == 4:
           convert  = 'CAPEX'
+          beds_pot = 1.0
+          beds_cnv = 1.0
+          beds_cap = 1.0
+          rn_conv = calendar.monthrange(date.year, date.month)[1]
+
+        # Other
+        elif r['Conv']:
+          convert  = 'N/D'
           beds_pot = 1.0
           beds_cnv = 1.0
           beds_cap = 1.0
@@ -191,7 +199,7 @@ def beds_real_calc(dbClient):
 
   # Availability each month
   sql = '''
-  SELECT ra."Resource_id", ra."Date_from", ra."Date_to", ra."Status_id", ra."Convertible", rs."Not_flat"
+  SELECT ra."Resource_id", ra."Date_from", ra."Date_to", ra."Status_id", ra."Convertible", rs."Convertible" as "Conv", rs."Not_flat"
   FROM "Resource"."Resource_availability" ra
   INNER JOIN "Resource"."Resource_status" rs ON rs.id = ra."Status_id"
   WHERE NOT rs."Available"

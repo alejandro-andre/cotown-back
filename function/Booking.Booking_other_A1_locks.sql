@@ -54,7 +54,7 @@ BEGIN
       RAISE EXCEPTION '!!!Pre capex end date is wrong!!!La fecha fin de pre capex es incorrecta!!!';
     END IF;
     INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    VALUES (NEW."Resource_id", 3, date_from, NEW."Date_precapex", 'PRECAPEX');
+    VALUES (NEW."Resource_id", 3, date_from, NEW."Date_precapex", NULL);
     date_from = NEW."Date_precapex" + INTERVAL '1 day';
   END IF;
 
@@ -64,7 +64,7 @@ BEGIN
       RAISE EXCEPTION '!!!Capex end date is wrong!!!La fecha fin de capex es incorrecta!!!';
     END IF;
     INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    VALUES (NEW."Resource_id", 4, date_from, NEW."Date_capex", 'CAPEX');
+    VALUES (NEW."Resource_id", 4, date_from, NEW."Date_capex", NULL);
   END IF;
 
   -- Return record

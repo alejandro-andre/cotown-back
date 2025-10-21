@@ -2,6 +2,7 @@ SELECT
   r."Code" AS "Resource.Code", 
   ra."Date_from", 
   ra."Date_to", 
+  ra."Convertible", 
   rs."Name" AS "Status.Name"
 FROM "Resource"."Resource_availability" ra
   INNER JOIN "Resource"."Resource" r ON r.id = ra."Resource_id"
