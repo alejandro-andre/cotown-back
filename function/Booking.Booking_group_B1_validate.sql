@@ -16,8 +16,14 @@ BEGIN
   IF NEW."Date_from" > (SELECT MIN("Rent_date") FROM "Booking"."Booking_group_price" bp WHERE bp."Booking_id" = NEW.id) THEN
     RAISE exception '!!!Rents before initial date!!!Hay rentas anteriores a la fecha de inicio!!!';
   END IF;
+  IF NEW."Date_from" > (SELECT MIN("Check_in") FROM "Booking"."Booking_group_rooming" bp WHERE bp."Booking_id" = NEW.id) THEN
+    RAISE exception '!!!Check-ins before initial date!!!Hay check-ins anteriores a la fecha de inicio!!!';
+  END IF;
   IF NEW."Date_to" < (SELECT MAX("Rent_date") FROM "Booking"."Booking_group_price" bp WHERE bp."Booking_id" = NEW.id) THEN
     RAISE exception '!!!Rents after finish date!!!Hay rentas posteriores a la fecha de fin!!!';
+  END IF;
+  IF NEW."Date_to" < (SELECT MAX("Check_out") FROM "Booking"."Booking_group_rooming" bp WHERE bp."Booking_id" = NEW.id) THEN
+    RAISE exception '!!!Check-outs after finish date!!!Hay check-outs posteriores a la fecha de fin!!!';
   END IF;
 
   -- Check the places

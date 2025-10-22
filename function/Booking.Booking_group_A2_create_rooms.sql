@@ -1,6 +1,7 @@
 -- Crea/Actualiza la rooming list
 DECLARE
 
+  rec_id INTEGER;
   room_id INTEGER;
   room_ids INTEGER[];
   room_code VARCHAR;
@@ -14,16 +15,10 @@ DECLARE
 
 BEGIN
 
-  -- Update rooming list if status changed
-  --?Remove
-  IF OLD."Status" <> NEW."Status" THEN
-    UPDATE "Booking"."Booking_group_rooming" SET id = id WHERE "Booking_id" = NEW.id;
-  END IF;
-  
   -- No changes
-  --IF OLD."Room_ids" = NEW."Room_ids" THEN
-  --  RETURN NEW;
-  --END IF;
+  IF OLD."Room_ids" = NEW."Room_ids" THEN
+    RETURN NEW;
+  END IF;
 
   -- Get place ids from codes
   RESET ROLE;
@@ -51,13 +46,14 @@ BEGIN
     -- Expand rooms
     INSERT
       INTO "Booking"."Booking_group_rooms" ("Booking_id", "Resource_id", "Code")
-      VALUES (NEW.id, room_id, room_code);
+      VALUES (NEW.id, room_id, room_code)
+      RETURNING id INTO rec_id;
 
     -- Rooming list
     INSERT
-      INTO "Booking"."Booking_group_rooming" ("Booking_id", "Resource_id", "Check_in", "Check_out")
-      VALUES (NEW.id, room_id, NEW."Date_from", NEW."Date_to")
-    ON CONFLICT ("Booking_id", "Resource_id", "Check_in") DO NOTHING;
+      INTO "Booking"."Booking_group_rooming" ("Booking_id", "Room_id", "Resource_id", "Check_in", "Check_out")
+      VALUES (NEW.id, rec_id, room_id, NEW."Date_from", NEW."Date_to")
+    ON CONFLICT ("Booking_id", "Room_id", "Check_in") DO NOTHING;
 
     -- Locks
     IF NEW."Status" NOT IN ('cancelada') THEN

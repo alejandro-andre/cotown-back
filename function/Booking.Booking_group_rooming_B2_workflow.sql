@@ -1,0 +1,47 @@
+-- Actualizacion de status
+DECLARE
+
+  status "Auxiliar"."Rooming_status";
+
+BEGIN
+
+  -- Status
+  status := NEW."Status";
+
+  -- Checkin
+  IF status IS NULL THEN
+    IF NEW."Check_in" <= CURRENT_DATE THEN
+      status = 'checkin';
+    END IF;
+  END IF;
+
+  -- Inhouse
+  IF status = 'checkin' THEN
+    IF NEW."Check_in_ok" THEN
+      status = 'inhouse';
+    END IF;
+  END IF;
+
+  -- Checkout
+  IF status = 'inhouse' THEN
+    IF NEW."Check_out" <= CURRENT_DATE THEN
+      status = 'checkout';
+    END IF;
+  END IF;
+
+  -- Revised
+  IF status = 'checkout' THEN
+    IF NEW."Revision_ok" THEN
+      status = 'revisada';
+    END IF;
+  END IF;
+
+  -- Update status
+  IF status <> NEW."Status" OR (status IS NOT NULL AND NEW."Status" IS NULL) THEN
+    NEW."Status" = status;
+  END IF;
+
+  -- Return record
+  RETURN NEW;
+  
+END;
