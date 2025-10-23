@@ -160,11 +160,18 @@ def income_stabilised_calc(dbClient):
   sql = f'''
     SELECT 
       pd."Year" AS "year", b."Code" AS "building", rft."Code" AS "flat_type", rpt."Code" AS "place_type", 
-      pd."Rent_long" AS "long", pd."Rent_medium" AS "medium", pd."Rent_short" AS "short", COALESCE(pd."Rent_group", 0) AS "group"
+      ROUND(AVG(COALESCE(pr."Multiplier", 1) * pd."Rent_long"), 2) AS "long", 
+      ROUND(AVG(COALESCE(pr."Multiplier", 1) * pd."Rent_medium"), 2) AS "medium", 
+      ROUND(AVG(COALESCE(pr."Multiplier", 1) * pd."Rent_short"), 2) AS "short", 
+      ROUND(AVG(COALESCE(pd."Rent_group", 0)), 2) AS "group"
     FROM "Billing"."Pricing_detail" pd
       INNER JOIN "Building"."Building" b ON b.id = pd."Building_id"
       INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = pd."Flat_type_id"
       INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pd."Place_type_id"
+      LEFT JOIN "Resource"."Resource" r ON (b.id = r."Building_id" AND rft.id = r."Flat_type_id" AND rpt.id = r."Place_type_id")
+      LEFT JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id"
+    GROUP BY 1, 2, 3, 4
+    ORDER BY 1, 2
   '''
   try:
     cur = dbClient.execute(con, sql)

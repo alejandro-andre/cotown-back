@@ -10,20 +10,11 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE; 
 
-  -- Is there another LAU contract after this?
-  IF EXISTS (
-    SELECT 1 
-    FROM "Booking"."Booking_other" bo
-    WHERE bo."Resource_id" = NEW."Resource_id"
-    AND "Date_from" > NEW."Date_from"
-  ) THEN
-    RETURN OLD;
-  END IF;
-
   -- Delete pre capex & capex locks
+  SET core.allow_lock_delete =  true;
   DELETE FROM "Resource"."Resource_availability" 
-  WHERE "Resource_id" = NEW."Resource_id"
-    AND "Status_id" IN (2, 3, 4);
+  WHERE "Booking_id" = NEW.id;
+  SET core.allow_lock_delete =  false;
 
   -- Return
   IF TG_OP = 'DELETE' THEN
@@ -32,19 +23,19 @@ BEGIN
 
   -- Long term
   IF NEW."Date_estimated" IS NULL THEN
-  	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    	VALUES (NEW."Resource_id", 2, NEW."Date_from", '2099/12/31', 'LTNC');
+  	INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Booking_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    	VALUES (NEW."Resource_id", NEW.id, 2, NEW."Date_from", '2099/12/31', 'LTNC');
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
 
   -- Fixed term
   IF NEW."Date_to" IS NULL THEN
-    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    VALUES (NEW."Resource_id", 2, NEW."Date_from", NEW."Date_estimated", 'LTC');
+    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Booking_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    VALUES (NEW."Resource_id", NEW.id, 2, NEW."Date_from", NEW."Date_estimated", 'LTC');
   ELSE
-    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    VALUES (NEW."Resource_id", 2, NEW."Date_from", NEW."Date_estimated", 'FTC');
+    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Booking_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    VALUES (NEW."Resource_id", NEW.id, 2, NEW."Date_from", NEW."Date_estimated", 'FTC');
   END IF;
   date_from = NEW."Date_estimated" + INTERVAL '1 day';
 
@@ -53,8 +44,8 @@ BEGIN
     IF NEW."Date_precapex" <= date_from THEN
       RAISE EXCEPTION '!!!Pre capex end date is wrong!!!La fecha fin de pre capex es incorrecta!!!';
     END IF;
-    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    VALUES (NEW."Resource_id", 3, date_from, NEW."Date_precapex", NULL);
+    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Booking_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    VALUES (NEW."Resource_id", NEW.id, 3, date_from, NEW."Date_precapex", NULL);
     date_from = NEW."Date_precapex" + INTERVAL '1 day';
   END IF;
 
@@ -63,8 +54,8 @@ BEGIN
     IF NEW."Date_capex" <= date_from THEN
       RAISE EXCEPTION '!!!Capex end date is wrong!!!La fecha fin de capex es incorrecta!!!';
     END IF;
-    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Status_id", "Date_from", "Date_to", "Convertible")
-    VALUES (NEW."Resource_id", 4, date_from, NEW."Date_capex", NULL);
+    INSERT INTO "Resource"."Resource_availability" ("Resource_id", "Booking_id", "Status_id", "Date_from", "Date_to", "Convertible")
+    VALUES (NEW."Resource_id", NEW.id, 4, date_from, NEW."Date_capex", NULL);
   END IF;
 
   -- Return record

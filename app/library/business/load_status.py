@@ -36,7 +36,8 @@ def load_status(dbClient, con, data):
     WHERE "Resource_id" IN (
       SELECT "Resource_id" 
       FROM "Resource"."Resource" 
-      WHERE "Code" IN %s
+      WHERE "Booking_id" IS NULL 
+        AND "Code" IN %s
     )'''
     cur = dbClient.execute(con, sql, (resources, ))
     logger.info('Availabilities deleted')
