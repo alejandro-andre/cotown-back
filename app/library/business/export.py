@@ -31,8 +31,14 @@ def fill_sheet(df, columns, sheet):
   # Validations
   if sheet.title.lower() == 'rooming':
 
+    #Rooms
+    dvRoomsType = DataValidation(type='list', formula1='=Rooms!$B$3:$B$9999', allow_blank=True)
+    dvRoomsType.showInputMessage = True
+    dvRoomsType.showErrorMessage = True
+    sheet.add_data_validation(dvRoomsType)
+
     #IdType
-    dvIdType = DataValidation(type='list', formula1='=Id_type!$B$3:$B$9999', allow_blank=True)
+    dvIdType = DataValidation(type='list', formula1='=Idtype!$B$3:$B$9999', allow_blank=True)
     dvIdType.showInputMessage = True
     dvIdType.showErrorMessage = True
     sheet.add_data_validation(dvIdType)
@@ -82,6 +88,8 @@ def fill_sheet(df, columns, sheet):
 
       # Test validation
       if sheet.title.lower() == 'rooming':
+        if columns[c] == 'Resource.Code':
+          dvRoomsType.add(cell)
         if columns[c] == 'Id_type.Name':
           dvIdType.add(cell)
         if columns[c] == 'Gender.Name':

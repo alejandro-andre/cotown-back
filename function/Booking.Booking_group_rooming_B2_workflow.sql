@@ -26,6 +26,10 @@ BEGIN
   IF status = 'inhouse' THEN
     IF NEW."Check_out" <= CURRENT_DATE THEN
       status = 'checkout';
+    ELSE
+      IF NOT NEW."Check_in_ok" THEN
+        status = 'checkin';
+      END IF;
     END IF;
   END IF;
 

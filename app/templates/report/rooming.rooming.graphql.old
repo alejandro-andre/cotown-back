@@ -5,7 +5,7 @@ query Rooms ($id: Int) {
     ) {
         id
         Booking_id
-        Resource: ResourceViaResource_id {
+        Resource: Booking_group_roomsViaRoom_id {
             id
             Code
         }

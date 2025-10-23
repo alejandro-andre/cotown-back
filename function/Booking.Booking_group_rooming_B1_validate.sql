@@ -12,7 +12,7 @@ BEGIN
   FROM "Booking"."Booking_group"
   WHERE id = NEW."Booking_id";
 
-  -- Verifica las fechas de la habitación
+  -- Verifica las fechas de la plaza
   IF NEW."Check_in" < '2000-01-01' THEN
     NEW."Check_in" = NULL;
   END IF;
@@ -39,6 +39,19 @@ BEGIN
       RAISE exception '!!!Check-out date cannot be later than the end of the reservation!!!Fecha de check out no puede ser posterior al final de la reserva!!!';
     END IF;
   END IF;
+
+  -- Valida que no se solapa con ninguna otra plaza
+    IF EXISTS (
+        SELECT 1
+        FROM "Booking"."Booking_group_rooming" b
+        WHERE b.id <> NEW."id"
+          AND b."Room_id" = NEW."Room_id"
+          AND b."Booking_id" = NEW."Booking_id" -- ¿Se debería quitar para comprobar solapamiento con otras reservas?
+          AND b."Check_in" < NEW."Check_out"
+          AND b."Check_out" > NEW."Check_in"
+    ) THEN
+        RAISE EXCEPTION '!!!Overlapping with another place/dates!!!Se solapa con otra plaza/fechas!!!';
+    END IF;
 
   -- Return record
   RETURN NEW;

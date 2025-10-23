@@ -1,0 +1,9 @@
+query Rooms ($id: Int) {
+    data: Booking_Booking_group_roomsList (
+        orderBy: [{attribute: Code}]
+        where: { Booking_id: { EQ: $id } }
+    ) {
+        id
+        Code
+   }
+}
