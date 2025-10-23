@@ -40,7 +40,7 @@ BEGIN
   date_from = NEW."Date_estimated" + INTERVAL '1 day';
 
   -- Add pre capex lock
-  IF NEW."Date_precapex" IS NOT NULL THEN
+  IF NEW."Calc_locks" AND NEW."Date_precapex" IS NOT NULL THEN
     IF NEW."Date_precapex" <= date_from THEN
       RAISE EXCEPTION '!!!Pre capex end date is wrong!!!La fecha fin de pre capex es incorrecta!!!';
     END IF;
@@ -50,7 +50,7 @@ BEGIN
   END IF;
 
   -- Add capex lock
-  IF NEW."Date_capex" IS NOT NULL THEN
+  IF NEW."Calc_locks" AND NEW."Date_capex" IS NOT NULL THEN
     IF NEW."Date_capex" <= date_from THEN
       RAISE EXCEPTION '!!!Capex end date is wrong!!!La fecha fin de capex es incorrecta!!!';
     END IF;

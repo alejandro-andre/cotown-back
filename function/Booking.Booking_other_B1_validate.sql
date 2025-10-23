@@ -15,7 +15,7 @@ BEGIN
 
   -- Auto Pre capex and Capex
   IF NEW."Booking_type" = 'lau' THEN
-    IF NEW."Date_estimated" IS NOT NULL AND NEW."Date_precapex" IS NULL AND NEW."Date_capex" IS NULL THEN
+    IF NEW."Calc_locks" AND NEW."Date_estimated" IS NOT NULL AND NEW."Date_precapex" IS NULL AND NEW."Date_capex" IS NULL THEN
       NEW."Date_precapex" := (DATE_TRUNC('month', NEW."Date_estimated" + INTERVAL '2 months') + INTERVAL '1 month' - INTERVAL '1 day')::date;
       NEW."Date_capex" := (DATE_TRUNC('month', NEW."Date_precapex" + INTERVAL '4 months') + INTERVAL '1 month' - INTERVAL '1 day')::date;
     END IF;
