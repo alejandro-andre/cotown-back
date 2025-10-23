@@ -27,5 +27,4 @@ BEGIN
 
   RETURN NEW;
 
-END;$function$
-;
+END;
