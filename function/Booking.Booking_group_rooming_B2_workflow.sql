@@ -1,11 +1,21 @@
 -- Actualizacion de status
 DECLARE
 
+  bg_status "Auxiliar"."Group_status";
   status "Auxiliar"."Rooming_status";
 
 BEGIN
 
-  -- Status
+  -- Booking status
+  SELECT "Status"
+  INTO bg_status
+  FROM "Booking"."Booking_group"
+  WHERE id = NEW."Booking_id";
+  IF bg_status != 'inhouse' THEN
+    RETURN NEW;
+  END IF;
+
+  -- Rooming status
   status := NEW."Status";
 
   -- Checkin
