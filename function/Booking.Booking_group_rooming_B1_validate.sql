@@ -50,7 +50,7 @@ BEGIN
           AND b."Check_in" < NEW."Check_out"
           AND b."Check_out" > NEW."Check_in"
     ) THEN
-        RAISE EXCEPTION '!!!Overlapping with another place/dates!!!Se solapa con otra plaza/fechas!!!';
+        RAISE EXCEPTION '!!!Overlapping with another place/dates (%)!!!Se solapa con otra plaza/fechas (%)!!!', NEW.id, NEW.id;
     END IF;
 
   -- Return record
