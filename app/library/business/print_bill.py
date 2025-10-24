@@ -34,6 +34,9 @@ query BillById ($id: Int!) {
         }
     ) {
         Bill_type
+        Booking_id
+        Booking_group_id
+        Booking_other_id
         BookingViaBooking_id {
             ResourceViaResource_id {
                 Resource_code: Code
@@ -174,9 +177,22 @@ def do_bill(apiClient, id):
     )
     oid = response.content
 
-    # Email bill
+    # Email B2B bill
+    if context.get('Booking_group_id') and context['Customer_email']:
+      logger.info('Send B2B bill to ' + context['Customer_email'])
+      file.filename = context['Bill_code'] + '.pdf'
+      smtp_mail(
+        #context['Customer_email'],
+        'alejandroandref@gmail.com',
+        context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
+        'Adjuntamos ' + context['Bill_type'].lower() + ' ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
+        file=file,
+        from_type='cotown'
+      )
+
+    # Email LAU bill
     if context.get('Send_bill') and context['Customer_email']:
-      logger.info('Send bill to ' + context['Customer_email'])
+      logger.info('Send LAU bill to ' + context['Customer_email'])
       file.filename = context['Bill_code'] + '.pdf'
       smtp_mail(
         context['Customer_email'],

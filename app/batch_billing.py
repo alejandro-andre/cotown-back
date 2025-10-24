@@ -895,7 +895,7 @@ def bill_group_concepts(dbClient, con):
     '''
     SELECT
       s.id, b.id as "Booking_id", b."Payer_id", b."Room_ids",
-      s."Concept", s."Comments", s."Amount", s."Tax_id", s."Product_id",  s."Provider_id",
+      s."Concept", s."Comments", s."Quantity", s."Amount", s."Tax_id", s."Product_id", s."Provider_id",
       p."Product_type_id", pr."Pos"
     FROM "Booking"."Booking_group" b
       INNER JOIN "Booking"."Booking_group_service" s ON s."Booking_id" = b.id
@@ -951,7 +951,7 @@ def bill_group_concepts(dbClient, con):
             item['Pos'],
             item['Payer_id'],
             item['Booking_id'],
-            item['Amount'],
+            item['Amount'] * item['Quantity'],
             datetime.now(),
             item['Concept'],
             'servicios'
@@ -993,7 +993,7 @@ def bill_group_concepts(dbClient, con):
           (
             billid,
             flat_ids[0][1],
-            item['Amount'],
+            item['Amount'] * item['Quantity'],
             item['Product_id'],
             item['Tax_id'],
             item['Concept'],

@@ -1,6 +1,7 @@
 SELECT
   bgr.id,
   bgr."Booking_id",
+  bgp."Code" AS "Resource.Code",
   bgr."Check_in",
   bgr."Check_out",
   bgr."Document",
@@ -11,7 +12,6 @@ SELECT
   bgr."Zip",
   bgr."City",
   bgr."Province",
-  bgp."Code" AS "Resource.Code",
   i."Name" AS "Id_type.Name",
   c."Name" AS "Country.Name",
   g."Name" AS "Gender.Name",
@@ -31,6 +31,7 @@ UNION ALL
 SELECT 
   NULL::int AS id,
   %(id)s::int AS "Booking_id",
+  NULL::text AS "Resource.Code",
   NULL::date AS "Check_in",
   NULL::date AS "Check_out",
   NULL::text AS "Document",
@@ -41,7 +42,6 @@ SELECT
   NULL::text AS "Zip",
   NULL::text AS "City",
   NULL::text AS "Province",
-  NULL::text AS "Resource.Code",
   NULL::text AS "Id_type.Name",
   NULL::text AS "Country.Name",
   NULL::text AS "Gender.Name",
@@ -49,4 +49,4 @@ SELECT
   NULL::text AS "Nationality.Name",
   NULL::text AS "Origin.Name"
 FROM generate_series(1, 40)
-;
+ORDER BY 4, 3;

@@ -16,7 +16,7 @@ BEGIN
 	
   -- Booking data
   SELECT bg."Date_from", bg."Date_to", bg."Payer_id", MIN(bgr."Resource_id")
-  date_from, date_to, customer_id, resource_id
+  INTO date_from, date_to, customer_id, resource_id
   FROM "Booking"."Booking_group" bg
   INNER JOIN "Booking"."Booking_group_rooms" bgr ON bgr."Booking_id" = bg.id
   WHERE bg.id = 1
