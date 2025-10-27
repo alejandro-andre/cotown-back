@@ -32,31 +32,37 @@ def fill_sheet(df, columns, sheet):
   if sheet.title.lower() == 'rooming':
 
     #Rooms
-    dvRoomsType = DataValidation(type='list', formula1='=Rooms!$B$3:$B$9999', allow_blank=True)
+    dvRoomsType = DataValidation(type='list', formula1='=_Rooms!$B$3:$B$999', allow_blank=True)
     dvRoomsType.showInputMessage = True
     dvRoomsType.showErrorMessage = True
     sheet.add_data_validation(dvRoomsType)
 
+    #Checks
+    dvChecks = DataValidation(type='list', formula1='=_Check!$A$3:$A$4', allow_blank=True)
+    dvChecks.showInputMessage = True
+    dvChecks.showErrorMessage = True
+    sheet.add_data_validation(dvChecks)
+
     #IdType
-    dvIdType = DataValidation(type='list', formula1='=Idtype!$B$3:$B$9999', allow_blank=True)
+    dvIdType = DataValidation(type='list', formula1='=_Idtype!$B$3:$B$999', allow_blank=True)
     dvIdType.showInputMessage = True
     dvIdType.showErrorMessage = True
     sheet.add_data_validation(dvIdType)
 
     # Gender
-    dvGender = DataValidation(type='list', formula1='=Gender!$B$3:$B$9999', allow_blank=True)
+    dvGender = DataValidation(type='list', formula1='=_Gender!$B$3:$B$999', allow_blank=True)
     dvGender.showInputMessage = True
     dvGender.showErrorMessage = True
     sheet.add_data_validation(dvGender)
 
     # Country
-    dvCountry = DataValidation(type='list', formula1='=Country!$B$3:$B$9999', allow_blank=True)
+    dvCountry = DataValidation(type='list', formula1='=_Country!$B$3:$B$999', allow_blank=True)
     dvCountry.showInputMessage = True
     dvCountry.showErrorMessage = True
     sheet.add_data_validation(dvCountry)
 
     # Language
-    dvLanguage = DataValidation(type='list', formula1='=Language!$B$3:$B$9999', allow_blank=True)
+    dvLanguage = DataValidation(type='list', formula1='=_Language!$B$3:$B$999', allow_blank=True)
     dvLanguage.showInputMessage = True
     dvLanguage.showErrorMessage = True
     sheet.add_data_validation(dvLanguage)
@@ -88,6 +94,8 @@ def fill_sheet(df, columns, sheet):
 
       # Test validation
       if sheet.title.lower() == 'rooming':
+        if columns[c] in ('Check_in_ok', 'Revision_ok', 'Cleaning_billed'):
+          dvChecks.add(cell)
         if columns[c] == 'Resource.Code':
           dvRoomsType.add(cell)
         if columns[c] == 'Id_type.Name':

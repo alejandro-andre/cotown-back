@@ -1,3 +1,4 @@
+-- TODO-B2B
 -- Crea/Actualiza la rooming list
 DECLARE
 
@@ -26,16 +27,16 @@ BEGIN
 
   -- No rooms
   IF room_ids IS NULL THEN
-    DELETE FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id;
     DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id;
+    DELETE FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id;
     DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
     RETURN NEW;
   END IF;
 
   -- Delete locks and removed rooms
+  DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
   DELETE FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id;
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
-  DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
 
   -- Insert new rooms
   FOREACH room_id IN ARRAY(room_ids) LOOP

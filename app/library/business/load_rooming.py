@@ -17,13 +17,29 @@ def load_rooming(dbClient, con, data):
   n_ok = n_ko = 0
   log = ''
 
+  # Get booking 
+  booking_id = data['F2'].value
+
+  # Check booking status
+  cur = dbClient.execute(con, 'SELECT "Status" FROM "Booking"."Booking_group" WHERE id=%s', [booking_id])
+  aux = cur.fetchone()
+  if aux is None:
+    log += 'Reserva desconocida\n'
+    return False, log  
+  if aux['Status'] not in ('grupobloqueado', 'grupoconfirmado', 'inhouse'):
+    log += 'Reserva no activa. No se han cargado datos\n'
+    return False, log  
+
+  # Delete current rooming list
+  cur = dbClient.execute(con, 'DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id"=%s', [booking_id, ])
+
   # Header
   header = list(map(lambda cell: cell.value, data[4]))
 
   # Loop thru all rows skipping four first rows
   for irow, row in enumerate(data.iter_rows(min_row=5)):
     # Skip empty rows
-    if all((cell.value is None or cell.value == '') for cell in row):
+    if row[0].value is None or row[0].value == '':
       continue
 
     # Process
@@ -49,7 +65,10 @@ def load_rooming(dbClient, con, data):
         elif column == 'Resource.Code':
           id = None
           if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id, "Code" FROM "Resource"."Resource" WHERE "Code"=%s', [cell.value])
+            cur = dbClient.execute(
+              con, 
+              'SELECT id, "Code" FROM "Booking"."Booking_group_rooms" WHERE "Booking_id"=%s AND "Code"=%s', [booking_id, cell.value]
+            )
             aux = cur.fetchone()
             cur.close()
             if aux is None:
@@ -147,13 +166,12 @@ def load_rooming(dbClient, con, data):
         else:
           record[column] = cell.value
 
-      # Update record
-      update = list(map(lambda key: '"'+ key + '" = %s', record.keys()))
-      update = update[1:]
-      values = [record[field] for field in record.keys()][1:]
-      values.append(record['id'])
-      sql = 'UPDATE "Booking"."Booking_group_rooming" SET {} WHERE id=%s'.format(','.join(update))
-      dbClient.execute(con, sql, values)
+      # Insert record
+      fields = list(map(lambda key: '"' + key + '"', record.keys()))
+      values = [record[field] for field in record.keys()]
+      markers = ['%s'] * len(record.keys())
+      sql = 'INSERT INTO "Booking"."Booking_group_rooming" ({}) VALUES ({})'.format(','.join(fields), ','.join(markers))
+      cur = dbClient.execute(con, sql, values)
 
     # Error
     except Exception as error:

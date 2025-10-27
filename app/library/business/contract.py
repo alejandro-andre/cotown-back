@@ -300,83 +300,85 @@ query Booking_groupById ($id: Int!) {
       Customer_signer_id: Signer_document
     }
     Rooms: Booking_group_roomingListViaBooking_id {
-      ResourceViaResource_id {
-        Resource_code: Code
-        Resource_type
-        Resource_part: Part
-        Resource_address: Address
-        Resource_street: Street
-        Flat: ResourceViaFlat_id {
-          Resource_flat_code: Code
-          Resource_flat_address: Address
-          Resource_flat_street: Street
-        }
-        Building: BuildingViaBuilding_id {
-          Resource_building_code: Code
-          Resource_building_address: Address
-          SegmentViaSegment_id {
-              Segment_name: Name
-              Segment_url: Url
-          }
-          DistrictViaDistrict_id {
-            LocationViaLocation_id {
-              Resource_building_city: Name
+      Booking_group_roomsViaRoom_id {
+        ResourceViaResource_id {
+            Resource_code: Code
+            Resource_type
+            Resource_part: Part
+            Resource_address: Address
+            Resource_street: Street
+            Flat: ResourceViaFlat_id {
+            Resource_flat_code: Code
+            Resource_flat_address: Address
+            Resource_flat_street: Street
             }
-          }
-        }
-        ProviderViaOwner_id {
-          Id_typeViaId_type_id {
-            Owner_id_type: Name
-          }
-          Owner_id: Document
-          Owner_name: Name
-          Owner_email: Email
-          Owner_address: Address
-          Owner_zip: Zip
-          Owner_city: City
-          Owner_province: Province
-          CountryViaCountry_id {
-            Owner_country: Name
-          }
-          Owner_signers: Provider_contactListViaProvider_id (
-            where: { Provider_contact_type_id: { EQ: 1 } }
-          ) {
-            Owner_signer: id
-            Owner_signer_name: Name
+            Building: BuildingViaBuilding_id {
+            Resource_building_code: Code
+            Resource_building_address: Address
+            SegmentViaSegment_id {
+                Segment_name: Name
+                Segment_url: Url
+            }
+            DistrictViaDistrict_id {
+                LocationViaLocation_id {
+                Resource_building_city: Name
+                }
+            }
+            }
+            ProviderViaOwner_id {
             Id_typeViaId_type_id {
-              Owner_signer_id_type: Name
+                Owner_id_type: Name
             }
-            Owner_signer_id: Document
-          }
-          Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
-        }
-        ProviderViaService_id {
-          Id_typeViaId_type_id {
-            Service_id_type: Name
-          }
-          Service_id: Document
-          Service_name: Name
-          Service_email: Email
-          Service_address: Address
-          Service_zip: Zip
-          Service_city: City
-          Service_province: Province
-          CountryViaCountry_id {
-            Service_country: Name
-          }
-          Service_signers: Provider_contactListViaProvider_id (
-            where: { Provider_contact_type_id: { EQ: 1 } }
-          ) {
-            Service_signer: id
-            Service_signer_name: Name
+            Owner_id: Document
+            Owner_name: Name
+            Owner_email: Email
+            Owner_address: Address
+            Owner_zip: Zip
+            Owner_city: City
+            Owner_province: Province
+            CountryViaCountry_id {
+                Owner_country: Name
+            }
+            Owner_signers: Provider_contactListViaProvider_id (
+                where: { Provider_contact_type_id: { EQ: 1 } }
+            ) {
+                Owner_signer: id
+                Owner_signer_name: Name
+                Id_typeViaId_type_id {
+                Owner_signer_id_type: Name
+                }
+                Owner_signer_id: Document
+            }
+            Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+            }
+            ProviderViaService_id {
             Id_typeViaId_type_id {
-              Service_signer_id_type: Name
+                Service_id_type: Name
             }
-            Service_signer_id: Document
-          }
-          Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+            Service_id: Document
+            Service_name: Name
+            Service_email: Email
+            Service_address: Address
+            Service_zip: Zip
+            Service_city: City
+            Service_province: Province
+            CountryViaCountry_id {
+                Service_country: Name
+            }
+            Service_signers: Provider_contactListViaProvider_id (
+                where: { Provider_contact_type_id: { EQ: 1 } }
+            ) {
+                Service_signer: id
+                Service_signer_name: Name
+                Id_typeViaId_type_id {
+                Service_signer_id_type: Name
+                }
+                Service_signer_id: Document
+            }
+            Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+            }
         }
-      }
+      }  
       Id_typeViaId_type_id {
         Resident_id_type: Name
       }
