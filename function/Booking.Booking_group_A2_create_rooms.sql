@@ -1,4 +1,3 @@
--- TODO-B2B
 -- Crea/Actualiza la rooming list
 DECLARE
 
@@ -25,18 +24,19 @@ BEGIN
   RESET ROLE;
   SELECT array_agg(id) INTO room_ids FROM "Resource"."Resource" WHERE "Code" = ANY(NEW."Room_ids");
 
+  -- Delete locks
+  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
+
   -- No rooms
   IF room_ids IS NULL THEN
     DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id;
     DELETE FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id;
-    DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
     RETURN NEW;
   END IF;
 
-  -- Delete locks and removed rooms
-  DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
-  DELETE FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id;
-  DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
+  -- Delete removed rooms
+  DELETE FROM "Booking"."Booking_group_rooming" WHERE "Room_id" IN (SELECT id FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids));
+  DELETE FROM "Booking"."Booking_group_rooms" WHERE "Booking_id" = NEW.id AND "Resource_id" <> ALL(room_ids);
 
   -- Insert new rooms
   FOREACH room_id IN ARRAY(room_ids) LOOP
@@ -44,17 +44,18 @@ BEGIN
     -- Code
     SELECT "Code" INTO room_code FROM "Resource"."Resource" WHERE id = room_id;
 
-    -- Expand rooms
+    -- Insert room
     INSERT
       INTO "Booking"."Booking_group_rooms" ("Booking_id", "Resource_id", "Code")
       VALUES (NEW.id, room_id, room_code)
+      ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING
       RETURNING id INTO rec_id;
 
-    -- Rooming list
+    -- Insert default rooming list
     INSERT
-      INTO "Booking"."Booking_group_rooming" ("Booking_id", "Room_id", "Resource_id", "Check_in", "Check_out")
-      VALUES (NEW.id, rec_id, room_id, NEW."Date_from", NEW."Date_to")
-    ON CONFLICT ("Booking_id", "Room_id", "Check_in") DO NOTHING;
+      INTO "Booking"."Booking_group_rooming" ("Booking_id", "Room_id", "Resource_id", "Check_in", "Check_out", "Group_code")
+      VALUES (NEW.id, rec_id, room_id, NEW."Date_from", NEW."Date_to", '1')
+      ON CONFLICT ("Booking_id", "Room_id", "Group_code") DO NOTHING;
 
     -- Locks
     IF NEW."Status" NOT IN ('cancelada') THEN
@@ -63,7 +64,8 @@ BEGIN
       WHILE (FOUND) LOOP
         INSERT INTO "Booking"."Booking_detail" (
           "Availability_id", "Booking_id", "Booking_group_id", "Booking_rooming_id", "Resource_id", "Building_id",
-          "Status", "Date_from", "Date_to", "Lock", "Booked_resource_id", "Billing_type", "Billing_type_last"
+          "Status", "Date_from", "Date_to", "Lock", "Booked_resource_id", 
+          "Billing_type", "Billing_type_last"
         )
         VALUES (
           NULL, NULL, NEW.id, NULL, re.id, re."Building_id",
