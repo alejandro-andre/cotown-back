@@ -3,16 +3,21 @@
 DECLARE
 
   count INTEGER;
+  canchange VARCHAR;
 
 BEGIN
 
-  -- No deja borrar bloqueos LAU
+  -- No deja modificar bloqueos LAU
+  canchange := COALESCE(current_setting('core.allow_lock_change', true), 'false');
   IF TG_OP = 'DELETE' THEN
-    IF OLD."Booking_id" IS NOT NULL AND current_setting('core.allow_lock_delete', true) IS DISTINCT FROM 'true' THEN
-      RAISE EXCEPTION '!!!Cannot delete LAU bookings locks!!!NO se pueden borrar bloqueos de reservas LAU!!!';
+    IF OLD."Booking_id" IS NOT NULL AND canchange = 'false' THEN
+      RAISE EXCEPTION '!!!Cannot change LAU bookings locks!!!NO se pueden modificar bloqueos de reservas LAU!!!';
     ELSE
       RETURN OLD;
     END IF;
+  END IF;
+  IF TG_OP = 'UPDATE' AND NEW."Booking_id" IS NOT NULL AND canchange = 'false' THEN
+    RAISE EXCEPTION '!!!Cannot change LAU bookings locks!!!NO se pueden modificar bloqueos de reservas LAU!!!';
   END IF;
 
   -- Cosharing is the preset state, do not save

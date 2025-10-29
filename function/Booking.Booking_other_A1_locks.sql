@@ -11,10 +11,10 @@ BEGIN
   RESET ROLE; 
 
   -- Delete pre capex & capex locks
-  SET core.allow_lock_delete =  true;
+  SET core.allow_lock_change = 'true';
   DELETE FROM "Resource"."Resource_availability" 
   WHERE "Booking_id" = NEW.id;
-  SET core.allow_lock_delete =  false;
+  SET core.allow_lock_change = 'false';
 
   -- Return
   IF TG_OP = 'DELETE' THEN
