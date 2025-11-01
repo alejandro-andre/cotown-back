@@ -5,20 +5,22 @@ BEGIN
 
   -- NULL to checkin
   BEGIN
-    UPDATE "Booking"."Booking_group_rooming" b
+    UPDATE "Booking"."Booking_group_rooming" br
     SET "Status" = 'checkin'
-    WHERE b."Status" IS NULL
-    AND b."Check_in" <= CURRENT_DATE;
+    FROM "Booking"."Booking_group" b
+    WHERE b.id = br."Booking_id" AND b."Status" = 'inhouse'
+      AND br."Status" IS NULL AND br."Check_in" <= CURRENT_DATE;
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error actualizando reserva B2B a "check-in": % %', SQLSTATE, SQLERRM;
   END; 
 
   -- inhouse to checkout
   BEGIN
-    UPDATE "Booking"."Booking_group_rooming" b
+    UPDATE "Booking"."Booking_group_rooming" brw
     SET "Status" = 'checkout'
-    WHERE b."Status" = 'inhouse'
-    AND b."Check_out" <= CURRENT_DATE;
+    FROM "Booking"."Booking_group" b
+    WHERE b.id = br."Booking_id" AND b."Status" = 'inhouse'
+      AND br."Status" = 'inhouse' AND br."Check_out" <= CURRENT_DATE;
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error actualizando reserva B2B a "check-out": % %', SQLSTATE, SQLERRM;
   END; 
