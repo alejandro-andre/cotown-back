@@ -200,7 +200,7 @@ def load_resources(dbClient, con, data):
       # Insert record
       fields = list(map(lambda key: '"' + key + '"', record.keys()))
       update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
-      values = [record[field] for field in record.keys()]
+      values = [record[field] if record[field] != '' else None for field in record.keys()]
       markers = ['%s'] * len(record.keys())
       sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
       cur = dbClient.execute(con, sql, values)
