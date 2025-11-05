@@ -16,7 +16,7 @@ BEGIN
 
   -- inhouse to checkout
   BEGIN
-    UPDATE "Booking"."Booking_group_rooming" brw
+    UPDATE "Booking"."Booking_group_rooming" br
     SET "Status" = 'checkout'
     FROM "Booking"."Booking_group" b
     WHERE b.id = br."Booking_id" AND b."Status" = 'inhouse'
