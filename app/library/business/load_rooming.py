@@ -18,7 +18,7 @@ def load_rooming(dbClient, con, data):
   log = ''
 
   # Get booking 
-  booking_id = data['F2'].value
+  booking_id = data['A5'].value
 
   # Check booking status
   cur = dbClient.execute(con, 'SELECT "Status" FROM "Booking"."Booking_group" WHERE id=%s', [booking_id])
@@ -26,12 +26,9 @@ def load_rooming(dbClient, con, data):
   if aux is None:
     log += 'Reserva desconocida\n'
     return False, log  
-  if aux['Status'] not in ('grupobloqueado', 'grupoconfirmado', 'inhouse'):
-    log += 'Reserva no activa. No se han cargado datos\n'
-    return False, log  
-
-  # Delete current rooming list
-  cur = dbClient.execute(con, 'DELETE FROM "Booking"."Booking_group_rooming" WHERE "Booking_id"=%s', [booking_id, ])
+  #if aux['Status'] not in ('grupobloqueado', 'grupoconfirmado', 'inhouse'):
+  #  log += 'Reserva no activa. No se han cargado datos\n'
+  #  return False, log  
 
   # Header
   header = list(map(lambda cell: cell.value, data[4]))
@@ -39,7 +36,7 @@ def load_rooming(dbClient, con, data):
   # Loop thru all rows skipping four first rows
   for irow, row in enumerate(data.iter_rows(min_row=5)):
     # Skip empty rows
-    if row[0].value is None or row[0].value == '':
+    if row[1].value is None or row[1].value == '':
       continue
 
     # Process
@@ -76,7 +73,7 @@ def load_rooming(dbClient, con, data):
               ok = False
             else: 
               id = aux['id']
-          record['Resource_id'] = id
+          record['Room_id'] = id
 
         # Id_type.Name
         elif column == 'Id_type.Name':
@@ -166,12 +163,23 @@ def load_rooming(dbClient, con, data):
         else:
           record[column] = cell.value
 
-      # Insert record
-      fields = list(map(lambda key: '"' + key + '"', record.keys()))
-      values = [record[field] for field in record.keys()]
+      # Update record
+      keys = [k for k in list(record.keys()) if k not in ('Booking_id', 'Group_code', 'Room_id')] 
+      update_fields = [f'"{key}" = %s' for key in keys]
+      update_values = [record[key] for key in keys + ['Booking_id', 'Group_code', 'Room_id']]
+      update_sql = 'UPDATE "Booking"."Booking_group_rooming" SET {} WHERE "Booking_id"=%s AND "Group_code"=%s and "Room_id"=%s'.format(','.join(update_fields))
+
+      # Or insert record
+      insert_fields = list(map(lambda key: '"' + key + '"', record.keys()))
+      insert_update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
+      insert_values = [record[field] for field in record.keys()]
       markers = ['%s'] * len(record.keys())
-      sql = 'INSERT INTO "Booking"."Booking_group_rooming" ({}) VALUES ({})'.format(','.join(fields), ','.join(markers))
-      cur = dbClient.execute(con, sql, values)
+      insert_sql = 'INSERT INTO "Booking"."Booking_group_rooming" ({}) VALUES ({}) ON CONFLICT ("Booking_id", "Group_code", "Room_id") DO UPDATE SET {} '.format(','.join(insert_fields), ','.join(markers), ','.join(insert_update))
+
+      # Execute
+      cur = dbClient.execute(con, update_sql, update_values)
+      if cur.rowcount == 0:
+        cur = dbClient.execute(con, insert_sql, insert_values)
 
     # Error
     except Exception as error:
