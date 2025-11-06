@@ -3,9 +3,7 @@
 # ###################################################
 
 # System includes
-import calendar
 import pandas as pd
-from dateutil.relativedelta import relativedelta
 
 # Logging
 import logging
@@ -108,8 +106,8 @@ def history(dbClient):
         ELSE r."Flat_id"
       END AS "flat",
       CASE 
-        WHEN r."Resource_type" = 'piso' THEN COALESCE(r."Area", 0)
-        ELSE 0
+        WHEN r."Resource_type" in ('habitacion', 'plaza') THEN 0
+        ELSE COALESCE(r."Area", 0)
       END AS "area",
       CASE 
         WHEN r."Resource_type" = 'plaza' THEN 1
