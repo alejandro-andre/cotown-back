@@ -26,9 +26,9 @@ def load_rooming(dbClient, con, data):
   if aux is None:
     log += 'Reserva desconocida\n'
     return False, log  
-  #if aux['Status'] not in ('grupobloqueado', 'grupoconfirmado', 'inhouse'):
-  #  log += 'Reserva no activa. No se han cargado datos\n'
-  #  return False, log  
+  if aux['Status'] not in ('grupobloqueado', 'grupoconfirmado', 'inhouse'):
+    log += 'Reserva no activa. No se han cargado datos\n'
+    return False, log  
 
   # Header
   header = list(map(lambda cell: cell.value, data[4]))
