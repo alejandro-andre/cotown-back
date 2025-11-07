@@ -11,7 +11,7 @@ BEGIN
 
   -- Final cleaning
   IF NEW."Date_from" >= '2024-06-01' AND NEW."Final_cleaning" > 0 THEN
-    SELECT id, "Tax_id" into product_id, tax_id FROM "Billing"."Product" WHERE "Name" = 'Limpieza final';
+    SELECT id, "Tax_id" into product_id, tax_id FROM "Billing"."Product" WHERE "Name" LIKE 'Limpieza de salida%' LIMIT 1;
     IF product_id IS NOT NULL THEN
 
       -- Superuser ROLE
