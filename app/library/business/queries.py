@@ -50,50 +50,27 @@ def sql_dashboard_operaciones(status, vars):
   building        = vars.get('building')
   buildings       = vars.getlist('building[]')
   location        = vars.get('location')
+  b2c_b2b         = vars.get('b2c_b2b') or 'b2c'
 
   # Get bookings
-  select = '''
-    SELECT 
-      b.id, 
-      b."Status", 
-      b."Date_from", 
-      b."Date_to", 
-      b."Check_in",
-      b."Check_out",
-      b."Confirmation_date",
-      COALESCE(b."Check_in", b."Date_from") AS "Date_in",
-      COALESCE(b."Check_out", b."Date_to") AS "Date_out",
-      b."New_check_out",
-      b."Old_check_out",
-      b."Check_in_time",
-      b."Arrival", 
-      b."Flight", 
-      b."Check_in_room_ok",
-      b."Check_in_notice_ok",
-      b."Check_in_keys_ok",
-      b."Check_in_keyless_ok", 
-      b."Check_out_keys_ok",
-      b."Check_out_keyless_ok", 
-      b."Check_out_revision_ok", 
-      b."Issues", 
-      b."Issues_ok", 
-      b."Damages", 
-      b."Damages_ok", 
-      b."Comments",
-      b."Origin_id",
-      b."Destination_id",
-      b."Eco_ext_change_ok",
-      b."Eco_ext_keyless_ok",
-      b."Cha_ext",
+  select_b2c = '''
+    SELECT
+      'b2c' AS "b2c_b2b",
+      b.id, 0 as "Line", b."Status"::text, b."Confirmation_date",
+      b."Date_from", b."Date_to", b."Check_in", b."Check_out", 
+      COALESCE(b."Check_in", b."Date_from") AS "Date_in", COALESCE(b."Check_out", b."Date_to") AS "Date_out",
+      b."New_check_out", b."Old_check_out", 
+      b."Check_in_time", b."Arrival", b."Flight", b."Check_in_room_ok", 
       ct."Name" AS "Option_in",
+      b."Check_in_notice_ok", b."Check_in_keys_ok", b."Check_in_keyless_ok", 
+      b."Check_out_keys_ok", b."Check_out_keyless_ok", b."Check_out_revision_ok", 
       cto."Name" AS "Option_out",
-      CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END as "Building",
+      b."Issues", b."Issues_ok", b."Damages", b."Damages_ok", 
+      b."Comments",
+      b."Origin_id", b."Destination_id", b."Eco_ext_change_ok", b."Eco_ext_keyless_ok", b."Cha_ext",
+      CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END AS "Building",
       r."Code" as "Resource",
-      c."Name",
-      c."Email",
-      c."Phones",
-      p.id AS "Payment_id",
-      p."Payment_date"      
+      c."Name", c."Email", c."Phones", p.id AS "Payment_id", p."Payment_date"
     FROM "Booking"."Booking" b
       INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
       INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
@@ -102,60 +79,129 @@ def sql_dashboard_operaciones(status, vars):
       LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
       LEFT JOIN "Billing"."Payment" p ON p."Booking_id" = b.id AND p."Payment_type" = 'checkin' AND p."Amount" > 0
       LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-      LEFT JOIN "Booking"."Checkin_type" cto ON cto.id = b."Check_out_option_id" '''
+      LEFT JOIN "Booking"."Checkin_type" cto ON cto.id = b."Check_out_option_id"
+  '''
+  select_b2b = '''
+    SELECT 
+      'b2b' AS "b2c_b2b",
+      bg.id, b.id as "Line", b."Status"::text, bg."Confirmation_date",
+      bg."Date_from", bg."Date_to", b."Check_in", b."Check_out", 
+      b."Check_in" AS "Date_in", b."Check_out" AS "Date_out",
+      NULL AS "New_check_out", NULL AS "Old_check_out", 
+      b."Check_in_time", b."Arrival", b."Flight", b."Check_in_room_ok", 
+      ct."Name" AS "Option_in",
+      b."Check_in_notice_ok", b."Check_in_keys_ok", b."Check_in_keyless_ok", 
+      b."Check_out_keys_ok", b."Check_out_keyless_ok", b."Check_out_revision_ok", 
+      cto."Name" AS "Option_out",
+      b."Issues", b."Issues_ok", b."Damages", b."Damages_ok", 
+      bg."Comments",
+      NULL AS "Origin_id", NULL AS "Destination_id", NULL AS "Eco_ext_change_ok", NULL AS "Eco_ext_keyless_ok", NULL AS "Cha_ext",
+      CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END AS "Building",
+      r."Code" AS "Resource",
+      CONCAT(c."Name", ' - ', b."Name") AS "Name", 
+      CONCAT(c."Email", ' - ', b."Email") AS "Email", 
+      CONCAT(c."Phones", ' - ', b."Phones") AS "Phones", 
+      NULL AS "Payment_id", NULL AS "Payment_date"
+    FROM "Booking"."Booking_group_rooming" b
+      INNER JOIN "Booking"."Booking_group_rooms" br ON br.id = b."Room_id"
+      INNER JOIN "Booking"."Booking_group" bg ON bg.id = b."Booking_id"
+      INNER JOIN "Customer"."Customer" c ON c.id = bg."Payer_id"
+      INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
+      INNER JOIN "Building"."Building" b1 ON b1.id = r."Building_id"
+      LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
+      LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
+      LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
+  LEFT JOIN "Booking"."Checkin_type" cto ON cto.id = b."Check_out_option_id"
+  '''
 
   # All confirmed
   if status == 'ok':
-    sql = select + '''
+    sql_b2c = select_b2c + '''
     WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') '''
-
-  # Check-ins
-  elif status == 'checkin':
-    sql = select + '''
-    WHERE (b."Status" =\'checkin\' OR (COALESCE(b."Check_in", b."Date_from") <= CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))) '''
+    sql_b2b = select_b2b + '''
+    WHERE bg."Status" = \'grupoconfirmado\' '''
 
   # Next check-ins
   elif status in ('next', 'nextin'):
-    sql = select + f'''
+    sql_b2c = select_b2c + f'''
     WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
       AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
+    sql_b2b = select_b2b + f'''
+    WHERE bg."Status" IN (\'inhouse\', \'grupoconfirmado\')
+      AND b."Check_in" BETWEEN '{date_from}' AND '{date_checkinto}' '''
+
+  # Check-ins
+  elif status == 'checkin':
+    sql_b2c = select_b2c + '''
+    WHERE (b."Status" = \'checkin\' OR (COALESCE(b."Check_in", b."Date_from") <= CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))) '''
+    sql_b2b = select_b2b + '''
+    WHERE bg."Status" = \'inhouse\' AND b."Status" =\'checkin\' '''
 
   # Next check-outs
   elif status == 'nextout':
-    sql = select + f'''
+    sql_b2c = select_b2c + f'''
     WHERE b."Status" IN (\'inhouse\')
       AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
+    sql_b2b = select_b2b + f'''
+    WHERE bg."Status" IN (\'inhouse\')
+      AND b."Check_out" BETWEEN '{date_from}' AND '{date_checkoutto}' '''
 
   # Check-ins with issues
   elif status == 'issues':
-    sql = select + f'''
+    sql_b2c = select_b2c + f'''
     WHERE b."Status" IN (\'inhouse\')
       AND b."Issues" IS NOT NULL
       AND b."Issues_ok" <> TRUE
       AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
+    sql_b2b = select_b2b + f'''
+    WHERE bg."Status" IN (\'inhouse\')
+      AND b."Issues" IS NOT NULL
+      AND b."Issues_ok" <> TRUE
+      AND b."Check_in" BETWEEN '{date_from}' AND '{date_checkinto}' '''
 
   # ECO/EXT
   elif status == 'ecoext':
-    sql = select + f'''
+    sql_b2c = select_b2c + f'''
     WHERE b."Status" IN (\'inhouse\')
       AND COALESCE(b."New_check_out", COALESCE(b."Check_out", b."Date_to")) <> COALESCE(b."Check_out", b."Date_to")
       AND NOT b."Eco_ext_change_ok" '''
+    sql_b2b = ''
+
+  # Revisión
+  elif status == 'revision':
+    sql_b2c = select_b2c + f'''
+    WHERE b."Status" = 'revision' '''
+    sql_b2b = select_b2b + f'''
+    WHERE b."Status" = 'checkout' '''
 
   # Other status
   else:
-    sql = select + f'''
+    sql_b2c = select_b2c + f'''
+    WHERE b."Status" = '{status}' '''
+    sql_b2b = select_b2b + f'''
     WHERE b."Status" = '{status}' '''
 
   # Result
   if buildings:
-    sql += f'''AND b2.id IN ({','.join(buildings)}) '''
+    sql_b2c += f'''AND b2.id IN ({','.join(buildings)}) '''
+    if sql_b2b: sql_b2b += f'''AND b2.id IN ({','.join(buildings)}) '''
   elif building:
-    sql += f'''AND b2.id={building} '''
+    sql_b2c += f'''AND b2.id={building} '''
+    if sql_b2b: sql_b2b += f'''AND b2.id={building} '''
   if location:
-    sql += f'''AND d."Location_id"={location} '''
+    sql_b2c += f'''AND d."Location_id"={location} '''
+    if sql_b2b: sql_b2b += f'''AND d."Location_id"={location} '''
 
   # SQL
-  return sql
+  if b2c_b2b == 'b2c':
+    return sql_b2c
+  else:
+    if sql_b2b:
+      if b2c_b2b == 'b2b':
+        return sql_b2b
+      else:
+        return sql_b2c + ' UNION ' + sql_b2b
+    return None
 
 
 def q_dashboard_operaciones(dbClient, status=None, vars=None):
@@ -195,11 +241,14 @@ def q_dashboard_operaciones(dbClient, status=None, vars=None):
     return result
 
   # Get bookings
-  cur = dbClient.execute(con, sql_dashboard_operaciones(status, vars), vars)
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-  cur.close()
-  dbClient.putconn(con)
-  return result
+  sql = sql_dashboard_operaciones(status, vars)
+  if sql:
+    cur = dbClient.execute(con, sql, vars)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
+    dbClient.putconn(con)
+    return result
+  return []
 
 
 # ######################################################
