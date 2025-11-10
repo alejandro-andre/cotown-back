@@ -62,6 +62,8 @@ query BillById ($id: Int!) {
             Customer_id: Document
             Customer_name: Name
             Customer_email: Email
+            Customer_bill_email_to: Bill_email_to
+            Customer_bill_email_cc: Bill_email_cc
             Customer_address: Address
             Customer_zip: Zip
             Customer_city: City
@@ -177,15 +179,19 @@ def do_bill(apiClient, id):
     )
     oid = response.content
 
+
     # Email B2B bill
     if context.get('Booking_group_id') and context['Customer_email']:
       logger.info('Send B2B bill to ' + context['Customer_email'])
+      context['Customer_bill_email_to'] = 'alejandroandref@gmail.com'
+      if context['Customer_bill_email_cc'] is not None: 
+        context['Customer_bill_email_cc'] = 'alejandroandre@hotmail.com' 
       file.filename = context['Bill_code'] + '.pdf'
       smtp_mail(
-        #context['Customer_email'],
-        'alejandroandref@gmail.com',
+        context['Customer_bill_email_to'],
         context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
         'Adjuntamos ' + context['Bill_type'].lower() + ' ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
+        cc=context['Customer_bill_email_cc'],
         file=file,
         from_type='cotown'
       )
