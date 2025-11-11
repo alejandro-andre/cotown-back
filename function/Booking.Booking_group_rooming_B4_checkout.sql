@@ -4,7 +4,9 @@ DECLARE
   holiday INTEGER;
   dow INTEGER;
   num INTEGER; 
+  payer INTEGER; 
   curr_user VARCHAR;
+  resource VARCHAR;
   payment_method_id INTEGER = 3;
   price DECIMAL;
   loc INTEGER;
@@ -37,8 +39,8 @@ BEGIN
   RESET ROLE;
 
   -- Get booking location
-  SELECT d."Location_id"
-  INTO loc
+  SELECT d."Location_id", r."Code"
+  INTO loc, resource
   FROM "Booking"."Booking_group_rooms" br
     INNER JOIN  "Resource"."Resource" r ON r.id = br."Resource_id"
     INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
@@ -124,10 +126,11 @@ BEGIN
 
   -- Insert fee
   IF price > 0 THEN
-    SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
+    SELECT "Payer_id" into payer FROM "Booking"."Booking_group" WHERE id = NEW."Booking_id";
+    SELECT COALESCE("Payment_method_id", 3) INTO payment_method_id FROM "Customer"."Customer" WHERE id = payer;
     INSERT
-      INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_id", "Amount", "Issued_date", "Concept", "Payment_type" )
-      VALUES (payment_method_id, 'cotown', NEW."Payer_id", NEW."Booking_id", price, CURRENT_DATE, 'Check-out', 'checkout');
+      INTO "Billing"."Payment"("Payment_method_id", "Pos", "Customer_id", "Booking_group_id", "Amount", "Issued_date", "Concept", "Payment_type" )
+      VALUES (payment_method_id, 'cotown', payer, NEW."Booking_id", price, CURRENT_DATE, 'Check-out ' || resource, 'checkout');
   END IF;
 
   -- Return
