@@ -111,7 +111,7 @@ def sql_dashboard_operaciones(status, vars):
       LEFT JOIN "Building"."Building" b2 ON b2.id = r."Building_id"
       LEFT JOIN "Geo"."District" d ON d.id = b1."District_id"
       LEFT JOIN "Booking"."Checkin_type" ct ON ct.id = b."Check_in_option_id"
-  LEFT JOIN "Booking"."Checkin_type" cto ON cto.id = b."Check_out_option_id"
+      LEFT JOIN "Booking"."Checkin_type" cto ON cto.id = b."Check_out_option_id"
   '''
 
   # All confirmed
@@ -119,7 +119,7 @@ def sql_dashboard_operaciones(status, vars):
     sql_b2c = select_b2c + '''
     WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') '''
     sql_b2b = select_b2b + '''
-    WHERE bg."Status" = \'grupoconfirmado\' '''
+    WHERE bg."Type_B2C" AND bg."Status" = \'grupoconfirmado\' '''
 
   # Next check-ins
   elif status in ('next', 'nextin'):
@@ -127,7 +127,7 @@ def sql_dashboard_operaciones(status, vars):
     WHERE b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')
       AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
     sql_b2b = select_b2b + f'''
-    WHERE bg."Status" IN (\'inhouse\', \'grupoconfirmado\')
+    WHERE bg."Type_B2C" AND bg."Status" IN (\'inhouse\', \'grupoconfirmado\')
       AND b."Check_in" BETWEEN '{date_from}' AND '{date_checkinto}' '''
 
   # Check-ins
@@ -135,7 +135,7 @@ def sql_dashboard_operaciones(status, vars):
     sql_b2c = select_b2c + '''
     WHERE (b."Status" = \'checkin\' OR (COALESCE(b."Check_in", b."Date_from") <= CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))) '''
     sql_b2b = select_b2b + '''
-    WHERE bg."Status" = \'inhouse\' AND b."Status" =\'checkin\' '''
+    WHERE bg."Type_B2C" AND bg."Status" = \'inhouse\' AND b."Status" =\'checkin\' '''
 
   # Next check-outs
   elif status == 'nextout':
@@ -143,7 +143,7 @@ def sql_dashboard_operaciones(status, vars):
     WHERE b."Status" IN (\'inhouse\')
       AND COALESCE(b."Check_out", b."Date_to") BETWEEN '{date_from}' AND '{date_checkoutto}' '''
     sql_b2b = select_b2b + f'''
-    WHERE bg."Status" IN (\'inhouse\')
+    WHERE bg."Type_B2C" AND bg."Status" IN (\'inhouse\')
       AND b."Check_out" BETWEEN '{date_from}' AND '{date_checkoutto}' '''
 
   # Check-ins with issues
@@ -154,7 +154,7 @@ def sql_dashboard_operaciones(status, vars):
       AND b."Issues_ok" <> TRUE
       AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_checkinto}' '''
     sql_b2b = select_b2b + f'''
-    WHERE bg."Status" IN (\'inhouse\')
+    WHERE bg."Type_B2C" AND bg."Status" IN (\'inhouse\')
       AND b."Issues" IS NOT NULL
       AND b."Issues_ok" <> TRUE
       AND b."Check_in" BETWEEN '{date_from}' AND '{date_checkinto}' '''
@@ -172,14 +172,14 @@ def sql_dashboard_operaciones(status, vars):
     sql_b2c = select_b2c + f'''
     WHERE b."Status" = 'revision' '''
     sql_b2b = select_b2b + f'''
-    WHERE b."Status" = 'checkout' '''
+    WHERE bg."Type_B2C" AND b."Status" = 'checkout' '''
 
   # Other status
   else:
     sql_b2c = select_b2c + f'''
     WHERE b."Status" = '{status}' '''
     sql_b2b = select_b2b + f'''
-    WHERE b."Status" = '{status}' '''
+    WHERE bg."Type_B2C" AND b."Status" = '{status}' '''
 
   # Result
   if buildings:
