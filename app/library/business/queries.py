@@ -201,13 +201,11 @@ def sql_dashboard_operaciones(status, vars):
   # SQL
   if b2c_b2b == 'b2c':
     return sql_b2c
-  else:
-    if sql_b2b:
-      if b2c_b2b == 'b2b':
-        return sql_b2b
-      else:
-        return sql_b2c + ' UNION ' + sql_b2b
-    return None
+  if b2c_b2b == 'b2b':
+    return sql_b2b
+  if sql_b2b:
+    return sql_b2c + ' UNION ' + sql_b2b
+  return sql_b2c
 
 
 def q_dashboard_operaciones(dbClient, status=None, vars=None):
