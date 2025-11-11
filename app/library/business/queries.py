@@ -1078,41 +1078,35 @@ def q_prev_next(dbClient):
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, '''
-      SELECT DISTINCT ON (b.id) b.id, NULL AS "Line", 'B2C' AS "b2c_b2b", prv.id AS "Prev_id", COALESCE(b."Check_in", b."Date_from") AS "Date_in", COALESCE(prv."Check_out", prv."Date_to") AS "Prev_date"
+      SELECT DISTINCT ON (b.id) b.id, 0 AS "Line", 'B2C' AS "b2c_b2b", prv.id AS "Prev_id", COALESCE(b."Check_in", b."Date_from") AS "Date_in", COALESCE(prv."Check_out", prv."Date_to") AS "Prev_date"
       FROM "Booking"."Booking" b
         INNER JOIN "Booking"."Booking" prv ON b."Resource_id" = prv."Resource_id" AND b.id != prv.id AND b."Customer_id" <> prv."Customer_id"
           AND prv."Date_to" BETWEEN b."Date_from" - INTERVAL '20 days' AND b."Date_from"
-      WHERE b."Status" IN ('firmacontrato', 'contrato', 'checkinconfirmado');
-    ''')
-    prv_b2c = [dict(row) for row in cur.fetchall()]
-    cur.close()
-    cur = dbClient.execute(con, '''
-      SELECT DISTINCT ON (b.id) b.id, NULL AS "Line", 'B2C' AS "b2c_b2b", nxt.id AS "Next_id", COALESCE(b."Check_out", b."Date_to") AS "Date_out", COALESCE(nxt."Check_in", nxt."Date_from") AS "Next_date"
-      FROM "Booking"."Booking" b
-        INNER JOIN "Booking"."Booking" nxt ON b."Resource_id" = nxt."Resource_id" AND b.id != nxt.id AND b."Customer_id" <> nxt."Customer_id"
-          AND nxt."Date_from" BETWEEN b."Date_to" AND b."Date_to" + INTERVAL '20 days' 
-      WHERE b."Status" IN ('inhouse');
-    ''')
-    next_b2c = [dict(row) for row in cur.fetchall()]
-    cur.close()
-    cur = dbClient.execute(con, '''
+      WHERE b."Status" IN ('firmacontrato', 'contrato', 'checkinconfirmado')
+      UNION
       SELECT DISTINCT ON (b.id) b."Booking_id" AS id, b.id AS "Line", 'B2B' AS "b2c_b2b", prv.id AS "Prev_id", b."Check_in" AS "Date_in", prv."Check_out" AS "Prev_date"
       FROM "Booking"."Booking_group_rooming" b
         INNER JOIN "Booking"."Booking_group_rooming" prv ON b."Room_id" = prv."Room_id" AND b.id != prv.id
           AND prv."Check_out" BETWEEN b."Check_in" - INTERVAL '20 days' AND b."Check_in";
     ''')
-    prv_b2b = [dict(row) for row in cur.fetchall()]
+    prv = [dict(row) for row in cur.fetchall()]
     cur.close()
     cur = dbClient.execute(con, '''
+      SELECT DISTINCT ON (b.id) b.id, 0 AS "Line", 'B2C' AS "b2c_b2b", nxt.id AS "Next_id", COALESCE(b."Check_out", b."Date_to") AS "Date_out", COALESCE(nxt."Check_in", nxt."Date_from") AS "Next_date"
+      FROM "Booking"."Booking" b
+        INNER JOIN "Booking"."Booking" nxt ON b."Resource_id" = nxt."Resource_id" AND b.id != nxt.id AND b."Customer_id" <> nxt."Customer_id"
+          AND nxt."Date_from" BETWEEN b."Date_to" AND b."Date_to" + INTERVAL '20 days' 
+      WHERE b."Status" IN ('inhouse')
+      UNION
       SELECT DISTINCT ON (b.id) b."Booking_id" AS id, b.id AS "Line", 'B2B' AS "b2c_b2b", nxt.id AS "Prev_id", b."Check_in" AS "Date_in", nxt."Check_out" AS "Prev_date"
       FROM "Booking"."Booking_group_rooming" b
         INNER JOIN "Booking"."Booking_group_rooming" nxt ON b."Room_id" = nxt."Room_id" AND b.id != nxt.id
           AND nxt."Check_in" BETWEEN b."Check_out" AND b."Check_out" + INTERVAL '20 days';
     ''')
-    next_b2b = [dict(row) for row in cur.fetchall()]
+    nxt = [dict(row) for row in cur.fetchall()]
     cur.close()
     dbClient.putconn(con)
-    return json.dumps([prv_b2c, next_b2c, prv_b2b, next_b2b], default=str)    
+    return json.dumps([prv, nxt], default=str)    
   
   except Exception as error:
     logger.error(error)
