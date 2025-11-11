@@ -146,6 +146,12 @@ def sql_dashboard_operaciones(status, vars):
     WHERE bg."Type_B2C" AND bg."Status" IN (\'inhouse\')
       AND b."Check_out" BETWEEN '{date_from}' AND '{date_checkoutto}' '''
 
+  # Check-outs
+  elif status == 'checkout':
+    sql_b2c = select_b2c + f'''
+    WHERE b."Status" = 'checkout' '''
+    sql_b2b = ''
+
   # Check-ins with issues
   elif status == 'issues':
     sql_b2c = select_b2c + f'''
