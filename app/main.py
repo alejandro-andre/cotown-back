@@ -26,7 +26,7 @@ from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub
 from library.api.airflows import req_signature, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard_operaciones, req_dashboard_lau, req_dashboard_payments, req_dashboard_deposits, req_dashboard_to_excel, req_prev_next_operaciones, req_availability, req_questionnaire
 from library.api.web import req_flats, req_rooms, req_amenities, req_promo
 from library.api.payment import req_pay, req_pub_notification
-from library.api.integration import req_pub_int_customers, req_pub_int_invoices, req_pub_int_management_fees
+from library.api.integration import req_pub_int_customers, req_pub_int_invoices, req_pub_int_management_fees, req_pub_int_payments
 
 # Logging
 import logging
@@ -209,6 +209,7 @@ def runapp():
   app.add_url_rule(settings.API_PREFIX + '/integration/customers', view_func=req_pub_int_customers, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/integration/invoices', view_func=req_pub_int_invoices, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/integration/managementfees', view_func=req_pub_int_management_fees, methods=['GET'])
+  app.add_url_rule(settings.API_PREFIX + '/integration/payments', view_func=req_pub_int_payments, methods=['GET'])
 
   # Static web (11ty data retrieving)
   app.add_url_rule(settings.API_PREFIX + '/flats/<int:segment>/<int:year>', view_func=req_flats, methods=['GET'])

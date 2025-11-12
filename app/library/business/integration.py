@@ -2,7 +2,8 @@
 # Imports
 # ######################################################
 
-# 
+# System 
+import json
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -14,6 +15,99 @@ logger = logging.getLogger('COTOWN')
 # ######################################################
 # Integration queries
 # ######################################################
+
+# ------------------------------------------------------
+# Payment query
+# ------------------------------------------------------
+
+def q_int_payments(dbClient, date):
+  sql = f'''
+    SELECT 
+      p.id as "Payment_id",
+      p."Pos",
+      p."Payment_auth",
+      TO_CHAR(p."Payment_date", 'DD/MM/YYYY') AS "Payment_date",
+      p."Amount" AS "Payment_amount", 
+      m."Name" AS "Payment_method",
+      i.id as "Invoice_id",
+      i."Code", 
+      TO_CHAR(i."Issued_date", 'DD/MM/YYYY') AS "Issued_date",
+      i."Concept" AS "Invoice_concept",
+      i."Customer_id",
+      il."Amount" AS "Line_amount",
+      il."Concept" AS "Line_concept", 
+      c."Document",
+      c."Name"
+    FROM "Billing"."Payment" p
+      INNER JOIN "Billing"."Payment_method" m ON m.id = p."Payment_method_id"
+      INNER JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
+      INNER JOIN "Billing"."Invoice_line" il ON il."Invoice_id" = i.id
+      INNER JOIN "Customer"."Customer" c ON c.id = i."Customer_id"
+    WHERE p."Payment_date"::date = '{date}'   
+      AND m."Name" LIKE '%TPV%'
+    ORDER BY p.id 
+  '''
+  try:
+    # Get data
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql)
+    column_names = [desc[0] for desc in cur.description]
+    result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
+    cur.close()
+    dbClient.putconn(con)
+
+    # Group by payment/invoice
+    payments = {}
+    for row in result:
+      # Keys
+      pid = row["Payment_id"]
+      iid = row["Invoice_id"]
+
+      # Payment level
+      if pid not in payments:
+        payments[pid] = {
+          "id": pid,
+          "amount":       row["Payment_amount"],
+          "pos":          row["Pos"],
+          "payment_auth": row["Payment_auth"],
+          "payment_date": row["Payment_date"],
+          "invoices":     {}
+        }
+
+      # Invoice level
+      invoices = payments[pid]["invoices"]
+      if iid not in invoices:
+        invoices[iid] = {
+          "id":          iid,
+          "issued_date": row["Issued_date"],
+          "code":        row["Code"],
+          "concept":     row["Invoice_concept"],
+          "customer": {
+            "document":  row["Document"],
+            "name":      row["Name"]
+          },
+          "lines": []
+        }
+
+      # Line level
+      invoices[iid]["lines"].append({
+        "concept": row["Line_concept"],
+        "amount":  row["Line_amount"]
+      })
+
+    # Convert to lists
+    json_result = []
+    for payment in payments.values():
+      payment["invoices"] = list(payment["invoices"].values())
+      json_result.append(payment)
+    return list(payments.values())
+ 
+  except Exception as error:
+    logger.error(error)
+    con.rollback()
+    return []
+
+
 
 # ------------------------------------------------------
 # Client query
@@ -180,7 +274,8 @@ def q_int_customers(dbClient, date, codes):
     logger.error(error)
     con.rollback()
     return None
-  
+
+
 # ------------------------------------------------------
 # Invoices query
 # ------------------------------------------------------

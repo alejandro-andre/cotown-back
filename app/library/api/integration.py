@@ -17,7 +17,7 @@ from schwifty import IBAN, exceptions
 from library.services.config import settings
 
 # Cotown includes - business functions
-from library.business.integration import q_int_customers, q_int_invoices, q_int_management_fees
+from library.business.integration import q_int_payments, q_int_customers, q_int_invoices, q_int_management_fees
 
 # Logging
 import logging
@@ -27,6 +27,40 @@ logger = logging.getLogger('COTOWN')
 # ###################################################
 # Integration endpoints
 # ###################################################
+
+# ---------------------------------------------------
+# Payments - Get payments on a specific date
+# ---------------------------------------------------
+
+def req_pub_int_payments():
+
+  # Debug
+  logger.debug('Integration - Payments')
+
+  # Get API key
+  #key = request.headers.get('Api-Key', None)
+  #client_data = settings.get(key)
+  #if not client_data:
+  #  logger.warning('Invalid Api-Key: ' + str(key))
+  #  abort(403, 'Invalid Api-Key')
+  #print(client_data)
+
+  # Validate date
+  date = '2023-01-01'
+  d = request.args.get('date')
+  if d != None:
+    try:
+      date = datetime.strptime(str(d), '%Y-%m-%d').strftime('%Y-%m-%d')
+    except ValueError:
+      logger.warning('Invalid date: ' + str(d))
+      abort(400, 'Invalid date')
+
+  # Payments
+  payments = q_int_payments(g.dbClient, date)
+
+  # Return
+  return payments
+
 
 # ---------------------------------------------------
 # Clients - Get recent clients
