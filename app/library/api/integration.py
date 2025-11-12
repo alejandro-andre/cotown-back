@@ -33,17 +33,116 @@ logger = logging.getLogger('COTOWN')
 # ---------------------------------------------------
 
 def req_pub_int_payments():
+  '''
+  Retrieve payments and related invoices for a given date
+  ---
+  tags:
+    - name: "Payments"
+  parameters:
+    - name: date
+      in: query
+      type: string
+      required: false
+      default: "2023-01-01"
+      description: "Date for which payments are required, in YYYY-MM-DD format"
+    - name: Api-Key
+      in: header
+      type: string
+      required: true
+      description: "Security API KEY that must be present in the HTTP request header"
+  definitions:
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "Unique identifier of the payment"
+        pos:
+          type: string
+          description: "Point of sale identifier"
+        payment_auth:
+          type: string
+          description: "Authorization or reference code of the payment"
+        payment_date:
+          type: string
+          format: date
+          description: "Date of the payment, in DD/MM/YYYY format"
+        amount:
+          type: number
+          format: float
+          description: "Total amount of the payment"
+        invoices:
+          type: array
+          items:
+            $ref: "#/definitions/Invoice"
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: "Unique identifier of the invoice"
+        issued_date:
+          type: string
+          format: date
+          description: "Issue date of the invoice, in DD/MM/YYYY format"
+        code:
+          type: string
+          description: "Invoice code or reference"
+        concept:
+          type: string
+          description: "General concept or description of the invoice"
+        customer:
+          $ref: "#/definitions/Customer"
+        lines:
+          type: array
+          items:
+            $ref: "#/definitions/InvoiceLine"
+    InvoiceLine:
+      type: object
+      properties:
+        concept:
+          type: string
+          description: "Description or concept of the invoice line"
+        amount:
+          type: number
+          format: float
+          description: "Amount of the line item"
+    Customer:
+      type: object
+      properties:
+        document:
+          type: string
+          description: "Customer's identity or tax document number"
+        name:
+          type: string
+          description: "Full name or business name of the customer"
+  responses:
+    200:
+      description: "List of payments and their related invoices for the given date"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Payment"
+    400:
+      description: "Invalid date or date format"
+    403:
+      description: "Invalid Api-Key"
+  '''
 
   # Debug
   logger.debug('Integration - Payments')
 
   # Get API key
-  #key = request.headers.get('Api-Key', None)
-  #client_data = settings.get(key)
-  #if not client_data:
-  #  logger.warning('Invalid Api-Key: ' + str(key))
-  #  abort(403, 'Invalid Api-Key')
-  #print(client_data)
+  key = request.headers.get('Api-Key', None)
+  client_data = settings.get(key)
+  if not client_data:
+    logger.warning('Invalid Api-Key: ' + str(key))
+    abort(403, 'Invalid Api-Key')
+  print(client_data)
 
   # Validate date
   date = '2023-01-01'

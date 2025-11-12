@@ -24,7 +24,10 @@ def q_int_payments(dbClient, date):
   sql = f'''
     SELECT 
       p.id as "Payment_id",
-      p."Pos",
+      CASE 
+      	WHEN p."Payment_method_id" = 1 THEN m."Name" || ' ' || p."Pos"
+      	ELSE m."Name"
+      END AS "Pos",
       p."Payment_auth",
       TO_CHAR(p."Payment_date", 'DD/MM/YYYY') AS "Payment_date",
       p."Amount" AS "Payment_amount", 
@@ -43,8 +46,8 @@ def q_int_payments(dbClient, date):
       INNER JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
       INNER JOIN "Billing"."Invoice_line" il ON il."Invoice_id" = i.id
       INNER JOIN "Customer"."Customer" c ON c.id = i."Customer_id"
-    WHERE p."Payment_date"::date = '{date}'   
-      AND m."Name" LIKE '%TPV%'
+    WHERE m."SAP"
+      AND p."Payment_date"::date = '{date}'   
     ORDER BY p.id 
   '''
   try:
