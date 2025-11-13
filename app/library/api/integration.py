@@ -79,45 +79,40 @@ def req_pub_int_payments():
     Invoice:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-          description: "Unique identifier of the invoice"
-        issued_date:
-          type: string
-          format: date
-          description: "Issue date of the invoice, in DD/MM/YYYY format"
         code:
           type: string
           description: "Invoice code or reference"
-        concept:
+        document_type:
           type: string
-          description: "General concept or description of the invoice"
-        customer:
-          $ref: "#/definitions/Customer"
+          enum:
+            - DNI/NIF
+            - NIE
+            - CIF
+            - Id Nacional
+            - Pasaporte
+          description: "Type of tax identification document"
+        customer_id:
+          type: integer
+          description: "Unique identifier of the customer"
         lines:
           type: array
           items:
-            $ref: "#/definitions/InvoiceLine"
-    InvoiceLine:
+            $ref: "#/definitions/Invoice_line"
+    Invoice_line:
       type: object
       properties:
-        concept:
+        description:
           type: string
-          description: "Description or concept of the invoice line"
+          description: "Description of the invoice content"
+        project_id:
+          type: string
+          description: "SAP Id of the project/task to allocate the amount"
         amount:
-          type: number
-          format: float
-          description: "Amount of the line item"
-    Customer:
-      type: object
-      properties:
-        document:
+          type: float
+          description: "Amount of the billed service"
+        tax_id:
           type: string
-          description: "Customer's identity or tax document number"
-        name:
-          type: string
-          description: "Full name or business name of the customer"
+          description: "SAP Id of the tax applied"
   responses:
     200:
       description: "List of payments and their related invoices for the given date"
@@ -139,7 +134,7 @@ def req_pub_int_payments():
   # Get API key
   key = request.headers.get('Api-Key', None)
   client_data = settings.get(key)
-  if not client_data:
+  if not client_data or client_data != '0:9999':
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
   print(client_data)
