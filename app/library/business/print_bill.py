@@ -146,7 +146,7 @@ def generate_bill_file(context):
 # Generate bill
 # ######################################################
 
-def do_bill(apiClient, id):
+def do_bill(apiClient, id, emails=[]):
 
   try:
 
@@ -184,14 +184,17 @@ def do_bill(apiClient, id):
     if context.get('Booking_group_id') and context['Customer_bill_email_to']:
       logger.info('Send B2B bill to ' + context['Customer_bill_email_to'])
       context['Customer_bill_email_to'] = 'alejandroandref@gmail.com'
-      context['Customer_bill_email_cc'] = 'alejandroandre@hotmail.com' 
+      context['Customer_bill_email_cc'] = 'alejandroandre@hotmail.com'
+      emails = ['ebizaxe@gmail.com']
+      to = context['Customer_bill_email_to']
+      cc = context['Customer_bill_email_cc'] + emails
       file.filename = context['Bill_code'] + '.pdf'
       try:
         smtp_mail(
-          context['Customer_bill_email_to'],
+          to,
           context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
           'Adjuntamos ' + context['Bill_type'].lower() + ' ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
-          cc=context['Customer_bill_email_cc'],
+          cc=cc,
           file=file,
           from_type='cotown'
         )

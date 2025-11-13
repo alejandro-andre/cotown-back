@@ -56,6 +56,16 @@ def main():
   # Main
   # ###################################################
 
+  # Get params
+  param = apiClient.call('{ data: Admin_ParamList ( where: { Name: { EQ: "B2B_BILL_CC" } } ) { Value } }')
+  emails = []
+  try:
+    value = param.get('data')[0].get('Value')
+    if value:
+      emails = value.split(',')
+  except:
+    pass
+
   # Get pending bills
   bills = apiClient.call('''
   {
@@ -75,7 +85,7 @@ def main():
   if bills  is not None:
     for b in bills.get('data'):
         id = b['id']
-        if do_bill(apiClient, id):
+        if do_bill(apiClient, id, emails):
           num += 1
   logger.info('{} bills printed'.format(num))
 
