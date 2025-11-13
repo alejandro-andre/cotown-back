@@ -70,7 +70,9 @@ def sql_dashboard_operaciones(status, vars):
       b."Origin_id", b."Destination_id", b."Eco_ext_change_ok", b."Eco_ext_keyless_ok", b."Cha_ext",
       CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END AS "Building",
       r."Code" as "Resource",
-      c."Name", c."Email", c."Phones", p.id AS "Payment_id", p."Payment_date"
+      c."Name", c."Email", c."Phones", 
+      NULL AS "Resident_name", NULL AS "Resident_email", NULL AS "Resident_phones", 
+      p.id AS "Payment_id", p."Payment_date"
     FROM "Booking"."Booking" b
       INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
       INNER JOIN "Building"."Building" b1 ON b1.id = b."Building_id"
@@ -98,9 +100,8 @@ def sql_dashboard_operaciones(status, vars):
       NULL AS "Origin_id", NULL AS "Destination_id", NULL AS "Eco_ext_change_ok", NULL AS "Eco_ext_keyless_ok", NULL AS "Cha_ext",
       CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END AS "Building",
       r."Code" AS "Resource",
-      CONCAT(c."Name", ' - ', b."Name") AS "Name", 
-      CONCAT(c."Email", ' - ', b."Email") AS "Email", 
-      CONCAT(c."Phones", ' - ', b."Phones") AS "Phones", 
+      c."Name", c."Email", c."Phones", 
+      b."Name" AS "Resident_name", b."Email" AS "Resident_email", b."Phones" AS "Resident_phones", 
       NULL AS "Payment_id", NULL AS "Payment_date"
     FROM "Booking"."Booking_group_rooming" b
       INNER JOIN "Booking"."Booking_group_rooms" br ON br.id = b."Room_id"
@@ -228,6 +229,12 @@ def q_dashboard_operaciones(dbClient, status=None, vars=None):
     row = cur.fetchone()
     cur.close()
     result['ok'] = row[0]
+
+    # Count checkins
+    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" = \'checkin\' OR (COALESCE(b."Check_in", b."Date_from") <= CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))')
+    row = cur.fetchone()
+    cur.close()
+    result['checkin'] = row[0]
 
     # Count nearest checkins
     cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') AND COALESCE("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
