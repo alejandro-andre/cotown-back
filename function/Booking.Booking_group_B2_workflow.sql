@@ -47,6 +47,11 @@ BEGIN
           VALUES (invoice_id, NEW."Rooms" * NEW."Booking_fee", 1, 1, 'Membership fee', flat_id);
 
       END IF;
+
+      -- Deposit
+      IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
+        NEW."Deposit_actual" = NEW."Deposit" * NEW."Rooms";
+      END IF;
   
     END IF;
   END IF;
