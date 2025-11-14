@@ -2,13 +2,14 @@
 DECLARE
 
   bg_status "Auxiliar"."Group_status";
+  bg_b2c BOOLEAN;
   status "Auxiliar"."Rooming_status";
 
 BEGIN
 
   -- Booking status
-  SELECT "Status"
-  INTO bg_status
+  SELECT "Status", "Type_B2C"
+  INTO bg_status, bg_b2c
   FROM "Booking"."Booking_group"
   WHERE id = NEW."Booking_id";
   IF bg_status != 'inhouse' THEN
@@ -27,7 +28,7 @@ BEGIN
 
   -- Inhouse
   IF status = 'checkin' THEN
-    IF NEW."Check_in_ok" THEN
+    IF NEW."Check_in_ok" OR NOT bg_b2c THEN
       status = 'inhouse';
     END IF;
   END IF;
@@ -37,7 +38,7 @@ BEGIN
     IF NEW."Check_out" <= CURRENT_DATE THEN
       status = 'checkout';
     ELSE
-      IF NOT NEW."Check_in_ok" THEN
+      IF NOT NEW."Check_in_ok" OR bg_b2c THEN
         status = 'checkin';
       END IF;
     END IF;
@@ -45,7 +46,7 @@ BEGIN
 
   -- Revised
   IF status = 'checkout' THEN
-    IF NEW."Revision_ok" THEN
+    IF NEW."Check_out_revision_ok" OR NOT bg_b2c THEN
       status = 'revisada';
     END IF;
   END IF;

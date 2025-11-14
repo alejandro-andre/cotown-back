@@ -16,7 +16,7 @@ DECLARE
       AND bg."Type_B2C" 
       AND NOT b."Check_in_notice_ok"
       AND bg."Status" = 'inhouse'
-      AND b."Check_in" <= (CURRENT_DATE + INTERVAL '2 days')
+      AND b."Check_in" <= (CURRENT_DATE + INTERVAL '2 days');
 
 BEGIN
 

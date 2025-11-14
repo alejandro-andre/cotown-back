@@ -43,6 +43,8 @@ query BillById ($id: Int!) {
             }
         }
         Booking_groupViaBooking_group_id {
+            Booking_bill_email_to: Bill_email_to
+            Booking_bill_email_cc: Bill_email_cc
             BuildingViaBuilding_id {
                 Building_code: Code
             }
@@ -183,11 +185,13 @@ def do_bill(apiClient, id, emails=[]):
     # Email B2B bill
     if context.get('Booking_group_id') and context['Customer_bill_email_to']:
       logger.info('Send B2B bill to ' + context['Customer_bill_email_to'])
+      context['Booking_bill_email_to']  = 'alejandroandref@gmail.com'
+      context['Booking_bill_email_cc']  = 'alejandroandre@hotmail.com'
       context['Customer_bill_email_to'] = 'alejandroandref@gmail.com'
       context['Customer_bill_email_cc'] = 'alejandroandre@hotmail.com'
       emails = ['ebizaxe@gmail.com']
-      to = context['Customer_bill_email_to']
-      cc = context['Customer_bill_email_cc'] + emails
+      to = context['Booking_bill_email_to'] or context['Customer_bill_email_to']
+      cc = [(context['Booking_bill_email_cc'] or context['Customer_bill_email_cc'])] + emails
       file.filename = context['Bill_code'] + '.pdf'
       try:
         smtp_mail(
