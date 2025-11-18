@@ -28,35 +28,21 @@ def q_int_payments(dbClient, date):
       p."Payment_auth",
       TO_CHAR(p."Payment_date", 'DD/MM/YYYY') AS "Payment_date",
       CASE 
-      	WHEN p."Payment_method_id" = 1 THEN m."Name" || ' ' || p."Pos"
-      	ELSE m."Name"
-      END AS "Pos",
+      	WHEN p."Payment_method_id" = 1 THEN (SELECT "Value" FROM "Admin"."Param" WHERE "Name" = 'TPV_' || UPPER(p."Pos"::text))
+      	ELSE m."SAP_code"
+      END AS "Cc",
       i."Code", 
       i."Customer_id",
       il."Amount",
       il."Concept" AS "Description", 
 	  SUBSTRING(pv."SAP_code", 1, 2) || r."SAP_code" AS "Project_id",
-      CASE 
-        WHEN i."Provider_id" = 1 OR i."Provider_id" = 10 THEN
-          CASE
-	          WHEN pr."Product_type_id" = 2 THEN 'GF'
-            WHEN i."Bill_type" = 'rectificativa' THEN 'CCM'
-            ELSE 'CI'
-          END
-        ELSE
-          CASE
-	          WHEN pr."Product_type_id" = 2 THEN 'GF'
-            WHEN i."Bill_type" = 'rectificativa' THEN 'AT'
-            ELSE 'FT'
-          END
-      END AS "Document_type",
       t."SAP_code" AS "Tax_id"
     FROM "Billing"."Payment" p
       INNER JOIN "Billing"."Payment_method" m ON m.id = p."Payment_method_id"
       INNER JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
       INNER JOIN "Billing"."Invoice_line" il ON il."Invoice_id" = i.id
-	    INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id"
-	    INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id" 
+      INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id"
+      INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id" 
       INNER JOIN "Customer"."Customer" c ON c.id = i."Customer_id"
       INNER JOIN "Provider"."Provider" pv ON pv.id = i."Provider_id"
       INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
@@ -85,7 +71,7 @@ def q_int_payments(dbClient, date):
         payments[pid] = {
           "id": pid,
           "amount":       row["Payment_amount"],
-          "pos":          row["Pos"],
+          "cc":           row["Cc"],
           "payment_auth": row["Payment_auth"],
           "payment_date": row["Payment_date"],
           "invoices":     {}
@@ -97,7 +83,6 @@ def q_int_payments(dbClient, date):
         invoices[iid] = {
           "invoice_id":    iid,
           "customer_id":   row["Customer_id"],
-          "document_type": row["Document_type"],
           "lines": []
         }
 

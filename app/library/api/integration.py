@@ -58,9 +58,9 @@ def req_pub_int_payments():
           type: integer
           format: int64
           description: "Unique identifier of the payment"
-        pos:
+        cc:
           type: string
-          description: "Point of sale identifier"
+          description: "Bank account"
         payment_auth:
           type: string
           description: "Authorization or reference code of the payment"
@@ -82,15 +82,6 @@ def req_pub_int_payments():
         code:
           type: string
           description: "Invoice code or reference"
-        document_type:
-          type: string
-          enum:
-            - DNI/NIF
-            - NIE
-            - CIF
-            - Id Nacional
-            - Pasaporte
-          description: "Type of tax identification document"
         customer_id:
           type: integer
           description: "Unique identifier of the customer"
