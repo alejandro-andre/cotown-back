@@ -185,11 +185,14 @@ def do_bill(apiClient, id, emails=[]):
     # Email B2B bill
     if context.get('Booking_group_id') and context['Customer_bill_email_to']:
       logger.info('Send B2B bill to ' + context['Customer_bill_email_to'])
-      context['Booking_bill_email_to']  = 'alejandroandref@gmail.com'
-      context['Booking_bill_email_cc']  = 'alejandroandre@hotmail.com'
-      context['Customer_bill_email_to'] = 'alejandroandref@gmail.com'
-      context['Customer_bill_email_cc'] = 'alejandroandre@hotmail.com'
-      emails = ['ebizaxe@gmail.com']
+      # REMOVE
+      # vvvvvv
+      #context['Booking_bill_email_to']  = 'backoffice@cotown.com'
+      #context['Booking_bill_email_cc']  = None
+      #context['Customer_bill_email_to'] = 'backoffice@cotown.com'
+      #context['Customer_bill_email_cc'] = None
+      # ^^^^^^
+      # REMOVE
       to = context['Booking_bill_email_to'] or context['Customer_bill_email_to']
       cc = [(context['Booking_bill_email_cc'] or context['Customer_bill_email_cc'])] + emails
       file.filename = context['Bill_code'] + '.pdf'
