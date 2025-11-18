@@ -23,9 +23,11 @@ class APIClient:
     # Attributes
     self.server = server
     self.token = ''
+    self.headers = {}
 
     # Create GraphQL client
-    self.client = Client(transport=AIOHTTPTransport(url='https://' + server + '/graphql'), fetch_schema_from_transport=True)
+    transport = AIOHTTPTransport(url=f'https://{server}/graphql', headers=self.headers)
+    self.client = Client(transport=transport, fetch_schema_from_transport=True)
 
 
   # Sets token
@@ -34,12 +36,16 @@ class APIClient:
     # Set token
     if token is not None:
       self.token = token
+      self.headers["Authorization"] = f"Bearer {self.token}"
+      self.client.transport.headers = self.headers
       return
  
     # Get auth token
     try:
       result = self.client.execute(gql('mutation { login(username:"' + user + '", password:"' + password + '") }'))
       self.token = result['login']
+      self.headers["Authorization"] = f"Bearer {self.token}"
+      self.client.transport.headers = self.headers
     except Exception as e:
       logger.error(e)
 
@@ -62,6 +68,7 @@ class APIClient:
 
     # Get file from Airflows
     url = 'https://' + self.server + '/wopi/files/' + entity + '/' + str(id) + '/' + field + '/contents?inline=true&access_token=' + self.token
-    result = requests.get(url)
+    headers = { 'Authorization': f'Bearer {self.token}'}
+    result = requests.get(url, headers=headers)
     return result
 
