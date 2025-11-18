@@ -205,6 +205,7 @@ CREATE TABLE gold.beds (
   "date" date NOT NULL,
 
   "available" int NOT NULL,
+  "convertible" int NOT NULL,
   "beds" int NOT NULL,                  -- Converted beds
   "beds_cnv" numeric NOT NULL,          -- Convertible beds
   "beds_pot" numeric NOT NULL,          -- Potential beds
@@ -212,7 +213,6 @@ CREATE TABLE gold.beds (
   "beds_pre" numeric NOT NULL,          -- Pre capex beds
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "resource" varchar NOT NULL,          -- Dimension resource
-  "convertible" varchar DEFAULT NULL,
   "val_current" numeric DEFAULT NULL,
   "val_residential" numeric DEFAULT NULL,
   "val_cosharing" numeric DEFAULT NULL,

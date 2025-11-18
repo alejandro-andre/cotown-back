@@ -170,18 +170,18 @@ def forecast(apiClient):
 
         # Beds forecast
         if beds > 0:
-          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, '', 0, 0, 0]
+          line = ['FOC' + str(c), 'Forecast', row[1].value, month, beds, beds, beds, 0, 0, days * beds, 0, 0, 0, 0]
           beds_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy forecast
         if beds_c > 0:
-          line = ['OFL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, '', 'LONG']
+          line = ['OFL' + str(c), 'Forecast', row[1].value, month, occ_l * days * occu * beds_c, occ_l * days * occu * beds_c, 0, 0, 0, 'LONG']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['OFM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, '', 'MEDIUM']
+          line = ['OFM' + str(c), 'Forecast', row[1].value, month, occ_m * days * occu * beds_c, occ_m * days * occu * beds_c, 0, 0, 0, 'MEDIUM']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['OFS' + str(c), 'Forecast', row[1].value, month, occ_s * days * occu * beds_c, occ_s * days * occu * beds_c, 0, 0, '', 'SHORT']
+          line = ['OFS' + str(c), 'Forecast', row[1].value, month, occ_s * days * occu * beds_c, occ_s * days * occu * beds_c, 0, 0, 0, 'SHORT']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
-          line = ['OFG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, '', 'GROUP']
+          line = ['OFG' + str(c), 'Forecast', row[1].value, month, occ_g * days * occu * beds_c, occ_g * days * occu * beds_c, 0, 0, 0, 'GROUP']
           occupancy_result += ','.join([f'"{e}"' for e in line]) + '\n'
 
         # Occupancy stabilised
