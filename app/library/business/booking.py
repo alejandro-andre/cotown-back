@@ -29,15 +29,15 @@ def month(m, lang='es'):
 
 
 # List of months (MMM YYYY) between two dates
-def month_dates(date_from, date_to, price):
+def month_dates(date_from, date_to, price, lang):
 
   df = datetime.strptime(date_from, "%Y-%m-%d")
   dt = datetime.strptime(date_to, "%Y-%m-%d") + timedelta(days=1)
-  d = month(df.month).capitalize()[:3] + ' ' + str(df.year)
+  d = month(df.month, lang).capitalize()[:3] + ' ' + str(df.year)
   dates = [{'date': d, 'd':df.date(), 'price': 0, 'rack': 0}]
   next = (df.replace(day=1) + relativedelta(months=1))
   while next <= dt:
-    d = month(next.month).capitalize()[:3] + ' ' + str(next.year)
+    d = month(next.month, lang).capitalize()[:3] + ' ' + str(next.year)
     dates.append({ 'date': d, 'd': next.date(), 'price': price, 'rack': price })
     next += relativedelta(months=1)
   return dates
@@ -420,7 +420,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         data['Rent_last'] = data['Rent'] / 2
 
     # Details
-    months = month_dates(date_from, date_to, float(data['Rent']) + float(data['Services']))
+    months = month_dates(date_from, date_to, float(data['Rent']) + float(data['Services']), lang)
     months[0]['price'] = float(data['Rent_first']) + float(data['Services'])
     months[0]['rack'] = float(data['Rent_first']) + float(data['Services'])
     months[-1]['price'] = float(data['Rent_last']) + float(data['Services'])
