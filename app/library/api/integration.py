@@ -82,28 +82,16 @@ def req_pub_int_payments():
         code:
           type: string
           description: "Invoice code or reference"
+        amount:
+          type: number
+          format: float
+          description: "Total amount of the invoice"
         customer_id:
           type: integer
           description: "Unique identifier of the customer"
-        lines:
-          type: array
-          items:
-            $ref: "#/definitions/Invoice_line"
-    Invoice_line:
-      type: object
-      properties:
-        description:
-          type: string
-          description: "Description of the invoice content"
-        project_id:
-          type: string
-          description: "SAP Id of the project/task to allocate the amount"
-        amount:
-          type: float
-          description: "Amount of the billed service"
-        tax_id:
-          type: string
-          description: "SAP Id of the tax applied"
+        issuer_id:
+          type: integer
+          description: "Unique identifier of the issuer"
   responses:
     200:
       description: "List of payments and their related invoices for the given date"

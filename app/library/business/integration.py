@@ -33,19 +33,13 @@ def q_int_payments(dbClient, date):
       END AS "Cc",
       i."Code", 
       i."Customer_id",
-      il."Amount",
-      il."Concept" AS "Description", 
-	  SUBSTRING(pv."SAP_code", 1, 2) || r."SAP_code" AS "Project_id",
-      t."SAP_code" AS "Tax_id"
+      i."Total",
+      pv."SAP_code"
     FROM "Billing"."Payment" p
       INNER JOIN "Billing"."Payment_method" m ON m.id = p."Payment_method_id"
       INNER JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
-      INNER JOIN "Billing"."Invoice_line" il ON il."Invoice_id" = i.id
-      INNER JOIN "Billing"."Product" pr ON pr.id = il."Product_id"
-      INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id" 
       INNER JOIN "Customer"."Customer" c ON c.id = i."Customer_id"
       INNER JOIN "Provider"."Provider" pv ON pv.id = i."Provider_id"
-      INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
     WHERE m."SAP"
       AND p."Payment_date"::date = '{date}'   
     ORDER BY p.id 
@@ -81,18 +75,11 @@ def q_int_payments(dbClient, date):
       invoices = payments[pid]["invoices"]
       if iid not in invoices:
         invoices[iid] = {
-          "invoice_id":    iid,
-          "customer_id":   row["Customer_id"],
-          "lines": []
+          "invoice_id":  iid,
+          "amount":      row["Total"],
+          "customer_id": row["Customer_id"],
+          "issuer_id":   row["SAP_code"],
         }
-
-      # Line level
-      invoices[iid]["lines"].append({
-        "description": row["Description"],
-        "amount":  row["Amount"],
-        "project_id":  row["Project_id"],
-        "tax_id":  row["Tax_id"]
-      })
 
     # Convert to lists
     json_result = []
