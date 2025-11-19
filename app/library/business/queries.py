@@ -231,7 +231,7 @@ def q_dashboard_operaciones(dbClient, status=None, vars=None):
     result['ok'] = row[0]
 
     # Count checkins
-    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" = \'checkin\' OR (COALESCE(b."Check_in", b."Date_from") <= CURRENT_DATE AND b."Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))')
+    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" = \'checkin\' OR (COALESCE(b."Check_in", b."Date_from") <= CURRENT_DATE AND "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))')
     row = cur.fetchone()
     cur.close()
     result['checkin'] = row[0]
