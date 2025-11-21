@@ -221,7 +221,7 @@
                   <div class="pure-u-1-3">
                     <div class="campo">
                       <label class="label">Tutor's id document type</label>
-                      <select name="Tutor_id_type_id" required>
+                      <select name="Tutor_id_type_id">
                         <option value="">Id Type</option> 
                         [% for c in data.id_types %]
                         <option value="[[c.id]]">[[c.Name]]</option>
@@ -233,31 +233,28 @@
                    <div class="pure-u-2-3">
                     <div class="campo">
                       <label class="label">Tutor's id document</label>
-                      <input class="input" type="name" name="Tutor_document" value="[[data.customer.Tutor_document]]"
-                             required placeholder="Id document">
+                      <input class="input" type="name" name="Tutor_document" value="[[data.customer.Tutor_document]]" placeholder="Id document">
                     </div>
                   </div>
 
                    <div class="pure-u-1">
                     <div class="campo">
                       <label class="label">Tutor's name</label>
-                      <input class="input" type="name" name="Tutor_name" value="[[data.customer.Tutor_name]]"
-                             required placeholder="Full name">
+                      <input class="input" type="name" name="Tutor_name" value="[[data.customer.Tutor_name]]" placeholder="Full name">
                     </div>
                   </div>
 
                   <div class="pure-u-1">
                     <div class="campo">
                       <label class="label">Tutor's Email</label>
-                      <input class="input" type="email" name="Tutor_email" value="[[data.customer.Tutor_email]]"
-                             required placeholder="Email">
+                      <input class="input" type="email" name="Tutor_email" value="[[data.customer.Tutor_email]]" placeholder="Email">
                     </div>
                   </div>
 
                   <div class="pure-u-1-3">
                     <div class="campo">
                       <label class="label">Tutor's phone prefix</label>
-                      <select name="Tutor_prefix" required>
+                      <select name="Tutor_prefix">
                         <option value="">Prefix</option>
                         [% for c in data.countries %]
                         [% if c.Prefix != null %]
@@ -271,8 +268,7 @@
                   <div class="pure-u-2-3">
                     <div class="campo">
                       <label class="label">Tutor's phone number</label>
-                      <input class="input" type="name" name="Tutor_phone"
-                             required value="[[data.customer.Tutor_phone]]" placeholder="Phone number">
+                      <input class="input" type="name" name="Tutor_phone" value="[[data.customer.Tutor_phone]]" placeholder="Phone number">
                     </div>
                   </div>
 
@@ -321,11 +317,17 @@
 
 <script>
   const birthdate = document.getElementById('Birth_date');
+  const tutor = document.getElementById("tutor");
+
   birthdate.addEventListener('change', () => {
     const d = new Date(birthdate.value);
     const age = new Date(Date.now() - d.getTime()).getUTCFullYear() - 1970;
-    console.log(age);
-    document.getElementById("tutor").className = (age < 18) ? "pure-g" : "hidden";
+    const isMinor = age < 18;
+    tutor.className = isMinor ? "pure-g" : "hidden";
+    const tutorInputs = tutor.querySelectorAll("input, select");
+    tutorInputs.forEach(el => {
+      el.required = isMinor;
+    });
   });
 
   const reason = document.getElementById("Reason_id");

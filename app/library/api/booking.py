@@ -229,6 +229,8 @@ def register(segment):
    'Tutor_email':      get_var('Tutor_email', save=False),
    'Tutor_phones':     get_var('Tutor_prefix', save=False) + ' ' + get_var('Tutor_phone', save=False),
   }
+  if customer['Tutor_email'] == '':
+    customer['Tutor_email'] = None
   id, error = q_insert_customer(g.dbClient, customer)
 
   # Error?
