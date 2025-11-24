@@ -214,12 +214,15 @@ def login(usr, pwd):
 def register(segment):
 
   # Insert customer
+  phones = None
+  if get_var('Prefix', save=False) and get_var('Phone', save=False):
+    phones = get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False)
   customer = {   
    'Name':             get_var('Name', save=False),
    'Email':            get_var('Email', save=False),
    'Prefix':           get_var('Prefix', save=False),
    'Phone':            get_var('Phone', save=False),
-   'Phones':           get_var('Prefix', save=False) + ' ' + get_var('Phone', save=False),
+   'Phones':           phones,
    'Birth_date':       get_var('Birth_date', save=False) ,
    'Nationality_id':   to_int(get_var('Nationality_id', save=False)),
    'Gender_id':        to_int(get_var('Gender_id', save=False)) ,
