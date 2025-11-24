@@ -181,7 +181,7 @@ def q_typologies(dbClient, segment):
       AND b."Active" 
       AND b."Segment_id" = {}
       AND "Sale_type" IS NOT NULL
-      AND (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI_%')
+      --AND (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI_%')
     GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3, 4
     '''.format(segment)
@@ -648,8 +648,8 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
-        WHERE rpt."Code" NOT LIKE 'DUI%%'
-          AND r."Sale_type" IN ('plazas', 'ambos')
+        WHERE r."Sale_type" IN ('plazas', 'ambos')
+          --AND rpt."Code" NOT LIKE 'DUI%%'
           AND bd.id IS NULL
         GROUP BY 1  
         UNION ALL
