@@ -678,8 +678,8 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE bd.id IS NULL 
+          --AND rpt."Code" NOT LIKE 'DUI%%'
           AND r."Building_id" = %s 
-          AND rpt."Code" NOT LIKE 'DUI%%'
           AND r."Sale_type" IN ('plazas', 'ambos')
         GROUP BY 1
         '''
