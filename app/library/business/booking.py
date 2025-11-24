@@ -168,6 +168,7 @@ def q_typologies(dbClient, segment):
       CASE
         WHEN rpt."Code" LIKE 'I\_%' THEN 'ind'
         WHEN rpt."Code" LIKE 'D\_%' THEN 'sha'
+        WHEN rpt."Code" LIKE 'DUI\_%' THEN 'idu'
         ELSE 'apt'
       END as "Room_type",
       COUNT(*)
