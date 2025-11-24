@@ -600,10 +600,13 @@ def q_flat_prices(dbClient, segment, year):
 # Web - Price by place/flat types info
 # ######################################################
 
-def q_room_prices(dbClient, segment, year):
+def q_room_prices(dbClient, segment, year, dui=False):
 
   # Connect
   con = dbClient.getconn()
+
+  # DUI?
+  type = 'DUI%' if not dui else 'X'
 
   # Get prices
   sql = '''
@@ -645,7 +648,7 @@ def q_room_prices(dbClient, segment, year):
         AND pd."Year" = %s
         AND px."Year" = %s
         AND b."Segment_id" = %s
-        AND rpt."Code" NOT LIKE 'DUI%%'
+        AND rpt."Code" NOT LIKE %s
       GROUP BY 1, 2, 3, 4, 5
     )
     SELECT 
@@ -659,7 +662,7 @@ def q_room_prices(dbClient, segment, year):
     AND (pr."Flat_type_id"  IS NULL OR pr."Flat_type_id"  = pz."Flat_type_id")
     ORDER BY pz."Building_id", pz."Place_type_id", pz."Flat_type_id";
   '''
-  cur = dbClient.execute(con, sql, (year, year + 1, segment))
+  cur = dbClient.execute(con, sql, (year, year + 1, segment), type)
 
   # Obtener los resultados de la consulta
   results = cur.fetchall()

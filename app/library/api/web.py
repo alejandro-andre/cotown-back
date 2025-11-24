@@ -33,6 +33,11 @@ def req_rooms(segment, year):
 
     return q_room_prices(g.dbClient, segment, year)
  
+# Get room types
+def req_roomsd(segment, year):
+
+    return q_room_prices(g.dbClient, segment, year, True)
+ 
 # Get amenities
 def req_amenities(segment):
 
