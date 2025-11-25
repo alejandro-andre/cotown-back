@@ -90,7 +90,7 @@ def generate_email(apiClient, email):
   from_type = template['From_type'] or 'cotown'
 
   # Context
-  context = email
+  context = email.copy()
 
   # Call graphQL endpoint
   if id is not None and template['Query'] != '':
