@@ -18,7 +18,11 @@ BEGIN
 
   -- Update rooming list if status changed
   IF OLD."Status" <> NEW."Status" THEN
-    UPDATE "Booking"."Booking_detail" SET "Status" = NEW."Status" WHERE "Booking_group_id" = NEW.id;
+    IF NEW."Status" = 'cancelada' THEN
+      DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
+    ELSE
+      UPDATE "Booking"."Booking_detail" SET "Status" = NEW."Status" WHERE "Booking_group_id" = NEW.id;
+    END IF;
   END IF;
 
   -- No changes
