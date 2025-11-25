@@ -187,7 +187,7 @@ def do_bill(apiClient, id, emails=[]):
       context['Customer_bill_email_cc'] = 'alejandroandre@hotmail.com'
       emails = ['ebizaxe@gmail.com']
       to = context['Customer_bill_email_to']
-      cc = context['Customer_bill_email_cc'] + emails
+      cc = [context['Customer_bill_email_cc']] + emails
       file.filename = context['Bill_code'] + '.pdf'
       try:
         smtp_mail(
