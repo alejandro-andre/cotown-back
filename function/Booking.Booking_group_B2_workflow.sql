@@ -2,6 +2,7 @@
 DECLARE
 
   status "Auxiliar"."Group_status";
+  curr_user VARCHAR;
   payment_method_id INTEGER;
   payment_id INTEGER;
   invoice_id INTEGER;
@@ -13,6 +14,10 @@ BEGIN
 
   -- Status
   status := NEW."Status";
+
+    -- Superuser
+  curr_user := CURRENT_USER;
+  RESET ROLE;
 
   -- Tentative
   IF status IS NULL OR status = 'grupobloqueado' THEN
@@ -123,6 +128,7 @@ BEGIN
   END IF;
 
   -- Return record
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

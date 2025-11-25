@@ -5,6 +5,7 @@ DECLARE
   room_id INTEGER;
   room_ids INTEGER[];
   room_code VARCHAR;
+  curr_user VARCHAR;
 
   re RECORD;
   res CURSOR FOR
@@ -15,13 +16,21 @@ DECLARE
 
 BEGIN
 
+  -- Update rooming list if status changed
+  IF OLD."Status" <> NEW."Status" THEN
+    UPDATE "Booking"."Booking_detail" SET "Status" = NEW."Status" WHERE "Booking_group_id" = NEW.id;
+  END IF;
+
   -- No changes
   IF OLD."Room_ids" = NEW."Room_ids" THEN
     RETURN NEW;
   END IF;
 
-  -- Get place ids from codes
+  -- Superuser
+  curr_user := CURRENT_USER;
   RESET ROLE;
+
+  -- Get place ids from codes
   SELECT array_agg(id) INTO room_ids FROM "Resource"."Resource" WHERE "Code" = ANY(NEW."Room_ids");
 
   -- Delete locks
@@ -80,6 +89,7 @@ BEGIN
   END LOOP;
 
   -- Return record
+  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

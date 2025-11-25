@@ -600,10 +600,13 @@ def q_flat_prices(dbClient, segment, year):
 # Web - Price by place/flat types info
 # ######################################################
 
-def q_room_prices(dbClient, segment, year):
+def q_room_prices(dbClient, segment, year, dui=False):
 
   # Connect
   con = dbClient.getconn()
+
+  # DUI?
+  type = 'DUI%' if not dui else 'X'
 
   # Get prices
   sql = '''
@@ -625,7 +628,10 @@ def q_room_prices(dbClient, segment, year):
         r."Building_id", 
         rpt.id AS "Place_type_id", 
         rft.id AS "Flat_type_id", 
-        rpt."Code" AS "Place_type", 
+        CASE
+          WHEN rpt."Code" LIKE 'DUI%%' THEN REPLACE(rpt."Code", 'DUI_', 'ID_')
+          ELSE rpt."Code"
+        END as "Place_type",
         rft."Code" AS "Flat_type",
         MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long",   0)) AS "Rent_long",
         MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
@@ -645,7 +651,7 @@ def q_room_prices(dbClient, segment, year):
         AND pd."Year" = %s
         AND px."Year" = %s
         AND b."Segment_id" = %s
-        AND rpt."Code" NOT LIKE 'DUI%%'
+        AND rpt."Code" NOT LIKE %s
       GROUP BY 1, 2, 3, 4, 5
     )
     SELECT 
@@ -659,7 +665,7 @@ def q_room_prices(dbClient, segment, year):
     AND (pr."Flat_type_id"  IS NULL OR pr."Flat_type_id"  = pz."Flat_type_id")
     ORDER BY pz."Building_id", pz."Place_type_id", pz."Flat_type_id";
   '''
-  cur = dbClient.execute(con, sql, (year, year + 1, segment))
+  cur = dbClient.execute(con, sql, (year, year + 1, segment, type))
 
   # Obtener los resultados de la consulta
   results = cur.fetchall()
