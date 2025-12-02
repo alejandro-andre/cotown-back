@@ -167,7 +167,7 @@ def income_stabilised_calc(dbClient):
     FROM "Billing"."Pricing_detail" pd
       INNER JOIN "Building"."Building" b ON b.id = pd."Building_id"
       INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = pd."Flat_type_id"
-      INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pd."Place_type_id"
+      LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pd."Place_type_id"
       LEFT JOIN "Resource"."Resource" r ON (b.id = r."Building_id" AND rft.id = r."Flat_type_id" AND rpt.id = r."Place_type_id")
       LEFT JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id"
     GROUP BY 1, 2, 3, 4
