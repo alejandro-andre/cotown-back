@@ -50,6 +50,7 @@ BEGIN
         INSERT
           INTO "Billing"."Invoice_line" ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
           VALUES (invoice_id, NEW."Rooms" * NEW."Booking_fee", 1, 1, 'Membership fee', flat_id);
+        UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = invoice_id;
 
       END IF;
 
@@ -114,11 +115,12 @@ BEGIN
     RETURNING id INTO payment_id;
     INSERT 
       INTO "Billing"."Invoice" ("Bill_type", "Issued", "Rectified", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
-      VALUES ('factura', FALSE, FALSE, 1, NEW."Payer_id", NEW.id, COALESCE(payment_method_id, 2), payment_id, 'Garantía')
+      VALUES ('recibo', FALSE, FALSE, 1, NEW."Payer_id", NEW.id, COALESCE(payment_method_id, 2), payment_id, 'Garantía')
       RETURNING id INTO invoice_id;
     INSERT
       INTO "Billing"."Invoice_line" ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
       VALUES (invoice_id, NEW."Deposit_actual", 2, 2, 'Garantía', flat_id);
+    UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE id = invoice_id;
 
   END IF;
 

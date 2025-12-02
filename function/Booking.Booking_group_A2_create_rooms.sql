@@ -5,7 +5,6 @@ DECLARE
   room_id INTEGER;
   room_ids INTEGER[];
   room_code VARCHAR;
-  curr_user VARCHAR;
 
   re RECORD;
   res CURSOR FOR
@@ -16,28 +15,18 @@ DECLARE
 
 BEGIN
 
-  -- Update rooming list if status changed
-  IF OLD."Status" <> NEW."Status" THEN
-    IF NEW."Status" = 'cancelada' THEN
-      DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
-    ELSE
-      UPDATE "Booking"."Booking_detail" SET "Status" = NEW."Status" WHERE "Booking_group_id" = NEW.id;
-    END IF;
-  END IF;
-
   -- No changes
-  IF OLD."Room_ids" = NEW."Room_ids" THEN
+  IF OLD."Room_ids"  = NEW."Room_ids" AND
+     OLD."Date_from" = NEW."Date_from" AND
+     OLD."Date_to"   = NEW."Date_to" THEN
     RETURN NEW;
   END IF;
 
-  -- Superuser
-  curr_user := CURRENT_USER;
-  RESET ROLE;
-
   -- Get place ids from codes
+  RESET ROLE;
   SELECT array_agg(id) INTO room_ids FROM "Resource"."Resource" WHERE "Code" = ANY(NEW."Room_ids");
 
-  -- Delete locks
+  -- Delete ALL locks
   DELETE FROM "Booking"."Booking_detail" WHERE "Booking_group_id" = NEW.id;
 
   -- No rooms
@@ -54,21 +43,20 @@ BEGIN
   -- Insert new rooms
   FOREACH room_id IN ARRAY(room_ids) LOOP
 
-    -- Code
+    -- Select room code
     SELECT "Code" INTO room_code FROM "Resource"."Resource" WHERE id = room_id;
 
-    -- Insert room
-    INSERT
-      INTO "Booking"."Booking_group_rooms" ("Booking_id", "Resource_id", "Code")
-      VALUES (NEW.id, room_id, room_code)
-      ON CONFLICT ("Booking_id", "Resource_id") DO NOTHING
-      RETURNING id INTO rec_id;
-
-    -- Insert default rooming list
-    INSERT
-      INTO "Booking"."Booking_group_rooming" ("Booking_id", "Room_id", "Resource_id", "Check_in", "Check_out", "Group_code")
-      VALUES (NEW.id, rec_id, room_id, NEW."Date_from", NEW."Date_to", '1')
-      ON CONFLICT ("Booking_id", "Room_id", "Group_code") DO NOTHING;
+    -- Upsert room
+    SELECT bgr.id 
+	INTO rec_id 
+	FROM "Booking"."Booking_group_rooms" bgr 
+	WHERE bgr."Resource_id" = room_id AND bgr."Booking_id" = NEW.id;
+	IF rec_id IS NULL THEN
+      INSERT
+        INTO "Booking"."Booking_group_rooms" ("Booking_id", "Resource_id", "Code")
+        VALUES (NEW.id, room_id, room_code)
+        RETURNING id INTO rec_id;
+	END IF;
 
     -- Locks
     IF NEW."Status" NOT IN ('cancelada') THEN
@@ -93,7 +81,6 @@ BEGIN
   END LOOP;
 
   -- Return record
-  EXECUTE 'SET ROLE "' || curr_user || '"';
   RETURN NEW;
 
 END;

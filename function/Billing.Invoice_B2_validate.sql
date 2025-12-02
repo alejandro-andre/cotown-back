@@ -38,6 +38,23 @@ BEGIN
   -- Update, and already issued
   IF OLD."Issued" = TRUE THEN
 
+    -- No se puede cambiar
+    IF OLD."Bill_type"         <> NEW."Bill_type"        OR
+       OLD."Issued"            <> NEW."Issued"           OR
+       OLD."Bill_type"         <> NEW."Bill_type"        OR
+       OLD."Booking_id"        <> NEW."Booking_id"       OR
+       OLD."Booking_group_id"  <> NEW."Booking_group_id" OR
+       OLD."Customer_id"       <> NEW."Customer_id"      OR
+       OLD."Provider_id"       <> NEW."Provider_id"      OR
+       OLD."Concept"           <> NEW."Concept"          OR
+       OLD."Issued_date"       <> NEW."Issued_date"      OR
+      (OLD."Rectified" = TRUE AND NEW."Rectified" = FALSE) THEN
+      IF CURRENT_USER <> 'modelsadmin' OR COALESCE(current_setting('myapp.admin', true), 'false') <> 'true' THEN
+        RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
+      END IF;
+      RETURN NEW;
+    END IF;
+
     -- Rectificativa?
     IF NEW."Bill_type" = 'factura' AND OLD."Rectified" = FALSE AND NEW."Rectified" = TRUE THEN
 
@@ -64,23 +81,6 @@ BEGIN
 	    UPDATE "Billing"."Invoice" SET "Issued" = TRUE, "Issued_date" = CURRENT_DATE WHERE id = i_id;
       RETURN NEW;
      
-    END IF;
-
-    -- No se puede cambiar
-    IF OLD."Bill_type"         <> NEW."Bill_type"        OR
-       OLD."Issued"            <> NEW."Issued"           OR
-       OLD."Bill_type"         <> NEW."Bill_type"        OR
-       OLD."Booking_id"        <> NEW."Booking_id"       OR
-       OLD."Booking_group_id"  <> NEW."Booking_group_id" OR
-       OLD."Customer_id"       <> NEW."Customer_id"      OR
-       OLD."Provider_id"       <> NEW."Provider_id"      OR
-       OLD."Concept"           <> NEW."Concept"          OR
-       OLD."Issued_date"       <> NEW."Issued_date"      OR
-      (OLD."Rectified" = TRUE AND NEW."Rectified" = FALSE) THEN
-      IF CURRENT_USER <> 'modelsadmin'AND current_setting('myapp.admin', true) <> 'true' THEN
-        RAISE EXCEPTION '!!!Cannot change issued bill!!!No se puede cambiar una factura emitida!!!';
-      END IF;
-      RETURN NEW;
     END IF;
 
   END IF;
