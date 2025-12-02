@@ -10,7 +10,7 @@ DECLARE
   FROM "Booking"."Booking_other"
   WHERE ("Date_estimated" > CURRENT_DATE OR "Date_estimated" IS NULL)
     AND EXTRACT(MONTH FROM CURRENT_DATE + INTERVAL '2 month') = "IPC_month"
-    AND ("IPC_notified" IS NULL OR EXTRACT(YEAR FROM "IPC_notified") < EXTRACT(YEAR FROM CURRENT_DATE + INTERVAL '2 month'));
+    AND ("IPC_updated" IS NULL OR EXTRACT(YEAR FROM "IPC_updated") < EXTRACT(YEAR FROM CURRENT_DATE + INTERVAL '2 month'));
 
   -- IPC proximo mes
   ipc_update CURSOR FOR
