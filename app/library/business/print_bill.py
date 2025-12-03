@@ -187,6 +187,9 @@ def do_bill(apiClient, id, emails=[]):
       logger.info('Send B2B bill to ' + context['Customer_bill_email_to'])
       to = context['Booking_bill_email_to'] or context['Customer_bill_email_to']
       cc = [(context['Booking_bill_email_cc'] or context['Customer_bill_email_cc'])] + emails
+      cc = list(filter(bool, cc))
+      if cc == []:
+        cc = None
       file.filename = context['Bill_code'] + '.pdf'
       try:
         smtp_mail(
