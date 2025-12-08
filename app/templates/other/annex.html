@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Anexo al contrato de arrendamiento</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 20mm;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            margin: 0;
+            padding: 5px;
+        }
+        h1, h2 {
+            text-align: center;
+            margin: 0;
+        }
+        h1 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        h2 {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .rooming-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        .rooming-table th,
+        .rooming-table td {
+            border: 1px solid #000;
+            padding: 2px;
+        }
+        .rooming-table td .break {
+            word-wrap: break-word;
+        }
+        .rooming-table th {
+            text-align: left;
+        }
+        .signatures-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .signatures-table th {
+            text-align: left;
+            font-weight: bold;
+            padding-bottom: 10px;
+        }
+        .signatures-table td {
+            vertical-align: top;
+            padding-top: 20px;
+        }
+        .signature-block {
+            text-align: left;
+        }
+        .signature-image {
+            max-height: 80px;
+        }
+        .signature-name {
+            margin-top: 5px;
+        }
+        .signature-date {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ANEXO AL CONTRATO DE ARRENDAMIENTO DE LA FINCA SITA EN</h1>
+    <h2>{{ Rooming[0].Building_address }}, {{ Rooming[0].Building_city }}</h2>
+
+    <table class="rooming-table">
+        <thead>
+            <tr>
+                <th>Plaza</th>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Población</th>
+                <th>C.P.</th>
+                <th>Provincia</th>
+                <th>País</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in Rooming %}
+            <tr>
+                <td>{{ r.Resource_code }}</td>
+                <td>{{ r.Resident_id }}</td>
+                <td class="break">{{ r.Resident_name }}</td>
+                <td class="break">{{ r.Resident_address }}</td>
+                <td>{{ r.Resident_city }}</td>
+                <td>{{ r.Resident_zip }}</td>
+                <td class="break">{{ r.Resident_province }}</td>
+                <td class="break">{{ r.Resident_country }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="signatures-table">
+        <tr>
+            <th>El Arrendador</th>
+            <th>El Arrendatario</th>
+        </tr>
+
+        {% for s in Rooming[0].Owner_signers %}
+        <tr>
+            <!-- Columna Arrendador -->
+            <td class="signature-block">
+                <div><br><br><br></div>
+                <div class="signature-name">
+                    Fdo: {{ s.Owner_signer_name }}
+                </div>
+            </td>
+
+            <!-- Columna Arrendatario -->
+            <td class="signature-block">
+                {% if loop.index == 1 %}
+                    <div style="color: white;">/FIRMACLIENTE/<br><br><br></div>
+                    <div class="signature-name">
+                        Fdo:
+                        {% if Customer_type == 'empresa' %}
+                            {{ Customer_signer_name }}
+                        {% else %}
+                            {% if Customer_gender == 'H' %}
+                                D.
+                            {% elif Customer_gender == 'M' %}
+                                Dª.
+                            {% else %}
+                                D./Dª.
+                            {% endif %}
+                            {{ Customer_name }}
+                        {% endif %}
+                    </div>
+                    <div class="signature-date">
+                        Fecha: <span style="color: white;">/FECHACLIENTE/</span>
+                    </div>
+                    <div>
+                      &nbsp;
+                    </div>
+                {% else %}
+                    &nbsp;
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

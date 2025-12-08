@@ -73,7 +73,8 @@ class DBClient:
       port=self.port,
       dbname=self.dbname, 
       user=self.user, 
-      password=self.password
+      password=self.password,
+      application_name='Cotown Backoffice'
     )
     
 

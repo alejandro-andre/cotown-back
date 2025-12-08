@@ -11,7 +11,7 @@
 # Cotown includes
 from library.services.config import settings
 from library.services.apiclient import APIClient
-from library.business.contract import do_contracts, do_group_contracts
+from library.business.contract import do_contracts, do_group_contracts, send_group_contracts, do_group_annexes
 
 # Logging
 import logging
@@ -77,10 +77,10 @@ def main():
     # Loop thru contracts
     if bookings is not None:
       for booking in bookings.get('data'):
-          id = booking['id']
-          logger.debug(id)
-          if do_contracts(apiClient, id):
-            num += 1
+        id = booking['id']
+        logger.debug(id)
+        if do_contracts(apiClient, id):
+          num += 1
 
     # Get pending group booking contracts
     bookings = apiClient.call('''
@@ -101,13 +101,66 @@ def main():
     # Loop thru contracts
     if bookings is not None:
       for booking in bookings.get('data'):
-          id = booking['id']
-          logger.debug(id)
-          if do_group_contracts(apiClient, id):
-            num += 1
+        id = booking['id']
+        logger.debug(id)
+        if do_group_contracts(apiClient, id):
+          num += 1
 
     # Debug
     logger.info('{} contracts printed'.format(num))
+
+    # Get group booking contracts to send
+    num = 0
+    """
+    bookings = apiClient.call('''
+    {
+      data: Booking_Booking_groupList (
+        orderBy: [{ attribute: id }]
+        where: {
+          AND: [
+            { Contract_ok: { EQ: true } },
+            { Contract_status: { IS_NULL: true } }
+          ]
+        }
+      ) { id }
+    }
+    ''')
+
+    # Loop thru contracts
+    if bookings is not None:
+      for booking in bookings.get('data'):
+        id = booking['id']
+        logger.debug(id)
+        if send_group_contracts(apiClient, id):
+          num += 1
+    """
+
+    # Get pending annexes contracts
+    annexes = apiClient.call('''
+    {
+      data: Booking_Booking_group_annexList (
+        where: {
+          AND: [
+            { Contract_annex: { IS_NULL: true } }
+          ]
+        }
+      ) {
+        id
+        Code
+      }
+    }
+    ''')
+
+    # Loop thru contracts
+    if annexes is not None:
+      for annex in annexes.get('data'):
+        id = annex['id']
+        code = annex['Code']
+        if do_group_annexes(apiClient, id, code):
+          num += 1
+
+    # Debug
+    logger.info('{} B2B annexes sent'.format(num))
 
 
 # #####################################

@@ -8,6 +8,7 @@ import requests
 import locale
 import base64
 from flask import g
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, DateSigned, CustomFields, TextCustomField 
 from num2words import num2words
 from datetime import datetime
@@ -23,7 +24,6 @@ logger = logging.getLogger('COTOWN')
 # Cotown includes
 from library.services.config import settings
 from library.services.utils import flatten
-from library.business.queries import q_change_contract
 
 
 # ######################################################
@@ -53,10 +53,18 @@ img[alt=firma] {{ width: 200px; }}
 </html>
 '''
 
-SUBJECT    = 'Contrato digital listo para firmar - ¡Tu experiencia está cerca!'
-SUBJECT_EN = 'Digital contract ready to sign – Your experience is almost here!'
-BODY       = '''<p>Hey!</p><p>Somos <strong>Cotown Group</strong> y queremos informarte que el <strong>contrato digital</strong> de tu reserva ya está disponible. <strong>Lee detenidamente</strong> las normas y condiciones de estancia antes de firmarlo. Una vez firmado, podremos facilitarte las llaves durante el check-in.</p><p><strong>Importante:</strong></p><p><li>Si tu llegada es <strong>fuera del horario laboral</strong>, en <strong>festivos</strong> o <strong>fin de semana</strong>, aplican condiciones especiales para el check-in. Te recomendamos coordinarlo con anticipación.</li></p><p><strong>¿Necesitas servicios adicionales?</strong> Explora opciones como traslados o limpiezas extra aquí:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>¡Quedamos atentos para resolver cualquier duda! Estamos emocionados de que disfrutes pronto de tu estancia.</p><p>Atentamente,</p><p><strong>Equipo Cotown Group</strong></p>'''
-BODY_EN    = '''<p>Hey!</p><p>We’re <strong>Cotown Group</strong>, and we’re excited to let you know that the <strong>digital contract</strong> for your reservation is now ready to sign.Please take a moment to <strong>carefully review the stay rules and conditions</strong>. Once signed, we’ll be all set to hand over your keys during check-in.</p><p><strong>Important Notes:</strong></p><p><li>If you’re arriving <strong>outside business hours</strong>, on <strong>holidays</strong>, or during the <strong>weekend</strong>, special check-in conditions apply. We recommend coordinating this with us in advance.</li></p><p><strong>Need extra services?</strong> Explore options like transfers or additional cleanings here:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>Let us know if you have any questions—we’re here to help! Your amazing stay is just around the corner.</p><p>Best,</p><p><strong>The Cotown Group Team</strong></p>'''
+# B2C email content
+SUBJECT_B2C    = 'Contrato digital listo para firmar - ¡Tu experiencia está cerca!'
+SUBJECT_B2C_EN = 'Digital contract ready to sign – Your experience is almost here!'
+BODY_B2C       = '''<p>Hey!</p><p>Somos <strong>Cotown Group</strong> y queremos informarte que el <strong>contrato digital</strong> de tu reserva ya está disponible. <strong>Lee detenidamente</strong> las normas y condiciones de estancia antes de firmarlo. Una vez firmado, podremos facilitarte las llaves durante el check-in.</p><p><strong>Importante:</strong></p><p><li>Si tu llegada es <strong>fuera del horario laboral</strong>, en <strong>festivos</strong> o <strong>fin de semana</strong>, aplican condiciones especiales para el check-in. Te recomendamos coordinarlo con anticipación.</li></p><p><strong>¿Necesitas servicios adicionales?</strong> Explora opciones como traslados o limpiezas extra aquí:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>¡Quedamos atentos para resolver cualquier duda! Estamos emocionados de que disfrutes pronto de tu estancia.</p><p>Atentamente,</p><p><strong>Equipo Cotown Group</strong></p>'''
+BODY_B2C_EN    = '''<p>Hey!</p><p>We’re <strong>Cotown Group</strong>, and we’re excited to let you know that the <strong>digital contract</strong> for your reservation is now ready to sign.Please take a moment to <strong>carefully review the stay rules and conditions</strong>. Once signed, we’ll be all set to hand over your keys during check-in.</p><p><strong>Important Notes:</strong></p><p><li>If you’re arriving <strong>outside business hours</strong>, on <strong>holidays</strong>, or during the <strong>weekend</strong>, special check-in conditions apply. We recommend coordinating this with us in advance.</li></p><p><strong>Need extra services?</strong> Explore options like transfers or additional cleanings here:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>Let us know if you have any questions—we’re here to help! Your amazing stay is just around the corner.</p><p>Best,</p><p><strong>The Cotown Group Team</strong></p>'''
+
+# B2B email content
+SUBJECT_B2B    = 'Contrato digital'
+SUBJECT_B2B_EN = 'Digital contract'
+BODY_B2B       = ''
+BODY_B2B_EN    = ''
+
 
 # ######################################################
 # Querys to retrieve the bookings
@@ -391,6 +399,78 @@ query Booking_groupById ($id: Int!) {
 }
 '''
 
+GROUP_ANNEX = '''
+query Booking_group_annexById ($id: Int!, $group: String) {
+  data: Booking_Booking_group_annexList (
+    where: { id: { EQ: $id } }
+  ) {
+    Booking_groupViaBooking_id {
+        Booking_id: id
+        Booking_date_from: Date_from
+        Booking_date_to: Date_to
+        Booking_date_from_day: Date_from_day
+        Booking_date_from_month: Date_from_month
+        Booking_date_from_year: Date_from_year
+        Booking_date_to_day: Date_to_day
+        Booking_date_to_month: Date_to_month
+        Booking_date_to_year: Date_to_year
+        CustomerViaPayer_id {
+        Customer_type: Type
+        Customer_name: Name
+        Customer_email: Email
+        Customer_signer_name: Signer_name
+        }
+        Rooming: Booking_group_roomingListViaBooking_id (
+        where: { 
+            AND: [
+            { Name: { IS_NULL: false } }
+            { Group_code: { EQ: $group } }
+            ] 
+        }
+        ) {
+        Group: Group_code
+        Resident_id: Document
+        Resident_name: Name
+        Resident_address: Address
+        Resident_zip: Zip
+        Resident_province: Province
+        Resident_city: City
+        CountryViaCountry_id {
+            Resident_country: Name
+        }
+        Rooms: Booking_group_roomsViaRoom_id {
+            ResourceViaResource_id {
+            Resource_code: Code
+            BuildingViaBuilding_id {
+                Building_address: Address
+                DistrictViaDistrict_id {
+                LocationViaLocation_id {
+                  Building_city: Name
+                }
+              }
+            }
+            ProviderViaOwner_id {
+                Owner_name: Name
+                Owner_email: Email
+                Owner_signers: Provider_contactListViaProvider_id (
+                where: { Provider_contact_type_id: { EQ: 1 } }
+                ) {
+                Owner_signer: id
+                Owner_signer_name: Name
+                Id_typeViaId_type_id {
+                    Owner_signer_id_type: Name
+                }
+                Owner_signer_id: Document
+                }
+            }
+            }
+        }
+      }
+    }
+  }
+}
+'''
+
 
 # ######################################################
 # Additional functions
@@ -488,7 +568,7 @@ def get_private_key(private_key_path):
 # Send documents to sign
 # ######################################################
 
-def do_send_contract(file_rent, file_svcs, context):
+def do_send_contract(file_rent, file_svcs, context, b2c=True):
 
   # API Client setup
   api_client = ApiClient()
@@ -509,7 +589,6 @@ def do_send_contract(file_rent, file_svcs, context):
   documents.append(
     Document(
       document_base64=document_base64,
-      # TO DO: Nombre del documento
       name='Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
       file_extension='pdf',
       document_id='1',
@@ -520,11 +599,14 @@ def do_send_contract(file_rent, file_svcs, context):
   if file_svcs:
     file_svcs.seek(0)
     document_base64 = base64.b64encode(file_svcs.read()).decode('utf-8')
+    if b2c:
+      name='Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code']
+    else:
+      name='Contrato de servicios ' + str(context['Booking_id'])
     documents.append(
       Document(
         document_base64=document_base64,
-        # TO DO: Nombre del documento
-        name='Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
+        name=name,
         file_extension='pdf',
         document_id='2',
       )
@@ -556,18 +638,26 @@ def do_send_contract(file_rent, file_svcs, context):
       ),
       TextCustomField(
         name='Booking Type',
-        value='B2C',
+        value='B2C' if b2c else 'B2B',
         show=True
       )
     ]
   )
 
+  # Email content
+  if b2c:
+    subject = (SUBJECT_B2C if context['Customer_lang'] == 'es' else SUBJECT_B2C_EN) + ' (' + str(context['Booking_id']) + '-' + context['Resource_code'] + ')'
+    body = BODY_B2C if context['Customer_lang'] == 'es' else BODY_B2C_EN
+  else:
+    subject = (SUBJECT_B2B if context['Customer_lang'] == 'es' else SUBJECT_B2B_EN) + ' (' + str(context['Booking_id']) + ')'
+    body = BODY_B2B if context['Customer_lang'] == 'es' else BODY_B2B_EN
+  
   # Envelope
   envelope_definition = EnvelopeDefinition(
     documents=documents,
     recipients={'signers': [signer]},
-    email_subject=(SUBJECT if context['Customer_lang'] == 'es' else SUBJECT_EN) + ' (' + str(context['Booking_id']) + '-' + context['Resource_code'] + ')',
-    email_blurb=BODY if context['Customer_lang'] == 'es' else BODY_EN,
+    email_subject=subject,
+    email_blurb=body,
     custom_fields=custom_fields,
     status='sent'
   )
@@ -789,7 +879,7 @@ def do_contracts(apiClient, id):
 
     # Send contract
     if context['Resource_building_contract']:
-      eid, status = do_send_contract(file_rent, file_svcs, context)
+      eid, status = do_send_contract(file_rent, file_svcs, context, b2c=True)
     else:
       eid, status = 'n/a', 'other'
 
@@ -888,6 +978,74 @@ def do_group_contracts(apiClient, id):
       return True
     return False
  
+  except Exception as error:
+    logger.error(error)
+    return False
+
+
+def send_group_contracts(apiClient, id):
+
+  logger.info('Enviando contrato para la reserva G' + str(id))
+  file_rent = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_rent')
+  file_svcs = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_services')
+
+
+def do_group_annexes(apiClient, id, code):
+
+  try:
+
+    # Get booking info
+    variables = { 'id': id, 'group': code }
+    result = apiClient.call(GROUP_ANNEX, variables)
+    context = flatten(result['data'][0])
+    name = str(context['Booking_id']) + '-' + code
+    logger.info('Anexo para la reserva G' + name)
+
+    # Jinja environment
+    env = Environment(
+      loader=FileSystemLoader('./templates/other'),
+      autoescape=select_autoescape(['html', 'xml'])
+    )
+
+    # Generate HTML
+    tpl = env.get_template('annex.html')
+    result = tpl.render(context)
+
+    # Generate PDF
+    file_annex = BytesIO()
+    html = HTML(string=result)
+    html.write_pdf(file_annex)
+    file_annex.seek(0)
+
+    # Upload pdf
+    url = 'https://' + apiClient.server + '/document/Booking/Booking_group_annex/' + str(id) + '/Contract_annex/contents?access_token=' + apiClient.token
+    response = requests.post(url, data=file_annex.read(), headers={ 'Content-Type': 'application/pdf' })      
+    json_annex = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+
+    # Update query
+    query = '''
+    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $annex: Models_DocumentTypeInputType $dt: String) {
+      Booking_Booking_group_annexUpdate (
+        where:  { id: {EQ: $id} }
+        entity: {
+          Contract_id: $contractid
+          Contract_status: $contractstatus
+          Contract_annex: $annex
+          Contract_signed: $dt
+        }
+      ) { id }
+    }
+    '''
+
+    # Call graphQL endpoint
+    if file_annex is not None:
+      dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+      apiClient.call(query, { 'id': id, 'contractid': name, 'contractstatus': 'other', 'annex': json_annex, 'dt': dt })
+      return True
+    
+    # Error
+    return False
+
   except Exception as error:
     logger.error(error)
     return False
