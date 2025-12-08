@@ -5,6 +5,7 @@ DECLARE
   months INTEGER;
   years INTEGER;
   duration INTERVAL;
+  num INTEGER;
   billing_type VARCHAR;
 
 BEGIN
@@ -34,6 +35,17 @@ BEGIN
   -- Request date
   IF NEW."Request_date" IS NULL THEN
     NEW."Request_date" := NOW();
+  END IF;
+
+  -- Cannot cancel booking with invoices
+  IF NEW."Status" = 'cancelada' THEN
+  	SELECT COUNT(*)
+  	INTO num
+  	FROM "Billing"."Invoice" i
+  	WHERE i."Booking_group_id" = NEW.id;
+    IF num > 0 THEN
+      RAISE exception '!!!Cannot cancel booking with invoices!!!No se puede cancelar una reserva con facturas!!!';
+    END IF;
   END IF;
 
   -- Billing type
