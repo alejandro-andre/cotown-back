@@ -568,7 +568,7 @@ def get_private_key(private_key_path):
 # Send documents to sign
 # ######################################################
 
-def do_send_contract(file_rent, file_svcs, context, b2c=True):
+def do_send_contract(contracts, context, b2c=True):
 
   # API Client setup
   api_client = ApiClient()
@@ -582,35 +582,21 @@ def do_send_contract(file_rent, file_svcs, context, b2c=True):
   token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
   auth=f'Bearer {token_response.access_token}'
 
-  # Rent contract
+  # Contracts
   documents = []
-  file_rent.seek(0)
-  document_base64 = base64.b64encode(file_rent.read()).decode('utf-8')
-  documents.append(
-    Document(
-      document_base64=document_base64,
-      name='Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'],
-      file_extension='pdf',
-      document_id='1',
-    )
-  )
-
-  # Services contract
-  if file_svcs:
-    file_svcs.seek(0)
-    document_base64 = base64.b64encode(file_svcs.read()).decode('utf-8')
-    if b2c:
-      name='Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code']
-    else:
-      name='Contrato de servicios ' + str(context['Booking_id'])
-    documents.append(
-      Document(
-        document_base64=document_base64,
-        name=name,
-        file_extension='pdf',
-        document_id='2',
+  for contract in contracts:
+    file = contract['file']
+    if file:
+      file.seek(0)
+      document_base64 = base64.b64encode(file.read()).decode('utf-8')
+      documents.append(
+        Document(
+          document_base64=document_base64,
+          name=contract['name'],
+          file_extension='pdf',
+          document_id=str(contract['id']),
+        )
       )
-    )
 
   # Signer
   signer = Signer(
@@ -879,7 +865,11 @@ def do_contracts(apiClient, id):
 
     # Send contract
     if context['Resource_building_contract']:
-      eid, status = do_send_contract(file_rent, file_svcs, context, b2c=True)
+      contracts = [
+        { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
+        { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
+      ]
+      eid, status = do_send_contract(contracts, context, b2c=True)
     else:
       eid, status = 'n/a', 'other'
 
