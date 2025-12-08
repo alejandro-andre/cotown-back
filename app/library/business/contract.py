@@ -60,10 +60,14 @@ BODY_B2C       = '''<p>Hey!</p><p>Somos <strong>Cotown Group</strong> y queremos
 BODY_B2C_EN    = '''<p>Hey!</p><p>We’re <strong>Cotown Group</strong>, and we’re excited to let you know that the <strong>digital contract</strong> for your reservation is now ready to sign.Please take a moment to <strong>carefully review the stay rules and conditions</strong>. Once signed, we’ll be all set to hand over your keys during check-in.</p><p><strong>Important Notes:</strong></p><p><li>If you’re arriving <strong>outside business hours</strong>, on <strong>holidays</strong>, or during the <strong>weekend</strong>, special check-in conditions apply. We recommend coordinating this with us in advance.</li></p><p><strong>Need extra services?</strong> Explore options like transfers or additional cleanings here:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>Let us know if you have any questions—we’re here to help! Your amazing stay is just around the corner.</p><p>Best,</p><p><strong>The Cotown Group Team</strong></p>'''
 
 # B2B email content
-SUBJECT_B2B    = 'Contrato digital'
-SUBJECT_B2B_EN = 'Digital contract'
-BODY_B2B       = ''
-BODY_B2B_EN    = ''
+SUBJECT_B2B          = 'Contrato digital'
+SUBJECT_B2B_EN       = 'Digital contract'
+BODY_B2B             = ''
+BODY_B2B_EN          = ''
+SUBJECT_B2B_ANNEX    = 'Anexo a contrato digital'
+SUBJECT_B2B_ANNEX_EN = 'Digital contract annex'
+BODY_B2B_ANNEX       = ''
+BODY_B2B_ANNEX_EN    = ''
 
 
 # ######################################################
@@ -539,7 +543,7 @@ def part(p):
 
 # Get Docusign JWT token
 def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user_id):
-  '''Get the jwt token'''
+
   api_client = ApiClient()
   api_client.set_base_path(auth_server)
   response = api_client.request_jwt_user_token(
@@ -555,6 +559,7 @@ def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user
 
 # Get Docusign private key
 def get_private_key(private_key_path):
+
   private_key_file = path.abspath(private_key_path)
   if path.isfile(private_key_file):
     with open(private_key_file) as private_key_file:
@@ -568,7 +573,7 @@ def get_private_key(private_key_path):
 # Send documents to sign
 # ######################################################
 
-def do_send_contract(contracts, context, b2c=True):
+def do_send_contract(contracts, context, type):
 
   # API Client setup
   api_client = ApiClient()
@@ -624,19 +629,22 @@ def do_send_contract(contracts, context, b2c=True):
       ),
       TextCustomField(
         name='Booking Type',
-        value='B2C' if b2c else 'B2B',
+        value=type,
         show=True
       )
     ]
   )
 
   # Email content
-  if b2c:
+  if type == 'B2C':
     subject = (SUBJECT_B2C if context['Customer_lang'] == 'es' else SUBJECT_B2C_EN) + ' (' + str(context['Booking_id']) + '-' + context['Resource_code'] + ')'
     body = BODY_B2C if context['Customer_lang'] == 'es' else BODY_B2C_EN
-  else:
+  elif type == 'B2B':
     subject = (SUBJECT_B2B if context['Customer_lang'] == 'es' else SUBJECT_B2B_EN) + ' (' + str(context['Booking_id']) + ')'
     body = BODY_B2B if context['Customer_lang'] == 'es' else BODY_B2B_EN
+  else:
+    subject = (SUBJECT_B2B_ANNEX if context['Customer_lang'] == 'es' else SUBJECT_B2B_ANNEX_EN) + ' (' + str(context['Booking_id']) + ')'
+    body = BODY_B2B_ANNEX if context['Customer_lang'] == 'es' else BODY_B2B_ANNEX_EN
   
   # Envelope
   envelope_definition = EnvelopeDefinition(
@@ -816,9 +824,13 @@ def get_template(apiClient, templates, resource_type, provider):
     return template, annex, fname
    
 
+# ######################################################
+# Generate and send B2C Contracts
+# ######################################################
+
 def do_contracts(apiClient, id):
 
-  logger.info('Contrato para la reserva ' + str(id))
+  logger.info('Generando y enviando contrato para la reserva ' + str(id))
 
   try:
    
@@ -869,7 +881,7 @@ def do_contracts(apiClient, id):
         { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
         { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
       ]
-      eid, status = do_send_contract(contracts, context, b2c=True)
+      eid, status = do_send_contract(contracts, context, 'B2C')
     else:
       eid, status = 'n/a', 'other'
 
@@ -902,9 +914,13 @@ def do_contracts(apiClient, id):
     return False
 
 
+# ######################################################
+# Generate B2B Contracts
+# ######################################################
+
 def do_group_contracts(apiClient, id):
 
-  logger.info('Contrato para la reserva G' + str(id))
+  logger.info('Generando contrato para la reserva G' + str(id))
 
   try:
 
@@ -973,12 +989,41 @@ def do_group_contracts(apiClient, id):
     return False
 
 
+# ######################################################
+# Send B2B Contracts
+# ######################################################
+
 def send_group_contracts(apiClient, id):
 
   logger.info('Enviando contrato para la reserva G' + str(id))
-  file_rent = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_rent')
-  file_svcs = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_services')
 
+  try:
+
+    # Get booking info
+    variables = { 'id': id }
+    result = apiClient.call(GROUP_BOOKING, variables)
+    context = flatten(result['data'][0])
+
+    # Get contracts
+    file_rent = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_rent')
+    file_svcs = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_services')
+
+    # Send contracts
+    contracts = [
+      { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) },
+      { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) } 
+    ]
+    #?eid, status = do_send_contract(contracts, context, 'B2B')
+    eid, status = 'n/a', 'other'
+
+  except Exception as error:
+    logger.error(error)
+    return False
+
+
+# ######################################################
+# Generate and send B2B Annexes
+# ######################################################
 
 def do_group_annexes(apiClient, id, code):
 
@@ -989,7 +1034,10 @@ def do_group_annexes(apiClient, id, code):
     result = apiClient.call(GROUP_ANNEX, variables)
     context = flatten(result['data'][0])
     name = str(context['Booking_id']) + '-' + code
-    logger.info('Anexo para la reserva G' + name)
+    logger.info('Generando y enviando anexo para la reserva G' + name)
+    if not context['Rooming']:
+      logger.warning('Rooming vacía!')
+      return False
 
     # Jinja environment
     env = Environment(
@@ -1012,6 +1060,13 @@ def do_group_annexes(apiClient, id, code):
     response = requests.post(url, data=file_annex.read(), headers={ 'Content-Type': 'application/pdf' })      
     json_annex = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
+    # Send contracts
+    contracts = [
+      { 'id': 1, 'file': file_annex, 'name': 'Anexo al contrato - Reserva ' + str(context['Booking_id']) },
+    ]
+    #?eid, status = do_send_contract(contracts, context, 'B2B Anexo')
+    eid, status = name, 'other'
+
     # Update query
     query = '''
     mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $annex: Models_DocumentTypeInputType $dt: String) {
@@ -1030,7 +1085,7 @@ def do_group_annexes(apiClient, id, code):
     # Call graphQL endpoint
     if file_annex is not None:
       dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-      apiClient.call(query, { 'id': id, 'contractid': name, 'contractstatus': 'other', 'annex': json_annex, 'dt': dt })
+      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'annex': json_annex, 'dt': dt })
       return True
     
     # Error

@@ -57,7 +57,8 @@ def main():
 
     # Contracts
     num = 0
-    date = settings.CONTRACTDATE
+    min_date = settings.CONTRACTDATE
+    min_id   = str(settings.CONTRACTID)
 
     # Get pending individual booking contracts
     bookings = apiClient.call('''
@@ -66,7 +67,7 @@ def main():
         where: {
           AND: [
             { Status: { IN: [firmacontrato, contrato, checkinconfirmado, checkin, inhouse] } },
-            { Date_from: { GE: "''' + date + '''"} }
+            { Date_from: { GE: "''' + min_date + '''"} }
             { Contract_rent: { IS_NULL: true } }
           ]
         }
@@ -82,6 +83,9 @@ def main():
         if do_contracts(apiClient, id):
           num += 1
 
+    # Debug
+    logger.info('{} B2C contracts printed/sent'.format(num))
+
     # Get pending group booking contracts
     bookings = apiClient.call('''
     {
@@ -90,7 +94,7 @@ def main():
         where: {
           AND: [
             { Status: { IN: [grupoconfirmado, inhouse] } },
-            { Date_from: { GE: "''' + date + '''"} }
+            { Date_from: { GE: "''' + min_date + '''"} }
             { Contract_rent: { IS_NULL: true } }
           ]
         }
@@ -107,11 +111,10 @@ def main():
           num += 1
 
     # Debug
-    logger.info('{} contracts printed'.format(num))
+    logger.info('{} B2B contracts printed'.format(num))
 
     # Get group booking contracts to send
     num = 0
-    """
     bookings = apiClient.call('''
     {
       data: Booking_Booking_groupList (
@@ -120,6 +123,7 @@ def main():
           AND: [
             { Contract_ok: { EQ: true } },
             { Contract_status: { IS_NULL: true } }
+            { id: { GE: ''' + min_id + '''} }
           ]
         }
       ) { id }
@@ -133,7 +137,8 @@ def main():
         logger.debug(id)
         if send_group_contracts(apiClient, id):
           num += 1
-    """
+    # Debug
+    logger.info('{} B2B contracts sent'.format(num))
 
     # Get pending annexes contracts
     annexes = apiClient.call('''
