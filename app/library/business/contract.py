@@ -671,7 +671,7 @@ def do_send_contract(contracts, context, type):
 # Send documents to sign
 # ######################################################
 
-def check_contracts(apiClient, id, current_status):
+def check_contracts(apiClient, id, current_status, table='Booking'):
 
   try:
     # API Client setup
@@ -713,7 +713,7 @@ def check_contracts(apiClient, id, current_status):
     # Update query
     query = '''
     mutation ($contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $dt: String) {
-      Booking_BookingUpdate (
+      Booking_''' + table + '''Update (
         where:  { Contract_id: {EQ: $contractid} }
         entity: {
           Contract_status: $contractstatus
