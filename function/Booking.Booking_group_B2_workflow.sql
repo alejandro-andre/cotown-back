@@ -115,7 +115,7 @@ BEGIN
     RETURNING id INTO payment_id;
     INSERT 
       INTO "Billing"."Invoice" ("Bill_type", "Issued", "Rectified", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
-      VALUES ('recibo', FALSE, FALSE, 1, NEW."Payer_id", NEW.id, COALESCE(payment_method_id, 2), payment_id, 'Garantía')
+      VALUES ('recibo', FALSE, FALSE, owner_id, NEW."Payer_id", NEW.id, COALESCE(payment_method_id, 2), payment_id, 'Garantía')
       RETURNING id INTO invoice_id;
     INSERT
       INTO "Billing"."Invoice_line" ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
