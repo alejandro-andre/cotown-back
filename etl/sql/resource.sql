@@ -26,6 +26,7 @@ SELECT
   END AS "billing_type",
   b."Estabilised_date" AS "estabilised_date",
   COALESCE(r."Area", 0) AS "area",
+  COALESCE(r."Area_woc", 0) AS "area_woc",
   CASE 
   	WHEN r."Resource_type" = 'plaza' THEN 1
   	WHEN r."Resource_type" = 'habitacion' THEN (

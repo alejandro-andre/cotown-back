@@ -166,6 +166,7 @@ CREATE TABLE gold.resource (
   "place_type" varchar DEFAULT NULL,
   "billing_type" varchar DEFAULT NULL,
   "area" numeric DEFAULT NULL,
+  "area_woc" numeric DEFAULT NULL,
   "rooms" numeric DEFAULT NULL,
   "beds" numeric DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
