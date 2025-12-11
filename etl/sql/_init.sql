@@ -185,7 +185,8 @@ CREATE TABLE gold.resource_history (
   "id" varchar NOT NULL,
   "date" date NOT NULL,
 
-  "area"  numeric NOT NULL,               -- Area m2
+  "area" numeric NOT NULL,                -- Area m2
+  "area_woc" numeric NULL,                -- Area m2 without commons
   "units" numeric NOT NULL,               -- Units (flats...)
   "rooms" numeric NOT NULL,               -- Rooms
   "beds" numeric NOT NULL,                -- Beds

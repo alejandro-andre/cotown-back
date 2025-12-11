@@ -110,6 +110,10 @@ def history(dbClient):
         ELSE COALESCE(r."Area", 0)
       END AS "area",
       CASE 
+        WHEN r."Resource_type" in ('habitacion', 'plaza') THEN 0
+        ELSE COALESCE(r."Area_woc", 0)
+      END AS "area_woc",
+      CASE 
         WHEN r."Resource_type" = 'plaza' THEN 1
         WHEN r."Resource_type" = 'habitacion' THEN (
           SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END
@@ -239,5 +243,5 @@ def history(dbClient):
   df['id'] = 'HIS' + df['id'].astype(str)
 
   # To CSV
-  df.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
+  df.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'area_woc', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
   logger.info('- History saved')
