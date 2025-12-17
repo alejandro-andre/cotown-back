@@ -38,11 +38,13 @@ query BillById ($id: Int!) {
         Booking_group_id
         Booking_other_id
         BookingViaBooking_id {
+            Invoice_comment
             ResourceViaResource_id {
                 Resource_code: Code
             }
         }
         Booking_groupViaBooking_group_id {
+            Invoice_comment
             Booking_bill_email_to: Bill_email_to
             Booking_bill_email_cc: Bill_email_cc
             BuildingViaBuilding_id {
@@ -50,6 +52,7 @@ query BillById ($id: Int!) {
             }
         }
         Booking_otherViaBooking_other_id {
+            Invoice_comment
             ResourceViaResource_id {
                 Resource_code: Code
             }
