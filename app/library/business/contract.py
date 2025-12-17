@@ -454,20 +454,20 @@ query Booking_group_annexById ($id: Int!, $group: String) {
               }
             }
             ProviderViaOwner_id {
-                Owner_name: Name
-                Owner_email: Email
-                Owner_signers: Provider_contactListViaProvider_id (
-                where: { Provider_contact_type_id: { EQ: 1 } }
-                ) {
+              Owner_name: Name
+              Owner_email: Email
+              Owner_signers: Provider_contactListViaProvider_id (
+              where: { Provider_contact_type_id: { EQ: 1 } }
+            ) {
                 Owner_signer: id
                 Owner_signer_name: Name
                 Id_typeViaId_type_id {
-                    Owner_signer_id_type: Name
+                  Owner_signer_id_type: Name
                 }
                 Owner_signer_id: Document
-                }
+              }
             }
-            }
+          }
         }
       }
     }
@@ -957,7 +957,7 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if room['Owner_id'] != room['Service_id']:
+    if room['Owner_id'] != room['Service_id'] and context['Booking_services'] > 0:
       template, annex, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
       if template is not None:
         file_svcs = generate_doc_file(context, template)

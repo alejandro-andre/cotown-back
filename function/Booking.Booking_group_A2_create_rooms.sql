@@ -2,6 +2,7 @@
 DECLARE
 
   room_id INTEGER;
+  rooming_id INTEGER;
   resource_id INTEGER;
   resource_ids INTEGER[];
   room_code VARCHAR;
@@ -46,21 +47,28 @@ BEGIN
     -- Select room code
     SELECT "Code" INTO room_code FROM "Resource"."Resource" WHERE id = resource_id;
 
-    -- Upsert room and rooming
+    -- Upsert room
     SELECT bgr.id 
       INTO room_id 
       FROM "Booking"."Booking_group_rooms" bgr 
       WHERE bgr."Resource_id" = resource_id AND bgr."Booking_id" = NEW.id;
-      IF room_id IS NULL THEN
-        INSERT
-          INTO "Booking"."Booking_group_rooms" ("Booking_id", "Resource_id", "Code")
-          VALUES (NEW.id, resource_id, room_code)
-          RETURNING id INTO room_id;
-        INSERT
-          INTO "Booking"."Booking_group_rooming" ("Booking_id", "Room_id", "Resource_id", "Check_in", "Check_out", "Group_code")
-          VALUES (NEW.id, room_id, resource_id, NEW."Date_from", NEW."Date_to", '1')
-          ON CONFLICT ("Booking_id", "Room_id", "Group_code") DO NOTHING;
-      END IF;
+    IF room_id IS NULL THEN
+      INSERT
+        INTO "Booking"."Booking_group_rooms" ("Booking_id", "Resource_id", "Code")
+        VALUES (NEW.id, resource_id, room_code)
+        RETURNING id INTO room_id;
+    END IF;
+
+    -- Upsert rooming
+    SELECT bgr.id 
+      INTO rooming_id 
+      FROM "Booking"."Booking_group_rooming" bgr 
+      WHERE bgr."Room_id" = room_id;
+    IF rooming_id IS NULL THEN
+      INSERT
+        INTO "Booking"."Booking_group_rooming" ("Booking_id", "Room_id", "Resource_id", "Check_in", "Check_out", "Group_code")
+        VALUES (NEW.id, room_id, resource_id, NEW."Date_from", NEW."Date_to", '1');
+    END IF;
 
     -- Locks
     IF NEW."Status" NOT IN ('cancelada') THEN
