@@ -318,17 +318,17 @@
 <script>
   const birthdate = document.getElementById('Birth_date');
   const tutor = document.getElementById("tutor");
-
-  birthdate.addEventListener('change', () => {
-    const d = new Date(birthdate.value);
-    const age = new Date(Date.now() - d.getTime()).getUTCFullYear() - 1970;
-    const isMinor = age < 18;
-    tutor.className = isMinor ? "pure-g" : "hidden";
-    const tutorInputs = tutor.querySelectorAll("input, select");
-    tutorInputs.forEach(el => {
-      el.required = isMinor;
+  if (birthdate && tutor)
+    birthdate.addEventListener('change', () => {
+      const d = new Date(birthdate.value);
+      const age = new Date(Date.now() - d.getTime()).getUTCFullYear() - 1970;
+      const isMinor = age < 18;
+      tutor.className = isMinor ? "pure-g" : "hidden";
+      const tutorInputs = tutor.querySelectorAll("input, select");
+      tutorInputs.forEach(el => {
+        el.required = isMinor;
+      });
     });
-  });
 
   const reason = document.getElementById("Reason_id");
   if (reason)
