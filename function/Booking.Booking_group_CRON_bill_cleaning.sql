@@ -7,7 +7,8 @@ DECLARE
 
 BEGIN
 
-  booking_id = 0;
+  booking_id := 0;
+  invoice_id := 0;
 
   FOR rec IN
 
@@ -40,50 +41,46 @@ BEGIN
 	IF rec.id <> booking_id THEN
 
       -- Issue invoice
-      IF booking_id <> 0 THEN
-        UPDATE "Billing"."Invoice"
-          SET "Issued" = TRUE
-          WHERE "Booking_group_id" = booking_id
-            AND "Bill_type" = 'factura'
-            AND "Issued" = FALSE;
+      IF invoice_id <> 0 THEN
+        UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE "id" = invoice_id;
       END IF;
 
       -- Insert invoice
       INSERT INTO "Billing"."Invoice"
         ("Bill_type", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
       VALUES
-        ('factura', 1, rec."Payer_id", rec.id, COALESCE(rec."Payment_method_id", 2), NULL, 'Limpieza final plazas con salida el ' || rec."Check_out")
+        ('factura', 1, rec."Payer_id", rec.id, COALESCE(rec."Payment_method_id", 2), NULL, 'Limpieza final plazas')
       RETURNING id INTO invoice_id;
       RAISE NOTICE 'INSERT BILL % % %', rec.id, rec."Check_out", invoice_id;
 
 	END IF;
 
 	-- Insert line
-  INSERT INTO "Billing"."Invoice_line" 
-    ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
-  VALUES
-    (invoice_id, rec.amount, 19, 1, 'Limpieza final ' || rec."Code" || ' - ' || rec.room_count || ' plazas', rec."Flat_id");
-  RAISE NOTICE ' LINE % % %', rec."Flat_id", rec.room_count, rec.amount;
+    INSERT INTO "Billing"."Invoice_line" 
+      ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
+    VALUES
+      (invoice_id, rec.amount, 19, 1, 'Limpieza final ' || rec."Code" || ' - ' || rec.room_count || ' plazas', rec."Flat_id");
+    RAISE NOTICE ' LINE % % %', rec."Flat_id", rec.room_count, rec.amount;
 
-  -- Update checkout
-	UPDATE "Booking"."Booking_group_rooming"
-    SET "Cleaning_billed" = TRUE
-  WHERE "Booking_id" = rec.id
-    AND "Check_out" = rec."Check_out"
-    AND COALESCE("Cleaning_billed", FALSE) = FALSE;
+    -- Update cleaning billed
+    UPDATE "Booking"."Booking_group_rooming" bgr
+      SET "Cleaning_billed" = TRUE
+    FROM "Booking"."Booking_group_rooms" br
+      JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
+    WHERE bgr."Booking_id" = rec.id
+      AND bgr."Check_out" = rec."Check_out"
+      AND bgr."Room_id" = br.id   
+      AND r."Flat_id" = rec."Flat_id"
+      AND COALESCE(bgr."Cleaning_billed", FALSE) = FALSE;
 
 	-- Next record
-	booking_id = rec.id;
+	booking_id := rec.id;
 
   END LOOP;
 
   -- Issue last invoice
-  IF booking_id <> 0 THEN
-    UPDATE "Billing"."Invoice"
-      SET "Issued" = TRUE
-      WHERE "Booking_group_id" = booking_id
-        AND "Bill_type" = 'factura'
-        AND "Issued" = FALSE;
+  IF invoice_id <> 0 THEN
+    UPDATE "Billing"."Invoice" SET "Issued" = TRUE WHERE "id" = invoice_id;
   END IF;
 
 END;
