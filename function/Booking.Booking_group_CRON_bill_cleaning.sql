@@ -39,6 +39,15 @@ BEGIN
 	-- Booking id change
 	IF rec.id <> booking_id THEN
 
+      -- Issue invoice
+      IF booking_id <> 0 THEN
+        UPDATE "Billing"."Invoice"
+          SET "Issued" = TRUE
+          WHERE "Booking_group_id" = booking_id
+            AND "Bill_type" = 'factura'
+            AND "Issued" = FALSE;
+      END IF;
+
       -- Insert invoice
       INSERT INTO "Billing"."Invoice"
         ("Bill_type", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
@@ -50,22 +59,31 @@ BEGIN
 	END IF;
 
 	-- Insert line
-    INSERT INTO "Billing"."Invoice_line" 
-      ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
-    VALUES
-      (invoice_id, rec.amount, 19, 1, 'Limpieza final ' || rec."Code" || ' - ' || rec.room_count || ' plazas', rec."Flat_id");
-    RAISE NOTICE ' LINE % % %', rec."Flat_id", rec.room_count, rec.amount;
+  INSERT INTO "Billing"."Invoice_line" 
+    ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
+  VALUES
+    (invoice_id, rec.amount, 19, 1, 'Limpieza final ' || rec."Code" || ' - ' || rec.room_count || ' plazas', rec."Flat_id");
+  RAISE NOTICE ' LINE % % %', rec."Flat_id", rec.room_count, rec.amount;
 
-    -- Update checkout
-  	UPDATE "Booking"."Booking_group_rooming"
-      SET "Cleaning_billed" = TRUE
-    WHERE "Booking_id" = rec.id
-      AND "Check_out" = rec."Check_out"
-      AND COALESCE("Cleaning_billed", FALSE) = FALSE;
+  -- Update checkout
+	UPDATE "Booking"."Booking_group_rooming"
+    SET "Cleaning_billed" = TRUE
+  WHERE "Booking_id" = rec.id
+    AND "Check_out" = rec."Check_out"
+    AND COALESCE("Cleaning_billed", FALSE) = FALSE;
 
 	-- Next record
 	booking_id = rec.id;
 
   END LOOP;
+
+  -- Issue last invoice
+  IF booking_id <> 0 THEN
+    UPDATE "Billing"."Invoice"
+      SET "Issued" = TRUE
+      WHERE "Booking_group_id" = booking_id
+        AND "Bill_type" = 'factura'
+        AND "Issued" = FALSE;
+  END IF;
 
 END;

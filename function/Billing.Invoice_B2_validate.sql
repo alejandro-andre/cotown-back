@@ -29,7 +29,7 @@ BEGIN
 
   -- Delete
   IF TG_OP = 'DELETE' THEN
-    IF OLD."Issued" = FALSE OR current_setting('myapp.admin', true) = 'true' THEN
+    IF OLD."Bill_type" = 'recibo' OR OLD."Issued" = FALSE OR current_setting('myapp.admin', true) = 'true' THEN
       RETURN OLD;
     END IF;    
     RAISE EXCEPTION '!!!Cannot delete issued bill!!!No se puede borrar una factura emitida!!!';

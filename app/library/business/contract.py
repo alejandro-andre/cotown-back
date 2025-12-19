@@ -3,6 +3,7 @@
 # ###################################################
 
 # System includes
+import io
 import markdown
 import requests
 import locale
@@ -57,7 +58,7 @@ img[alt=firma] {{ width: 200px; }}
 SUBJECT_B2C    = 'Contrato digital listo para firmar - ¡Tu experiencia está cerca!'
 SUBJECT_B2C_EN = 'Digital contract ready to sign – Your experience is almost here!'
 BODY_B2C       = '''<p>Hey!</p><p>Somos <strong>Cotown Group</strong> y queremos informarte que el <strong>contrato digital</strong> de tu reserva ya está disponible. <strong>Lee detenidamente</strong> las normas y condiciones de estancia antes de firmarlo. Una vez firmado, podremos facilitarte las llaves durante el check-in.</p><p><strong>Importante:</strong></p><p><li>Si tu llegada es <strong>fuera del horario laboral</strong>, en <strong>festivos</strong> o <strong>fin de semana</strong>, aplican condiciones especiales para el check-in. Te recomendamos coordinarlo con anticipación.</li></p><p><strong>¿Necesitas servicios adicionales?</strong> Explora opciones como traslados o limpiezas extra aquí:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>¡Quedamos atentos para resolver cualquier duda! Estamos emocionados de que disfrutes pronto de tu estancia.</p><p>Atentamente,</p><p><strong>Equipo Cotown Group</strong></p>'''
-BODY_B2C_EN    = '''<p>Hey!</p><p>We’re <strong>Cotown Group</strong>, and we’re excited to let you know that the <strong>digital contract</strong> for your reservation is now ready to sign.Please take a moment to <strong>carefully review the stay rules and conditions</strong>. Once signed, we’ll be all set to hand over your keys during check-in.</p><p><strong>Important Notes:</strong></p><p><li>If you’re arriving <strong>outside business hours</strong>, on <strong>holidays</strong>, or during the <strong>weekend</strong>, special check-in conditions apply. We recommend coordinating this with us in advance.</li></p><p><strong>Need extra services?</strong> Explore options like transfers or additional cleanings here:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>Let us know if you have any questions—we’re here to help! Your amazing stay is just around the corner.</p><p>Best,</p><p><strong>The Cotown Group Team</strong></p>'''
+BODY_B2C_EN    = '''<p>Hey!</p><p>We’re <strong>Cotown Group</strong>, and we’re excited to let you know that the <strong>digital contract</strong> for your reservation is now ready to sign. Please take a moment to <strong>carefully review the stay rules and conditions</strong>. Once signed, we’ll be all set to hand over your keys during check-in.</p><p><strong>Important Notes:</strong></p><p><li>If you’re arriving <strong>outside business hours</strong>, on <strong>holidays</strong>, or during the <strong>weekend</strong>, special check-in conditions apply. We recommend coordinating this with us in advance.</li></p><p><strong>Need extra services?</strong> Explore options like transfers or additional cleanings here:</p><p><a href="https://shorturl.at/w04KY">https://shorturl.at/w04KY</a></p><p>Let us know if you have any questions—we’re here to help! Your amazing stay is just around the corner.</p><p>Best,</p><p><strong>The Cotown Group Team</strong></p>'''
 
 # B2B email content
 SUBJECT_B2B          = 'Contrato digital'
@@ -310,6 +311,7 @@ query Booking_groupById ($id: Int!) {
         Customer_signer_id_type: Name
       }
       Customer_signer_id: Signer_document
+      Customer_lang: Lang
     }
     Rooms: Booking_group_roomsListViaBooking_id {
       ResourceViaResource_id {
@@ -423,6 +425,7 @@ query Booking_group_annexById ($id: Int!, $group: String) {
         Customer_name: Name
         Customer_email: Email
         Customer_signer_name: Signer_name
+        Customer_lang: Lang
         }
         Rooming: Booking_group_roomingListViaBooking_id (
         where: { 
@@ -1007,15 +1010,36 @@ def send_group_contracts(apiClient, id):
     # Get contracts
     file_rent = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_rent')
     file_svcs = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_services')
+    file_r = io.BytesIO(file_rent.content) if file_rent.content else None
+    file_s = io.BytesIO(file_svcs.content) if file_svcs.content else None
 
     # Send contracts
     contracts = [
-      { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) },
-      { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) } 
+      { 'id': 1, 'file': file_r, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) },
+      { 'id': 2, 'file': file_s, 'name': 'Contrato de servicios ' + str(context['Booking_id']) } 
     ]
-    #?eid, status = do_send_contract(contracts, context, 'B2B')
-    eid, status = 'n/a', 'other'
+    eid, status = do_send_contract(contracts, context, 'B2B')
 
+    # Update query
+    query = '''
+    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $dt: String) {
+      Booking_Booking_groupUpdate (
+        where:  { id: {EQ: $id} }
+        entity: {
+          Contract_id: $contractid
+          Contract_status: $contractstatus
+          Contract_signed: $dt
+        }
+      ) { id }
+    }
+    '''
+
+    # Call graphQL endpoint
+    dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+    logger.info(eid + ' - ' + status + ' - ' + dt)
+    apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'dt': dt })
+    return True
+ 
   except Exception as error:
     logger.error(error)
     return False
@@ -1046,6 +1070,7 @@ def do_group_annexes(apiClient, id, code):
     )
 
     # Generate HTML
+    context['Server'] = 'https://' + settings.BACK + settings.API_PREFIX
     tpl = env.get_template('annex.html')
     result = tpl.render(context)
 
@@ -1064,8 +1089,7 @@ def do_group_annexes(apiClient, id, code):
     contracts = [
       { 'id': 1, 'file': file_annex, 'name': 'Anexo al contrato - Reserva ' + str(context['Booking_id']) },
     ]
-    #?eid, status = do_send_contract(contracts, context, 'B2B Anexo')
-    eid, status = name, 'other'
+    eid, status = do_send_contract(contracts, context, 'B2B Anexo')
 
     # Update query
     query = '''
