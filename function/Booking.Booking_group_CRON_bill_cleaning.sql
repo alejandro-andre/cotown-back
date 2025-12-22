@@ -13,32 +13,32 @@ BEGIN
   FOR rec IN
 
     -- Select not billed final cleanings from still unfinished bookings
-	SELECT
-	    bg.id,
-	    bgr."Check_out",
-	    r."Flat_id",
+    SELECT
+      bg.id,
+      bgr."Check_out",
+      r."Flat_id",
         f."Code",
-	    bg."Payer_id",
+      bg."Payer_id",
         c."Payment_method_id",
-	    COUNT(*) AS room_count,
-	    bg."Final_cleaning" * COUNT(*) AS amount
-	FROM "Booking"."Booking_group_rooming" bgr
-	    INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgr."Booking_id"
-	    INNER JOIN "Booking"."Booking_group_rooms" br ON br.id = bgr."Room_id"
-	    INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
-	    INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
+      COUNT(*) AS room_count,
+      bg."Final_cleaning" * COUNT(*) AS amount
+    FROM "Booking"."Booking_group_rooming" bgr
+      INNER JOIN "Booking"."Booking_group" bg ON bg.id = bgr."Booking_id"
+      INNER JOIN "Booking"."Booking_group_rooms" br ON br.id = bgr."Room_id"
+      INNER JOIN "Resource"."Resource" r ON r.id = br."Resource_id"
+      INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
         INNER JOIN "Customer"."Customer" c ON c.id = bg."Payer_id"
-	WHERE bg."Final_cleaning" > 0
-	  AND bgr."Check_out" <= CURRENT_DATE
-	  AND bg."Status" IN ('inhouse', 'revision', 'devolvergarantia', 'finalizada')
-	  AND COALESCE(bgr."Cleaning_billed", FALSE) = FALSE
-	GROUP BY 1, 2, 3, 4, 5, 6
-	ORDER BY 1, 2, 3
+    WHERE bg."Final_cleaning" > 0
+      AND bgr."Check_out" <= CURRENT_DATE
+      AND bg."Status" IN ('inhouse', 'revision', 'devolvergarantia', 'finalizada')
+      AND COALESCE(bgr."Cleaning_billed", FALSE) = FALSE
+      GROUP BY 1, 2, 3, 4, 5, 6
+    ORDER BY 1, 2, 3
 
   LOOP
 
-	-- Booking id change
-	IF rec.id <> booking_id THEN
+  -- Booking id change
+  IF rec.id <> booking_id THEN
 
       -- Issue invoice
       IF invoice_id <> 0 THEN
@@ -53,9 +53,9 @@ BEGIN
       RETURNING id INTO invoice_id;
       RAISE NOTICE 'INSERT BILL % % %', rec.id, rec."Check_out", invoice_id;
 
-	END IF;
+  END IF;
 
-	-- Insert line
+  -- Insert line
     INSERT INTO "Billing"."Invoice_line" 
       ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
     VALUES
@@ -73,8 +73,8 @@ BEGIN
       AND r."Flat_id" = rec."Flat_id"
       AND COALESCE(bgr."Cleaning_billed", FALSE) = FALSE;
 
-	-- Next record
-	booking_id := rec.id;
+  -- Next record
+  booking_id := rec.id;
 
   END LOOP;
 
