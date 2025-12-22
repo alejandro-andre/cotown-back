@@ -37,7 +37,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Booking"."Booking_group_rooms" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Rooms" r on r.id = b.id 
-WHERE bp."Rent_date" >= '2024-01-01'
+WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" <> 'cancelada'
 )  
@@ -84,7 +84,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Booking"."Booking_group_rooms" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Rooms" r on r.id = b.id 
-WHERE bp."Rent_date" >= '2024-01-01'
+WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" <> 'cancelada'
 );

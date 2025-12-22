@@ -35,7 +35,7 @@ FROM "Booking"."Booking_price" bp
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
-WHERE bp."Rent_date" >= '2024-01-01'
+WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" IN ('confirmada', 'firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
 
@@ -81,7 +81,7 @@ FROM "Booking"."Booking_price" bp
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
-WHERE bp."Rent_date" >= '2024-01-01'
+WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" IN ('confirmada', 'firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
   AND bp."Services" > 0
@@ -94,7 +94,7 @@ SELECT
   bs."Booking_id" AS "doc_id",
   '-' AS "doc_type",
   'C' || bs."Booking_id"::text AS "booking",
-  bs."Billing_date_from" AS "date",
+  GREATEST(CURRENT_DATE, bs."Billing_date_from") AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
   r."Code" AS "resource",
@@ -120,7 +120,7 @@ FROM "Booking"."Booking_service" bs
   INNER JOIN "Billing"."Product" pr ON pr.id = bs."Product_id" 
   INNER JOIN "Billing"."Tax" t ON t.id = bs."Tax_id"
 WHERE bs."Invoice_services_id" IS NULL 
-  AND bs."Billing_date_from" IS NOT NULL 
+  AND bs."Billing_date_from" > CURRENT_DATE
   AND bs."Extra_type" <> 'recurrente'
   AND bs."Amount" > 0
   AND b."Status" IN ('confirmada', 'firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
@@ -160,7 +160,7 @@ FROM "Booking"."Booking_service" bs
   JOIN "Billing"."Tax" t ON t.id = bs."Tax_id"
   JOIN LATERAL (
     SELECT generate_series(
-      date_trunc('month', bs."Billing_date_from"),
+      date_trunc('month', GREATEST(CURRENT_DATE, bs."Billing_date_from")),
       date_trunc('month', bs."Billing_date_to"),
       interval '1 month'
     ) AS dt
