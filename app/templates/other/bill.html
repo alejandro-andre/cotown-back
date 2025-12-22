@@ -73,7 +73,7 @@ p { margin: 0.3em; }
           <p>EDIFICIO: {{Building_code}}</p>
           {% endif %}
           {% if Invoice_comment %}
-          <p>{{Invoice_comment}}</p>
+          <p>{{ Invoice_comment | replace('\r\n', '<br>') | replace('\n', '<br>') | safe }}</p>
           {% endif %}
         </td>
       </tr>
