@@ -56,10 +56,26 @@ def income_forecast_calc(dbClient):
   # Calculate amounts
   df['date'] = pd.to_datetime(df['date'], errors='coerce')
   df['days_in_month']  = df['date'].dt.days_in_month.fillna(0).astype(int)
-  df['Rent_short']     = df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_short'].astype(float)  * df['Pct_short'].astype(float)  * (100.0 - df['Discount'].astype(float)) / 1000000
-  df['Rent_medium']    = df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_medium'].astype(float) * df['Pct_medium'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1000000
-  df['Rent_long']      = df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_long'].astype(float)   * df['Pct_long'].astype(float)   * (100.0 - df['Discount'].astype(float)) / 1000000
-  df['Rent_group']     = df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_group'].astype(float)  * df['Pct_group'].astype(float)  * (100.0 - df['Discount'].astype(float)) / 1000000
+  df['Rent_short'] = np.where(
+    df['type'] == 3, 
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_short'].astype(float) * df['Pct_short'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1100000,
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_short'].astype(float) * df['Pct_short'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1000000
+  )
+  df['Rent_medium'] = np.where(
+    df['type'] == 3, 
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_medium'].astype(float) * df['Pct_medium'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1100000,
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_medium'].astype(float) * df['Pct_medium'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1000000
+  )
+  df['Rent_long'] = np.where(
+    df['type'] == 3, 
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_long'].astype(float) * df['Pct_long'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1100000,
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_long'].astype(float) * df['Pct_long'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1000000
+  )
+  df['Rent_group'] = np.where(
+    df['type'] == 3, 
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_group'].astype(float) * df['Pct_group'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1100000,
+    df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_group'].astype(float) * df['Pct_group'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1000000
+  )
   df['Management_fee'] = np.where(
     df['type'] == 3, 
     df['Management_fee'].astype(float) * (df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 110.0,
@@ -159,7 +175,7 @@ def income_stabilised_calc(dbClient):
   # Prices
   sql = f'''
     SELECT 
-      pd."Year" AS "year", b."Code" AS "building", rft."Code" AS "flat_type", rpt."Code" AS "place_type", 
+      pd."Year" AS "year", b."Code" AS "building", rft."Code" AS "flat_type", rpt."Code" AS "place_type", b."Building_type_id" AS "building_type",
       ROUND(AVG(COALESCE(pr."Multiplier", 1) * pd."Rent_long"), 2) AS "long", 
       ROUND(AVG(COALESCE(pr."Multiplier", 1) * pd."Rent_medium"), 2) AS "medium", 
       ROUND(AVG(COALESCE(pr."Multiplier", 1) * pd."Rent_short"), 2) AS "short", 
@@ -170,7 +186,7 @@ def income_stabilised_calc(dbClient):
       LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = pd."Place_type_id"
       LEFT JOIN "Resource"."Resource" r ON (b.id = r."Building_id" AND rft.id = r."Flat_type_id" AND rpt.id = r."Place_type_id")
       LEFT JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id"
-    GROUP BY 1, 2, 3, 4
+    GROUP BY 1, 2, 3, 4, 5
     ORDER BY 1, 2
   '''
   try:
@@ -213,7 +229,6 @@ def income_stabilised_calc(dbClient):
   )
 
   # Calcs
-  df_ina.fillna(0)
   df_ina['product'] = 'Monthly rent'
   df_ina['stay_length'] = ''
 
@@ -231,11 +246,19 @@ def income_stabilised_calc(dbClient):
 
   # Amounts
   df_ina['data_type'] = 'Stabilised Available'
-  df_ina['amount'] = df_ina['beds'].astype(float) * df_ina['occupancy'].astype(float) * (df_ina['pct_long'] * df_ina['long'] + df_ina['pct_medium'] * df_ina['medium'] + df_ina['pct_short'] * df_ina['short'] + df_ina['pct_group'] * df_ina['group']).astype(float) / 10000
+  df_ina['amount'] = np.where(
+    df_ina['building_type'] == 3,
+    df_ina['beds'].astype(float) * df_ina['occupancy'].astype(float) * (df_ina['pct_long'] * df_ina['long'] + df_ina['pct_medium'] * df_ina['medium'] + df_ina['pct_short'] * df_ina['short'] + df_ina['pct_group'] * df_ina['group']).astype(float) / 11000,
+    df_ina['beds'].astype(float) * df_ina['occupancy'].astype(float) * (df_ina['pct_long'] * df_ina['long'] + df_ina['pct_medium'] * df_ina['medium'] + df_ina['pct_short'] * df_ina['short'] + df_ina['pct_group'] * df_ina['group']).astype(float) / 10000
+  )
   df_ina['rate'] = df_ina['amount']
   df_ina = df_ina[df_ina['amount'].notna() & (df_ina['amount'] != 0)]
   df_inc['data_type'] = 'Stabilised Convertible'
-  df_inc['amount'] = df_inc['beds_cnv'].astype(float) * df_inc['occupancy'].astype(float) * (df_inc['pct_long'] * df_inc['long'] + df_inc['pct_medium'] * df_inc['medium'] + df_inc['pct_short'] * df_inc['short'] + df_inc['pct_group'] * df_inc['group']).astype(float) / 10000
+  df_inc['amount'] = np.where(
+    df_inc['building_type'] == 3,
+    df_inc['beds_cnv'].astype(float) * df_inc['occupancy'].astype(float) * (df_inc['pct_long'] * df_inc['long'] + df_inc['pct_medium'] * df_inc['medium'] + df_inc['pct_short'] * df_inc['short'] + df_inc['pct_group'] * df_inc['group']).astype(float) / 11000,
+    df_inc['beds_cnv'].astype(float) * df_inc['occupancy'].astype(float) * (df_inc['pct_long'] * df_inc['long'] + df_inc['pct_medium'] * df_inc['medium'] + df_inc['pct_short'] * df_inc['short'] + df_inc['pct_group'] * df_inc['group']).astype(float) / 10000
+  )
   df_inc['rate'] = df_inc['amount']
   df_inc = df_inc[df_inc['amount'].notna() & (df_inc['amount'] != 0)]
 
