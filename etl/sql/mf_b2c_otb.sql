@@ -8,6 +8,7 @@ SELECT
   b."Customer_id" AS "customer",
   r."Code" AS "resource",
   CASE
+    WHEN b."Master_id" IS NOT NULL THEN 'GROUP'
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
     ELSE 'LONG'

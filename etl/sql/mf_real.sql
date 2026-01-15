@@ -11,6 +11,7 @@ SELECT
   il."Amount" / (1 + t."Value" / 100) * COALESCE(r."Management_fee", 0) / 100 AS "amount",
   0 AS "rate",
   CASE
+    WHEN b."Master_id" IS NOT NULL THEN 'GROUP'
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
     WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
     ELSE 'LONG'
