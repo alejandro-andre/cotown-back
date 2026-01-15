@@ -29,9 +29,9 @@ BEGIN
     RETURN NEW;
   END IF;
  
-  -- Ignora los estados que no bloquean
+  -- Ignora los estados que no bloquean o las dependientes de una B2B master
   -- WARNING: Las canceladas no bloquean, pero desaparecen del planning...
-  IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'cancelada', 'caducada') THEN
+  IF NEW."Master_id" IS NOT NULL OR NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'cancelada', 'caducada') THEN
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
