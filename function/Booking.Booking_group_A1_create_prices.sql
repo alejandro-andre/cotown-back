@@ -7,6 +7,11 @@ DECLARE
 
 BEGIN
 
+  -- Only calc if not master
+  IF NEW."Master" THEN
+    RETURN NEW;
+  END IF;
+
   -- Only calc if not yet confirmed or no calculated yet
   SELECT COUNT(*) 
   INTO num
