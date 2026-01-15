@@ -46,7 +46,7 @@ BEGIN
 
     -- Enviar correo
     IF rec."Send_IPC" THEN
-      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (rec."Customer_id", 'ipc', rec.id);
+      INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id", "Cc") VALUES (rec."Customer_id", 'ipc', rec.id, 'info@vandor.es');
     END IF;
 
     -- Siguiente
