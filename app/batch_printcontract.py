@@ -68,6 +68,7 @@ def main():
           AND: [
             { Status: { IN: [firmacontrato, contrato, checkinconfirmado, checkin, inhouse] } },
             { Date_from: { GE: "''' + min_date + '''"} }
+            { Master_id: { IS_NULL: true } }
             { Contract_rent: { IS_NULL: true } }
           ]
         }
