@@ -1,0 +1,1 @@
+UPDATE "Admin"."Param" SET "Value" = TO_CHAR(NOW(), 'DD/MM/YYYY HH24:MI') WHERE "Name" = 'COPY_STABILISED';

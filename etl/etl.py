@@ -64,7 +64,7 @@ def dbConnect():
     sshuser=settings.get('SSHUSER', None),
     sshpassword=settings.get('SSHPASS', None),
     sshprivatekey=settings.get('SSHPKEY', None),
-    readonly=True
+    readonly=False
   )
   dbOrigin.connect()
 
@@ -100,6 +100,25 @@ def main(interfaces):
   except Exception as e:
     logger.error(e)
     return
+
+  # ------------------------------------
+  # Copy stabilised param
+  # ------------------------------------
+
+  copied = None
+  try:
+    con = dbOrigin.getconn()
+    cur = dbOrigin.execute(con, 'SELECT "Value" FROM "Admin"."Param" WHERE "Name" = \'COPY_STABILISED\';')
+    copied = cur.fetchall()[0][0]
+    cur.close()
+    dbOrigin.putconn(con)
+    logger.info('Copying stabilised param: {}'.format(copied))
+  except Exception as e:
+    logger.error(e)
+  if not copied:
+    # TO DO
+    execute(dbOrigin, '_update_copy')
+
 
   # ------------------------------------
   # Init destination
@@ -163,8 +182,8 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'booking', 'booking')
     load(dbOrigin, dbDestination, 'marketplace', 'marketplace')
 
-  # Forecast
-  # TO BE REMOVED
+  # Forecast 2024
+  # TO BE REMOVED?
   if 'income' in interfaces or 'occupancy' in interfaces:
     forecast(apiClient)
 
@@ -174,10 +193,6 @@ def main(interfaces):
     income_forecast(dbOrigin)
     income_stabilised(dbOrigin)
     execute(dbDestination, '_clear_income')
-    load(dbOrigin, dbDestination, 'income', 'income_budget')
-    load(dbOrigin, dbDestination, 'income', 'income_forecast_xls')
-    load(dbOrigin, dbDestination, 'income', 'income_forecast')
-    load(dbOrigin, dbDestination, 'income', 'income_stabilised')
     load(dbOrigin, dbDestination, 'income', 'income_b2b_real')
     load(dbOrigin, dbDestination, 'income', 'income_b2b_otb')
     load(dbOrigin, dbDestination, 'income', 'income_b2c_real')
@@ -187,6 +202,11 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'income', 'mf_real')
     load(dbOrigin, dbDestination, 'income', 'mf_b2c_otb')
     load(dbOrigin, dbDestination, 'income', 'mf_b2b_otb')
+    load(dbOrigin, dbDestination, 'income', 'income_budget')
+    load(dbOrigin, dbDestination, 'income', 'income_forecast_xls')
+    load(dbOrigin, dbDestination, 'income', 'income_forecast')
+    load(dbOrigin, dbDestination, 'income', 'income_stabilised')
+    load(dbOrigin, dbDestination, 'income', 'income_business_plan')
 
   # Beds
   if 'beds' in interfaces:
@@ -196,6 +216,7 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'beds', 'beds_real')
     load(dbOrigin, dbDestination, 'beds', 'beds_forecast_xls')
     load(dbOrigin, dbDestination, 'beds', 'beds_forecast')
+    load(dbOrigin, dbDestination, 'beds', 'beds_business_plan')
 
   # Occupancy
   if 'occupancy' in interfaces:
@@ -207,6 +228,7 @@ def main(interfaces):
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast_xls')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_forecast')
     load(dbOrigin, dbDestination, 'occupancy', 'occupancy_stabilised')
+    load(dbOrigin, dbDestination, 'occupancy', 'occupancy_business_plan')
 
   # History
   if 'history' in interfaces:
