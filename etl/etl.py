@@ -11,6 +11,7 @@
 # System imports
 import os
 import argparse
+import subprocess
 from datetime import datetime, timedelta
 
 # Cotown includes
@@ -100,24 +101,6 @@ def main(interfaces):
   except Exception as e:
     logger.error(e)
     return
-
-  # ------------------------------------
-  # Copy stabilised param
-  # ------------------------------------
-
-  copied = None
-  try:
-    con = dbOrigin.getconn()
-    cur = dbOrigin.execute(con, 'SELECT "Value" FROM "Admin"."Param" WHERE "Name" = \'COPY_STABILISED\';')
-    copied = cur.fetchall()[0][0]
-    cur.close()
-    dbOrigin.putconn(con)
-    logger.info('Copying stabilised param: {}'.format(copied))
-  except Exception as e:
-    logger.error(e)
-  if not copied:
-    # TO DO
-    execute(dbOrigin, '_update_copy')
 
 
   # ------------------------------------
@@ -235,6 +218,27 @@ def main(interfaces):
     history(dbOrigin)
     execute(dbDestination, '_clear_history')
     load(dbOrigin, dbDestination, 'resource_history', 'history_real')
+
+  # ------------------------------------
+  # Copy stabilised
+  # ------------------------------------
+
+  copied = None
+  try:
+    con = dbOrigin.getconn()
+    cur = dbOrigin.execute(con, 'SELECT "Value" FROM "Admin"."Param" WHERE "Name" = \'COPY_STABILISED\';')
+    copied = cur.fetchall()[0][0]
+    cur.close()
+    dbOrigin.putconn(con)
+    logger.info('Copying stabilised param: {}'.format(copied))
+    if not copied:
+      result = subprocess.run(["bash", "copy.sh"], capture_output=True, text=True)
+      logger.info(result.stdout)
+      logger.info(result.stderr)
+      logger.info(result.returncode)
+      execute(dbOrigin, '_update_copy')
+  except Exception as e:
+    logger.error(e)
 
   # Disconnect
   dbDestination.disconnect()
