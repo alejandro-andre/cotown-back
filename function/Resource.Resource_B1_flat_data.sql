@@ -23,17 +23,27 @@ BEGIN
       "Service_id" = NEW."Service_id",
       "Billing_type" = NEW."Billing_type",
       "Sale_type" = NEW."Sale_type",
+      "SAP_code" = NEW."SAP_code",
       "Management_fee" = NEW."Management_fee",
-      "SAP_code" = NEW."SAP_code"
-    WHERE "Building_id" <> NEW."Building_id"
-      AND "Owner_id" <> NEW."Owner_id"
-      AND "Service_id" <> NEW."Service_id"
-      AND "Management_fee" <> NEW."Management_fee"
-      AND "SAP_code" <> NEW."SAP_code"
-      AND "Billing_type" IS NULL
-      AND "Sale_type" IS NULL
-      AND "Flat_id" = NEW.id
-      AND id <> NEW.id;
+      "Management_fee_no_cleaning" = NEW."Management_fee_no_cleaning",
+      "Management_fee_weekly" = NEW."Management_fee_weekly",
+      "Management_fee_biweekly" = NEW."Management_fee_biweekly",
+      "Management_fee_monthly" = NEW."Management_fee_monthly"
+    WHERE "Flat_id" = NEW.id
+      AND id <> NEW.id
+      AND (
+        "Building_id" <> NEW."Building_id" OR 
+        "Owner_id" <> NEW."Owner_id" OR 
+        "Service_id" <> NEW."Service_id" OR
+        "Billing_type" IS NULL OR
+        "Sale_type" IS NULL OR
+        "SAP_code" <> NEW."SAP_code" OR
+        "Management_fee" <> NEW."Management_fee" OR
+        "Management_fee_no_cleaning" <> NEW."Management_fee_no_cleaning" OR
+        "Management_fee_weekly" <> NEW."Management_fee_weekly" OR
+        "Management_fee_biweekly" <> NEW."Management_fee_biweekly" OR
+        "Management_fee_monthly" <> NEW."Management_fee_monthly"
+      );
     EXECUTE 'SET ROLE "' || curr_user || '"';
     RETURN NEW;
   END IF;
