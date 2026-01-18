@@ -40,7 +40,13 @@ SELECT
   END AS "stay_length",
   COALESCE(t."Value", 0) / 100 AS "tax",
   COALESCE(b."Booking_fee_actual", 0) AS "booking_fee",
-  r."Management_fee" / 100 AS "management_fee"
+  CASE 
+    WHEN b."Cleaning_freq" = 'no' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'semanal' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee" / 100 
+    ELSE r."Management_fee" / 100 
+  END AS "Management_fee"
 FROM "Booking"."Booking" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
   LEFT JOIN "Booking"."Customer_reason" cr ON cr.id = b."Reason_id"

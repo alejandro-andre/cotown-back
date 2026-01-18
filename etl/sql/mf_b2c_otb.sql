@@ -17,7 +17,15 @@ SELECT
   CASE 
   	WHEN bu."Building_type_id" = 3 THEN ((bp."Rent" + COALESCE(bp."Rent_discount", 0)) / 1.1)
   	ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
-  END * COALESCE(r."Management_fee", 0) / 100 AS "amount",
+  END 
+  *
+  CASE 
+    WHEN b."Cleaning_freq" = 'no' THEN r."Management_fee_no_cleaning" / 100 
+    WHEN b."Cleaning_freq" = 'semanal' THEN r."Management_fee_weekly" / 100 
+    WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly" / 100 
+    WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee_monthly" / 100 
+    ELSE r."Management_fee" / 100 
+  END AS "amount",
   0 AS "rate",
   NULL AS "price",
   --'B2C' AS "income_type",

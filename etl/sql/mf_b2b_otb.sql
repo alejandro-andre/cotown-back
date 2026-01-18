@@ -1,6 +1,8 @@
 WITH 
 "Rooms" AS (
-	SELECT bgr."Booking_id" AS "id", r."Owner_id", r."Service_id", p."Document", (r."Code"), r."Management_fee", bgr.id AS "rid"
+	SELECT bgr."Booking_id" AS "id", r."Owner_id", r."Service_id", p."Document", (r."Code"), 
+  r."Management_fee",  r."Management_fee_no_cleaning", r."Management_fee_weekly", r."Management_fee_biweekly", r."Management_fee_monthly", 
+  bgr.id AS "rid"
 	FROM "Booking"."Booking_group_rooms" bgr 
     INNER JOIN "Resource"."Resource" r ON r.id = bgr."Resource_id"
     INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
@@ -19,7 +21,15 @@ SELECT
   CASE 
   	WHEN bu."Building_type_id" = 3 THEN bp."Rent" / 1.1
   	ELSE bp."Rent"
-  END * COALESCE(r."Management_fee", 0) / 100 AS "amount",
+  END 
+  * 
+  CASE 
+    WHEN b."Cleaning_freq" = 'no' THEN r."Management_fee_no_cleaning" / 100 
+    WHEN b."Cleaning_freq" = 'semanal' THEN r."Management_fee_weekly" / 100 
+    WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly" / 100 
+    WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee_monthly" / 100 
+    ELSE r."Management_fee" / 100 
+  END AS "amount",
   0 AS "rate",
   NULL AS "price",
   --'B2B' AS "income_type",

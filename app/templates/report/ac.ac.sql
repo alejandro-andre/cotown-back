@@ -48,13 +48,22 @@ FROM "Booking"."Booking" b
   	SELECT 
   	  bp."Booking_id", 
   	  SUM(bp."Rent") AS "Total_rent", 
-  	  SUM(bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * bu."Management_fee" / 100) AS "Management_fee", 
+      SUM(
+		CASE 
+        	WHEN b."Cleaning_freq" = 'no' THEN bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * r."Management_fee" / 100
+        	WHEN b."Cleaning_freq" = 'semanal' THEN bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * r."Management_fee_weekly" / 100
+        	WHEN b."Cleaning_freq" = 'quincenal' THEN bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * r."Management_fee_biweekly" / 100
+        	WHEN b."Cleaning_freq" = 'mensual' THEN bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * r."Management_fee_monthly" / 100
+        	ELSE bp."Rent" / (1 + COALESCE(t."Value", 0) / 100) * r."Management_fee" / 100
+      	END
+      ) AS "Management_fee",
   	  SUM(bp."Services") AS "Total_services"
   	FROM "Booking"."Booking_price" bp
   	  LEFT JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
   	  LEFT JOIN "Building"."Building" bu ON bu.id = b."Building_id"
   	  LEFT JOIN "Building"."Building_type" bt ON bt.id = bu."Building_type_id" 
   	  LEFT JOIN "Billing"."Tax" t ON t.id = bt."Tax_id" 
+      LEFT JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   	WHERE "Status" NOT IN ('solicitud','alternativas','alternativaspagada','descartada','descartadapagada','cancelada')
   	GROUP BY 1
   	) sums ON sums."Booking_id" = b.id

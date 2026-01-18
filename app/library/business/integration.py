@@ -368,7 +368,7 @@ def q_int_management_fees(dbClient, fdesde, codes):
         bu."Code" AS "resource",
         il."Amount" AS "gross",
         il."Amount" / (1 + t."Value" / 100) AS "net",
-        il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "fee"
+        il."Amount" / (1 + t."Value" / 100) * COALESCE(il."Management_fee", 0) / 100 AS "fee"
       FROM "Billing"."Invoice_line" il
         INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
@@ -384,7 +384,7 @@ def q_int_management_fees(dbClient, fdesde, codes):
         bu."Code" AS "resource",
         il."Amount" AS "gross",
         il."Amount" / (1 + t."Value" / 100) AS "net",
-        il."Amount" / (1 + t."Value" / 100) * r."Management_fee" / 100 AS "fee"
+        il."Amount" / (1 + t."Value" / 100) * COALESCE(il."Management_fee", 0) / 100 AS "fee"
       FROM "Billing"."Invoice_line" il
         INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
         INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  

@@ -63,7 +63,7 @@ UNION
 
 SELECT DISTINCT
   SUBSTRING(r."Code", 1, 6) AS "id",
-  'edificio' AS "type",
+  'building' AS "type",
   p."Document" AS "owner", 
   l."Name_en" AS "location", 
   s."Name" AS "segment",
@@ -74,8 +74,9 @@ SELECT DISTINCT
   '' AS "billing_type",
   b."Estabilised_date" AS "estabilised_date",
   0 AS "area",
-  0 AS "rooms",
-  0 AS "beds"
+  0 AS "area_woc",
+  0 AS "beds",
+  0 AS "rooms"
 FROM "Resource"."Resource" r 
 INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
 INNER JOIN "Building"."Building" b ON b.id = r."Building_id" 

@@ -42,7 +42,13 @@ SELECT
   pc."Amount",
   (SELECT SUM(bp."Rent_total")+SUM(bp."Services_total") AS "Rent" FROM "Booking"."Booking_price" bp WHERE bp."Booking_id" = b.id) AS "Rent",
   COALESCE(t."Value", 0) / 100 AS "Tax",
-  r."Management_fee" / 100 AS "Management_fee",
+  CASE 
+    WHEN b."Cleaning_freq" = 'no' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'semanal' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee" / 100 
+    ELSE r."Management_fee" / 100 
+  END AS "Management_fee",
   b."Commision_bill_status"
 FROM "Booking"."Booking" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id" 
@@ -83,7 +89,13 @@ SELECT
     WHEN b."Tax" THEN 0
     ELSE 0.21
   END AS "Tax",
-  r."Management_fee" / 100 AS "Management_fee",
+  CASE 
+    WHEN b."Cleaning_freq" = 'no' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'semanal' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee" / 100 
+    WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee" / 100 
+    ELSE r."Management_fee" / 100 
+  END AS "Management_fee",
   '' AS "Commision_bill_status"
 FROM "Booking"."Booking_group" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Payer_id" 
