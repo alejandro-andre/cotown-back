@@ -49,7 +49,7 @@ BEGIN
       INSERT INTO "Billing"."Invoice"
         ("Bill_type", "Provider_id", "Customer_id", "Booking_group_id", "Payment_method_id", "Payment_id", "Concept")
       VALUES
-        ('factura', 1, rec."Payer_id", rec.id, COALESCE(rec."Payment_method_id", 2), NULL, 'Limpieza final plazas')
+        ('factura', 1, rec."Payer_id", rec.id, COALESCE(rec."Payment_method_id", 2), NULL, 'Limpieza de salida plazas')
       RETURNING id INTO invoice_id;
       RAISE NOTICE 'INSERT BILL % % %', rec.id, rec."Check_out", invoice_id;
 
@@ -59,7 +59,7 @@ BEGIN
     INSERT INTO "Billing"."Invoice_line" 
       ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept", "Resource_id")
     VALUES
-      (invoice_id, rec.amount, 19, 1, 'Limpieza final ' || rec."Code" || ' - ' || rec.room_count || ' plazas', rec."Flat_id");
+      (invoice_id, rec.amount, 19, 1, 'Limpieza de salida ' || rec."Code" || ' - ' || rec.room_count || ' plazas', rec."Flat_id");
     RAISE NOTICE ' LINE % % %', rec."Flat_id", rec.room_count, rec.amount;
 
     -- Update cleaning billed
