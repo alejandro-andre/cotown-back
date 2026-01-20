@@ -8,6 +8,7 @@ DECLARE
   booking_id INTEGER;
   booking_group_id INTEGER;
   resource_id INTEGER;
+  provider_id INTEGER;
   concept VARCHAR;
 
 BEGIN
@@ -20,8 +21,8 @@ BEGIN
   END IF;
 
   -- Get invoice info
-  SELECT "Issued", "Booking_id", "Booking_group_id" 
-  INTO issued, booking_id, booking_group_id 
+  SELECT "Issued", "Provider_id", "Booking_id", "Booking_group_id" 
+  INTO issued, provider_id, booking_id, booking_group_id 
   FROM "Billing"."Invoice" 
   WHERE id = invoice_id;
 
@@ -56,6 +57,22 @@ BEGIN
     ELSE
       RAISE EXCEPTION '!!!Resource (flat) is mandatory!!!El recurso (piso) es obligatorio!!!';
     END IF;
+  END IF;
+
+  -- Management fee (según frecuencia de limpieza)
+  IF provider_id <> 1 AND NEW."Management_fee" IS NULL THEN
+    SELECT
+      CASE
+        WHEN b."Cleaning_freq" = 'no'        THEN r."Management_fee_no_cleaning"
+        WHEN b."Cleaning_freq" = 'semanal'   THEN r."Management_fee_weekly"
+        WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly"
+        WHEN b."Cleaning_freq" = 'mensual'   THEN r."Management_fee_monthly"
+        ELSE r."Management_fee"
+      END
+    INTO NEW."Management_fee"
+    FROM "Booking"."Booking" b
+    JOIN "Resource"."Resource" r ON r.id = NEW."Resource_id"
+    WHERE b.id = booking_id;
   END IF;
 
   -- Tax

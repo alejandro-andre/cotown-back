@@ -8,7 +8,7 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   'Management fee' AS "product",
-  il."Amount" / (1 + t."Value" / 100) * il."Management_fee" / 100 AS "amount",
+  ROUND(COALESCE(il."Amount", 0) / (1 + COALESCE(t."Value", 0) / 100) * COALESCE(il."Management_fee", 0) / 100, 4) AS "amount",
   0 AS "rate",
   CASE
     WHEN b."Master_id" IS NOT NULL THEN 'GROUP'
@@ -44,7 +44,7 @@ SELECT
   i."Customer_id" AS "customer",
   r."Code" AS "resource",
   'Management fee' AS "product",
-  il."Amount" / (1 + t."Value" / 100) * il."Management_fee" / 100 AS "amount",
+  ROUND(COALESCE(il."Amount", 0) / (1 + COALESCE(t."Value", 0) / 100) * COALESCE(il."Management_fee", 0) / 100, 4) AS "amount",
   0 AS "rate",
   'GROUP' AS "stay_length",
   NULL AS "price",

@@ -14,18 +14,20 @@ SELECT
     ELSE 'LONG'
   END AS "stay_length",
   'Management fee' AS "product",
-  CASE 
-  	WHEN bu."Building_type_id" = 3 THEN ((bp."Rent" + COALESCE(bp."Rent_discount", 0)) / 1.1)
-  	ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
-  END 
-  *
-  CASE 
-    WHEN b."Cleaning_freq" = 'no' THEN r."Management_fee_no_cleaning" / 100 
-    WHEN b."Cleaning_freq" = 'semanal' THEN r."Management_fee_weekly" / 100 
-    WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly" / 100 
-    WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee_monthly" / 100 
-    ELSE r."Management_fee" / 100 
-  END AS "amount",
+  ROUND(
+    CASE 
+  	  WHEN bu."Building_type_id" = 3 THEN ((COALESCE(bp."Rent", 0) + COALESCE(bp."Rent_discount", 0)) / 1.1)
+  	  ELSE bp."Rent" + COALESCE(bp."Rent_discount", 0)
+    END 
+    *
+    CASE 
+      WHEN b."Cleaning_freq" = 'no' THEN COALESCE(r."Management_fee_no_cleaning", 0) / 100 
+      WHEN b."Cleaning_freq" = 'semanal' THEN COALESCE(r."Management_fee_weekly", 0) / 100 
+      WHEN b."Cleaning_freq" = 'quincenal' THEN COALESCE(r."Management_fee_biweekly", 0) / 100 
+      WHEN b."Cleaning_freq" = 'mensual' THEN COALESCE(r."Management_fee_monthly", 0) / 100 
+      ELSE COALESCE(r."Management_fee", 0) / 100 
+    END, 4
+  ) AS "amount",
   0 AS "rate",
   NULL AS "price",
   --'B2C' AS "income_type",
