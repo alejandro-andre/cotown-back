@@ -230,6 +230,9 @@ def beds_real_calc(dbClient):
   df[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df.apply(count_real, axis=1, result_type='expand')
   df['data_type'] = 'Real'
 
+  # Remove non existing beds
+  df = df[df['beds_pot'] != 0]
+
   # Index
   df = df.reset_index(drop=True)
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
