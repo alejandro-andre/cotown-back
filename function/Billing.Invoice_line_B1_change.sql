@@ -61,18 +61,34 @@ BEGIN
 
   -- Management fee (según frecuencia de limpieza)
   IF provider_id <> 1 AND NEW."Management_fee" IS NULL THEN
-    SELECT
-      CASE
-        WHEN b."Cleaning_freq" = 'no'        THEN r."Management_fee_no_cleaning"
-        WHEN b."Cleaning_freq" = 'semanal'   THEN r."Management_fee_weekly"
-        WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly"
-        WHEN b."Cleaning_freq" = 'mensual'   THEN r."Management_fee_monthly"
-        ELSE r."Management_fee"
-      END
-    INTO NEW."Management_fee"
-    FROM "Booking"."Booking" b
-    JOIN "Resource"."Resource" r ON r.id = NEW."Resource_id"
-    WHERE b.id = booking_id;
+    IF booking_id IS NOT NULL THEN
+      SELECT
+        CASE
+          WHEN b."Cleaning_freq" = 'no'        THEN r."Management_fee_no_cleaning"
+          WHEN b."Cleaning_freq" = 'semanal'   THEN r."Management_fee_weekly"
+          WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly"
+          WHEN b."Cleaning_freq" = 'mensual'   THEN r."Management_fee_monthly"
+          ELSE r."Management_fee"
+        END
+      INTO NEW."Management_fee"
+      FROM "Booking"."Booking" b
+      JOIN "Resource"."Resource" r ON r.id = NEW."Resource_id"
+      WHERE b.id = booking_id;
+    END IF;
+    IF booking_group_id IS NOT NULL THEN
+      SELECT
+        CASE
+          WHEN b."Cleaning_freq" = 'no'        THEN r."Management_fee_no_cleaning"
+          WHEN b."Cleaning_freq" = 'semanal'   THEN r."Management_fee_weekly"
+          WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly"
+          WHEN b."Cleaning_freq" = 'mensual'   THEN r."Management_fee_monthly"
+          ELSE r."Management_fee"
+        END
+      INTO NEW."Management_fee"
+      FROM "Booking"."Booking_group" b
+      JOIN "Resource"."Resource" r ON r.id = NEW."Resource_id"
+      WHERE b.id = booking_group_id;
+    END IF;
   END IF;
 
   -- Tax
