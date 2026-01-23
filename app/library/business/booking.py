@@ -645,11 +645,14 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           CONCAT(r."Building_id", '_', SUBSTRING(rpt."Code", 1, 1)) as "id", COUNT(*) as "Qty"
         FROM
           "Resource"."Resource" r
+          INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+          INNER JOIN "Geo"."District" d ON d.id = b."District_id"
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE r."Sale_type" IN ('plazas', 'ambos')
           --AND rpt."Code" NOT LIKE 'DUI%%'
+          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND bd.id IS NULL
         GROUP BY 1  
         UNION ALL
@@ -657,10 +660,13 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           CONCAT(r."Building_id", '_F') as "id", COUNT(*) as "Qty"
         FROM
           "Resource"."Resource" r
+          INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+          INNER JOIN "Geo"."District" d ON d.id = b."District_id"
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE rpt."Code" IS NULL
+          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND r."Sale_type" IN ('completo', 'ambos')
           AND bd.id IS NULL
         GROUP BY 1
@@ -674,11 +680,14 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           CONCAT(rpt."Code", '_', rft."Code") AS "id", COUNT(*) AS "Qty"
         FROM
           "Resource"."Resource" r
+          INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+          INNER JOIN "Geo"."District" d ON d.id = b."District_id"
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE bd.id IS NULL 
           --AND rpt."Code" NOT LIKE 'DUI%%'
+          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND r."Building_id" = %s 
           AND r."Sale_type" IN ('plazas', 'ambos')
         GROUP BY 1
@@ -692,9 +701,12 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           rfst."Code" AS "id", COUNT(*) AS "Qty"
         FROM
           "Resource"."Resource" r
+          INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+          INNER JOIN "Geo"."District" d ON d.id = b."District_id"
           INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE bd.id IS NULL 
+          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND r."Building_id" = %s
           AND r."Sale_type" IN ('completo', 'ambos')
         GROUP BY 1
