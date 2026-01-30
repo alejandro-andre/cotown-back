@@ -241,8 +241,10 @@ def income_stabilised_calc(dbClient):
   df_ina['price']         = ''
   df_ina['discount_type'] = ''
 
-  # Duplicate DF
+  # Duplicate DFs
   df_inc = df_ina.copy()   
+  df_mpa = df_ina.copy()   
+  df_mpc = df_ina.copy()   
 
   # Amounts
   df_ina['data_type'] = 'Stabilised Available'
@@ -253,6 +255,7 @@ def income_stabilised_calc(dbClient):
   )
   df_ina['rate'] = df_ina['amount']
   df_ina = df_ina[df_ina['amount'].notna() & (df_ina['amount'] != 0)]
+
   df_inc['data_type'] = 'Stabilised Convertible'
   df_inc['amount'] = np.where(
     df_inc['building_type'] == 3,
@@ -262,15 +265,43 @@ def income_stabilised_calc(dbClient):
   df_inc['rate'] = df_inc['amount']
   df_inc = df_inc[df_inc['amount'].notna() & (df_inc['amount'] != 0)]
 
+  df_mpa['data_type'] = 'MPR Available'
+  df_mpa['amount'] = np.where(
+    df_mpa['building_type'] == 3,
+    df_mpa['beds'].astype(float) * (df_mpa['pct_long'] * df_mpa['long'] + df_mpa['pct_medium'] * df_mpa['medium'] + df_mpa['pct_short'] * df_mpa['short'] + df_ina['pct_group'] * df_ina['group']).astype(float) / 110,
+    df_mpa['beds'].astype(float) * (df_mpa['pct_long'] * df_mpa['long'] + df_mpa['pct_medium'] * df_mpa['medium'] + df_mpa['pct_short'] * df_mpa['short'] + df_mpa['pct_group'] * df_mpa['group']).astype(float) / 100
+  )
+  df_mpa['rate'] = df_mpa['amount']
+  df_mpa = df_mpa[df_mpa['amount'].notna() & (df_mpa['amount'] != 0)]
+
+  df_mpc['data_type'] = 'MPR Convertible'
+  df_mpc['amount'] = np.where(
+    df_mpc['building_type'] == 3,
+    df_mpc['beds_cnv'].astype(float) * (df_mpc['pct_long'] * df_mpc['long'] + df_mpc['pct_medium'] * df_mpc['medium'] + df_mpc['pct_short'] * df_mpc['short'] + df_mpc['pct_group'] * df_mpc['group']).astype(float) / 110,
+    df_mpc['beds_cnv'].astype(float) * (df_mpc['pct_long'] * df_mpc['long'] + df_mpc['pct_medium'] * df_mpc['medium'] + df_mpc['pct_short'] * df_mpc['short'] + df_mpc['pct_group'] * df_mpc['group']).astype(float) / 100
+  )
+  df_mpc['rate'] = df_mpc['amount']
+  df_mpc = df_mpc[df_mpc['amount'].notna() & (df_mpc['amount'] != 0)]
+
   # Indexes
   df_ina = df_ina.reset_index(drop=True)
   df_ina['id'] = (df_ina.index + 1).astype(str).str.zfill(6)
   df_ina['id'] = 'ISA' + df_ina['id'].astype(str)
+
   df_inc = df_inc.reset_index(drop=True)
   df_inc['id'] = (df_inc.index + 1).astype(str).str.zfill(6)
   df_inc['id'] = 'ISC' + df_inc['id'].astype(str)
+
+  df_mpa = df_mpa.reset_index(drop=True)
+  df_mpa['id'] = (df_mpa.index + 1).astype(str).str.zfill(6)
+  df_mpa['id'] = 'MPA' + df_mpa['id'].astype(str)
+
+  df_mpc = df_mpc.reset_index(drop=True)
+  df_mpc['id'] = (df_mpc.index + 1).astype(str).str.zfill(6)
+  df_mpc['id'] = 'MPC' + df_mpc['id'].astype(str)
+
   logger.info('- Income calculated')
-  return pd.concat([df_ina, df_inc], ignore_index=True)
+  return pd.concat([df_ina, df_inc, df_mpa, df_mpc], ignore_index=True)
 
 
 def income_stabilised(dbClient):
