@@ -2,6 +2,7 @@
 "Owner",
 "Income_date",
 "Booking_id",
+"Type",
 "Code",
 "Date_from",
 "Date_to",

@@ -12,7 +12,8 @@ SELECT
   i."Code" AS "Invoice",
   pd."Name" AS "Product",
   pdt."Name" AS "Product_type",
-  CASE WHEN pr."Provider_type_id" = 1 THEN il."Management_fee" / 100 ELSE NULL END AS "Management_fee"
+  CASE WHEN pr."Provider_type_id" = 1 THEN il."Management_fee" / 100 ELSE NULL END AS "Management_fee",
+  'B2C' AS "Type"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
@@ -39,7 +40,8 @@ SELECT
   i."Code" AS "Invoice",
   pd."Name" AS "Product",
   pdt."Name" AS "Product_type",
-  CASE WHEN pr."Provider_type_id" = 1 THEN il."Management_fee" / 100 ELSE NULL END AS "Management_fee"
+  CASE WHEN pr."Provider_type_id" = 1 THEN il."Management_fee" / 100 ELSE NULL END AS "Management_fee",
+  'B2B' AS "Type"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"  
