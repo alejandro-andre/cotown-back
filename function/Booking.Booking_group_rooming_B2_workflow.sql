@@ -38,7 +38,7 @@ BEGIN
     IF NEW."Check_out" <= CURRENT_DATE THEN
       status = 'checkout';
     ELSE
-      IF NOT NEW."Check_in_ok" OR bg_b2c THEN
+      IF NOT NEW."Check_in_ok" THEN
         status = 'checkin';
       END IF;
     END IF;
