@@ -35,6 +35,7 @@ PR_DEPOSIT = 2
 PR_RENT = 3
 PR_SERVICES = 4
 PR_CHECKIN = 10
+PR_CHECKOUT = 52
 
 VAT_21 = 1
 VAT_0  = 2
@@ -89,7 +90,7 @@ def bill_payments(dbClient, con):
     INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
     LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
     WHERE i.id IS NULL
-    AND ("Payment_date" IS NOT NULL OR "Payment_type" = 'checkin')
+    AND ("Payment_date" IS NOT NULL OR "Payment_type" IN ('checkin', 'checkout'))
     ORDER BY p."Booking_id"
     ''')
   data = cur.fetchall()
@@ -114,6 +115,8 @@ def bill_payments(dbClient, con):
         pid = PR_DEPOSIT
       if item['Payment_type'] == 'checkin':
         pid = PR_CHECKIN
+      if item['Payment_type'] == 'checkout':
+        pid = PR_CHECKOUT
 
       # Create invoice
       cur = dbClient.execute(con, 
@@ -124,11 +127,11 @@ def bill_payments(dbClient, con):
         RETURNING id
         ''',
         (
-          'recibo' if item['Payment_type'] not in ('booking','checkin') and (item['Payment_type'] == 'deposito' or item['Receipt']) else 'factura',
+          'recibo' if item['Payment_type'] not in ('booking','checkin','checkout') and (item['Payment_type'] == 'deposito' or item['Receipt']) else 'factura',
           False,
           False,
           datetime.now(),
-          ID_COTOWN if item['Payment_type'] in ('booking','checkin') else item['Owner_id'],
+          ID_COTOWN if item['Payment_type'] in ('booking','checkin','checkout') else item['Owner_id'],
           item['Customer_id'],
           item['Booking_id'],
           item['Payment_method_id'],
