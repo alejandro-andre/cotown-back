@@ -19,7 +19,11 @@ SELECT
     WHEN bo."Unlawful" AND bo."Bill_unlawful" THEN 'Yes'
     WHEN bo."Unlawful" AND NOT bo."Bill_unlawful" THEN 'No'
     ELSE ''
-  END AS "Bill_unlawful"
+  END AS "Bill_unlawful",
+  CASE
+    WHEN bo."IPC_apply" THEN 'Yes'
+    ELSE 'No'
+  END AS "IPC_apply"
 FROM "Booking"."Booking_other" bo 
   INNER JOIN "Resource"."Resource" r ON r.id = bo."Resource_id"
   INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id" 
