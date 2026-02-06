@@ -251,13 +251,14 @@ def download_nra(dbClient, variables=None):
         # Write CSV file
         cru = item['CRU']
         if cru and len(cru) == 14:
-          with open('download/' + cru + '.csv', 'a') as csv:
+          with open('download/n2/' + cru + '.csv', 'a') as csv:
             csv.write(line + '\n')
             #num += 1
 
     # Zip
     if num > 0:
       zip('n2.zip', 'download')
+      clear('download/n2')
       return 'n2.zip'
 
   # Error, return
