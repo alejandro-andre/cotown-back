@@ -70,7 +70,7 @@ def req_download(name):
       vars[item] = request.args[item]
 
   # Download zip
-  result = do_download(g.apiClient, name, vars)
+  result = do_download(g.apiClient, g.dbClient, name, vars)
   if result is None:
     abort(404)
 
