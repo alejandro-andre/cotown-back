@@ -203,8 +203,8 @@ def do_bill(apiClient, id, emails=[]):
           file=file,
           from_type='cotown'
         )
-      except:
-        pass
+      except Exception as error:
+        logger.error(error)
 
     # Email LAU bill
     if context.get('Send_bill') and context['Customer_email']:
@@ -218,8 +218,8 @@ def do_bill(apiClient, id, emails=[]):
           file=file,
           from_type='vandor'
         )
-      except:
-        pass
+      except Exception as error:
+        logger.error(error)
 
     # Update query
     query = '''

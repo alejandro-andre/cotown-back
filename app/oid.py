@@ -96,6 +96,6 @@ print(errors)
 #    con.commit()
 
 # End
-con.commit()
+#con.commit()
 dbClient.putconn(con)
 dbClient.disconnect()
