@@ -259,6 +259,7 @@ def download_nra(dbClient, variables=None):
     if num > 0:
       zip('n2.zip', 'download')
       clear('download/n2')
+      return
       return 'n2.zip'
 
   # Error, return
