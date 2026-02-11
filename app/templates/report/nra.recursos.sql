@@ -10,9 +10,9 @@ FROM "Resource"."Resource" r
   LEFT JOIN "Booking"."Booking" b ON r.id = b."Resource_id"
 WHERE b."Status" IS NULL 
   OR(
-  	b."Status" NOT IN ('cancelada')
+    b."Status" IN ('confirmada','firmacontrato','contrato','checkinconfirmado','checkin','inhouse','checkout','devolvergarantia','finalizada','revision')
     AND EXTRACT(YEAR FROM b."Date_from") <= %(year)s 
-	AND EXTRACT(YEAR FROM b."Date_to") >= %(year)s
+  	AND EXTRACT(YEAR FROM b."Date_to") >= %(year)s
   )
 GROUP BY 1, 2, 3
 ORDER BY 1

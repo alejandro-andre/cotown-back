@@ -15,7 +15,7 @@ SELECT
 FROM "Booking"."Booking" b 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   INNER JOIN "Booking"."Customer_reason" cr ON cr.id = b."Reason_id" 
-WHERE b."Status" NOT IN ('cancelada')
+WHERE b."Status" IN ('confirmada','firmacontrato','contrato','checkinconfirmado','checkin','inhouse','checkout','devolvergarantia','finalizada','revision')
   AND EXTRACT(YEAR FROM b."Date_from") <= %(year)s
   AND EXTRACT(YEAR FROM b."Date_to") >= %(year)s
 ORDER BY 3, 2, 1

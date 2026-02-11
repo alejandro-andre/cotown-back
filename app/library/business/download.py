@@ -47,6 +47,7 @@ def download_bills(apiClient, variables=None):
 
   # Auth
   logger.info('Downloading bills...')
+  clear('download')
  
   # Get records
   query = '''query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int) {
@@ -90,8 +91,6 @@ def download_bills(apiClient, variables=None):
   # Zip
   if num > 0:
     zip('facturas.zip', 'download')
-    clear('download/recibos')
-    clear('download/facturas')
     return 'facturas.zip'
 
 
@@ -195,6 +194,7 @@ def download_nra(dbClient, variables=None):
 
   # Auth
   logger.info('Downloading CSVs N2...')
+  clear('download')
 
   # SQL
   sql = '''
@@ -210,14 +210,14 @@ def download_nra(dbClient, variables=None):
         ELSE NULL
       END AS "Reason", 
       1 AS "Pax",
-      b."Date_from",
-      b."Date_to"
+      GREATEST(b."Date_from"::date, make_date(%s, 1, 1)) AS "Date_from",
+      LEAST(b."Date_to"::date, make_date(%s, 12, 31)) AS "Date_to"
     FROM "Booking"."Booking" b 
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
       INNER JOIN "Booking"."Customer_reason" cr ON cr.id = b."Reason_id" 
-    WHERE b."Status" NOT IN ('cancelada')
-      AND EXTRACT(YEAR FROM b."Date_from") <= %s 
-      AND EXTRACT(YEAR FROM b."Date_to") >= %s
+    WHERE b."Status" IN ('confirmada','firmacontrato','contrato','checkinconfirmado','checkin','inhouse','checkout','devolvergarantia','finalizada','revision')
+      AND b."Date_from"::date <= make_date(%s, 12, 31)
+      AND b."Date_to"::date   >= make_date(%s, 1, 1)
     ORDER BY 3, 2, 1
   '''
 
@@ -227,7 +227,7 @@ def download_nra(dbClient, variables=None):
     # Get data
     year = variables['year'] or 2025
     con = dbClient.getconn()
-    cur = dbClient.execute(con, sql, (year, year))
+    cur = dbClient.execute(con, sql, (year, year, year, year))
     data = cur.fetchall()
     cur.close()
 
@@ -253,13 +253,11 @@ def download_nra(dbClient, variables=None):
         if cru and len(cru) == 14:
           with open('download/n2/' + cru + '.csv', 'a') as csv:
             csv.write(line + '\n')
-            #num += 1
+            num += 1
 
     # Zip
     if num > 0:
       zip('n2.zip', 'download')
-      clear('download/n2')
-      return
       return 'n2.zip'
 
   # Error, return
