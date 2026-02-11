@@ -9,7 +9,8 @@ FROM "Booking"."Booking" b
   LEFT JOIN "Booking"."Customer_reason" cr ON cr.id = b."Reason_id"
   LEFT JOIN "Customer"."Customer_doc" cd ON cd."Customer_id" = b."Customer_id" AND (cd."Document").name IS NOT NULL
   LEFT JOIN "Customer"."Customer_doc_type" cdt ON cdt.id = cd."Customer_doc_type_id" AND cdt.id IN (6, 7, 11, 12)
-WHERE b."Date_from" < %(fhasta)s AND b."Date_to" >= %(fdesde)s
+WHERE b."Status" IN ('confirmada','firmacontrato','contrato','checkinconfirmado','checkin','inhouse','checkout','devolvergarantia','finalizada','revision')
+  AND b."Date_from" < %(fhasta)s AND b."Date_to" >= %(fdesde)s
 GROUP BY 1, 2, 3, 4, 5
 ORDER BY b.id
 ;
