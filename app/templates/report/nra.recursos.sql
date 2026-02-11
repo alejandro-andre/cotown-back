@@ -11,8 +11,8 @@ FROM "Resource"."Resource" r
 WHERE b."Status" IS NULL 
   OR(
     b."Status" IN ('confirmada','firmacontrato','contrato','checkinconfirmado','checkin','inhouse','checkout','devolvergarantia','finalizada','revision')
-    AND EXTRACT(YEAR FROM b."Date_from") <= %(year)s 
-  	AND EXTRACT(YEAR FROM b."Date_to") >= %(year)s
+    AND b."Date_from"::date <= make_date(%(year)s, 12, 31)
+    AND b."Date_to"::date   >= make_date(%(year)s, 1, 1)
   )
 GROUP BY 1, 2, 3
 ORDER BY 1
