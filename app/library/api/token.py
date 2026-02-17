@@ -28,6 +28,7 @@ def validate_token(token):
     # Get token
     if token is not None:
       g.apiClient.auth(token)
+      return 0
 
     # Debug / Remove in production
     logger.warning('Acceso sin token')
