@@ -10,7 +10,6 @@
 
 # System includes
 from flask import g
-from cachetools import TTLCache
 
 # Cotown includes - services
 from library.services.config import settings
@@ -21,41 +20,17 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
-# Cache
-# ###################################################
-
-cache = TTLCache(maxsize=100, ttl=60)
-
-
-# ###################################################
 # Validate token
 # ###################################################
 
 def validate_token(token):
 
-    # Check cache first
-    if token in cache:
-        return cache[token]
-
-    # Forbidden
-    result = 403
-
-    # Call API to check if token is valid
+    # Get token
     if token is not None:
-      try:
-        g.apiClient.auth(token)
-        data = g.apiClient.call('{ user: getCurrentUser { currentUser } }')
-        if data['user']['currentUser'] != 'anonymous':
-          result = 0
-      except:
-        pass
-      cache[token] = result
-      return result
+      g.apiClient.auth(token)
 
     # Debug / Remove in production
-    g.apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
     logger.warning('Acceso sin token')
-    result = 0
-
-    # Forbidden
-    return result
+    g.apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
+    return 0
+    #return 403
