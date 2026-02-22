@@ -289,6 +289,8 @@ query Booking_groupById ($id: Int!) {
     Booking_limit: Limit
     Booking_final_cleaning: Final_cleaning
     Booking_cleaning_freq: Cleaning_freq
+    Contract_rent: Contract_rent { oid }
+    Contract_services: Contract_services { oid }
     CustomerViaPayer_id {
       Customer_type: Type
       Id_typeViaId_type_id {
@@ -1009,9 +1011,13 @@ def send_group_contracts(apiClient, id):
 
     # Get contracts
     file_rent = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_rent')
-    file_svcs = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_services')
     file_r = io.BytesIO(file_rent.content) if file_rent.content else None
-    file_s = io.BytesIO(file_svcs.content) if file_svcs.content else None
+    file_s = None
+    if not context.get('Contract_services') == None:
+      logger.info('Contrato de servicios no encontrado')
+    else:
+      file_svcs = apiClient.getFile(id, 'Booking/Booking_group', 'Contract_services')
+      file_s = io.BytesIO(file_svcs.content) if file_svcs.content else None
 
     # Send contracts
     contracts = [

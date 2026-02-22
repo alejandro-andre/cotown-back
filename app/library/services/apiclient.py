@@ -3,7 +3,7 @@
 # ###################################################
 
 from gql import gql, Client
-from gql.transport.aiohttp import AIOHTTPTransport
+from gql.transport.requests import RequestsHTTPTransport
 import requests
 
 # Logging
@@ -26,7 +26,7 @@ class APIClient:
     self.headers = {}
 
     # Create GraphQL client
-    transport = AIOHTTPTransport(url=f'https://{server}/graphql', headers=self.headers)
+    transport = RequestsHTTPTransport(url=f"https://{server}/graphql", headers=self.headers, verify=True, retries=0, )
     self.client = Client(transport=transport, fetch_schema_from_transport=True)
 
 
