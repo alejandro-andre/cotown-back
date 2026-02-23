@@ -76,11 +76,8 @@ def income_forecast_calc(dbClient):
     df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_group'].astype(float) * df['Pct_group'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1100000,
     df['beds'].astype(float) * df['occupancy'].astype(float) * df['Rent_group'].astype(float) * df['Pct_group'].astype(float) * (100.0 - df['Discount'].astype(float)) / 1000000
   )
-  df['Management_fee'] = np.where(
-    df['type'] == 3, 
-    df['Management_fee'].astype(float) * (df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 110.0,
-    df['Management_fee'].astype(float) * (df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 100.0
-  )
+  df['Management_fee'].astype(float) * (df['Rent_long'] + df['Rent_medium'] + df['Rent_short'] + df['Rent_group']) / 100.0
+
   # Stack by stay types
   df = df.rename(
     columns = {
