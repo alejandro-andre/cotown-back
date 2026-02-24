@@ -1,6 +1,7 @@
 SELECT 
   b.id,
   r."Code",
+  a."Name" as "Marketplace",
   substring(r."Registry_num", 11, 14) AS "CRU", 
   r."Registry_num" AS "NRUA",
   CASE 
@@ -15,6 +16,7 @@ SELECT
 FROM "Booking"."Booking" b 
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   INNER JOIN "Booking"."Customer_reason" cr ON cr.id = b."Reason_id" 
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE b."Status" IN ('confirmada','firmacontrato','contrato','checkinconfirmado','checkin','inhouse','checkout','devolvergarantia','finalizada','revision')
   AND b."Date_from"::date <= make_date(%(year)s, 12, 31)
   AND b."Date_to"::date   >= make_date(%(year)s, 1, 1)
