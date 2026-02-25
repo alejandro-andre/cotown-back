@@ -54,13 +54,13 @@ class APIClient:
   def call(self, query, vars=None):
 
     # Prepare variables
-    if vars is None:
-      vars = {'authorization': self.token}
-    else:
-      vars['authorization'] = self.token
+    #if vars is None:
+    #  vars = {'authorization': self.token}
+    #else:
+    #  vars['authorization'] = self.token
 
     # Call API
-    return self.client.execute(gql(query), vars)
+    return self.client.execute(gql(query), variable_values=vars)
  
 
   # Get file
