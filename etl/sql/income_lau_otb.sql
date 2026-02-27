@@ -7,6 +7,7 @@ SELECT
   b.id AS "doc_id",
   '-' AS "doc_type",
   'L' || b.id::text AS "booking",
+  NULL as "marketplace",
   d."Date" AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",

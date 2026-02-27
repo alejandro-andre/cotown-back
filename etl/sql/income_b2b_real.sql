@@ -3,6 +3,7 @@ SELECT
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   'G' || b.id::text AS "booking",
+  a."Name" AS "marketplace",
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
   r."Code" AS "resource",
@@ -28,6 +29,7 @@ FROM "Billing"."Invoice_line" il
   INNER JOIN "Resource"."Resource" r ON r.id = il."Resource_id" 
   INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id" 
   LEFT JOIN "Booking"."Booking_price" bp ON bp."Invoice_rent_id" = i.id 
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE i."Issued" 
   AND i."Issued_date" >= '2024-01-01'
   AND (pr."Product_type_id" <> 2 OR i."Bill_type" <> 'recibo')

@@ -3,6 +3,7 @@ SELECT
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
   'L' || b.id::text AS "booking",
+  NULL as "marketplace",
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
   i."Customer_id" AS "customer",

@@ -4,6 +4,7 @@ SELECT
   b.id AS "doc_id",
   'otb' AS "doc_type",
   'C' || bp."Booking_id"::text AS "booking",
+  a."Name" AS "marketplace",
   bp."Rent_date" AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
@@ -36,6 +37,7 @@ FROM "Booking"."Booking_price" bp
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" IN ('confirmada', 'firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
@@ -48,6 +50,7 @@ SELECT
   b.id AS "doc_id",
   '-' AS "doc_type",
   'C' || bp."Booking_id"::text AS "booking",
+  a."Name" AS "marketplace",
   bp."Rent_date" AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
@@ -83,6 +86,7 @@ FROM "Booking"."Booking_price" bp
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" IN ('confirmada', 'firmacontrato', 'checkinconfirmado', 'contrato','checkin', 'inhouse', 'checkout', 'revision')
@@ -96,6 +100,7 @@ SELECT
   bs."Booking_id" AS "doc_id",
   '-' AS "doc_type",
   'C' || bs."Booking_id"::text AS "booking",
+  a."Name" AS "marketplace",
   GREATEST(CURRENT_DATE, bs."Billing_date_from") AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
@@ -122,6 +127,7 @@ FROM "Booking"."Booking_service" bs
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Billing"."Product" pr ON pr.id = bs."Product_id" 
   INNER JOIN "Billing"."Tax" t ON t.id = bs."Tax_id"
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE bs."Invoice_services_id" IS NULL 
   AND bs."Billing_date_from" > CURRENT_DATE
   AND bs."Extra_type" <> 'recurrente'
@@ -136,6 +142,7 @@ SELECT
   bs."Booking_id" AS "doc_id",
   '-' AS "doc_type",
   'C' || bs."Booking_id"::text AS "booking",
+  NULL AS "marketplace",
   d.dt AS "date", -- día 1 de cada mes
   p."Document" AS "provider",
   b."Customer_id" AS "customer",

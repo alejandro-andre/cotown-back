@@ -11,6 +11,7 @@ SELECT
   b.id AS "doc_id",
   '-' AS "doc_type",
   'G' || bp."Booking_id"::text AS "booking",
+  a."Name" AS "marketplace",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
   b."Payer_id" AS "customer",
@@ -37,6 +38,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Booking"."Booking_group_rooms" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Rooms" r on r.id = b.id 
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" <> 'cancelada'
@@ -55,6 +57,7 @@ SELECT
   b.id AS "doc_id",
   '-' AS "doc_type",
   'G' || bp."Booking_id"::text AS "booking",
+  a."Name" AS "marketplace",
   bp."Rent_date" AS "date",
   r."Document" AS "provider",
   b."Payer_id" AS "customer",
@@ -84,6 +87,7 @@ FROM "Booking"."Booking_group_price" bp
   INNER JOIN "Booking"."Booking_group_rooms" br on b.id = br."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 
   INNER JOIN "Rooms" r on r.id = b.id 
+  LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE bp."Rent_date" >= CURRENT_DATE
   AND bp."Invoice_rent_id" IS NULL AND bp."Invoice_services_id" IS NULL
   AND b."Status" <> 'cancelada'

@@ -248,12 +248,12 @@ CREATE TABLE gold.income (
 
   "amount" numeric NOT NULL,
   "booking" varchar DEFAULT NULL,
+  "marketplace" varchar DEFAULT NULL,
   "customer" int8 DEFAULT NULL,         -- Dimension resource
   "data_type" varchar NOT NULL,         -- Real, OTB, Forecast...
   "discount_type" varchar NULL,
   "doc_id" varchar NOT NULL,
   "doc_type" varchar NOT NULL,
-  --"income_type" varchar NOT NULL,       -- B2B, B2C, ...
   "product" varchar NOT NULL,
   "provider" varchar DEFAULT NULL,
   "resource" varchar NOT NULL,          -- Dimension resource
