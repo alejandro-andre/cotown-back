@@ -38,7 +38,7 @@ SCOPES=['signature','impersonation']
 # Servers
 SSHUSER='partner'
 BACK='back.cotown.protozone.es'
-SERVER='experis.flows.ninja'
+SERVER='cotown-dev.flows.ninja'
 
 # Redsys
 REDSYS_MERCHANTURL='https://back.cotown.protozone.es/api/v1/notify'
