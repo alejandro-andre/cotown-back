@@ -53,8 +53,8 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE;
 
-  -- Comprobamos si el tipo de pago es 'booking'
-  IF (NEW."Payment_type" = 'booking') THEN
+  -- Comprobamos si el tipo de pago es 'booking' B2C
+  IF (NEW."Payment_type" = 'booking' AND NEW."Booking_id" IS NOT NULL) THEN
 
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Membership fee pagado');
@@ -88,7 +88,7 @@ BEGIN
   END IF;
 
   -- Comprobamos si el tipo de pago es 'deposito'
-  IF NEW."Payment_type" = 'deposito' THEN
+  IF (NEW."Payment_type" = 'deposito' AND NEW."Booking_id" IS NOT NULL) THEN
 
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
