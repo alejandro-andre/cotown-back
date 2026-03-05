@@ -33,14 +33,14 @@ BEGIN
 
     -- Si no hay un primer recordatorio envia uno
     IF NOT EXISTS (
-		  SELECT id
-  		FROM "Customer"."Customer_email"
-  		WHERE "Template" = 'pagorecall'
-  		AND "Customer_id" = customer_id
-  		AND "Entity_id" = entity_id
+      SELECT id
+      FROM "Customer"."Customer_email"
+      WHERE "Template" = 'pagorecall'
+      AND "Customer_id" = customer_id
+      AND "Entity_id" = entity_id
     ) THEN
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'pagorecall', entity_id);
-   	END IF;
+     END IF;
 
     FETCH c_first INTO entity_id, customer_id;
   END LOOP;
@@ -53,14 +53,14 @@ BEGIN
 
     -- Si no hay un segundo recordatorio envia uno
     IF NOT EXISTS (
-		  SELECT id
-  		FROM "Customer"."Customer_email"
-  		WHERE "Template" = 'pagorecallagain'
-  		AND "Customer_id" = customer_id
-  		AND "Entity_id" = entity_id
+      SELECT id
+      FROM "Customer"."Customer_email"
+      WHERE "Template" = 'pagorecallagain'
+      AND "Customer_id" = customer_id
+      AND "Entity_id" = entity_id
     ) THEN
       INSERT INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id") VALUES (customer_id, 'pagorecallagain', entity_id);
-   	END IF;
+     END IF;
 
     FETCH c_next INTO entity_id, customer_id;
   END LOOP;
