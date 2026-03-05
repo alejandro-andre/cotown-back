@@ -100,10 +100,11 @@ def main(variables):
       # File name
       resource = item['Lines'][0]['Resource']['Code']
       name     = resource[:12] + '-' + item['Code']
-      folder   = item['Provider']['Name'].split(',')[0] + '/' \
-               + item['Issued_date'].split('-')[0] + '/' \
-               + item['Issued_date'].split('-')[1] + '/' \
-               + resource[:6]
+      folder   = ('Recibos' if item['Bill_type'] == 'recibo' else 'Facturas') \
+               + '/' + item['Provider']['Name'].split(',')[0] \
+               + '/' + item['Issued_date'].split('-')[0] \
+               + '/' + item['Issued_date'].split('-')[1] \
+               + '/' + resource[:6]
 
       # Create path
       path = Path('sharepoint') / folder
