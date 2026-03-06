@@ -1,6 +1,6 @@
 SELECT 
   b."Code", bt."Name" AS "Type", b."Name", s."Name" AS "Segment", b."Start_date", b."Estabilised_date", 
-  b."Address", b."Zip", b."Lat_lon", b."Order", 
+  b."Address", b."Zip", b."Lat_lon", b."Order", b."Cadastral_ref",
   b."Description", b."Description_en",
   b."Details", b."Details_en",
   d."Name" AS "District", l."Name" AS "City", p."Name" AS "Province", c."Name" AS "Country",
