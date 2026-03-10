@@ -95,6 +95,10 @@ def main(variables):
   num = 0
   for item in result['data']:
 
+    # No resource...
+    if not item['Lines'][0]['Resource']:
+      continue
+
     # Bill
     if item['Document']:
       # File name
