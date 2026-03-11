@@ -67,9 +67,22 @@ def main():
   # Main
   # ###################################################
 
+  # Get expenses
+  cur = dbClient.execute(con, '''
+    SELECT b."Code", COALESCE(SUM(be."Amount"), 0) AS "Amount"
+    FROM "Building"."Building" b
+    LEFT JOIN "Building"."Building_expense" be ON be."Building_id" = b.id
+    GROUP BY 1
+    ORDER BY 1
+  ''')
+  expenses = {code: amount for code, amount in cur.fetchall()}
+  cur.close()
+
   # Get resources
-  cur = dbClient.execute(con, 'SELECT * FROM "Resource"."Resource" ORDER BY "Code" ASC')
-  data = cur.fetchall()
+  cur = dbClient.execute(con, '''
+    SELECT * FROM "Resource"."Resource" ORDER BY "Code" ASC
+  ''')
+  resources = cur.fetchall()
   cur.close()
 
   # Comparison constants
@@ -80,12 +93,12 @@ def main():
   num = 0
   status = ''
   building = None
-  for resource in data:
+  for resource in resources:
 
     # Pisos
     if resource['Resource_type'] == 'piso':
 
-      # Building change? Get building expenses
+      # Building change?
       if building != resource['Code'][0:6]:
         building = resource['Code'][0:6]
         logger.info('Building %s', building)
@@ -99,9 +112,7 @@ def main():
       last_lau_date       = resource['Last_LAU_date']
       last_lau_rent       = resource['Last_LAU_rent'] or 0
       index_rent          = resource['Index_rent'] or 0
-      max_services        = resource['Max_services'] or 0
-      max_expenses        = resource['Max_expenses'] or 0
-      max_furniture       = resource['Max_furniture'] or 0
+      max_expenses        = expenses[building] * (resource['Weigth'] or 0) / 100
       weight              = resource['Weigth'] or 0
       area                = resource['Area'] or 0
 
@@ -147,46 +158,50 @@ def main():
       if status == 'libre':
         resource['Limit_type']    = 'libre'
         resource['Max_rent']      = None
-        resource['Max_services']  = None
         resource['Max_expenses']  = None
-        resource['Max_furniture'] = None
 
       # Índice
       elif status == 'indice':
-        resource['Limit_type'] = 'indice'
-        resource['Max_rent']   = index_rent
+        resource['Limit_type']    = 'indice'
+        resource['Max_rent']      = index_rent
+        resource['Max_expenses']  = max_expenses
 
       # LAU
       else:
-        resource['Limit_type'] = 'LAU'
-        resource['Max_rent']   = lau_rent
+        resource['Limit_type']    = 'LAU'
+        resource['Max_rent']      = lau_rent
+        resource['Max_expenses']  = max_expenses
 
     # Habitación
     if resource['Resource_type'] in ('habitacion', 'plaza'):
+
+      # Calculation fields
+      weight = resource['Weigth'] or 0
 
       # Libre
       if status == 'libre':
         resource['Limit_type']    = 'libre'
         resource['Max_rent']      = None
-        resource['Max_services']  = None
         resource['Max_expenses']  = None
-        resource['Max_furniture'] = None
 
       # Índice
       elif status == 'indice':
         resource['Limit_type']    = 'indice'
-        resource['Max_rent']      = index_rent    * weight / 100
-        resource['Max_services']  = max_services  * weight / 100
-        resource['Max_expenses']  = max_expenses  * weight / 100
-        resource['Max_furniture'] = max_furniture * weight / 100
+        resource['Max_rent']      = index_rent * weight / 100
+        resource['Max_expenses']  = max_expenses * weight / 100
 
       # LAU
       else:
         resource['Limit_type']    = 'LAU'
-        resource['Max_rent']      = lau_rent      * weight / 100
-        resource['Max_services']  = max_services  * weight / 100
-        resource['Max_expenses']  = max_expenses  * weight / 100
-        resource['Max_furniture'] = max_furniture * weight / 100
+        resource['Max_rent']      = lau_rent * weight / 100
+        resource['Max_expenses']  = max_expenses * weight / 100
+
+    logger.info('{} {} {} {}'.format(
+      resource['Code'],
+      resource['Limit_type'],
+      resource['Max_rent'],
+      resource['Max_expenses']
+    ))
 
     # Result
     num += 1
