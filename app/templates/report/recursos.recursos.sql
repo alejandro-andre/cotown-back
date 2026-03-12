@@ -42,7 +42,7 @@ SELECT
   r."Capex", r."Pre_capex_long_term", r."Pre_capex_vacant", r."Post_capex", r."Post_capex_residential", r."Weigth",
   r."Registry_num", r."Registry_date", r."Occupancy_certificate",
   r."Big_renovation_date", r."Renovation_date", r."Energy_certificate", r."Energy_certificate_rate",
-  r."Last_LAU_date", r."Last_LAU_rent", r."Index_rent", r."Max_services", r."Max_furniture"
+  r."Last_LAU_date", r."Last_LAU_rent", r."Index_rent", r."Max_services", r."Max_utility", r."Max_furniture", r."HOA"
 FROM "Resource"."Resource" r
   INNER JOIN "Provider"."Provider" o ON o.id = r."Owner_id" 
   INNER JOIN "Provider"."Provider" s ON s.id = r."Service_id"
