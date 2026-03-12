@@ -69,13 +69,11 @@ def main():
 
   # Get expenses
   cur = dbClient.execute(con, '''
-    SELECT b."Code", COALESCE(SUM(be."Amount"), 0) AS "Amount"
+    SELECT b."Code", COALESCE(b."Expense_IBI", 0) AS "Expense_IBI", COALESCE(b."Expense_HOA", 0) AS "Expense_HOA"
     FROM "Building"."Building" b
-    LEFT JOIN "Building"."Building_expense" be ON be."Building_id" = b.id
-    GROUP BY 1
     ORDER BY 1
   ''')
-  expenses = {code: amount for code, amount in cur.fetchall()}
+  expenses = {code: {'ibi': ibi, 'hoa': hoa} for code, ibi, hoa in cur.fetchall()}
   cur.close()
 
   # Get resources
@@ -112,9 +110,14 @@ def main():
       last_lau_date       = resource['Last_LAU_date']
       last_lau_rent       = resource['Last_LAU_rent'] or 0
       index_rent          = resource['Index_rent'] or 0
-      max_expenses        = expenses[building] * (resource['Weigth'] or 0) / 100
       weight              = resource['Weigth'] or 0
       area                = resource['Area'] or 0
+
+      # Expenses
+      max_expenses = float(expenses[building]['ibi'])
+      if resource['HOA']:
+        max_expenses += float(expenses[building]['hoa'])
+      max_expenses *= (float(resource['Weigth'] or 0.0) / 100.0)
 
       # Big renovation < 5 years
       if big_renovation_date and big_renovation_date >= five_years_ago:
