@@ -13,6 +13,8 @@
 "City",
 "Province",
 "Country",
+"Expense_IBI",
+"Expense_HOA",
 "Vicente_date",
 "Pre_capex_long_term",
 "Pre_capex_vacant",

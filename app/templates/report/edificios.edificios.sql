@@ -3,6 +3,7 @@ SELECT
   b."Address", b."Zip", b."Lat_lon", b."Order", b."Cadastral_ref",
   b."Description", b."Description_en",
   b."Details", b."Details_en",
+  b."Expense_IBI", b."Expense_HOA",
   d."Name" AS "District", l."Name" AS "City", p."Name" AS "Province", c."Name" AS "Country",
   b."Gate_mac", b."Gate_phone", b."Gate_url",
   b."Wifi_key", b."Wifi_ssid",
