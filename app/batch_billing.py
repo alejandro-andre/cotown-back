@@ -540,6 +540,7 @@ def bill_group_month(dbClient, con):
         WHERE s."Booking_id" = %s
           AND s."Billing_date_to" >= CURRENT_DATE
           AND s."Billing_date_from" <= CURRENT_DATE 
+          AND p."Product_type_id" <> 3
         ''', (item['Booking_id'], ))
       extra_services = cur.fetchall()
       cur.close()
