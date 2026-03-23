@@ -93,6 +93,41 @@ def get_data(dbClient, script):
 
 
 # ###################################################
+# Insert batch with row-by-row fallback
+# ###################################################
+
+def insert_batch(con, sql, batch):
+  cur = con.cursor()
+  cur.execute("SAVEPOINT sp_batch")
+  try:
+    execute_values(cur, sql, batch, page_size=len(batch))
+    cur.execute("RELEASE SAVEPOINT sp_batch")
+    cur.close()
+    return len(batch), 0
+  except Exception as batch_err:
+    cur.execute("ROLLBACK TO SAVEPOINT sp_batch")
+    cur.execute("RELEASE SAVEPOINT sp_batch")
+    logger.warning(f"Batch of {len(batch)} failed, retrying row by row: {batch_err}")
+
+  ok = 0
+  skipped = 0
+  for row in batch:
+    cur.execute("SAVEPOINT sp_row")
+    try:
+      execute_values(cur, sql, [row], page_size=1)
+      cur.execute("RELEASE SAVEPOINT sp_row")
+      ok += 1
+    except Exception as row_err:
+      cur.execute("ROLLBACK TO SAVEPOINT sp_row")
+      cur.execute("RELEASE SAVEPOINT sp_row")
+      logger.warning(f"Row skipped: {row_err}")
+      skipped += 1
+
+  cur.close()
+  return ok, skipped
+
+
+# ###################################################
 # Load entity
 # ###################################################
 
@@ -101,8 +136,9 @@ def load(dbOrigin, dbDestination, table, query):
   # Log
   logger.info('Loading ' + query + '...')
 
-  # Get connection
+  # Get connection (autocommit must be off for SAVEPOINT support)
   con = dbDestination.getconn()
+  con.autocommit = False
 
   # Get data
   data = get_data(dbOrigin, query)
@@ -131,35 +167,30 @@ def load(dbOrigin, dbDestination, table, query):
     fields = ','.join(f'"{c}"' for c in columns)
     sql = f'INSERT INTO gold.{table} ({fields}) VALUES %s'
 
-    # Cursor
+    # Loop thru all rows in batches
     total = 0
-    cur = con.cursor()
-
-    # Generate tuples
-    def row_gen():
-      for tpl in data.itertuples(index=False, name=None):
-        yield tpl
-      
-    # Loop thru all rows
+    skipped = 0
     batch = []
-    for row in row_gen():
-      batch.append(row)
 
-      # Insert block
+    for tpl in data.itertuples(index=False, name=None):
+      batch.append(tpl)
+
       if len(batch) >= BATCH:
-        execute_values(cur, sql, batch, page_size=BATCH)
-        total += len(batch)
-        logger.debug('Loaded ' + str(len(batch)) + ' record(s)...')
+        ok, err = insert_batch(con, sql, batch)
+        total += ok
+        skipped += err
+        logger.debug(f'Loaded {ok} record(s), skipped {err}...')
         batch.clear()
-          
+
     # Insert last block
     if batch:
-      execute_values(cur, sql, batch, page_size=BATCH)
-      total += len(batch)
+      ok, err = insert_batch(con, sql, batch)
+      total += ok
+      skipped += err
 
     # Commit
     con.commit()
-    logger.info('Loaded ' + str(total) + ' record(s) ok')
+    logger.info(f'Loaded {total} record(s) ok, skipped {skipped}')
 
   except Exception as error:
     logger.error(error)
