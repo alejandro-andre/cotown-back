@@ -9,13 +9,19 @@
 # ###################################################
  
 # System includes
-from flask import send_file, abort
+import re
+import json
+import base64
+import hashlib
+from flask import g, send_file, abort, Response
 from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
-from datetime import datetime
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
-import re
+from icalendar import Calendar, Event
 
 # Cotown includes
 from library.services.config import settings
@@ -27,6 +33,29 @@ from library.business.queries import q_change_contract
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
+
+
+# ###################################################
+# Crypto functions
+# ###################################################
+
+def _normalize_key(secret: str) -> bytes:
+    return hashlib.sha256(secret.encode("utf-8")).digest()
+
+def generate_token(code: str, secret: str) -> str:
+    key = _normalize_key(secret)
+    cipher = AES.new(key, AES.MODE_GCM)
+    ciphertext, tag = cipher.encrypt_and_digest(code.encode("utf-8"))
+    return base64.urlsafe_b64encode(cipher.nonce + tag + ciphertext).decode("utf-8")
+
+def decode_token(token: str, secret: str) -> str:
+    key = _normalize_key(secret)
+    raw = base64.urlsafe_b64decode(token.encode("utf-8"))
+    nonce = raw[:16]
+    tag = raw[16:32]
+    ciphertext = raw[32:]
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    return cipher.decrypt_and_verify(ciphertext, tag).decode("utf-8")
 
 
 # ###################################################
@@ -113,3 +142,65 @@ def req_cert_booking(booking):
   html.write_pdf(file)
   file.seek(0)
   return send_file(file, mimetype='application/pdf')
+
+
+# iCAL URL
+def req_ical(token):
+
+  #?print(token)
+  #?token = generate_token('BLM335.01.01', 'COTOWN')
+  #?print(token)
+
+  # DBClient   
+  dbClient = g.dbClient
+
+  # Token
+  code = decode_token(token, 'COTOWN')
+  print(code)
+
+  # Query
+  sql = '''
+  SELECT
+    r."Code",
+    bd."Date_from",
+    bd."Date_to"
+  FROM "Booking"."Booking_detail" bd
+  JOIN "Resource"."Resource" r ON r.id = bd."Resource_id"
+  WHERE r."Code" = %s
+    AND bd."Date_to" >= CURRENT_DATE
+  ORDER BY bd."Date_from"
+  '''
+    
+  # Retrieve data
+  try:
+    con = dbClient.getconn()
+    cur = dbClient.execute(con, sql, (code,))
+    rows = cur.fetchall()
+    cur.close()
+    dbClient.putconn(con)
+  except Exception as error:
+    logger.error(error)
+    con.rollback()
+    dbClient.putconn(con)
+    return None
+
+  # Create feed
+  cal = Calendar()
+  cal.add("prodid", "-//booking//ical//")
+  cal.add("version", "2.0")
+  for resource, date_from, date_to in rows:
+    event = Event()
+    event.add("uid", f"{resource}@recurso")
+    event.add("summary", f"Reserva {resource}")
+    event.add("dtstart", date_from)
+    event.add("dtend", date_to + timedelta(days=1))
+    event.add("dtstamp", datetime.now(timezone.utc))
+    cal.add_component(event)
+
+  return Response(
+    cal.to_ical(),
+    headers={
+      "Content-Type": "text/calendar; charset=utf-8",
+      "Content-Disposition": f'inline; filename="{code}.ics"'
+    }
+  )
