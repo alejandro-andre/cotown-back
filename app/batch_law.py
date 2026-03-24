@@ -10,6 +10,8 @@
 
 # System includes
 from datetime import date
+from dateutil.relativedelta import relativedelta
+
 
 # Cotown includes
 from library.services.config import settings
@@ -78,7 +80,7 @@ def main():
 
   # Get resources
   cur = dbClient.execute(con, '''
-    SELECT * FROM "Resource"."Resource" ORDER BY "Code" ASC
+    SELECT * FROM "Resource"."Resource" r WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza') ORDER BY "Code" ASC
   ''')
   resources = cur.fetchall()
   cur.close()
@@ -108,10 +110,10 @@ def main():
       renovation_date     = resource['Renovation_date']
       big_renovation_date = resource['Big_renovation_date']
       last_lau_date       = resource['Last_LAU_date']
-      last_lau_rent       = resource['Last_LAU_rent'] or 0
-      index_rent          = resource['Index_rent'] or 0
-      weight              = resource['Weigth'] or 0
-      area                = resource['Area'] or 0
+      last_lau_rent       = float(resource['Last_LAU_rent'] or 0)
+      index_rent          = float(resource['Index_rent'] or 0)
+      weight              = float(resource['Weigth'] or 0)
+      area                = float(resource['Area'] or 0)
 
       # Expenses
       max_expenses = float(expenses[building]['ibi'])
@@ -133,8 +135,7 @@ def main():
 
       # Lau < 5 years
       else:
-        resource['Last_LAU_free_date'] = last_lau_date.replace(year=last_lau_date.year - 5)
-        status = 'lau'
+        resource['Last_LAU_free_date'] = last_lau_date - relativedelta(years=5)
 
       # Calculate LAU rent
       if status == 'lau':
@@ -155,7 +156,7 @@ def main():
       # LAU Free date
       resource['Last_LAU_free_date'] = None
       if status != 'libre' and last_lau_date:
-        resource['Last_LAU_free_date'] = last_lau_date.replace(year=last_lau_date.year - 5)
+        resource['Last_LAU_free_date'] = last_lau_date - relativedelta(years=5)
 
       # Libre
       if status == 'libre':
@@ -166,20 +167,20 @@ def main():
       # Índice
       elif status == 'indice':
         resource['Limit_type']    = 'indice'
-        resource['Max_rent']      = index_rent
-        resource['Max_expenses']  = max_expenses
+        resource['Max_rent']      = round(index_rent, 2)
+        resource['Max_expenses']  = round(max_expenses, 2)
 
       # LAU
       else:
         resource['Limit_type']    = 'LAU'
-        resource['Max_rent']      = lau_rent
-        resource['Max_expenses']  = max_expenses
+        resource['Max_rent']      = round(lau_rent, 2)
+        resource['Max_expenses']  = round(max_expenses, 2)
 
     # Habitación
     if resource['Resource_type'] in ('habitacion', 'plaza'):
 
       # Calculation fields
-      weight = resource['Weigth'] or 0
+      weight = float(resource['Weigth'] or 0)
 
       # Libre
       if status == 'libre':
@@ -190,14 +191,14 @@ def main():
       # Índice
       elif status == 'indice':
         resource['Limit_type']    = 'indice'
-        resource['Max_rent']      = index_rent * weight / 100
-        resource['Max_expenses']  = max_expenses * weight / 100
+        resource['Max_rent']      = round(index_rent * weight / 100, 2)
+        resource['Max_expenses']  = round(max_expenses * weight / 100, 2)
 
       # LAU
       else:
         resource['Limit_type']    = 'LAU'
-        resource['Max_rent']      = lau_rent * weight / 100
-        resource['Max_expenses']  = max_expenses * weight / 100
+        resource['Max_rent']      = round(lau_rent * weight / 100, 2)
+        resource['Max_expenses']  = round(max_expenses * weight / 100, 2)
 
     logger.info('{} {} {} {}'.format(
       resource['Code'],
