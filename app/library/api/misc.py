@@ -17,8 +17,6 @@ from flask import g, send_file, abort, Response
 from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
 from datetime import datetime, timedelta, timezone
 from io import BytesIO
 from icalendar import Calendar, Event
@@ -26,36 +24,13 @@ from icalendar import Calendar, Event
 # Cotown includes
 from library.services.config import settings
 from library.services.apiclient import APIClient
-from library.services.utils import flatten
+from library.services.utils import flatten, generate_token, decode_token
 from library.business.contract import BOOKING, month, decimal
 from library.business.queries import q_change_contract
 
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
-
-
-# ###################################################
-# Crypto functions
-# ###################################################
-
-def _normalize_key(secret: str) -> bytes:
-    return hashlib.sha256(secret.encode("utf-8")).digest()
-
-def generate_token(code: str, secret: str) -> str:
-    key = _normalize_key(secret)
-    cipher = AES.new(key, AES.MODE_GCM)
-    ciphertext, tag = cipher.encrypt_and_digest(code.encode("utf-8"))
-    return base64.urlsafe_b64encode(cipher.nonce + tag + ciphertext).decode("utf-8")
-
-def decode_token(token: str, secret: str) -> str:
-    key = _normalize_key(secret)
-    raw = base64.urlsafe_b64decode(token.encode("utf-8"))
-    nonce = raw[:16]
-    tag = raw[16:32]
-    ciphertext = raw[32:]
-    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-    return cipher.decrypt_and_verify(ciphertext, tag).decode("utf-8")
 
 
 # ###################################################
@@ -147,34 +122,27 @@ def req_cert_booking(booking):
 # iCAL URL
 def req_ical(token):
 
-  #?print(token)
-  #?token = generate_token('BLM335.01.01', 'COTOWN')
-  #?print(token)
-
-  # DBClient   
+  # DBClient
   dbClient = g.dbClient
-
-  # Token
-  code = decode_token(token, 'COTOWN')
-  print(code)
 
   # Query
   sql = '''
-  SELECT
-    r."Code",
-    bd."Date_from",
-    bd."Date_to"
-  FROM "Booking"."Booking_detail" bd
-  JOIN "Resource"."Resource" r ON r.id = bd."Resource_id"
-  WHERE r."Code" = %s
-    AND bd."Date_to" >= CURRENT_DATE
-  ORDER BY bd."Date_from"
+    SELECT
+      r."Code",
+      bd."Date_from",
+      bd."Date_to"
+    FROM "Resource"."Resource" r
+      LEFT JOIN "Booking"."Booking_detail" bd  ON r.id = bd."Resource_id" AND bd."Date_to" >= CURRENT_DATE
+    WHERE r."Ical" = 'OTM2MzhhMjBkZDg0MDFlMWYwODdlZjk4NjVhODNkZjU='
+    ORDER BY bd."Date_from"
   '''
     
   # Retrieve data
+  logger.debug(token)
+  code = 'unknown'
   try:
     con = dbClient.getconn()
-    cur = dbClient.execute(con, sql, (code,))
+    cur = dbClient.execute(con, sql, (token,))
     rows = cur.fetchall()
     cur.close()
     dbClient.putconn(con)
@@ -189,18 +157,24 @@ def req_ical(token):
   cal.add("prodid", "-//booking//ical//")
   cal.add("version", "2.0")
   for resource, date_from, date_to in rows:
-    event = Event()
-    event.add("uid", f"{resource}@recurso")
-    event.add("summary", f"Reserva {resource}")
-    event.add("dtstart", date_from)
-    event.add("dtend", date_to + timedelta(days=1))
-    event.add("dtstamp", datetime.now(timezone.utc))
-    cal.add_component(event)
-
-  return Response(
-    cal.to_ical(),
-    headers={
-      "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": f'inline; filename="{code}.ics"'
-    }
+    code = resource
+    logger.debug("{} {} {}".format(resource, date_from, date_to))
+    if date_from:
+      event = Event()
+      event.add("uid", f"{resource}@recurso")
+      event.add("summary", f"Reserva {resource}")
+      event.add("dtstart", date_from)
+      event.add("dtend", date_to + timedelta(days=1))
+      event.add("dtstamp", datetime.now(timezone.utc))
+      cal.add_component(event)
+  if code != 'unknown':
+    return Response(
+      cal.to_ical(),
+      headers={
+        "Content-Type": "text/calendar; charset=utf-8",
+        "Content-Disposition": f'inline; filename="{code}.ics"'
+      }
   )
+
+  # Not found
+  abort(404)

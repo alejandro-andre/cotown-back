@@ -1,4 +1,14 @@
 # ######################################################
+# Imports
+# ######################################################
+
+import base64
+import hashlib
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+
+
+# ######################################################
 # Flatten JSON
 # ######################################################
 
@@ -59,3 +69,24 @@ def flatten(json_obj, key='', flattened=None, prefix=''):
   return flattened
 
 
+# ###################################################
+# Crypto functions
+# ###################################################
+
+def _normalize_key(secret: str) -> bytes:
+    return hashlib.sha256(secret.encode("utf-8")).digest()
+
+def generate_token(code: str, secret: str) -> str:
+    key = _normalize_key(secret)
+    cipher = AES.new(key, AES.MODE_GCM)
+    ciphertext, tag = cipher.encrypt_and_digest(code.encode("utf-8"))
+    return base64.urlsafe_b64encode(cipher.nonce + tag + ciphertext).decode("utf-8")
+
+def decode_token(token: str, secret: str) -> str:
+    key = _normalize_key(secret)
+    raw = base64.urlsafe_b64decode(token.encode("utf-8"))
+    nonce = raw[:16]
+    tag = raw[16:32]
+    ciphertext = raw[32:]
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    return cipher.decrypt_and_verify(ciphertext, tag).decode("utf-8")

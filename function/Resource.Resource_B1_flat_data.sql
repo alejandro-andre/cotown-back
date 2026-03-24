@@ -11,6 +11,9 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE;
 
+  -- ICal URL
+  NEW."Ical" := replace(replace(encode(textsend(md5(NEW."Code")), 'base64'), '/', ''), '+', '');
+
   -- Piso?
   IF NEW."Resource_type" = 'piso' THEN
     IF NOT NEW."Code" ~ '^[A-Z]{3}\w{3}\.\w{2}\.\w{2}$' THEN
