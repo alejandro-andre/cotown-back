@@ -173,7 +173,7 @@ def main():
       max_expenses = float(expenses[building]['ibi'])
       if resource['HOA']:
         max_expenses += float(expenses[building]['hoa'])
-      max_expenses *= (weight / 100.0)
+      max_expenses *= (weight / 12 / 100.0)
 
       # Big renovation < 5 years
       if big_renovation_date and big_renovation_date >= five_years_ago:
