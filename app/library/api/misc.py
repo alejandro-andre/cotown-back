@@ -129,6 +129,7 @@ def req_ical(token):
   sql = '''
     SELECT
       r."Code",
+      bd.id,
       bd."Date_from",
       bd."Date_to"
     FROM "Resource"."Resource" r
@@ -156,13 +157,13 @@ def req_ical(token):
   cal = Calendar()
   cal.add("prodid", "-//booking//ical//")
   cal.add("version", "2.0")
-  for resource, date_from, date_to in rows:
+  for resource, id, date_from, date_to in rows:
     code = resource
-    logger.debug("{} {} {}".format(resource, date_from, date_to))
+    logger.debug("{} {} {} {}".format(resource, id, date_from, date_to))
     if date_from:
       event = Event()
-      event.add("uid", f"{resource}@recurso")
-      event.add("summary", f"Reserva {resource}")
+      event.add("uid", f"{id}@{resource}")
+      event.add("summary", f"Reserva {resource}-{id}")
       event.add("dtstart", date_from)
       event.add("dtend", date_to + timedelta(days=1))
       event.add("dtstamp", datetime.now(timezone.utc))
