@@ -167,7 +167,7 @@ def main():
       last_lau_rent       = float(resource['Last_LAU_rent'] or 0)
       index_rent          = float(resource['Index_rent'] or 0)
       weight              = float(resource['Weight'] or 0)
-      area                = float(resource['Area'] or 0)
+      area                = float(resource['Area_woc'] or 0)
 
       # Expenses
       max_expenses = (float(expenses[building]['ibi']) + float(expenses[building]['hoa'])) * weight / 12 / 100.0 if resource['HOA'] else 0
@@ -181,7 +181,7 @@ def main():
         status = 'libre'
  
       # Not LAU or LAU > 5 years
-      elif not last_lau_date or last_lau_date < five_years_ago:
+      elif not last_lau_date or last_lau_date < five_years_ago or last_lau_rent == 0:
         status = 'indice'
 
       # Lau < 5 years
@@ -192,7 +192,6 @@ def main():
       if status == 'lau':
 
         # Calculate IPC
-
         ipc = cumulative_cpi(last_lau_date, ipcs)
         last_lau_rent *= ipc
 
@@ -201,8 +200,12 @@ def main():
           last_lau_rent *= 1.1
 
         # Check if index rent < LAU rent
-        if index_rent < last_lau_rent:
+        if index_rent > 0 and index_rent < last_lau_rent:
           status = 'indice'
+
+      # Not LAU nor index
+      if status == 'indice' and index_rent == 0:
+        status = 'libre'  
 
       # LAU Free date
       resource['Last_LAU_free_date'] = None
