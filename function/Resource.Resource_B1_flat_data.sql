@@ -12,7 +12,7 @@ BEGIN
   RESET ROLE;
 
   -- ICal URL
-  NEW."Ical" := replace(replace(encode(textsend(md5(NEW."Code")), 'base64'), '/', ''), '+', '');
+  NEW."Ical" := 'https://back.cotown.com/api/v1/ical/' || replace(replace(encode(textsend(md5(NEW."Code")), 'base64'), '/', ''), '+', '');
 
   -- Piso?
   IF NEW."Resource_type" = 'piso' THEN

@@ -134,7 +134,7 @@ def req_ical(token):
       bd."Date_to"
     FROM "Resource"."Resource" r
       LEFT JOIN "Booking"."Booking_detail" bd  ON r.id = bd."Resource_id" AND bd."Date_to" >= CURRENT_DATE
-    WHERE r."Ical" = 'OTM2MzhhMjBkZDg0MDFlMWYwODdlZjk4NjVhODNkZjU='
+    WHERE r."Ical" = %s
     ORDER BY bd."Date_from"
   '''
     
@@ -143,7 +143,7 @@ def req_ical(token):
   code = 'unknown'
   try:
     con = dbClient.getconn()
-    cur = dbClient.execute(con, sql, (token,))
+    cur = dbClient.execute(con, sql, ('https://back.cotown.com/api/v1/ical/' + token,))
     rows = cur.fetchall()
     cur.close()
     dbClient.putconn(con)
