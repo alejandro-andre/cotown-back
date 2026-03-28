@@ -8,6 +8,43 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
+# Preload lookup table
+# ###################################################
+
+def preload_lookup(dbClient, con, sql, key_col):
+
+  # Execute and build dict
+  cur = dbClient.execute(con, sql)
+  result = {row[key_col]: row['id'] for row in cur.fetchall()}
+  cur.close()
+
+  # Return
+  return result
+
+
+# ###################################################
+# Resolve lookup value
+# ###################################################
+
+def resolve_lookup(cache, value, label, irow, log):
+
+  # Empty value
+  if not value and value != 0:
+    return None, True
+
+  # Lookup
+  resolved = cache.get(value)
+
+  # Not found
+  if resolved is None:
+    log.append('Fila: ' + str(irow).zfill(4) + '. ' + label + ' "' + str(value) + '" no encontrado')
+    return None, False
+
+  # Return
+  return resolved, True
+
+
+# ###################################################
 # Load resources
 # ###################################################
 
@@ -15,13 +52,26 @@ def load_resources(dbClient, con, data):
 
   # Return values
   n_ok = n_ko = 0
-  log = ''
+  log = []
+
+  # Pre-load all lookup tables
+  providers     = preload_lookup(dbClient, con, 'SELECT id, "Name" FROM "Provider"."Provider"', 'Name')
+  flat_types    = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource_flat_type"', 'Code')
+  flat_subs     = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource_flat_subtype"', 'Code')
+  place_types   = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource_place_type"', 'Code')
+  rates         = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Billing"."Pricing_rate"', 'Code')
+  usages        = preload_lookup(dbClient, con, 'SELECT id, "Name" FROM "Resource"."Resource_usage"', 'Name')
+  buildings     = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Building"."Building"', 'Code')
+  resources     = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource"', 'Code')
+  amenity_types = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource_amenity_type"', 'Code')
 
   # Header
-  header = list(map(lambda cell: cell.value, data[2]))
+  header = [cell.value for cell in data[2]]
 
   # Loop thru all rows skipping two first rows
   for irow, row in enumerate(data.iter_rows(min_row=3)):
+    row_num = irow + 3
+
     # Skip empty rows
     if all((cell.value is None or cell.value == '') for cell in row):
       continue
@@ -48,101 +98,38 @@ def load_resources(dbClient, con, data):
 
         # Provider.Name
         elif column == 'Owner.Name':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Owner_id'] = id
+          record['Owner_id'], ok_i = resolve_lookup(providers, cell.value, 'Proveedor', row_num, log)
+          ok = ok and ok_i
 
         # Service.Name
         elif column == 'Service.Name':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Provider"."Provider" WHERE "Name"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Proveedor "' + str(cell.value) + '" no encontrado\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Service_id'] = id
+          record['Service_id'], ok_i = resolve_lookup(providers, cell.value, 'Proveedor', row_num, log)
+          ok = ok and ok_i
 
         # Resource_flat_type.Code
         elif column == 'Flat_type.Code':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_flat_type" WHERE "Code"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de piso "' + str(cell.value) + '" no encontrado\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Flat_type_id'] = id
+          record['Flat_type_id'], ok_i = resolve_lookup(flat_types, cell.value, 'Tipo de piso', row_num, log)
+          ok = ok and ok_i
 
         # Resource_flat_subtype.Code
         elif column == 'Flat_subtype.Code':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_flat_subtype" WHERE "Code"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Subtipo de piso "' + str(cell.value) + '" no encontrado\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Flat_subtype_id'] = id
+          record['Flat_subtype_id'], ok_i = resolve_lookup(flat_subs, cell.value, 'Subtipo de piso', row_num, log)
+          ok = ok and ok_i
 
         # Resource_place_type.Code
         elif column == 'Place_type.Code':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_place_type" WHERE "Code"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tipo de habitación/plaza "' + str(cell.value) + '" no encontrado\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Place_type_id'] = id
+          record['Place_type_id'], ok_i = resolve_lookup(place_types, cell.value, 'Tipo de habitación/plaza', row_num, log)
+          ok = ok and ok_i
 
         # Pricing_rate.Code
         elif column == 'Pricing_rate.Code':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Billing"."Pricing_rate" WHERE "Code"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Tarifa "' + str(cell.value) + '" no encontrada\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Rate_id'] = id
+          record['Rate_id'], ok_i = resolve_lookup(rates, cell.value, 'Tarifa', row_num, log)
+          ok = ok and ok_i
 
-        # Pricing_rate.Code
+        # Resource_usage.Name
         elif column == 'Resource_usage.Name':
-          id = None
-          if cell.value is not None and cell.value != '':
-            cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_usage" WHERE "Name"=%s', [cell.value])
-            aux = cur.fetchone()
-            cur.close()
-            if aux is None:
-              log += 'Fila: ' + str(irow+3).zfill(4) + '. Uso "' + str(cell.value) + '" no encontrado\n'
-              ok = False
-            else: 
-              id = aux['id']
-          record['Usage_id'] = id
+          record['Usage_id'], ok_i = resolve_lookup(usages, cell.value, 'Uso', row_num, log)
+          ok = ok and ok_i
 
         # Extras
         elif column == '[extras]':
@@ -154,14 +141,12 @@ def load_resources(dbClient, con, data):
           record[column] = cell.value
 
       # Building
-      cur = dbClient.execute(con, 'SELECT id FROM "Building"."Building" WHERE "Code"=%s', (record['Code'][:6],))
-      aux = cur.fetchone()
-      cur.close()
-      if aux is None:
-        log += 'Fila: ' + str(irow+3).zfill(4) + '. Edificio "' + record['Code'][:6] + '" no encontrado\n'
+      building_id = buildings.get(record.get('Code', '')[:6])
+      if building_id is None:
+        log.append('Fila: ' + str(row_num).zfill(4) + '. Edificio "' + record['Code'][:6] + '" no encontrado')
         ok = False
-      else: 
-        record['Building_id'] = aux['id']
+      else:
+        record['Building_id'] = building_id
 
       # Flat
       record['Flat_id'] = None
@@ -169,71 +154,68 @@ def load_resources(dbClient, con, data):
 
       # Room
       if record['Resource_type'] == 'habitacion':
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
-        aux = cur.fetchone()
-        cur.close()
-        if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
+        flat_id = resources.get(record['Code'][:12])
+        if flat_id is None:
+          log.append('Fila: ' + str(row_num).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado')
           ok = False
-        else: 
-          record['Flat_id'] = aux['id']
+        else:
+          record['Flat_id'] = flat_id
 
       # Place
       if record['Resource_type'] == 'plaza':
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:12],))
-        aux = cur.fetchone()
-        cur.close()
-        if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado\n'
+        flat_id = resources.get(record['Code'][:12])
+        if flat_id is None:
+          log.append('Fila: ' + str(row_num).zfill(4) + '. Piso "' + record['Code'][:12] + '" no encontrado')
           ok = False
-        else: 
-          record['Flat_id'] = aux['id']
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource" WHERE "Code"=%s', (record['Code'][:16],))
-        aux = cur.fetchone()
-        cur.close()
-        if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Habitación "' + record['Code'][:12] + '" no encontrada\n'
+        else:
+          record['Flat_id'] = flat_id
+        room_id = resources.get(record['Code'][:16])
+        if room_id is None:
+          log.append('Fila: ' + str(row_num).zfill(4) + '. Habitación "' + record['Code'][:16] + '" no encontrada')
           ok = False
-        else: 
-          record['Room_id'] = aux['id']
+        else:
+          record['Room_id'] = room_id
 
       # Insert record
-      fields = list(map(lambda key: '"' + key + '"', record.keys()))
-      update = list(map(lambda key: '"'+ key + '"=EXCLUDED."' + key + '"', record.keys()))
-      values = [record[field] if record[field] != '' else None for field in record.keys()]
-      markers = ['%s'] * len(record.keys())
-      sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {} RETURNING ID'.format(','.join(fields), ','.join(markers), ','.join(update))
+      keys    = list(record.keys())
+      fields  = list(map(lambda k: '"' + k + '"', keys))
+      update  = list(map(lambda k: '"' + k + '"=EXCLUDED."' + k + '"', keys))
+      values  = [None if record[k] == '' else record[k] for k in keys]
+      markers = ['%s'] * len(keys)
+      sql = 'INSERT INTO "Resource"."Resource" ({}) VALUES ({}) ON CONFLICT ("Code") DO UPDATE SET {} RETURNING id'.format(','.join(fields), ','.join(markers), ','.join(update))
       cur = dbClient.execute(con, sql, values)
       id = cur.fetchone()[0]
+      cur.close()
 
       # Extras
       dbClient.execute(con, 'DELETE FROM "Resource"."Resource_amenity" WHERE "Resource_id" = %s', (id,))
       for u_res in extras:
-        cur = dbClient.execute(con, 'SELECT id FROM "Resource"."Resource_amenity_type" WHERE "Code" = %s', (u_res,))
-        aux = cur.fetchone()
-        cur.close()
-        if aux is None:
-          log += 'Fila: ' + str(irow+3).zfill(4) + '. Extra "' + u_res + '" no encontrado\n'
+        amenity_id = amenity_types.get(u_res)
+        if amenity_id is None:
+          log.append('Fila: ' + str(row_num).zfill(4) + '. Extra "' + u_res + '" no encontrado')
           ok = False
-        else: 
-          dbClient.execute(con, 
+        else:
+          dbClient.execute(con,
           '''
           INSERT INTO "Resource"."Resource_amenity"
           ("Resource_id", "Amenity_type_id")
           VALUES (%s, %s)
-          ''', 
-          (id, aux[0]))
+          ''',
+          (id, amenity_id))
+
+      # Log
+      logger.info(record['Code'])
 
     # Error
     except Exception as error:
       logger.error(error)
       con.rollback()
-      log += 'Fila: ' + str(irow+3).zfill(4) + '. Contiene datos erróneos.\n'
+      log.append('Fila: ' + str(row_num).zfill(4) + '. Contiene datos erróneos.')
       e = str(error)
       if (e.startswith('!!!')):
-        log += e.split('!!!')[2] + '\n'
+        log.append(e.split('!!!')[2])
       else:
-        log += e + '\n'
+        log.append(e)
       ok = False
 
     # Count oks and errors
@@ -245,12 +227,12 @@ def load_resources(dbClient, con, data):
   # Rollback?
   if n_ko > 0:
     con.rollback()
-    log += 'Analizados ' + str(n_ok) + ' registro(s) correctamente\n'
-    log += 'Analizados ' + str(n_ko) + ' registro(s) con errores\n'
-    log += 'No se han cargado datos\n'
+    log.append('Analizados ' + str(n_ok) + ' registro(s) correctamente')
+    log.append('Analizados ' + str(n_ko) + ' registro(s) con errores')
+    log.append('No se han cargado datos')
   else:
     con.commit()
-    log += 'Cargados ' + str(n_ok) + ' registro(s) correctamente\n'
-   
+    log.append('Cargados ' + str(n_ok) + ' registro(s) correctamente')
+
   # Return
-  return (n_ko == 0), log  
+  return (n_ko == 0), '\n'.join(log)
