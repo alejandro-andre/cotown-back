@@ -118,7 +118,7 @@ def main():
 
   # Get resources
   cur_read = dbClient.execute(con, '''
-    SELECT r."Code", COALESCE(p."Total_Weight", r."Weigth") AS "Weight", *
+    SELECT r."Code", d."Location_id", COALESCE(p."Total_Weight", r."Weigth") AS "Weight", *
     FROM "Resource"."Resource" r
     LEFT JOIN (
       SELECT "Room_id", SUM("Weigth") AS "Total_Weight"
@@ -126,6 +126,8 @@ def main():
         WHERE "Resource_type" = 'plaza'
         GROUP BY "Room_id"
     ) p ON r."id" = p."Room_id"
+    JOIN "Building"."Building" b on b.id = r."Building_id"
+    join "Geo"."District" d on d.id = b."District_id" 
     WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza')
     ORDER BY r."Code" ASC
   ''')
@@ -172,8 +174,12 @@ def main():
       # Expenses
       max_expenses = (float(expenses[building]['ibi']) + float(expenses[building]['hoa'])) * weight / 12 / 100.0 if resource['HOA'] else 0
 
+      # Not in Barcelona
+      if resource["Location_id"] != 1:
+        status = 'libre'
+
       # Big renovation < 5 years
-      if big_renovation_date and big_renovation_date >= five_years_ago:
+      elif big_renovation_date and big_renovation_date >= five_years_ago:
         status = 'libre'
   
       # > 150m, Not LAU or LAU > 5 years
