@@ -264,7 +264,7 @@ def main():
         resource['Limit_type']    = 'lau'
         resource['Max_LAU_rent']  = round(last_lau_rent * weight / 100, 2)
         resource['Max_rent']      = round(last_lau_rent * weight / 100, 2)
-        resource['Max_expenses']  = round(max_expenses * weight / 100, 2)
+        resource['Max_expenses']  = 0
 
     # Update
     cur_write.execute('''
