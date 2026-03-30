@@ -16,6 +16,7 @@ DECLARE
   billing_type VARCHAR;
   black_list BOOLEAN;
   black_reason VARCHAR;
+  limit_type VARCHAR;
   
 BEGIN
 
@@ -27,14 +28,6 @@ BEGIN
   IF NEW."Resource_type" <> 'piso' AND NEW."Place_type_id" IS NULL THEN
     RAISE exception '!!!Place type is mandatory!!!El tipo de plaza es obligatoria!!!'; 	
   END IF;
-
-  -- Comprueba si existen las tipologías seleccionadas en el edificio
-  SELECT COUNT(*)
-  INTO num
-  FROM "Resource"."Resource" r
-  WHERE "Building_id" = NEW."Building_id"
-  AND r."Flat_type_id" = NEW."Flat_type_id"
-  AND r."Place_type_id" = NEW."Place_type_id";
 
   -- Reserva bloqueada?
   IF NEW."Lock" AND
@@ -161,15 +154,34 @@ BEGIN
     )
   ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
  
-  -- Billing type
-  IF NEW."Resource_id" IS NOT NULL AND (NEW."Billing_type" IS NULL OR NEW."Billing_type_last" IS NULL ) THEN
-    SELECT "Billing_type" INTO billing_type FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
-    IF NEW."Billing_type" IS NULL THEN
-      NEW."Billing_type" = billing_type;
+  -- Valida recurso
+  IF NEW."Resource_id" IS NOT NULL  THEN
+
+    -- Lee datos de recurso
+    SELECT "Limit_type", "Billing_type" 
+    INTO limit_type, billing_type 
+    FROM "Resource"."Resource" 
+    WHERE id = NEW."Resource_id";
+
+    -- Recursos limitados
+	    IF limit_type <> 'libre' THEN
+      NEW."Limit_type" = limit_type;
+      IF NEW."Book_type" IS NULL OR NEW."Book_type" = 'libre' THEN
+        RAISE exception '!!!Resource has limited rent!!!Recurso con renta limitada!!!';
+      END IF;
     END IF;
-    IF NEW."Billing_type_last" IS NULL THEN
-      NEW."Billing_type_last" = billing_type;
+
+    -- Billing type
+    IF (NEW."Billing_type" IS NULL OR NEW."Billing_type_last" IS NULL) THEN
+      SELECT "Billing_type" INTO billing_type FROM "Resource"."Resource" WHERE id = NEW."Resource_id";
+      IF NEW."Billing_type" IS NULL THEN
+        NEW."Billing_type" = billing_type;
+      END IF;
+      IF NEW."Billing_type_last" IS NULL THEN
+        NEW."Billing_type_last" = billing_type;
+      END IF;
     END IF;
+
   END IF;
 
   -- Return record

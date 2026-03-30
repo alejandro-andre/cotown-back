@@ -19,9 +19,13 @@ DECLARE
   services NUMERIC;
   deposit NUMERIC;
   deposit_base NUMERIC;
+  legal_deposit NUMERIC;
   final_cleaning NUMERIC;
   second_resident NUMERIC;
   climit NUMERIC;
+  furniture NUMERIC;
+  expenses NUMERIC;
+  utility NUMERIC;
 
   n_rent NUMERIC;
   n_services NUMERIC;
@@ -118,99 +122,133 @@ BEGIN
     ano := ano + 1;
   END IF;
 
-  -- Get current year prices
-  WITH
-    "Extras" AS (
-      SELECT r.id,
-        EXP(SUM(LN(1 + COALESCE(rat."Increment", 0) / 100))) AS "Extra"
-      FROM "Resource"."Resource" r
-        LEFT JOIN "Resource"."Resource_amenity" ra ON ra."Resource_id" = r.id 
-        LEFT JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
-      GROUP BY 1
-    ),
-    "Prices" AS (
-      SELECT r.id,
-        CASE
-          WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
-          WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
-          ELSE pd."Rent_long" * pr."Multiplier"
-        END AS "Rent",
-        pd."Services",
-        pd."Deposit",
-        pd."Final_cleaning",
-        pd."Second_resident",
-        pd."Limit"
-      FROM "Resource"."Resource" r
-        INNER JOIN "Billing"."Pricing_detail" pd 
-          ON pd."Building_id" = r."Building_id"
-          AND pd."Flat_type_id" = r."Flat_type_id" 
-          AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
-        INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
-      WHERE pd."Year" = ano
-        AND r.id = NEW."Resource_id"
-    )
-  SELECT 
-    ROUND(p."Rent" * e."Extra") AS "Rent",
-    p."Services",
-    p."Deposit",
-    p."Final_cleaning",
-    p."Second_resident",
-    p."Limit"
-  INTO rent, services, deposit, final_cleaning, second_resident, climit
-  FROM "Prices" p
-  LEFT JOIN "Extras" e ON p.id = e.id;
-  
-  -- Get next year prices
-  WITH
-    "Extras" AS (
-      SELECT r.id,
-        EXP(SUM(LN(1 + COALESCE(rat."Increment", 0) / 100))) AS "Extra"
-      FROM "Resource"."Resource" r
-        LEFT JOIN "Resource"."Resource_amenity" ra ON ra."Resource_id" = r.id 
-        LEFT JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
-      GROUP BY 1
-    ),
-    "Prices" AS (
-      SELECT r.id,
-        CASE
-          WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
-          WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
-          ELSE pd."Rent_long" * pr."Multiplier"
-        END AS "Rent",
-        pd."Services"
-      FROM "Resource"."Resource" r
-        INNER JOIN "Billing"."Pricing_detail" pd 
-          ON pd."Building_id" = r."Building_id"
-          AND pd."Flat_type_id" = r."Flat_type_id" 
-          AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
-        INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
-      WHERE pd."Year" = ano + 1
-        AND r.id = NEW."Resource_id"
-    )
-  SELECT 
-    ROUND(COALESCE(p."Rent", rent) * e."Extra", 0) AS "Rent",
-    COALESCE(p."Services", services, 0)
-  INTO n_rent, n_services
-  FROM "Prices" p
-  LEFT JOIN "Extras" e ON p.id = e.id;
+  -- ##################################################
+  -- Limited prices
+  -- ##################################################
+  IF NEW."Book_type" = 'limitado' THEN
 
-  -- Base values
-  deposit_base := ROUND((rent + second_resident + services) * 1.5);
+    -- Base values
+    SELECT "Max_rent", "Max_services", "Max_utility", "Max_furniture", "Max_expenses", 0, 0
+    INTO rent, services, utility, furniture, expenses, final_cleaning, second_resident
+    FROM "Resource"."Resource"
+    WHERE id = NEW."Resource_id";
+    climit := utility;
+
+    -- Deposit
+    IF NEW."Book_type" == 'recreativo' THEN
+      legal_deposit := rent + utility + furniture + expenses;
+      deposit := legal_deposit / 2;
+    ELSE
+      legal_deposit := rent + utility + furniture + expenses;
+      deposit := legal_deposit / 2;
+    END IF;
+
+  -- ##################################################
+  -- Free and recreative prices
+  -- ##################################################
+  ELSE 
+    -- Get current year prices
+    WITH
+      "Extras" AS (
+        SELECT r.id,
+          EXP(SUM(LN(1 + COALESCE(rat."Increment", 0) / 100))) AS "Extra"
+        FROM "Resource"."Resource" r
+          LEFT JOIN "Resource"."Resource_amenity" ra ON ra."Resource_id" = r.id 
+          LEFT JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
+        GROUP BY 1
+      ),
+      "Prices" AS (
+        SELECT r.id,
+          CASE
+            WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
+            WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
+            ELSE pd."Rent_long" * pr."Multiplier"
+          END AS "Rent",
+          pd."Services",
+          pd."Deposit",
+          pd."Final_cleaning",
+          pd."Second_resident",
+          pd."Limit"
+        FROM "Resource"."Resource" r
+          INNER JOIN "Billing"."Pricing_detail" pd 
+            ON pd."Building_id" = r."Building_id"
+            AND pd."Flat_type_id" = r."Flat_type_id" 
+            AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
+          INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
+        WHERE pd."Year" = ano
+          AND r.id = NEW."Resource_id"
+      )
+    SELECT 
+      ROUND(p."Rent" * e."Extra") AS "Rent",
+      p."Services",
+      p."Deposit",
+      p."Final_cleaning",
+      p."Second_resident",
+      p."Limit"
+    INTO rent, services, deposit, final_cleaning, second_resident, climit
+    FROM "Prices" p
+    LEFT JOIN "Extras" e ON p.id = e.id;
+
+    -- Get next year prices
+    WITH
+      "Extras" AS (
+        SELECT r.id,
+          EXP(SUM(LN(1 + COALESCE(rat."Increment", 0) / 100))) AS "Extra"
+        FROM "Resource"."Resource" r
+          LEFT JOIN "Resource"."Resource_amenity" ra ON ra."Resource_id" = r.id 
+          LEFT JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id" 
+        GROUP BY 1
+      ),
+      "Prices" AS (
+        SELECT r.id,
+          CASE
+            WHEN months < 3 THEN pd."Rent_short" * pr."Multiplier"
+            WHEN months < 7 THEN pd."Rent_medium" * pr."Multiplier"
+            ELSE pd."Rent_long" * pr."Multiplier"
+          END AS "Rent",
+          pd."Services"
+        FROM "Resource"."Resource" r
+          INNER JOIN "Billing"."Pricing_detail" pd 
+            ON pd."Building_id" = r."Building_id"
+            AND pd."Flat_type_id" = r."Flat_type_id" 
+            AND COALESCE(pd."Place_type_id", 0) = COALESCE(r."Place_type_id", 0)
+          INNER JOIN "Billing"."Pricing_rate" pr ON pr.id = r."Rate_id" 
+        WHERE pd."Year" = ano + 1
+          AND r.id = NEW."Resource_id"
+      )
+    SELECT 
+      ROUND(COALESCE(p."Rent", rent) * e."Extra", 0) AS "Rent",
+      COALESCE(p."Services", services, 0)
+    INTO n_rent, n_services
+    FROM "Prices" p
+    LEFT JOIN "Extras" e ON p.id = e.id;
+
+    -- Base values
+    deposit_base  := ROUND((rent + second_resident + services) * 1.5);
+    legal_deposit := 0;
+    furniture     := 0;
+    expenses      := 0;
+    utility       := 0;
+  END IF;
+
+  -- Prices
   NEW."Deposit" := COALESCE(NEW."Deposit", deposit, deposit_base);
   IF NEW."Deposit" < deposit_base THEN
     NEW."Deposit" = deposit_base;
   END IF;
-  NEW."Final_cleaning" := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
-  NEW."Limit"          := COALESCE(NEW."Limit", climit, 0);
+  NEW."Incasol_deposit" := legal_deposit;
+  NEW."Final_cleaning"  := COALESCE(NEW."Final_cleaning", final_cleaning, 0);
+  NEW."Limit"           := COALESCE(NEW."Limit", climit, 0);
   IF NEW."New_check_out" < NEW."Date_to" THEN
-    NEW."Rent"         := COALESCE(NEW."Rent", rent + second_resident, 0);
-    NEW."Services"     := COALESCE(NEW."Services", services, 0);
+    NEW."Rent"          := COALESCE(NEW."Rent", rent + second_resident, 0);
+    NEW."Services"      := COALESCE(NEW."Services", services, 0);
   ELSE
-    NEW."Rent"         := COALESCE(rent + second_resident, NEW."Rent", 0);
-    NEW."Services"     := COALESCE(services, NEW."Services", 0);
+    NEW."Rent"          := COALESCE(rent + second_resident, NEW."Rent", 0);
+    NEW."Services"      := COALESCE(services, NEW."Services", 0);
   END IF;
- 
-  -- Prices
+  NEW."Furniture"       := COALESCE(NEW."Furniture", furniture);
+  NEW."Expenses"        := COALESCE(NEW."Expenses", expenses);
+
   monthly_rent     := NEW."Rent";
   monthly_services := NEW."Services";
   n_rent           := COALESCE(n_rent, NEW."Rent");
@@ -280,8 +318,8 @@ BEGIN
 
     -- Insert price
     INSERT INTO "Booking"."Booking_price"
-      ("Booking_id", "Rent_date", "Rent", "Services", "Rent_discount", "Services_discount", "Rent_rack", "Services_rack", "Discount_type_id")
-      VALUES (NEW.id, dt_curr, curr_rent, curr_services, disc_rent, disc_services, monthly_rent, monthly_services, disc_type)
+      ("Booking_id", "Rent_date", "Rent", "Services", "Furniture", "Expenses", "Utility", "Rent_discount", "Services_discount", "Rent_rack", "Services_rack", "Discount_type_id")
+      VALUES (NEW.id, dt_curr, curr_rent, curr_services, furniture, expenses, utility, disc_rent, disc_services, monthly_rent, monthly_services, disc_type)
       ON CONFLICT ("Booking_id", "Rent_date") DO NOTHING;
  
     -- Next month
