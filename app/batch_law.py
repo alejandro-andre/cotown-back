@@ -165,7 +165,7 @@ def main():
       # Calculation fields
       renovation_date     = resource['Renovation_date']
       big_renovation_date = resource['Big_renovation_date']
-      last_lau_date       = resource['Last_LAU_date']
+      last_lau_date       = resource['Last_LAU_date'] if resource['LAU_applicable'] else None
       last_lau_rent       = float(resource['Last_LAU_rent'] or 0)
       index_rent          = float(resource['Index_rent'] or 0)
       weight              = float(resource['Weight'] or 0)
