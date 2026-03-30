@@ -39,6 +39,7 @@
 "Energy_certificate_rate",
 "Last_LAU_date",
 "Last_LAU_rent",
+"LAU_applicable",
 "Index_rent",
 "Max_services",
 "Max_utility",
