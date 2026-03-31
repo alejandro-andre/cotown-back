@@ -118,7 +118,7 @@ def main():
 
   # Get resources
   cur_read = dbClient.execute(con, '''
-    SELECT r."Code", d."Location_id", COALESCE(p."Total_Weight", r."Weigth") AS "Weight", *
+    SELECT r."Code", d."Location_id", COALESCE(p."Total_Weight", r."Weigth") AS "Weight", r.*
     FROM "Resource"."Resource" r
     LEFT JOIN (
       SELECT "Room_id", SUM("Weigth") AS "Total_Weight"
@@ -127,7 +127,7 @@ def main():
         GROUP BY "Room_id"
     ) p ON r."id" = p."Room_id"
     JOIN "Building"."Building" b on b.id = r."Building_id"
-    join "Geo"."District" d on d.id = b."District_id" 
+    JOIN "Geo"."District" d on d.id = b."District_id" 
     WHERE r."Resource_type" IN ('piso', 'habitacion', 'plaza')
     ORDER BY r."Code" ASC
   ''')
@@ -280,16 +280,15 @@ def main():
         resource['id'],
       )
     )
-    logger.info('{} {} {} {} {} {} {} {} {}'.format(
+    logger.info('{} {} {} {} {} {} {} {}'.format(
       resource['Code'],
       ipc,
+      resource['Last_LAU_free_date'],
       resource['Limit_type'],
-      resource['Last_LAU_rent'],
-      resource['Index_rent'],
-      resource['Weight'],
       resource['Max_LAU_rent'],
       resource['Max_rent'],
-      resource['Max_expenses']
+      resource['Max_expenses'],
+      resource['id'],
     ))
 
     # Result
