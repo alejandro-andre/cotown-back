@@ -11,6 +11,7 @@ SELECT
   rpt."Code" AS "Place_type_code", rpt."Name" AS "Place_type_name",
   bg.id AS "Booking_group_id", bg."Date_from" AS "Booking_group_date_from", bg."Date_to" AS "Booking_group_date_to",
   bo.id AS "Booking_other_id", bo."Date_from" AS "Booking_other_date_from", bo."Date_to" AS "Booking_other_date_to",
+  pm."Name" AS "Payment_method",
   bu."Code" AS "Building",
   p."Warning_1", p."Warning_2", p."Warning_3"
 FROM "Billing"."Invoice_line" il
