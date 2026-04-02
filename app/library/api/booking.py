@@ -172,10 +172,17 @@ def req_form():
 def login(usr, pwd):
 
     # Call backend
-    g.apiClient.auth(user=usr, password=pwd)
+    #g.apiClient.auth(user=usr, password=pwd)
+    #if g.apiClient.token is None:
+    #  return None, None
+    g.apiClient.auth(user='modelsadmin', password='Ciber$2022')
+    result = g.apiClient.call('{ data: Models_UserList (where: { email: { EQ: "' + usr + '" } } ) { username } }')
+    if len(result['data']) != 1:
+      return None, None
+    g.apiClient.auth(user=result['data'][0]['username'], password=pwd)
     if g.apiClient.token is None:
       return None, None
-
+    
     # Get user name
     result = g.apiClient.call(
     '''{ 
