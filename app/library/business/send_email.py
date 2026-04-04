@@ -130,24 +130,33 @@ def generate_email(apiClient, email):
 # Send email thru SMTP
 # ###################################################
 
+def ensure_list(value):
+  if isinstance(value, list):
+    return value
+  elif isinstance(value, tuple):
+    return list(value)
+  elif isinstance(value, (str, bytes)):
+    return [value]
+  else:
+    return [value]
+
 def smtp_mail(to, subject, body, cc=None, bcc=None, file=None, from_type='cotown'):
 
   # Receivers
   if settings.SMTPSEND != 1:
     return
-  receivers = [to,]
-  if cc:
-    receivers.append(cc)
-  if bcc:
-    receivers.append(bcc)
+  to_list = ensure_list(to)
+  cc_list = ensure_list(cc) if cc else []
+  bcc_list = ensure_list(bcc) if bcc else []
+  receivers = to_list + cc_list + bcc_list
 
   # Prepare mail
   msg = MIMEMultipart()
   msg['From']    = settings.SMTPFROM if from_type != 'vandor' else settings.SMTPFROMVANDOR
-  msg['To']      = to
   msg['Subject'] = subject
+  msg['To']      = ', '.join(to_list)
   if cc:
-    msg['Cc'] = ', '.join(cc)
+    msg['Cc'] = ', '.join(cc_list)
   msg.attach(MIMEText(body, 'html'))
 
   # Attach file
