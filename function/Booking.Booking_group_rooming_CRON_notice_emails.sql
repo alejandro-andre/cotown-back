@@ -29,7 +29,7 @@ BEGIN
     -- Notice B2C roommates (inhouse)
     INSERT
       INTO "Customer"."Customer_email" ("Customer_id", "Template", "Entity_id")
-      SELECT c.id, 'compis', rec_id
+      SELECT c.id, 'compisgroup', rec_id
       FROM "Booking"."Booking" b
         INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
         INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
