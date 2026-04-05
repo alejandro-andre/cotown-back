@@ -32,10 +32,14 @@ PM_TRANSFER = 2
 
 PR_BOOKING_FEE = 1
 PR_DEPOSIT = 2
+PR_INCASOL = 58
 PR_RENT = 3
 PR_SERVICES = 4
 PR_CHECKIN = 10
 PR_CHECKOUT = 52
+PR_UTILITY = 53
+PR_FURNITURE = 54
+PR_EXPENSES = 57
 
 VAT_21 = 1
 VAT_0  = 2
@@ -83,14 +87,16 @@ def bill_payments(dbClient, con):
   # Get all payments without bill
   cur = dbClient.execute(con, 
     '''
-    SELECT p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", r."Owner_id", r."Code", pr."Receipt"
+    SELECT 
+      p.id, p."Payment_type", p."Customer_id", p."Booking_id", p."Payment_method_id", p."Amount", 
+      r."Owner_id", r."Code", pr."Receipt", b."Incasol_deposit"
     FROM "Billing"."Payment" p
-    INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
-    INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
-    INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
-    LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
+      INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
+      INNER JOIN "Resource"."Resource" r ON b."Resource_id" = r.id
+      INNER JOIN "Provider"."Provider" pr ON pr.id = r."Owner_id"
+      LEFT JOIN "Billing"."Invoice" i ON i."Payment_id" = p.id
     WHERE i.id IS NULL
-    AND ("Payment_date" IS NOT NULL OR "Payment_type" IN ('checkin', 'checkout'))
+      AND ("Payment_date" IS NOT NULL OR "Payment_type" IN ('checkin', 'checkout'))
     ORDER BY p."Booking_id"
     ''')
   data = cur.fetchall()
@@ -142,6 +148,8 @@ def bill_payments(dbClient, con):
       billid = cur.fetchone()[0]
 
       # Create invoice line
+      incasol = (item["Incasol_deposit"] or 0) if item['Payment_type'] == 'deposito' else 0
+      amount = item['Amount'] - incasol
       cur = dbClient.execute(con, 
         '''
         INSERT INTO "Billing"."Invoice_line"
@@ -150,12 +158,29 @@ def bill_payments(dbClient, con):
         ''',
         (
           billid,
-          item['Amount'],
+          amount,
           pid,
           PRODUCTS[pid]['tax'],
           PRODUCTS[pid]['concept'] + ' ' + item['Code']
         )
       )
+
+      # Create incasol invoice line
+      if incasol > 0:
+        cur = dbClient.execute(con, 
+          '''
+          INSERT INTO "Billing"."Invoice_line"
+          ("Invoice_id", "Amount", "Product_id", "Tax_id", "Concept")
+          VALUES (%s, %s, %s, %s, %s)
+          ''',
+          (
+            billid,
+            incasol,
+            PR_INCASOL,
+            PRODUCTS[PR_INCASOL]['tax'],
+            PRODUCTS[PR_INCASOL]['concept'] + ' ' + item['Code']
+          )
+        )
 
       # Update invoice
       cur = dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, billid))
@@ -188,7 +213,7 @@ def bill_month(dbClient, con):
     SELECT 
       p.id, p."Booking_id", p."Rent", p."Services", p."Rent_discount", p."Services_discount", p."Rent_date", p."Invoice_external",
       b."Customer_id", b."Tax_id" as "Tax", c."Payment_method_id", r.id as "Resource_id", r."Code", r."Owner_id", r."Service_id", st."Tax_id", pr."Receipt", 
-      pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos"
+      pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos", p."Expenses", p."Furniture", p."Utility", b."Book_type", b."Limit_type"
     FROM "Booking"."Booking_price" p
       INNER JOIN "Booking"."Booking" b ON p."Booking_id" = b.id
       INNER JOIN "Customer"."Customer" c ON b."Customer_id" = c.id
@@ -255,9 +280,12 @@ def bill_month(dbClient, con):
       total_extra_services = float(sum(r['Amount'] for r in extra_services) or 0.0)
 
       # Amounts
-      total_rent = float(item['Rent'] or 0.0) + float(item['Rent_discount'] or 0.0)
+      total_rent     = float(item['Rent'] or 0.0) + float(item['Rent_discount'] or 0.0)
       total_services = float(item['Services'] or 0.0) + float(item['Services_discount'] or 0.0)
-      if total_rent + total_services != 0:
+      utility        = float(item['Utility'] or 0.0)
+      expenses       = float(item['Expenses'] or 0.0)
+      furniture      = float(item['Furniture'] or 0.0)
+      if total_rent + total_services + utility + expenses + furniture != 0:
         logger.debug(item)
 
       # Same issuer
@@ -274,7 +302,7 @@ def bill_month(dbClient, con):
           item['Rent_pos'] = 'delegado'
        
       # Create payment
-      if total_rent + total_services + total_extra_rent + total_extra_services > 0:
+      if total_rent + total_services + total_extra_rent + total_extra_services + utility + expenses + furniture > 0:
 
         cur = dbClient.execute(con,
           '''
@@ -288,7 +316,7 @@ def bill_month(dbClient, con):
             item['Rent_pos'],
             item['Customer_id'],
             item['Booking_id'],
-            total_rent + total_services + total_extra_rent + total_extra_services,
+            total_rent + total_services + total_extra_rent + total_extra_services + utility + expenses + furniture,
             datetime.now(),
             product['concept'] + ' [' + item['Code'] + '] ' + str(item['Rent_date']),
             'servicios'
@@ -297,7 +325,7 @@ def bill_month(dbClient, con):
         paymentid = cur.fetchone()[0]
 
         # Create rent invoice
-        if total_rent + total_extra_rent > 0:
+        if total_rent + total_extra_rent + utility + expenses + furniture> 0:
 
           cur = dbClient.execute(con, 
           '''
@@ -338,6 +366,39 @@ def bill_month(dbClient, con):
             )
           )
 
+          # Utility
+          if utility > 0:
+            dbClient.execute(con, 
+              '''
+              INSERT INTO "Billing"."Invoice_line"
+              ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+              VALUES (%s, %s, %s, %s, %s, %s)
+              ''',
+              ( rentid, item['Resource_id'], utility, PR_UTILITY, PRODUCTS[PR_UTILITY]['Tax'], PRODUCTS[PR_UTILITY]['concept'] )
+            )
+
+          # Expenses
+          if expenses > 0:
+            dbClient.execute(con, 
+              '''
+              INSERT INTO "Billing"."Invoice_line"
+              ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+              VALUES (%s, %s, %s, %s, %s, %s)
+              ''',
+              ( rentid, item['Resource_id'], expenses, PR_EXPENSES, PRODUCTS[PR_EXPENSES]['Tax'], PRODUCTS[PR_EXPENSES]['concept'] )
+            )
+
+          # Furniture
+          if furniture > 0:
+            dbClient.execute(con, 
+              '''
+              INSERT INTO "Billing"."Invoice_line"
+              ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+              VALUES (%s, %s, %s, %s, %s, %s)
+              ''',
+              ( rentid, item['Resource_id'], furniture, PR_FURNITURE, PRODUCTS[PR_FURNITURE]['Tax'], PRODUCTS[PR_FURNITURE]['concept'] )
+            )
+
           # Extra rent
           if total_extra_rent > 0:
             for e in extra_rent:
@@ -357,7 +418,8 @@ def bill_month(dbClient, con):
               )
 
           # Update invoice
-          dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
+          if item["Book_type"] == 'libre':
+            dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
           # Update extra rent
           for e in extra_rent:

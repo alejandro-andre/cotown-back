@@ -27,6 +27,8 @@ DECLARE
   expenses NUMERIC;
   utility NUMERIC;
 
+  resource_type VARCHAR;
+
   n_rent NUMERIC;
   n_services NUMERIC;
 
@@ -128,19 +130,29 @@ BEGIN
   IF NEW."Book_type" = 'limitado' THEN
 
     -- Base values
-    SELECT "Max_rent", "Max_services", "Max_utility", "Max_furniture", "Max_expenses", 0, 0
-    INTO rent, services, utility, furniture, expenses, final_cleaning, second_resident
+    SELECT "Resource_type", "Max_rent", "Max_services", "Max_utility", "Max_furniture", "Max_expenses", 0, 0
+    INTO resource_type, rent, services, utility, furniture, expenses, final_cleaning, second_resident
     FROM "Resource"."Resource"
     WHERE id = NEW."Resource_id";
     climit := utility;
 
     -- Deposit
-    IF NEW."Book_type" == 'recreativo' THEN
-      legal_deposit := rent + utility + furniture + expenses;
-      deposit := legal_deposit / 2;
+    IF resource_type = 'piso' THEN
+      IF NEW."Book_type" == 'limitado' THEN
+        legal_deposit := rent + utility + furniture + expenses;
+        deposit := legal_deposit / 2;
+      ELSE
+        legal_deposit := months * (rent + utility + furniture + expenses) / 6;
+        deposit := 1.5 * (rent + utility + furniture + expenses);
+        IF deposit > legal_deposit THEN
+          deposit := deposit - legal_deposit;
+        ELSE
+          deposit = 0;
+        END IF;
+      END IF;
     ELSE
-      legal_deposit := rent + utility + furniture + expenses;
-      deposit := legal_deposit / 2;
+      deposit := 1.5 * (rent + utility + furniture + expenses);
+      legal_deposit := 0;
     END IF;
 
   -- ##################################################

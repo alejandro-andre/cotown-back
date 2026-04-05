@@ -97,6 +97,8 @@ query BookingById ($id: Int) {
     Booking_limit: Limit
     Booking_final_cleaning: Final_cleaning
     Booking_second_resident: Second_resident
+    Booking_type: Book_type
+    Booking_limit_type: Limit_type
     Customer_reasonViaReason_id {
         Booking_reason: Name
     }
@@ -881,14 +883,15 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    if context['Resource_building_contract']:
-      contracts = [
-        { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
-        { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
-      ]
-      eid, status = do_send_contract(contracts, context, 'B2C')
-    else:
-      eid, status = 'n/a', 'other'
+    if context["Booking_type"] == 'libre':
+      if context['Resource_building_contract']:
+        contracts = [
+          { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
+          { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
+          ]
+        eid, status = do_send_contract(contracts, context, 'B2C')
+      else:
+        eid, status = 'n/a', 'other'
 
     # Update query
     query = '''
