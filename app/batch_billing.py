@@ -374,7 +374,7 @@ def bill_month(dbClient, con):
               ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
               VALUES (%s, %s, %s, %s, %s, %s)
               ''',
-              ( rentid, item['Resource_id'], utility, PR_UTILITY, PRODUCTS[PR_UTILITY]['Tax'], PRODUCTS[PR_UTILITY]['concept'] )
+              ( rentid, item['Resource_id'], utility, PR_UTILITY, PRODUCTS[PR_UTILITY]['tax'], PRODUCTS[PR_UTILITY]['concept'] )
             )
 
           # Expenses
@@ -385,7 +385,7 @@ def bill_month(dbClient, con):
               ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
               VALUES (%s, %s, %s, %s, %s, %s)
               ''',
-              ( rentid, item['Resource_id'], expenses, PR_EXPENSES, PRODUCTS[PR_EXPENSES]['Tax'], PRODUCTS[PR_EXPENSES]['concept'] )
+              ( rentid, item['Resource_id'], expenses, PR_EXPENSES, PRODUCTS[PR_EXPENSES]['tax'], PRODUCTS[PR_EXPENSES]['concept'] )
             )
 
           # Furniture
@@ -396,7 +396,7 @@ def bill_month(dbClient, con):
               ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
               VALUES (%s, %s, %s, %s, %s, %s)
               ''',
-              ( rentid, item['Resource_id'], furniture, PR_FURNITURE, PRODUCTS[PR_FURNITURE]['Tax'], PRODUCTS[PR_FURNITURE]['concept'] )
+              ( rentid, item['Resource_id'], furniture, PR_FURNITURE, PRODUCTS[PR_FURNITURE]['tax'], PRODUCTS[PR_FURNITURE]['concept'] )
             )
 
           # Extra rent

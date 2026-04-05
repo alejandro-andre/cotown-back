@@ -144,6 +144,7 @@ def smtp_mail(to, subject, body, cc=None, bcc=None, file=None, from_type='cotown
 
   # Receivers
   if settings.SMTPSEND != 1:
+    logger.info('Not sent!')
     return
   to_list = ensure_list(to)
   cc_list = ensure_list(cc) if cc else []

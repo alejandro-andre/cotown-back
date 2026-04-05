@@ -134,7 +134,8 @@ BEGIN
     INTO resource_type, rent, services, utility, furniture, expenses, final_cleaning, second_resident
     FROM "Resource"."Resource"
     WHERE id = NEW."Resource_id";
-    climit := utility;
+    utility := COALESCE(NEW."Limit", utility);
+    climit  := utility;
 
     -- Deposit
     IF resource_type = 'piso' THEN
@@ -265,6 +266,8 @@ BEGIN
   monthly_services := NEW."Services";
   n_rent           := COALESCE(n_rent, NEW."Rent");
   n_services       := COALESCE(n_services, NEW."Services");
+  expenses         := NEW."Expenses";
+  furniture        := NEW."Furniture";
 
   -- Loop to insert prices
   dt_curr = NEW."Date_from";

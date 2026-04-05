@@ -116,7 +116,6 @@ def req_pub_int_payments():
   if not client_data or client_data != '0:9999':
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
-  print(client_data)
 
   # Validate date
   date = '2023-01-01'
@@ -261,7 +260,6 @@ def req_pub_int_customers():
   if not client_data:
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
-  print(client_data)
 
   # Validate date
   date = '2023-01-01'
@@ -486,7 +484,6 @@ def req_pub_int_management_fees():
   if client_data != '0:9999':
     logger.warning('Invalid Api-Key: ' + str(key))
     abort(403, 'Invalid Api-Key')
-  print(client_data)
 
   # Validate date
   d = request.args.get('month')
