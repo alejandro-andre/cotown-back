@@ -88,6 +88,7 @@ def main():
     logger.info('{} B2C contracts printed/sent'.format(num))
 
     # Get pending group booking contracts
+    num = 0
     bookings = apiClient.call('''
     {
       data: Booking_Booking_groupList (

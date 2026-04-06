@@ -133,6 +133,7 @@ query BookingById ($id: Int) {
       }
     }
     ResourceViaResource_id {
+      Resource_id: id
       Resource_code: Code
       Resource_type
       Resource_part: Part
@@ -482,6 +483,37 @@ query Booking_group_annexById ($id: Int!, $group: String) {
 }
 '''
 
+DOCUMENTS = '''
+query Documents ($id: Int) {
+  data: Resource_ResourceList (
+    where: { id: { EQ: $id } }
+  ) {
+    Flat: ResourceViaFlat_id {
+      Code
+      Building: BuildingViaBuilding_id {
+        Building_docs: Building_docListViaBuilding_id {
+          id
+          Building_doc_type: Building_doc_typeViaBuilding_doc_type_id ( 
+            joinType: INNER
+            where: { Contract: { EQ: true } }
+          ) {
+            Name
+          }
+        }
+      }
+      Resource_docs: Resource_docListViaResource_id {
+        id
+        Resource_doc_type: Resource_doc_typeViaResource_doc_type_id ( 
+          joinType: INNER
+          where: { Contract: { EQ: true } }
+        ) {
+          Name
+        }
+      }
+    }
+  }
+}
+'''
 
 # ######################################################
 # Additional functions
@@ -582,18 +614,6 @@ def get_private_key(private_key_path):
 
 def do_send_contract(contracts, context, type):
 
-  # API Client setup
-  api_client = ApiClient()
-  api_client.set_base_path(settings.AUTHORIZATION_SERVER)
-  api_client.set_oauth_host_name(settings.AUTHORIZATION_SERVER)
-  
-  # Private key
-  private_key = get_private_key('docusign.private.key').encode('ascii').decode('utf-8')
-
-  # Get JWT token
-  token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
-  auth=f'Bearer {token_response.access_token}'
-
   # Contracts
   documents = []
   for contract in contracts:
@@ -662,6 +682,23 @@ def do_send_contract(contracts, context, type):
     custom_fields=custom_fields,
     status='sent'
   )
+
+  # Skip sending
+  if settings.DOCUSIGNSEND != 1 or context["Booking_type"] == 'libre':
+    logger.info('Not sent!')
+    return None, None
+  
+  # API Client setup
+  api_client = ApiClient()
+  api_client.set_base_path(settings.AUTHORIZATION_SERVER)
+  api_client.set_oauth_host_name(settings.AUTHORIZATION_SERVER)
+  
+  # Private key
+  private_key = get_private_key('docusign.private.key').encode('ascii').decode('utf-8')
+
+  # Get JWT token
+  token_response = get_jwt_token(private_key, settings.SCOPES, settings.AUTHORIZATION_SERVER, settings.INTEGRATION_KEY, settings.IMPERSONATED_USER_ID)
+  auth=f'Bearer {token_response.access_token}'
 
   # Send
   api_client.host = settings.ACCOUNT_BASE_URI
@@ -852,6 +889,16 @@ def do_contracts(apiClient, id):
     result = apiClient.call(BOOKING, variables)
     context = flatten(result['data'][0])
 
+    # Get documents
+    building_documents = []
+    resource_documents = []
+    variables = { 'id': context.get('Resource_id') }
+    result = apiClient.call(DOCUMENTS, variables)
+    if result['data']:
+      documents = flatten(result['data'][0])
+      building_documents = documents['Building_docs']
+      resource_documents = documents['Resource_docs']
+
     # Determine template to use
     template_type = context.get('Resource_type')
     if template_type is None:
@@ -883,15 +930,29 @@ def do_contracts(apiClient, id):
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Send contract
-    if context["Booking_type"] == 'libre':
-      if context['Resource_building_contract']:
-        contracts = [
-          { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
-          { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
-          ]
-        eid, status = do_send_contract(contracts, context, 'B2C')
-      else:
-        eid, status = 'n/a', 'other'
+    if context['Resource_building_contract']:
+      # Contracts
+      contracts = [
+        { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
+        { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
+        ]
+      # Annexes
+      id = 2
+      for document in building_documents:
+        id += 1
+        data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+        if data:
+          file = io.BytesIO(data.content)
+          contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
+      for document in resource_documents:
+        id += 1
+        data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+        if data:
+          file = io.BytesIO(data.content)
+          contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
+      eid, status = do_send_contract(contracts, context, 'B2C')
+    else:
+      eid, status = 'n/a', 'other'
 
     # Update query
     query = '''
@@ -912,8 +973,9 @@ def do_contracts(apiClient, id):
     # Call graphQL endpoint
     if json_rent is not None or json_svcs is not None:
       dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-      logger.info(eid + ' - ' + status + ' - ' + dt)
-      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
+      if eid:
+        logger.info(eid + ' - ' + status + ' - ' + dt)
+        apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
       return True
     return False
  
@@ -1045,8 +1107,9 @@ def send_group_contracts(apiClient, id):
 
     # Call graphQL endpoint
     dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-    logger.info(eid + ' - ' + status + ' - ' + dt)
-    apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'dt': dt })
+    if eid:
+      logger.info(eid + ' - ' + status + ' - ' + dt)
+      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'dt': dt })
     return True
  
   except Exception as error:
