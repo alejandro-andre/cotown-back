@@ -140,6 +140,7 @@ query BookingById ($id: Int) {
       Resource_address: Address
       Resource_street: Street
       Flat: ResourceViaFlat_id {
+        Resource_flat_id: id
         Resource_flat_code: Code
         Resource_flat_address: Address
         Resource_flat_street: Street
@@ -488,27 +489,25 @@ query Documents ($id: Int) {
   data: Resource_ResourceList (
     where: { id: { EQ: $id } }
   ) {
-    Flat: ResourceViaFlat_id {
-      Code
-      Building: BuildingViaBuilding_id {
-        Building_docs: Building_docListViaBuilding_id {
-          id
-          Building_doc_type: Building_doc_typeViaBuilding_doc_type_id ( 
-            joinType: INNER
-            where: { Contract: { EQ: true } }
-          ) {
-            Name
-          }
-        }
-      }
-      Resource_docs: Resource_docListViaResource_id {
+    Code
+    Building: BuildingViaBuilding_id {
+      Building_docs: Building_docListViaBuilding_id {
         id
-        Resource_doc_type: Resource_doc_typeViaResource_doc_type_id ( 
+        Building_doc_type: Building_doc_typeViaBuilding_doc_type_id ( 
           joinType: INNER
           where: { Contract: { EQ: true } }
         ) {
           Name
         }
+      }
+    }
+    Resource_docs: Resource_docListViaResource_id {
+      id
+      Resource_doc_type: Resource_doc_typeViaResource_doc_type_id ( 
+        joinType: INNER
+        where: { Contract: { EQ: true } }
+      ) {
+        Name
       }
     }
   }
@@ -892,7 +891,7 @@ def do_contracts(apiClient, id):
     # Get documents
     building_documents = []
     resource_documents = []
-    variables = { 'id': context.get('Resource_id') }
+    variables = { 'id': context.get('Resource_flat_id') or context.get('Resource_id') }
     result = apiClient.call(DOCUMENTS, variables)
     if result['data']:
       documents = flatten(result['data'][0])
