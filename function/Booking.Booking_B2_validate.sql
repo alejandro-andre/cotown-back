@@ -155,7 +155,7 @@ BEGIN
   ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
  
   -- Valida recurso
-  IF NEW."Resource_id" IS NOT NULL  THEN
+  IF NEW."Resource_id" IS NOT NULL AND OLD."Resource_id" IS DISTINCT FROM NEW."Resource_id" THEN
 
     -- Lee datos de recurso
     SELECT "Limit_type", "Billing_type" 
