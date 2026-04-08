@@ -418,7 +418,7 @@ def bill_month(dbClient, con):
               )
 
           # Update invoice
-          if item["Book_type"] == 'libre':
+          if item["Book_type"] is None:
             dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, rentid))
 
           # Update extra rent

@@ -259,6 +259,14 @@ BEGIN
     NEW."Rent"          := COALESCE(rent + second_resident, NEW."Rent", 0);
     NEW."Services"      := COALESCE(services, NEW."Services", 0);
   END IF;
+
+  -- Furniture and expenses
+  IF NEW."limit_type" = 'lau' THEN
+    expenses := 0;
+  END IF;
+  IF NEW."limit_type" = 'indice' THEN
+    furniture := 0;
+  END IF;
   NEW."Furniture"       := COALESCE(NEW."Furniture", furniture);
   NEW."Expenses"        := COALESCE(NEW."Expenses", expenses);
 

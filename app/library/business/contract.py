@@ -683,7 +683,7 @@ def do_send_contract(contracts, context, type):
   )
 
   # Skip sending
-  if settings.DOCUSIGNSEND != 1 or context["Booking_type"] == 'libre':
+  if settings.DOCUSIGNSEND != 1 or context["Booking_type"] is not None:
     logger.info('Not sent!')
     return None, None
   
@@ -937,18 +937,18 @@ def do_contracts(apiClient, id):
       ]
       # Annexes
       id = 2
-      #for document in building_documents:
-      #  id += 1
-      #  data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
-      #  if data:
-      #    file = io.BytesIO(data.content)
-      #    contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
-      #for document in resource_documents:
-      #  id += 1
-      #  data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
-      #  if data:
-      #    file = io.BytesIO(data.content)
-      #    contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
+      for document in building_documents:
+        id += 1
+        data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+        if data:
+          file = io.BytesIO(data.content)
+          contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
+      for document in resource_documents:
+        id += 1
+        data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+        if data:
+          file = io.BytesIO(data.content)
+          contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
       eid, status = do_send_contract(contracts, context, 'B2C')
     else:
       eid, status = 'n/a', 'other'

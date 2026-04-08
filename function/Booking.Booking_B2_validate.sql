@@ -164,9 +164,9 @@ BEGIN
     WHERE id = NEW."Resource_id";
 
     -- Recursos limitados
-	    IF limit_type <> 'libre' THEN
+	  IF limit_type <> 'libre' THEN
       NEW."Limit_type" = limit_type;
-      IF NEW."Book_type" IS NULL OR NEW."Book_type" = 'libre' THEN
+      IF NEW."Book_type" IS NULL THEN
         RAISE exception '!!!Resource has limited rent!!!Recurso con renta limitada!!!';
       END IF;
     END IF;
