@@ -934,21 +934,21 @@ def do_contracts(apiClient, id):
       contracts = [
         { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
         { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
-        ]
+      ]
       # Annexes
       id = 2
-      for document in building_documents:
-        id += 1
-        data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
-        if data:
-          file = io.BytesIO(data.content)
-          contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
-      for document in resource_documents:
-        id += 1
-        data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
-        if data:
-          file = io.BytesIO(data.content)
-          contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
+      #for document in building_documents:
+      #  id += 1
+      #  data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+      #  if data:
+      #    file = io.BytesIO(data.content)
+      #    contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
+      #for document in resource_documents:
+      #  id += 1
+      #  data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+      #  if data:
+      #    file = io.BytesIO(data.content)
+      #    contracts.append({ 'id': id, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
       eid, status = do_send_contract(contracts, context, 'B2C')
     else:
       eid, status = 'n/a', 'other'
@@ -970,11 +970,10 @@ def do_contracts(apiClient, id):
     '''
 
     # Call graphQL endpoint
-    if json_rent is not None or json_svcs is not None:
+    if eid is not None and json_rent is not None or json_svcs is not None:
       dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-      if eid:
-        logger.info(eid + ' - ' + status + ' - ' + dt)
-        apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
+      logger.info(eid + ' - ' + status + ' - ' + dt)
+      apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
       return True
     return False
  
