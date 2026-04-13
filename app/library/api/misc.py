@@ -10,14 +10,11 @@
  
 # System includes
 import re
-import json
-import base64
-import hashlib
 from flask import g, send_file, abort, Response
 from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from io import BytesIO
 from icalendar import Calendar, Event
 
@@ -149,33 +146,58 @@ def req_ical(token):
     dbClient.putconn(con)
   except Exception as error:
     logger.error(error)
-    con.rollback()
-    dbClient.putconn(con)
+    if con:
+      con.rollback()
+      dbClient.putconn(con)
     return None
 
-  # Create feed
+  # Sin resultados = recurso no existe
+  if not rows:
+    abort(404)
+
+  # Calculate current weekend
+  today = date.today()
+  monday = today - timedelta(days=today.weekday())
+  current_weekend = [monday + timedelta(days=i) for i in (4, 5, 6)]
+
+  def is_day_booked(day, booked_ranges):
+    return any(date_from <= day <= date_to for date_from, date_to in booked_ranges)
+
+   # Create feed
   cal = Calendar()
   cal.add("prodid", "-//booking//ical//")
   cal.add("version", "2.0")
+  booked_ranges = []
+  now = datetime.now(timezone.utc)
   for resource, id, date_from, date_to in rows:
     code = resource
     logger.debug("{} {} {} {}".format(resource, id, date_from, date_to))
     if date_from:
+      booked_ranges.append((date_from, date_to))
       event = Event()
       event.add("uid", f"{id}@{resource}")
       event.add("summary", f"Reserva {resource}-{id}")
       event.add("dtstart", date_from)
       event.add("dtend", date_to + timedelta(days=1))
-      event.add("dtstamp", datetime.now(timezone.utc))
+      event.add("dtstamp", now)
       cal.add_component(event)
-  if code != 'unknown':
-    return Response(
-      cal.to_ical(),
-      headers={
-        "Content-Type": "text/calendar; charset=utf-8",
-        "Content-Disposition": f'inline; filename="{code}.ics"'
-      }
-  )
 
-  # Not found
-  abort(404)
+  # Block weekend days
+  for day in current_weekend:
+    if not is_day_booked(day, booked_ranges):
+      logger.debug("{} {}".format(code, day))
+      event = Event()
+      event.add("uid", f"N{day.isoformat()}@{code}")
+      event.add("summary", f"No disponible {code}")
+      event.add("dtstart", day)
+      event.add("dtend", day + timedelta(days=1))
+      event.add("dtstamp", now)
+      cal.add_component(event)
+
+  return Response(
+    cal.to_ical(),
+    headers={
+      "Content-Type": "text/calendar; charset=utf-8",
+      "Content-Disposition": f'inline; filename="{code}.ics"'
+    }
+  )
