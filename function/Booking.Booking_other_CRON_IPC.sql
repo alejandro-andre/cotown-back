@@ -39,7 +39,7 @@ BEGIN
     -- Actualizar fila
     UPDATE "Booking"."Booking_other"
     SET
-      "Applied_IPC" = ipc_value,
+      "Applied_IPC" = LEAST(ipc_value, COALESCE(rec."Max_IPC", 999)),
       "IPC_notified" = CURRENT_DATE
     WHERE id = rec.id;
 
