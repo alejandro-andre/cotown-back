@@ -17,6 +17,7 @@ from weasyprint import HTML
 from datetime import date, datetime, timedelta, timezone
 from io import BytesIO
 from icalendar import Calendar, Event
+from zoneinfo import ZoneInfo
 
 # Cotown includes
 from library.services.config import settings
@@ -134,7 +135,7 @@ def req_ical(token):
     WHERE r."Ical" = %s
     ORDER BY bd."Date_from"
   '''
-    
+
   # Retrieve data
   logger.debug(token)
   code = 'unknown'
@@ -156,14 +157,16 @@ def req_ical(token):
     abort(404)
 
   # Calculate current weekend
-  today = date.today()
+  madrid = ZoneInfo("Europe/Madrid")
+  now_madrid = datetime.now(madrid)
+  today = now_madrid.date()
   monday = today - timedelta(days=today.weekday())
   current_weekend = [monday + timedelta(days=i) for i in (4, 5, 6)]
 
   def is_day_booked(day, booked_ranges):
     return any(date_from <= day <= date_to for date_from, date_to in booked_ranges)
 
-   # Create feed
+  # Create feed
   cal = Calendar()
   cal.add("prodid", "-//booking//ical//")
   cal.add("version", "2.0")
@@ -182,17 +185,43 @@ def req_ical(token):
       event.add("dtstamp", now)
       cal.add_component(event)
 
-  # Block weekend days
-  for day in current_weekend:
-    if not is_day_booked(day, booked_ranges):
-      logger.debug("{} {}".format(code, day))
-      event = Event()
-      event.add("uid", f"N{day.isoformat()}@{code}")
-      event.add("summary", f"No disponible {code}")
-      event.add("dtstart", day)
-      event.add("dtend", day + timedelta(days=1))
-      event.add("dtstamp", now)
-      cal.add_component(event)
+  # Block weekend days only from Friday 12:00 (Madrid time) onwards
+  friday, saturday, sunday = current_weekend
+
+  is_blocking_period = (
+    (today == friday and now_madrid.hour >= 12) or
+    today == saturday or
+    today == sunday
+  )
+
+  if is_blocking_period:
+    weekend_blocks = [
+      (
+        friday,
+        datetime(friday.year, friday.month, friday.day, 12, 0, tzinfo=madrid),
+        datetime(friday.year, friday.month, friday.day, 23, 59, tzinfo=madrid),
+      ),
+      (
+        saturday,
+        datetime(saturday.year, saturday.month, saturday.day, 0, 0, tzinfo=madrid),
+        datetime(saturday.year, saturday.month, saturday.day, 23, 59, tzinfo=madrid),
+      ),
+      (
+        sunday,
+        datetime(sunday.year, sunday.month, sunday.day, 0, 0, tzinfo=madrid),
+        datetime(sunday.year, sunday.month, sunday.day, 23, 59, tzinfo=madrid),
+      ),
+    ]
+
+    for day, block_start, block_end in weekend_blocks:
+      if not is_day_booked(day, booked_ranges):
+        event = Event()
+        event.add("uid", f"N{day.isoformat()}@{code}")
+        event.add("summary", f"No disponible {code}")
+        event.add("dtstart", block_start)
+        event.add("dtend", block_end)
+        event.add("dtstamp", now)
+        cal.add_component(event)
 
   return Response(
     cal.to_ical(),
