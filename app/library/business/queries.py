@@ -522,8 +522,8 @@ def q_flat_prices(dbClient, segment, year):
         MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short",  0)) AS "Rent_short_next",
         COUNT(*) AS "Qty"
       FROM "Resource"."Resource" r
-        INNER JOIN "Building"."Building" b   ON r."Building_id"   = b.id
-        INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id"  = rft.id
+        INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+        INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
         INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
         INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id" = pr.id
         INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
@@ -641,6 +641,7 @@ def q_room_prices(dbClient, segment, year, dui=False):
         MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short",  0)) AS "Rent_short_next",
         COUNT(*) AS "Qty"
       FROM "Resource"."Resource" r
+      	INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id" 
         INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
         INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
         INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
@@ -650,7 +651,7 @@ def q_room_prices(dbClient, segment, year, dui=False):
       WHERE r."Sale_type" in ('ambos', 'plazas')
         AND pd."Year" = %s
         AND px."Year" = %s
-        AND r."Segment_id" = %s
+        AND f."Segment_id" = %s
         AND rpt."Code" NOT LIKE %s
       GROUP BY 1, 2, 3, 4, 5
     )
