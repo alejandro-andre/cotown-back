@@ -531,7 +531,7 @@ def q_flat_prices(dbClient, segment, year):
       WHERE r."Sale_type" IN ('ambos', 'completo')
         AND pd."Year" = %s
         AND px."Year" = %s
-        AND b."Segment_id" = %s
+        AND r."Segment_id" = %s
       GROUP BY 1, 2, 3, 4
     )
     SELECT 
@@ -650,7 +650,7 @@ def q_room_prices(dbClient, segment, year, dui=False):
       WHERE r."Sale_type" in ('ambos', 'plazas')
         AND pd."Year" = %s
         AND px."Year" = %s
-        AND b."Segment_id" = %s
+        AND r."Segment_id" = %s
         AND rpt."Code" NOT LIKE %s
       GROUP BY 1, 2, 3, 4, 5
     )
@@ -778,8 +778,7 @@ def q_promo(dbClient, segment):
       LEFT JOIN "Resource"."Resource_flat_type" rft ON rft."id" = pp."Flat_type_id" 
       LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt."id" = pp."Place_type_id" 
       LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
-    WHERE b."Segment_id" = %s
-      AND p."Active_from" <= CURRENT_DATE
+    WHERE p."Active_from" <= CURRENT_DATE
       AND p."Active_to" >= CURRENT_DATE
   '''
   cur = dbClient.execute(con, sql, (segment, ))
