@@ -13,6 +13,7 @@
 "increment",
 "Billing_type",
 "Sale_type",
+"Segment",
 "Pricing_rate.Code",
 "Management_fee",
 "Management_fee_no_cleaning",

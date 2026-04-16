@@ -64,6 +64,7 @@ def load_resources(dbClient, con, data):
   buildings     = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Building"."Building"', 'Code')
   resources     = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource"', 'Code')
   amenity_types = preload_lookup(dbClient, con, 'SELECT id, "Code" FROM "Resource"."Resource_amenity_type"', 'Code')
+  segments      = preload_lookup(dbClient, con, 'SELECT id, "Name" FROM "Auxiliar"."Segment"', 'Name')
 
   # Header
   header = [cell.value for cell in data[2]]
@@ -129,6 +130,11 @@ def load_resources(dbClient, con, data):
         # Resource_usage.Name
         elif column == 'Resource_usage.Name':
           record['Usage_id'], ok_i = resolve_lookup(usages, cell.value, 'Uso', row_num, log)
+          ok = ok and ok_i
+
+        # Segment.Name
+        elif column == 'Segment.Name':
+          record['Segment_id'], ok_i = resolve_lookup(segments, cell.value, 'Web', row_num, log)
           ok = ok and ok_i
 
         # Extras

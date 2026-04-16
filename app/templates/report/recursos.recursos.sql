@@ -33,6 +33,7 @@ SELECT
   rfs."Code" AS "Flat_subtype.Code", 
   rpt."Code" AS "Place_type.Code",
   r."Billing_type", r."Sale_type",
+  se."Name" as "Segment",
   pr."Code" AS "Pricing_rate.Code",
   r."Description", r."Description_en", 
   r."Area", r."Area_woc", r."Baths", r."Places", r."Orientation", r."Interior", r."Wifi_ssid", r."Wifi_key", r."Gate_mac", r."Gate_phone", r."Notes", 
@@ -52,6 +53,7 @@ FROM "Resource"."Resource" r
   LEFT JOIN "Resource"."Resource_flat_subtype" rfs ON rfs.id = r."Flat_subtype_id" 
   LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
   LEFT JOIN "Resource"."Resource_usage" ru on ru.id = r."Usage_id"
+  LEFT JOIN "Auxiliar"."Segment" se ON se.id = r."Segment_id" 
   LEFT JOIN "extras" ex ON ex.id = r.id
   LEFT JOIN "locks" lck ON lck.id = r.id
 ORDER BY r."Code"
