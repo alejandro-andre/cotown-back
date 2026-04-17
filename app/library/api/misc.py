@@ -195,31 +195,13 @@ def req_ical(token):
   )
 
   if is_blocking_period:
-    weekend_blocks = [
-      (
-        friday,
-        datetime(friday.year, friday.month, friday.day, 12, 0, tzinfo=madrid),
-        datetime(friday.year, friday.month, friday.day, 23, 59, tzinfo=madrid),
-      ),
-      (
-        saturday,
-        datetime(saturday.year, saturday.month, saturday.day, 0, 0, tzinfo=madrid),
-        datetime(saturday.year, saturday.month, saturday.day, 23, 59, tzinfo=madrid),
-      ),
-      (
-        sunday,
-        datetime(sunday.year, sunday.month, sunday.day, 0, 0, tzinfo=madrid),
-        datetime(sunday.year, sunday.month, sunday.day, 23, 59, tzinfo=madrid),
-      ),
-    ]
-
-    for day, block_start, block_end in weekend_blocks:
+    for day in [friday, saturday, sunday]:
       if not is_day_booked(day, booked_ranges):
         event = Event()
         event.add("uid", f"N{day.isoformat()}@{code}")
         event.add("summary", f"No disponible {code}")
-        event.add("dtstart", block_start)
-        event.add("dtend", block_end)
+        event.add("dtstart", day)
+        event.add("dtend", day + timedelta(days=1))
         event.add("dtstamp", now)
         cal.add_component(event)
 
