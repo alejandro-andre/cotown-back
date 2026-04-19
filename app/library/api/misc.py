@@ -189,7 +189,7 @@ def req_ical(token):
   friday, saturday, sunday = current_weekend
 
   is_blocking_period = (
-    (today == friday and now_madrid.hour >= 12) or
+    (today == friday and now_madrid.hour >= 10) or
     today == saturday or
     today == sunday
   )
