@@ -1,0 +1,166 @@
+{% set web = 'vanguard' if data.Segment_id == 1 else 'cotown' %}
+{% set types = ['completo', 'ambos'] if data.Sale_type == 'ap' else ['plazas', 'ambos'] %}
+<!DOCtype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page { 
+      size: A4 landscape; 
+      margin: 1.5cm; 
+      @bottom-right {
+        content: "Pág. " counter(page) " de " counter(pages);
+        margin-bottom: 1.0cm;
+        font-size: 12px;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    }
+    body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; margin: 0; padding: 0; }
+    thead { display: table-header-group; }
+    th, td { padding: 4px; }
+    .title { margin: 0; padding: 5px 10px; color: white; width: 100vh; font-size: 24px; font-weight: 700; text-transform: uppercase; }
+    .title.cotown { background-color: #00bfb2; }
+    .title.vanguard { background-color: #ff5166; }
+    .text { padding: 5px; }
+    .head { margin: 0; padding: 3px 10px; width: 100vh; font-size: 14px; font-weight: 700;}
+    .head.cotown { background-color: #95cfcf; }
+    .head.vanguard { background-color: #ffdee8; }
+  </style>
+</head>
+
+<body>
+
+  <table style="width: 100%; border-collapse: collapse;">
+
+    <tr>
+      <td style="font-weight: 300; vertical-align: middle;">
+        {% if data.Sale_type == 'ap' %}
+        <strong>APARTAMENTOS PRIVADOS BARCELONA</strong> <span style="font-style: italic;">Alquiler temporal de apartamentos amueblados en Barcelona</span>
+        {% else %}
+        <strong>PISOS COMPARTIDOS BARCELONA</strong> <span style="font-style: italic;">Alquiler temporal por habitaciones</span>
+        {% endif %}
+      </td>
+      <td style="text-align: right; vertical-align: middle;">
+        {% if web == 'vanguard' %}
+        <img src="https://vanguard-student-housing.com/assets/img/vanguard-coral.svg" style="width: 100px;">
+        {% else %}
+        <img src="https://cotown.com/assets/img/cotown-logo-black.svg" style="height: 40px; margin-right: -10px;">
+        {% endif %}
+      </td>
+    </tr>
+
+  </table>
+
+  <div class="title {{web}}">{{data.Name}}</div>
+  <div class="text {{web}}">{{data.Address}}, {{data.Zip}} {{data.District.Location.Name}}</div>
+  <br>
+
+  {% if data.Flats %}
+  {% set flat = data.Flats[0] %}
+  {% set rate = flat.Energy_certificate_rate or '' %}
+  <div class="head {{web}}">Certificación Energética</div>
+
+  <table>
+    <tr>
+      <td style="padding-left: 8px; font-weight: 700; font-size: 12px;">Etiqueta energética:</td>
+      <td>
+        {% if rate == 'A' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#00A651"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">A</text>
+          </svg>
+        {% endif %}
+        {% if rate == 'B' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#4CB848"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">B</text>
+          </svg>
+        {% endif %}
+        {% if rate == 'C' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#BFD730"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">C</text>
+          </svg>
+        {% endif %}
+        {% if rate == 'D' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#FFF200"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#555">D</text>
+          </svg>
+        {% endif %}
+        {% if rate == 'E' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#FFB81C"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">E</text>
+          </svg>
+        {% endif %}
+        {% if rate == 'F' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#F26522"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">F</text>
+          </svg>
+        {% endif %}
+        {% if rate == 'G' %}
+          <svg width="64" height="28" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="0,0 50,0 64,14 50,28 0,28" fill="#ED1C24"/>
+            <text x="42" y="19" text-anchor="end" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">G</text>
+          </svg>
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td style="padding-left: 8px; font-weight: 700; font-size: 12px;">Nº Registro CEE:</td>
+      <td style="font-weight: 300; font-size: 12px;">{{flat.Energy_certificate or ''}}</td>
+    </tr>
+  </table>
+
+  <br>
+  <div class="text {{web}}">Actualización de renta según IRAV</div>
+  <div class="text {{web}}"><strong>La propiedad del edificio tiene la condición de Gran Tenedor</strong></div>
+
+  <table>
+
+    <thead>
+    <tr class="head {{web}}">
+      <th style="white-space: nowrap;">Unidad<br>(Piso/Hab)</th>
+      <th>Número de Registro (NRA)</th>
+      <th>Cédula habitabilidad</th>
+      <th>m²</th>
+      <th>Índice de referencia (MIVAU)</th>
+      <th>Contrato LAU en los últimos 5 años</th>
+      <th>Precio de la última renta LAU </th>
+    </tr>
+    </thead>
+
+  {% for flat in data.Flats if flat.Sale_type in types %}
+
+    <tbody>
+    <tr style="background-color: #eee; font-weight: 700; font-size: 14px;">
+      <td>{{flat.Code[7:]}}</td>
+      <td>{{flat.Registry_num or ''}}</td>
+      <td>{{flat.Occupancy_certificate or ''}}</td>
+      <td style="white-space: nowrap; text-align: center;">{{fmt(flat.Area_woc, ' m²', '')}}</td>
+      <td style="white-space: nowrap; text-align: center;">{{fmt(flat.Index_rent, ' €', 'No aplica')}}</td>
+      <td style="text-align: center;">{% if is_old(flat.Last_LAU_date) %}No{% else %}Sí{% endif %}</td>
+      <td style="white-space: nowrap; text-align: center;">{% if is_old(flat.Last_LAU_date) %}No aplica{% else %}{{fmt(flat.Last_LAU_rent, ' €', 'No aplica')}}{% endif %}</td>
+    </tr>
+
+    {% if flat.Places and data.Sale_type == 'pc' %}
+    {% for place in flat.Places if place.Resource_type == 'habitacion' and place.Registry_num %}
+    <tr>
+      <td>{{place.Code[13:]}}</td>
+      <td>{{place.Registry_num or ''}}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+
+  {% endfor %}
+    <tbody>
+
+  </table>
+
+  {% endif %}
+
+</body>
+</html>

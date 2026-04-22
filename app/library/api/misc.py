@@ -15,6 +15,7 @@ from schwifty import IBAN, exceptions
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from weasyprint import HTML
 from datetime import date, datetime, timedelta, timezone
+from dateutil.relativedelta import relativedelta
 from io import BytesIO
 from icalendar import Calendar, Event
 from zoneinfo import ZoneInfo
@@ -29,6 +30,51 @@ from library.business.queries import q_change_contract
 # Logging
 import logging
 logger = logging.getLogger('COTOWN')
+
+BUILDING = '''
+query data ($code: String!, $segment: Int!) {
+  data: Building_BuildingList ( 
+    where: { Code: { EQ: $code } } 
+  ) {
+    Code
+    Name
+    Address
+    Zip
+    District: DistrictViaDistrict_id {
+      Location: LocationViaLocation_id {
+        Name
+      }
+    }
+    Flats: ResourceListViaBuilding_id (
+      orderBy: { attribute: Code }
+      where: { 
+        Resource_type: { EQ: piso } 
+        Segment_id: { EQ: $segment }
+      }
+    ) {
+      Code
+      Address
+      Sale_type
+      Resource_type
+      Index_rent
+      Last_LAU_rent
+      Last_LAU_date
+      Registry_num
+      Segment_id
+      Area_woc
+      Occupancy_certificate
+      Energy_certificate
+      Energy_certificate_rate
+      Places: ResourceListViaFlat_id {
+        Code
+        Address
+        Sale_type
+        Resource_type
+        Registry_num
+      }
+    }
+  }
+}'''
 
 
 # ###################################################
@@ -80,7 +126,7 @@ def req_validate_swift(code):
 # Residence certificate
 def req_cert_booking(booking):
 
-  # API Client   
+  # API Client
   apiClient = APIClient(settings.SERVER)
   apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
 
@@ -212,3 +258,51 @@ def req_ical(token):
       "Content-Disposition": f'inline; filename="{code}.ics"'
     }
   )
+
+# Legal PDF
+def is_old(d):
+    if d:
+      fecha = date.fromisoformat(str(d))
+      return fecha < date.today() - relativedelta(years=5)
+    return True
+
+def fmt(e, p='', d=''):
+    if e:
+      return f"{e:,.0f}".replace(",", ".") + p
+    return d
+
+def req_pub_legal_pdf(sale_type, segment, building):
+  # API Client
+  apiClient = APIClient(settings.SERVER)
+  apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
+
+  # Jinja environment
+  env = Environment(
+    loader=FileSystemLoader('./templates/other'),
+    autoescape=select_autoescape(['html', 'xml'])
+  )
+
+  # Get building
+  building = apiClient.call(BUILDING, { "code": building, "segment": segment })
+  if building is None:
+    abort(404)
+
+  # Prepare booking
+  context = building['data'][0]
+  now = datetime.now()
+  context['Today_day'] = now.day
+  context['Today_month'] = now.month
+  context['Today_year'] = now.year
+  context['Segment_id'] = segment
+  context['Sale_type'] = sale_type
+
+  # Generate HTML
+  tpl = env.get_template('legal.html')
+  result = tpl.render(data=context, is_old=is_old, fmt=fmt)
+
+  # Generate PDF
+  file = BytesIO()
+  html = HTML(string=result)
+  html.write_pdf(file)
+  file.seek(0)
+  return send_file(file, mimetype='application/pdf')

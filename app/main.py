@@ -20,7 +20,7 @@ from library.services.config import settings
 
 # Cotown includes - api functions
 from library.api.token import validate_token
-from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift, req_cert_booking, req_ical
+from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift, req_cert_booking, req_ical, req_pub_legal_pdf
 from library.api.contract import req_pub_contract
 from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard_operaciones, req_dashboard_lau, req_dashboard_payments, req_dashboard_deposits, req_dashboard_to_excel, req_prev_next_operaciones, req_availability, req_questionnaire
@@ -222,6 +222,9 @@ def runapp():
 
   # Static web (dynamic availability)
   app.add_url_rule(settings.API_PREFIX + '/availability/<int:type>/<int:filter>', view_func=req_pub_availability, methods=['GET'])
+  
+  # Static web (legal texts)
+  app.add_url_rule(settings.API_PREFIX + '/legal/<string:sale_type>/<int:segment>/<string:building>.pdf', view_func=req_pub_legal_pdf, methods=['GET'])
   
   # Dynamic web - Booking process - Pages
   app.add_url_rule('/assets/<path:filename>', view_func=req_pub_asset, methods=['GET'])
