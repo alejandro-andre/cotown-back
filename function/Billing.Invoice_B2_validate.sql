@@ -103,22 +103,20 @@ BEGIN
   END IF;
 
   -- Cliente
-  IF NEW."Customer_id" IS NULL THEN 
-    IF NEW."Booking_id" IS NOT NULL THEN
-      SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+  IF NEW."Booking_id" IS DISTINCT FROM OLD."Booking_id" THEN
+    SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
+    NEW."Customer_id" := customer_id;
+  ELSE
+    IF NEW."Booking_group_id" IS DISTINCT FROM OLD."Booking_group_id" THEN
+      SELECT "Payer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
       NEW."Customer_id" := customer_id;
     ELSE
-      IF NEW."Booking_group_id" IS NOT NULL THEN
-        SELECT "Payer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
+      IF NEW."Booking_other_id" IS DISTINCT FROM OLD."Booking_other_id" THEN
+        SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_other" WHERE id = NEW."Booking_other_id";
         NEW."Customer_id" := customer_id;
-      ELSE
-        IF NEW."Booking_other_id" IS NOT NULL THEN
-          SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_other" WHERE id = NEW."Booking_other_id";
-          NEW."Customer_id" := customer_id;
-        END IF;
       END IF;
     END IF;
-  END IF; 
+  END IF;
   IF NEW."Customer_id" IS NULL THEN 
     RAISE EXCEPTION '!!!Client is missing!!!Falta indicar el cliente!!!';
   END IF; 
