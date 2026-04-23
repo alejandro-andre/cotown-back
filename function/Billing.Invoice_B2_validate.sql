@@ -103,15 +103,15 @@ BEGIN
   END IF;
 
   -- Cliente
-  IF NEW."Booking_id" IS DISTINCT FROM OLD."Booking_id" THEN
+  IF NEW."Booking_id" IS NOT NULL AND (NEW."Customer_id" IS NULL OR NEW."Booking_id" <> OLD."Booking_id") THEN
     SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
     NEW."Customer_id" := customer_id;
   ELSE
-    IF NEW."Booking_group_id" IS DISTINCT FROM OLD."Booking_group_id" THEN
+    IF NEW."Booking_group_id" IS NOT NULL AND (NEW."Customer_id" IS NULL OR NEW."Booking_group_id" <> OLD."Booking_group_id") THEN
       SELECT "Payer_id" INTO customer_id FROM "Booking"."Booking_group" WHERE id = NEW."Booking_group_id";
       NEW."Customer_id" := customer_id;
     ELSE
-      IF NEW."Booking_other_id" IS DISTINCT FROM OLD."Booking_other_id" THEN
+      IF NEW."Booking_other_id" IS NOT NULL AND (NEW."Customer_id" IS NULL OR NEW."Booking_other_id" <> OLD."Booking_other_id") THEN
         SELECT "Customer_id" INTO customer_id FROM "Booking"."Booking_other" WHERE id = NEW."Booking_other_id";
         NEW."Customer_id" := customer_id;
       END IF;
