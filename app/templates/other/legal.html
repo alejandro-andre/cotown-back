@@ -1,3 +1,5 @@
+{% set web = 'vanguard' if data.Segment_id == 1 else 'cotown' %}
+{% set types = ['completo', 'ambos'] if data.Sale_type == 'ap' else ['plazas', 'ambos'] %}
 <!DOCtype html>
 <html lang="es">
 
