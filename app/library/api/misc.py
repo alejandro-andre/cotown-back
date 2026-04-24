@@ -56,6 +56,7 @@ query data ($code: String!, $segment: Int!) {
       Address
       Sale_type
       Resource_type
+      Limit_type
       Index_rent
       Last_LAU_rent
       Last_LAU_date
@@ -284,11 +285,11 @@ def req_pub_legal_pdf(sale_type, segment, building):
 
   # Get building
   building = apiClient.call(BUILDING, { "code": building, "segment": segment })
-  if building is None:
-    abort(404)
+  if building is None: abort(404)
 
-  # Prepare booking
+  # Prepare context
   context = building['data'][0]
+  if context is None: abort(404)
   now = datetime.now()
   context['Today_day'] = now.day
   context['Today_month'] = now.month
