@@ -162,6 +162,7 @@ query BookingById ($id: Int) {
         }
         DistrictViaDistrict_id {
           LocationViaLocation_id {
+            Resource_location_id: id
             Resource_building_city: Name
           }
         }
@@ -191,7 +192,7 @@ query BookingById ($id: Int) {
           }
           Owner_signer_id: Document
         }
-        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
       }
       ProviderViaService_id {
         Id_typeViaId_type_id {
@@ -217,7 +218,7 @@ query BookingById ($id: Int) {
           }
           Service_signer_id: Document
         }
-        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
       }
     }
     CustomerViaCustomer_id {
@@ -350,7 +351,8 @@ query Booking_groupById ($id: Int!) {
         }
         DistrictViaDistrict_id {
           LocationViaLocation_id {
-          Resource_building_city: Name
+            Resource_location_id: id
+            Resource_building_city: Name
           }
         }
         }
@@ -378,12 +380,12 @@ query Booking_groupById ($id: Int!) {
             }
             Owner_signer_id: Document
         }
-        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+        Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
         }
         ProviderViaService_id {
         Id_typeViaId_type_id {
             Service_id_type: Name
-        }
+        } 
         Service_id: Document
         Service_name: Name
         Service_email: Email
@@ -404,7 +406,7 @@ query Booking_groupById ($id: Int!) {
             }
             Service_signer_id: Document
         }
-        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Contract_id }
+        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
         }
       }
     }
@@ -693,7 +695,7 @@ def do_send_contract(contracts, context, type):
   )
 
   # Skip sending
-  if settings.DOCUSIGNSEND != 1 or context['Booking_type'] != '' or context['Resource_building_city'] == 'Barcelona':
+  if settings.DOCUSIGNSEND != 1 or context.get('Booking_type') or context.get('Resource_building_city') == 'Barcelona':
     logger.info(context['Resource_building_city'])
     logger.info('Not sent!')
     return None, None
@@ -840,7 +842,7 @@ def generate_doc_file(context, template):
 # Generate (rent and services) contracts
 # ######################################################
 
-def get_template(apiClient, templates, resource_type, provider):
+def get_template(apiClient, templates, resource_type, location, provider):
 
     # No templates
     if templates is None:
@@ -850,17 +852,22 @@ def get_template(apiClient, templates, resource_type, provider):
     # Look for proper template
     fid = None
     fname = ''
+    dfid = None
+    dfname = ''
     for c in templates:
-      if resource_type == c['Type']:
+      if location == c['Location_id'] and resource_type == c['Type']:
         fid = c['Contract_id']
         fname = c['Name']
         break
-    if fid is None:
+      if resource_type == c['Type']:
+        dfid = c['Contract_id']
+        dfname = c['Name']
+    if (fid or dfid) is None:
       logger.warning(provider + ' no tiene plantilla de contrato de ' + resource_type)
       return None, None, None
 
     # Get template
-    variables = { 'id': fid }
+    variables = { 'id': fid or dfid }
     q = '''
     query Contract ($id: Int) {
       data: Provider_Provider_contractList ( where: { id: { EQ: $id } } ) {
@@ -875,7 +882,7 @@ def get_template(apiClient, templates, resource_type, provider):
     annex = result['data'][0]['Annex']
     if template is None:
       logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + resource_type)
-    return template, annex, fname
+    return template, annex, fname or dfname
    
 
 # ######################################################
@@ -919,7 +926,7 @@ def do_contracts(apiClient, id):
       template_type = 'residencia'
 
     # Generate rent contract
-    template, annex, name = get_template(apiClient, context['Owner_template'], template_type, context['Owner_name'])
+    template, annex, name = get_template(apiClient, context['Owner_template'], template_type, context['Resource_location_id'], context['Owner_name'])
     if template is not None:
       if context['Customer_lang'] == 'en' and annex:
         template = template + '<div style="page-break-after: always;"></div>\n' + annex
@@ -930,7 +937,7 @@ def do_contracts(apiClient, id):
 
     # Generate services contract
     if context['Owner_id'] != context['Service_id'] and context['Booking_services'] > 0:
-      template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Service_name'])
+      template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Resource_location_id'], context['Service_name'])
       if template is not None:
         if context['Customer_lang'] == 'en' and annex:
           template = template + '<div style="page-break-after: always;"></div>\n' + annex
@@ -990,6 +997,9 @@ def do_contracts(apiClient, id):
  
   except Exception as error:
     logger.error(error)
+    import traceback
+    traceback.print_exc()
+
     return False
 
 
@@ -1028,7 +1038,7 @@ def do_group_contracts(apiClient, id):
       context['Flats'] = ', '.join(sorted(list({r['Resource_code'] for r in context['Rooms']})))
 
     # Generate rent contract
-    template, annex, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Owner_name'])
+    template, annex, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Resource_location_id'], room['Owner_name'])
     if template is not None:
       file_rent = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
@@ -1037,7 +1047,7 @@ def do_group_contracts(apiClient, id):
 
     # Generate services contract
     if room['Owner_id'] != room['Service_id'] and context['Booking_services'] > 0:
-      template, annex, name = get_template(apiClient, room['Service_template'], 'grupo', room['Service_name'])
+      template, annex, name = get_template(apiClient, room['Service_template'], 'grupo', room['Resource_location_id'], room['Service_name'])
       if template is not None:
         file_svcs = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
@@ -1198,4 +1208,6 @@ def do_group_annexes(apiClient, id, code):
 
   except Exception as error:
     logger.error(error)
+    import traceback
+    traceback.print_exc()
     return False
