@@ -7,6 +7,7 @@ BEGIN
     SET "Active" = FALSE
     WHERE "Provider_id" = NEW."Provider_id"
     AND "Type" = NEW."Type"
+    AND "Location_id" = NEW."Location_id"
     AND id <> NEW.id;
   END IF;
 

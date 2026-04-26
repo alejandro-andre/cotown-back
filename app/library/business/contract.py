@@ -695,8 +695,9 @@ def do_send_contract(contracts, context, type):
   )
 
   # Skip sending
+  logger.info(context.get('Booking_type'))
+  logger.info(context.get('Resource_building_city'))
   if settings.DOCUSIGNSEND != 1 or context.get('Booking_type') or context.get('Resource_building_city') == 'Barcelona':
-    logger.info(context['Resource_building_city'])
     logger.info('Not sent!')
     return None, None
   
@@ -867,7 +868,7 @@ def get_template(apiClient, templates, resource_type, location, provider):
       return None, None, None
 
     # Get template
-    variables = { 'id': fid or dfid }
+    variables = { 'id': (fid or dfid) }
     q = '''
     query Contract ($id: Int) {
       data: Provider_Provider_contractList ( where: { id: { EQ: $id } } ) {
@@ -882,7 +883,7 @@ def get_template(apiClient, templates, resource_type, location, provider):
     annex = result['data'][0]['Annex']
     if template is None:
       logger.warning(provider + ' no se encuentra la plantilla de contrato de ' + resource_type)
-    return template, annex, fname or dfname
+    return template, annex, (fname or dfname)
    
 
 # ######################################################
