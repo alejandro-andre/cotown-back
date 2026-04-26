@@ -95,6 +95,8 @@ query BookingById ($id: Int) {
     Booking_services: Services
     Booking_deposit: Deposit
     Booking_limit: Limit
+    Booking_expenses: Expenses
+    Booking_furniture: Furniture
     Booking_final_cleaning: Final_cleaning
     Booking_second_resident: Second_resident
     Booking_type: Book_type
@@ -144,6 +146,11 @@ query BookingById ($id: Int) {
         Resource_flat_code: Code
         Resource_flat_address: Address
         Resource_flat_street: Street
+        Resource_flat_area: Area_woc
+        Resource_flat_occupancy: Occupancy_certificate
+        Resource_flat_energy: Energy_certificate
+        Resource_last_LAU_date: Last_LAU_date
+        Resource_last_LAU_rent: Last_LAU_rent
       }
       Building: BuildingViaBuilding_id {
         Resource_building_code: Code
@@ -265,6 +272,9 @@ query BookingById ($id: Int) {
       Rent_date_year
       Rent
       Services
+      Expenses
+      Utility
+      Furniture
       Rent_discount
       Services_discount
     }
