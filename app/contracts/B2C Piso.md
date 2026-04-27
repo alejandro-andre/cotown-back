@@ -35,7 +35,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 I.- Que el arrendador es propietario del inmueble ubicado en [[Resource_street]], [[Resource_address]] que se encuentra totalmente amueblado y equipado con los utensilios domésticos (en adelante “la Vivienda”)
 La Vivienda dispone de cédula de habitabilidad (número de cédula) y de certificado de eficiencia energética (número certificado eficiencia energética) y tiene una superficie de (m2) construidos.
 II.- Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente
-III.- Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por motivos de [[Customer_reason]] en [[Customer_school]].
+III.- Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por motivos de [{{Booking_reason|lower}}] en [[Customer_school]].
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad.
  IV.- AMBAS PARTES se reconocen suficiente capacidad legal para llevar a cabo este contrato, INTERVINIENDO en nombre y derecho mencionados respectivamente, y convienen formalizar el presente CONTRATO DE ARRENDAMIENTO DE TEMPORADA.
@@ -46,7 +46,7 @@ Se adjunta al presente la documentación acreditativa de la estancia, a efectos 
  
 ## PRIMERA.- OBJETO. 
 
-El arrendador arrienda a [[Customer_name]] la Vivienda, para ser destinada a constituir su residencia temporal por motivo de [[Customer_reason]] en [[Customer_school]].y por el tiempo que después se dirá. La Vivienda que se arrienda en virtud del presente contrato no tendrá en ningún caso la condición de residencia permanente del arrendatario, por tener el Arrendatario su residencia permanente en la dirección reseñada en el encabezamiento del presente contrato, ni de cualesquiera terceros, salvo autorización expresa del arrendador. Asimismo, las partes convienen que la Vivienda no podrá ser destinada al uso como alojamiento turístico o análogo (incluyendo de manera no exhaustiva las siguientes modalidades de alojamiento turístico: apartamentos turísticos y viviendas de uso turístico). 
+El arrendador arrienda a [[Customer_name]] la Vivienda, para ser destinada a constituir su residencia temporal por motivo de [{{Booking_reason|lower}}] en [[Customer_school]] y por el tiempo que después se dirá. La Vivienda que se arrienda en virtud del presente contrato no tendrá en ningún caso la condición de residencia permanente del arrendatario, por tener el Arrendatario su residencia permanente en la dirección reseñada en el encabezamiento del presente contrato, ni de cualesquiera terceros, salvo autorización expresa del arrendador. Asimismo, las partes convienen que la Vivienda no podrá ser destinada al uso como alojamiento turístico o análogo (incluyendo de manera no exhaustiva las siguientes modalidades de alojamiento turístico: apartamentos turísticos y viviendas de uso turístico). 
  
 La parte arrendataria no podrá modificar el destino mencionado sin el previo consentimiento por escrito del arrendador. El incumplimiento de este precepto será motivo de resolución del contrato. 
 ## SEGUNDA.- ESTADO Y REGLAS DE USO. 

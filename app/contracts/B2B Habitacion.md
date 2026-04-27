@@ -1,13 +1,14 @@
+{% set R = Rooms[0] %}
 # CONTRATO DE ARRENDAMIENTO Y USO DE HABITACIÓN.
 <br><br>
 En Barcelona, a [{{Today_day}}] de [{{Today_month|month}}] de [{{Today_year}}]
 <br><br>
 ## LAS PARTES
 
-{%if Owner_id_type=='CIF'%}
-De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}[{{s.Owner_signer_name}}], mayor de edad, provisto de [{{s.Owner_signer_id_type}}] [{{s.Owner_signer_id}}]{%endfor%}, con domicilio profesional en [{{Owner_address}}], [{{Owner_zip}}] [{{Owner_city}}], actuando en nombre y representación de [{{Owner_name}}] con el mismo domicilio, [{{Owner_id_type}}] [{{Owner_id}}]{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}. La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"), con domicilio profesional en Beethoven 15, 7ª planta, 08021 Barcelona, CIF B67551754, representado por Dª Azucena Esteban Calderon, mayor de edad, provisto de DNI 38148452P, con el mismo domicilio, actuando en nombre de la mencionada sociedad.
+{%if R.Owner_id_type=='CIF'%}
+De una parte, {%for s in R.Owner_signers%}{%-if loop.index>1%} y {%endif%}[{{s.Owner_signer_name}}], mayor de edad, provisto de [{{s.Owner_signer_id_type}}] [{{s.Owner_signer_id}}]{%endfor%}, con domicilio profesional en [{{R.Owner_address}}], [{{R.Owner_zip}}] [{{R.Owner_city}}], actuando en nombre y representación de [{{R.Owner_name}}] con el mismo domicilio, [{{R.Owner_id_type}}] [{{R.Owner_id}}]{%if R.Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}. La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"), con domicilio profesional en Beethoven 15, 7ª planta, 08021 Barcelona, CIF B67551754, representado por Dª Azucena Esteban Calderon, mayor de edad, provisto de DNI 38148452P, con el mismo domicilio, actuando en nombre de la mencionada sociedad.
 {%else%}
-De una parte, [{{Owner_name}}], mayor de edad, con [{{Owner_id_type}}] núm. [{{Owner_id}}], con domicilio profesional en [{{Owner_address}}], [{{Owner_zip}}] [{{Owner_city}}] actuando en su nombre y representación.
+De una parte, [{{R.Owner_name}}], mayor de edad, con [{{R.Owner_id_type}}] núm. [{{R.Owner_id}}], con domicilio profesional en [{{R.Owner_address}}], [{{R.Owner_zip}}] [{{R.Owner_city}}] actuando en su nombre y representación.
 {%endif%}
 
 En adelante "**Arrendadora**".
@@ -32,11 +33,11 @@ I.   Que, la Arrendadora tiene la consideración de gran tenedora con arreglo a 
 
 II.  La Arrendadora es una entidad cuyo objeto es el arrendamiento de habitaciones para su uso por terceros en los edificios de su propiedad.
 
-III. El Arrendatario es una organización interesada en arrendar una o varias habitaciones en Barcelona con el mobiliario, equipamiento e instalaciones que contiene, de forma temporal, para su uso por las personas que se identificarán a continuación.
+III. El Arrendatario es una organización interesada en arrendar [{% if Rooms|length == 1 %}una habitación{% else %}{{Rooms|length}} habitaciones{% endif %}] en [{{R.Resource_building_city}}] con el mobiliario, equipamiento e instalaciones que contiene, de forma temporal, para su uso por las personas que se identificarán a continuación.
 
 IV.  Asimismo, manifiesta la Arrendataria que dispone de los medios económicos suficientes para atender el pago de la renta acordada y demás responsabilidades económicas por el arrendamiento de la habitación a favor de las personas designadas.
 
-V.   La Arrendataria está interesada en arrendar y usar de forma temporal [[nombre o numero de plazas]] habitaciones propiedad de la Arrendadora en [{{Resource_flat_street}}], [{{Resource_building_city}}], que tiene [[m2 de cada piso]] construidos, cuya cédula de habitabilidad es la "[{{Resource_flat_occupancy}}]" y el certificado de eficiencia energética "[{{Resource_flat_energy}}]"
+V.   La Arrendataria está interesada en arrendar y usar de forma temporal [[nombre o numero de plazas]] habitaciones propiedad de la Arrendadora en [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}], que tiene [[m2 de cada piso]] construidos, cuya cédula de habitabilidad es la "[{{R.Resource_flat_occupancy}}]" y el certificado de eficiencia energética "[{{R.Resource_flat_energy}}]"
 
 En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y uso de habitación, de acuerdo con las siguientes condiciones particulares y generales.
 
@@ -46,7 +47,7 @@ En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y uso 
 
 ## 1. Objeto.
 
-1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso [{{Resource_flat_address}}] del edificio de la calle [{{Resource_flat_street}}], [{{Resource_building_city}}], para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
+1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso [{{R.Resource_flat_address}}] del edificio de la calle [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}], para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
 
 ## 1.2. Vinculación con las Condiciones Generales 
 
@@ -60,11 +61,11 @@ Las Condiciones Particulares del presente Contrato de Habitación están vincula
 
 La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"). 
 
-La Arrendadora tiene delegada en la web de la gestora ([{{Segment_url}}]) el área privada a la que se podrá dirigir la Arrendataria para algunas de las gestiones de su Contrato de Habitación durante todo el plazo de duración.
+La Arrendadora tiene delegada en la web de la gestora ([{{R.Segment_url}}]) el área privada a la que se podrá dirigir la Arrendataria para algunas de las gestiones de su Contrato de Habitación durante todo el plazo de duración.
 
 ## 2. Descripción del arrendamiento
 
-La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por la persona indicada en el encabezamiento por motivos de [{{Booking_reason}}], con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
+La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por la persona indicada en el encabezamiento por motivos de [{{Booking_|lower}}], con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad
 
@@ -84,7 +85,7 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 
 ## 4. Precio
 
-Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{{Booking_rent}}] euros mensuales por plaza (la "**Renta**").
+Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)}}] euros mensuales por plaza (la "**Renta**").
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
@@ -104,15 +105,18 @@ El importe de la renta de la habitación ha sido determinado de conformidad con 
 Este importe incluye:
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
 
 - Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta, pero como concepto aparte.
 
-El servicio de internet.
+- El servicio de internet.
 
+{% if Booking_final_cleaning %}
 No está incluido en la renta:
-- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
+- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal(1)}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+
+{% endif %}
 {% elif Booking_limit_type == 'indice' %}
 -------INDICE------- 
 
@@ -120,22 +124,22 @@ De conformidad con lo anterior, la determinación de la renta de la habitación 
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
-- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit}}] mensuales por plaza.
-{% if Booking_expenses %}- IBI y gastos de comunidad [{{Booking_expenses}}] euros mensuales por plaza.{% endif %}
+- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] mensuales por plaza.
+{% if Booking_expenses %}- IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales por plaza.{% endif %}
 
 {% elif Booking_limit_type == 'lau' %}
 -------LAU------- 
 
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent}}] euros mensuales.
+- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{R.Resource_last_LAU_date}}], cuyo importe ascendía a [{{R.Resource_last_LAU_rent|decimal(1)}}] euros mensuales.
 
 - El Indice de Referencia Estatal que se adjunta como anexo al presente. Por ello, de conformidad con lo dispuesto en los Apartados 6 y 7 del Art. 17 de la LAU, la renta del arrendamiento corresponde a la menor entre la última renta del contrato anterior actualizada y la resultante del Índice de Referencia Estatal.
 
-Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la vivienda realizadas por el Arrendador en los dos años anteriores a la firma del contrato, la renta resultante asciende a [{{Booking_rent}}] euros mensuales.
+Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la vivienda realizadas por el Arrendador en los dos años anteriores a la firma del contrato, la renta resultante asciende a [{{Booking_rent|decimal(1)}}] euros mensuales.
 
-- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit}}] euros mensuales por plaza.
-- Mobiliario y equipamiento [{{Booking_furniture}}] euros mensuales.
+- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] euros mensuales por plaza.
+- Mobiliario y equipamiento [{{Booking_furniture|decimal(1)}}] euros mensuales.
 
 {% else %}
 -------LIBRE------- 
@@ -148,15 +152,19 @@ Este importe incluye:
 
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
 
-Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte.
+- Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte.
 
 - El servicio de internet.
 
+{% if Booking_final_cleaning %}
 No está incluido en la renta:
--	Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
-{% endof %}
+
+- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal(1)}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+
+{% endif %}
+{% endif %}
 
 ## 5. Cláusula de exención de IVA
 

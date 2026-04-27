@@ -64,7 +64,7 @@ La Arrendadora tiene delegada en la web de la gestora ([{{Segment_url}}]) el ár
 
 ## 2. Descripción del arrendamiento
 
-La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por motivos de [{{Booking_reason}}], con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
+La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por motivos de [{{Booking_reason|lower}}], con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad
 
@@ -84,7 +84,7 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 
 ## 4. Precio
 
-Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{{Booking_rent}}] euros mensuales (la "**Renta**").
+Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)}}] euros mensuales (la "**Renta**").
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
@@ -104,15 +104,18 @@ El importe de la renta de la habitación ha sido determinado de conformidad con 
 Este importe incluye:
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
 
 - Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta, pero como concepto aparte.
 
-El servicio de internet.
+- El servicio de internet.
 
+{% if Booking_final_cleaning %}
 No está incluido en la renta:
-- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
+- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal(1)}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+
+{% endif %}
 {% elif Booking_limit_type == 'indice' %}
 -------INDICE------- 
 
@@ -120,22 +123,22 @@ De conformidad con lo anterior, la determinación de la renta de la habitación 
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
-- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit}}] euros mensuales.
-{% if Booking_expenses %}- IBI y gastos de comunidad [{{Booking_expenses}}] euros mensuales.{% endif %}
+- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] euros mensuales.
+{% if Booking_expenses %}- IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales.{% endif %}
 
 {% elif Booking_limit_type == 'lau' %}
 -------LAU------- 
 
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent}}] euros mensuales.
+- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent|decimal(1)}}] euros mensuales.
 
 - El Indice de Referencia Estatal que se adjunta como anexo al presente. Por ello, de conformidad con lo dispuesto en los Apartados 6 y 7 del Art. 17 de la LAU, la renta del arrendamiento corresponde a la menor entre la última renta del contrato anterior actualizada y la resultante del Índice de Referencia Estatal.
 
-Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la vivienda realizadas por el Arrendador en los dos años anteriores a la firma del contrato, la renta resultante asciende a [{{Booking_rent}}] euros mensuales.
+Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la vivienda realizadas por el Arrendador en los dos años anteriores a la firma del contrato, la renta resultante asciende a [{{Booking_rent|decimal(1)}}] euros mensuales.
 
-- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit}}] euros mensuales.
-- Mobiliario y equipamiento [{{Booking_furniture}}] euros mensuales.
+- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] euros mensuales.
+- Mobiliario y equipamiento [{{Booking_furniture|decimal(1)}}] euros mensuales.
 
 {% else %}
 -------LIBRE------- 
@@ -148,15 +151,18 @@ Este importe incluye:
 
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
 
-Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte.
+- Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte.
 
 - El servicio de internet.
 
+{% if Booking_final_cleaning %}
 No está incluido en la renta:
 
--	Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal(1)}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+
+{% endif %}
 {% endif %}
 
 ## 5. Facturación y pago. 
