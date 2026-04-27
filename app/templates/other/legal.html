@@ -76,7 +76,7 @@
     </thead>
 
     {% if data.Flats %}
-    {% for flat in data.Flats if flat.Sale_type in types %}
+    {% for flat in data.Flats if flat.Sale_type in types and flat.Registry_num and flat.Occupancy_certificate %}
     {% set rate = flat.Energy_certificate_rate or '' %}
 
     <tbody>
@@ -161,7 +161,7 @@
     </tr>
 
     {% if flat.Places and data.Sale_type == 'pc' %}
-    {% for place in flat.Places if place.Resource_type == 'habitacion' and place.Registry_num %}
+    {% for place in flat.Places if place.Resource_type == 'habitacion' %}
     <tr>
       <td>{{place.Code[13:]}}</td>
       <td>{{place.Registry_num or ''}}</td>

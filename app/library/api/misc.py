@@ -287,6 +287,11 @@ def req_pub_legal_pdf(sale_type, segment, building):
   building = apiClient.call(BUILDING, { "code": building, "segment": segment })
   if building is None: abort(404)
 
+  # Check type
+  allowed = {flat['Sale_type'] for flat in building['data'][0]['Flats']}
+  if sale_type == 'ap' and not allowed & {'completo', 'ambos'}: abort(404)
+  if sale_type == 'pc' and not allowed & {'plazas', 'ambos'}: abort(404)
+
   # Prepare context
   context = building['data'][0]
   if context is None: abort(404)
