@@ -53,7 +53,7 @@ def generate_b2c(apiClient, id, template_file):
     if template is None:
         return
     pdf = generate_doc_file(context, template)
-    out = f'contract.pdf'
+    out = f'contract_b2c.pdf'
     with open(out, 'wb') as f:
         f.write(pdf.read())
     logger.info('PDF guardado: %s', out)
@@ -88,7 +88,7 @@ def generate_b2b(apiClient, id, template_file):
     if template is None:
         return
     pdf = generate_doc_file(context, template)
-    out = f'contract.pdf'
+    out = f'contract_b2b.pdf'
     with open(out, 'wb') as f:
         f.write(pdf.read())
     logger.info('PDF guardado: %s', out)

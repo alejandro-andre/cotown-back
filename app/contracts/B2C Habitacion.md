@@ -64,7 +64,7 @@ La Arrendadora tiene delegada en la web de la gestora ([{{Segment_url}}]) el ár
 
 ## 2. Descripción del arrendamiento
 
-La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por motivos de [{{Booking_reason|lower}}], con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
+La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por motivos de [{{Booking_reason|lower}}]{% if Booking_reason_id in (1, 3) and Booking_school %} en [{{Booking_other_school or Booking_school}}]{% endif %}{% if Booking_reason_id in (2, 4) and Booking_company %} en [{{Booking_company}}]{% endif %}, con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad
 
@@ -84,13 +84,13 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 
 ## 4. Precio
 
-Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)}}] euros mensuales (la "**Renta**").
+Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{% if Owner_id == Service_id %}{{(Booking_rent+(Booking_services or 0))|decimal(1)}}{% else %}{{Booking_rent|decimal(1)}}{% endif %}] euros mensuales (la "**Renta**").
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
-- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+rent.Services+(rent.Expenses or 0)+(rent.Utility or 0)+(rent.Furniture or 0)+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales
+- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales
 {%-else %}
-- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+(rent.Expenses or 0)+(rent.Utility or 0)+(rent.Furniture or 0)+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales
+- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales
 {%-endif %}
 {%-endfor %}
 
@@ -201,7 +201,7 @@ Las Partes podrán variar las direcciones que figuran en el apartado anterior, c
 
 ## 1. Objeto del Contrato de Habitación
 
-El objeto del Contrato de Habitación es el uso de la habitación, equivalente a una parte alícuota del piso (la "Habitación") y que concede el derecho de uso exclusivo de la habitación o plaza solicitada, sita en el edificio propiedad de la Arrendadora, gestionado por la Gestora, exclusivamente por la Arrendataria, con el mobiliario y equipamiento que se describe en la página web de la Arrendadora, y para su uso solo como alojamiento temporal por motivos de estudio o trabajo sin que sea destinada a residencia permanente de la Arrendataria con derecho además al uso compartido de las zonas y servicios comunes, así como los suministros (agua, gas, electricidad e internet), que no serán con carácter exclusivo.
+El objeto del Contrato de Habitación es el uso de la habitación, equivalente a una parte alícuota del piso (la "Habitación") y que concede el derecho de uso exclusivo de la habitación o plaza solicitada, sita en el edificio propiedad de la Arrendadora, gestionado por la Gestora, exclusivamente por la Arrendataria, con el mobiliario y equipamiento que se describe en la página web de la Arrendadora, y para su uso solo como alojamiento temporal por motivos de [{{Booking_reason|lower}}] sin que sea destinada a residencia permanente de la Arrendataria con derecho además al uso compartido de las zonas y servicios comunes, así como los suministros (agua, gas, electricidad e internet), que no serán con carácter exclusivo.
 
 Siendo el domicilio habitual y permanente de la Arrendataria el que consta en las Condiciones Particulares, el arrendamiento de la Habitación es tan solo para el Plazo indicado en las Condiciones Particulares.
 

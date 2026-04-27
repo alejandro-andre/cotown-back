@@ -101,11 +101,14 @@ query BookingById ($id: Int) {
     Booking_second_resident: Second_resident
     Booking_type: Book_type
     Booking_limit_type: Limit_type
+    Booking_other_school: Other_school
+    Booking_company: Company
     Customer_reasonViaReason_id {
-        Booking_reason: Name
+      Booking_reason_id: id
+      Booking_reason: Name
     }
     SchoolViaSchool_id {
-        Booking_school: Name
+      Booking_school: Name
     }
     Resource_flat_typeViaFlat_type_id {
       Booking_flat_type_code: Code

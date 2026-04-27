@@ -1,8 +1,10 @@
 General
-- No se puede diferenciar IBI de gastos de comunidad.
-- Motivo, ¿se indica escuela o empresa?
-- Anexos traducidos.
+[x] No se puede diferenciar IBI de gastos de comunidad: Juntos.
+[x] Motivo, ¿se indica escuela o empresa?: Sí, quitandolo si no hay.
+[-] Anexos traducidos: Sí, inglés.
+[-] Ejemplo de cada tipo de reserva.
 
 B2B
-- Lista de inmuebles en B2B.
-- Motivo de estancia no existe.
+[-] Lista de inmuebles en B2B: ¿?
+[-] Mensualidad x plaza o total: ¿?
+[x] Motivo de estancia no existe: generico motivos de estudio o trabajo.

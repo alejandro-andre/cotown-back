@@ -65,7 +65,7 @@ La Arrendadora tiene delegada en la web de la gestora ([{{R.Segment_url}}]) el �
 
 ## 2. Descripción del arrendamiento
 
-La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por la persona indicada en el encabezamiento por motivos de [{{Booking_|lower}}], con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
+La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por la persona indicada en el encabezamiento por motivos de estudios o trabajo, con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad
 
@@ -85,13 +85,14 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 
 ## 4. Precio
 
-Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)}}] euros mensuales por plaza (la "**Renta**").
+Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{% if Owner_id == Service_id %}{{(Booking_rent+(Booking_services or 0))|decimal(1)}}{% else %}{{Booking_rent|decimal(1)}}{% endif %}] euros mensuales por plaza (la "**Renta**").
+
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
-- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+rent.Services+(rent.Expenses or 0)+(rent.Utility or 0)+(rent.Furniture or 0)+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales
+- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales por plaza
 {%-else %}
-- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+(rent.Expenses or 0)+(rent.Utility or 0)+(rent.Furniture or 0)+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales
+- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales por plaza
 {%-endif %}
 {%-endfor %}
 
@@ -124,7 +125,7 @@ De conformidad con lo anterior, la determinación de la renta de la habitación 
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
-- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] mensuales por plaza.
+- Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] euros mensuales por plaza.
 {% if Booking_expenses %}- IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales por plaza.{% endif %}
 
 {% elif Booking_limit_type == 'lau' %}
@@ -139,7 +140,7 @@ De conformidad con lo expuesto, la determinación de la renta se ha efectuado to
 Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la vivienda realizadas por el Arrendador en los dos años anteriores a la firma del contrato, la renta resultante asciende a [{{Booking_rent|decimal(1)}}] euros mensuales.
 
 - Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] euros mensuales por plaza.
-- Mobiliario y equipamiento [{{Booking_furniture|decimal(1)}}] euros mensuales.
+- Mobiliario y equipamiento [{{Booking_furniture|decimal(1)}}] euros mensuales por plaza.
 
 {% else %}
 -------LIBRE------- 
