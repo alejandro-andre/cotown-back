@@ -29,7 +29,7 @@ def month(m, lang='es'):
 
 
 # List of months (MMM YYYY) between two dates
-def month_dates(date_from, date_to, price, lang):
+def month_dates(date_from, date_to, price, price_next, lang):
 
   df = datetime.strptime(date_from, "%Y-%m-%d")
   dt = datetime.strptime(date_to, "%Y-%m-%d") + timedelta(days=1)
@@ -37,6 +37,8 @@ def month_dates(date_from, date_to, price, lang):
   dates = [{'date': d, 'd':df.date(), 'price': 0, 'rack': 0}]
   next = (df.replace(day=1) + relativedelta(months=1))
   while next <= dt:
+    if df.month != next.month and next.month == 9:
+      price = price_next
     d = month(next.month, lang).capitalize()[:3] + ' ' + str(next.year)
     dates.append({ 'date': d, 'd': next.date(), 'price': price, 'rack': price })
     next += relativedelta(months=1)
@@ -66,10 +68,11 @@ def rent_info(date_from, date_to):
     field = 'Rent_long'
 
   # Rates year
-  year = df.year if df.month < 9 else df.year + 1
+  first_year = df.year if df.month < 9 else df.year + 1
+  last_year  = dt.year if dt.month < 9 else dt.year + 1
 
   # Return
-  return year, field
+  return first_year, last_year, field
 
 
 # ######################################################
@@ -229,7 +232,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
  
   # Query parameters
   l = '_en' if lang == 'en' else ''
-  year, field = rent_info(date_from, date_to)
+  first_year, last_year, field = rent_info(date_from, date_to)
   place_type = 'I_%' if room_type == 'ind' else 'D_%'
   building_type = (3,) if acom_type == 'rs' else (1, 2)
 
@@ -259,7 +262,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         AND d."Location_id" = %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
       '''
-    params = (date_to, date_from, year, segment, city, )
+    params = (date_to, date_from, first_year, segment, city, )
   else:
     sql = f'''
       SELECT
@@ -285,7 +288,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         AND rpt."Code" LIKE %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
       '''
-    params = (date_to, date_from, year, segment, building_type, city, place_type, )
+    params = (date_to, date_from, first_year, segment, building_type, city, place_type, )
 
   try:
     con = dbClient.getconn()
@@ -338,7 +341,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
 
   # Query parameters
   l = '_en' if lang == 'en' else ''
-  year, field = rent_info(date_from, date_to)
+  first_year, last_year, field = rent_info(date_from, date_to)
 
   # Private aparment
   if acom_type == 'ap':
@@ -359,11 +362,11 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
         INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id)
-      WHERE pd."Year" = %s
+      WHERE (pd."Year" = %s or pd."Year" = %s) 
         AND b.id = %s
         AND rft.id = %s
         AND rfst.id = %s
-      LIMIT 1
+      LIMIT 2
       '''
   else:
     sql = f'''
@@ -382,50 +385,62 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
         INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
-      WHERE pd."Year" = %s
+      WHERE (pd."Year" = %s or pd."Year" = %s) 
         AND b.id = %s
         AND rft.id = %s
         AND rpt.id = %s
-      LIMIT 1
+      LIMIT 2
       '''
 
   try:
     # Get data
     con = dbClient.getconn()
-    cur = dbClient.execute(con, sql, (year, building_id, flat_type_id, place_type_id))
+    cur = dbClient.execute(con, sql, (first_year, first_year + 1, building_id, flat_type_id, place_type_id))
     results = [dict(row) for row in cur.fetchall()]
     cur.close()
-    if len(results) < 1:
-      dbClient.putconn(con)
-      return None
+
+    # Two years span
+    if first_year < last_year:
+      if len(results) < 2:
+        dbClient.putconn(con)
+        return None
+      first = results[0]
+      last = results[1]
+      
+    # One year span
+    else:
+      if len(results) < 1:
+        dbClient.putconn(con)
+        return None
+      first = results[0]
+      last = results[0]
     
     # Preset first and last month prices
-    data = results[0]
-    data['Rent_first'] = data['Rent']
-    data['Rent_last'] = data['Rent']
+    first['Rent_first'] = first['Rent']
+    first['Rent_last']  = last['Rent']
 
     # Day and total days of 1st and last months
     dayf, daysf = days(date_from) 
     dayt, dayst = days(date_to)
 
     # Adjust prices if proportional
-    if data['Billing_type'] == 'proporcional':
-      data['Rent_first'] = data['Rent'] * (daysf - dayf) / daysf
-      data['Rent_last'] = data['Rent'] * dayt / dayst
+    if first['Billing_type'] == 'proporcional':
+      first['Rent_first'] = first['Rent_first'] * (daysf - dayf) / daysf
+      first['Rent_last'] = first['Rent_last'] * dayt / dayst
 
     # Adjust prices if by fortnights
-    elif data['Billing_type'] == 'quincena':
+    elif first['Billing_type'] == 'quincena':
       if dayf >= 15:
-        data['Rent_first'] = data['Rent'] / 2
+        first['Rent_first'] = first['Rent_first'] / 2
       if dayt < 15:
-        data['Rent_last'] = data['Rent'] / 2
+        first['Rent_last'] = first['Rent_last'] / 2
 
     # Details
-    months = month_dates(date_from, date_to, float(data['Rent']) + float(data['Services']), lang)
-    months[0]['price'] = float(data['Rent_first']) + float(data['Services'])
-    months[0]['rack'] = float(data['Rent_first']) + float(data['Services'])
-    months[-1]['price'] = float(data['Rent_last']) + float(data['Services'])
-    months[-1]['rack'] = float(data['Rent_last']) + float(data['Services'])
+    months = month_dates(date_from, date_to, float(first['Rent']) + float(first['Services']), float(last['Rent']) + float(last['Services']), lang)
+    months[0]['price'] = float(first['Rent_first']) + float(first['Services'])
+    months[0]['rack'] = float(first['Rent_first']) + float(first['Services'])
+    months[-1]['price'] = float(first['Rent_last']) + float(last['Services'])
+    months[-1]['rack'] = float(first['Rent_last']) + float(last['Services'])
 
     # Get promotion
     sql = '''
@@ -470,23 +485,23 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     cur.close()
 
     # Convert and return data
-    data['Booking_fee'] = float(data['Booking_fee'])
-    data['Booking_fee_rack'] = float(data['Booking_fee'])
-    data['Deposit'] = float(data['Deposit'])
-    data['Rent'] = float(data['Rent'])
-    data['Rent_first'] = float(data['Rent_first'])
-    data['Rent_last'] = float(data['Rent_last'])
-    data['Services'] = float(data['Services'])
-    data['Final_cleaning'] = float(data['Final_cleaning'])
-    data['Months'] = months
+    first['Booking_fee'] = float(first['Booking_fee'])
+    first['Booking_fee_rack'] = float(first['Booking_fee'])
+    first['Deposit'] = float(first['Deposit'])
+    first['Rent'] = float(first['Rent'])
+    first['Rent_first'] = float(first['Rent_first'])
+    first['Rent_last'] = float(first['Rent_last'])
+    first['Services'] = float(first['Services'])
+    first['Final_cleaning'] = float(first['Final_cleaning'])
+    first['Months'] = months
 
     # Apply promotion
     if len(promos):
       promo = promos[0]
       if promo['Value_fee']:
-        data['Booking_fee'] += float(promo['Value_fee'])
+        first['Booking_fee'] += float(promo['Value_fee'])
       elif promo['Value_fee_pct']:
-        data['Booking_fee'] *= (1.0 + float(promo['Value_fee_pct'] / 100))
+        first['Booking_fee'] *= (1.0 + float(promo['Value_fee_pct'] / 100))
       for m in months:
         if promo['Date_from'] <= m['d'] <= promo['Date_to']:
           if promo['Value_rent']:
@@ -501,12 +516,12 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
     for m in months:
       total_price += m['price']
       total_rack  += m['rack']
-    data['Total']      = total_price
-    data['Total_rack'] = total_rack
+    first['Total']      = total_price
+    first['Total_rack'] = total_rack
 
     # Returl
     dbClient.putconn(con)
-    return data
+    return first
  
   except Exception as error:
     logger.error(error)
