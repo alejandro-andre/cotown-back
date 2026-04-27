@@ -34,7 +34,7 @@ BEGIN
   -- Duplicate invoice
   NEW."Bill_type"         := COALESCE(NEW."Bill_type", bill_type::"Auxiliar"."Bill_type");
   NEW."Provider_id"       := COALESCE(NEW."Provider_id", provider_id);
-  NEW."Customer_id"       := COALESCE(NEW."Customer_id", customer_id);
+  --NEW."Customer_id"       := COALESCE(NEW."Customer_id", customer_id);
   NEW."Booking_id"        := COALESCE(NEW."Booking_id", booking_id);
   NEW."Booking_group_id"  := COALESCE(NEW."Booking_group_id", booking_group_id);
   NEW."Concept"           := COALESCE(NEW."Concept", concept);
