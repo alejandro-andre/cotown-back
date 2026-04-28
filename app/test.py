@@ -17,7 +17,7 @@ import os
 from library.services.config import settings
 from library.services.apiclient import APIClient
 from library.services.utils import flatten
-from library.business.contract import BOOKING, GROUP_BOOKING, generate_doc_file
+from library.business.contract import BOOKING, GROUP_BOOKING, generate_doc_file, merge_pdfs, fetch_annexes
 
 logger = logging.getLogger('COTOWN')
 
@@ -53,10 +53,30 @@ def generate_b2c(apiClient, id, template_file):
     if template is None:
         return
     pdf = generate_doc_file(context, template)
-    out = f'contract_b2c.pdf'
+
+    # Obtener documentos anexos y fusionar (solo Barcelona, ordenados alfabéticamente)
+    annex_pairs = []
+    if context.get('Resource_location_id') == 1:
+        building_docs, resource_docs = fetch_annexes(apiClient, context)
+        for doc in building_docs:
+            resp = apiClient.getFile(doc['id'], 'Building/Building_doc', 'Document')
+            if resp and resp.content:
+                annex_pairs.append((doc.get('Name', ''), resp.content))
+                logger.info('Anexo edificio añadido: %s', doc.get('Name', doc['id']))
+        for doc in resource_docs:
+            resp = apiClient.getFile(doc['id'], 'Resource/Resource_doc', 'Document')
+            if resp and resp.content:
+                annex_pairs.append((doc.get('Name', ''), resp.content))
+                logger.info('Anexo recurso añadido: %s', doc.get('Name', doc['id']))
+    annex_pairs.sort(key=lambda x: x[0])
+    annex_data = [content for _, content in annex_pairs]
+
+    # Guardar contrato (con anexos si los hay)
+    merged = merge_pdfs(pdf, annex_data) if annex_data else pdf
+    out = 'contract_b2c.pdf'
     with open(out, 'wb') as f:
-        f.write(pdf.read())
-    logger.info('PDF guardado: %s', out)
+        f.write(merged.read())
+    logger.info('PDF guardado: %s (%d anexos)', out, len(annex_data))
 
 
 def generate_b2b(apiClient, id, template_file):

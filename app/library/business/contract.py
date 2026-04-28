@@ -8,6 +8,7 @@ import markdown
 import requests
 import locale
 import base64
+from pypdf import PdfWriter, PdfReader
 from flask import g
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, DateSigned, CustomFields, TextCustomField 
@@ -715,6 +716,16 @@ def do_send_contract(contracts, context, type):
   logger.info(context.get('Resource_building_city'))
   if settings.DOCUSIGNSEND != 1 or context.get('Booking_type') or context.get('Resource_building_city') == 'Barcelona':
     logger.info('Not sent!')
+    # >>> TEST
+    if context.get('Resource_building_city') == 'Barcelona':
+      for contract in contracts:
+        if contract['file']:
+          contract['file'].seek(0)
+          filename = contract['name'].replace(' ', '_') + '.pdf'
+          with open(filename, 'wb') as f:
+            f.write(contract['file'].read())
+          logger.info('Contrato Barcelona guardado: %s', filename)
+    # <<< TEST
     return None, None
   
   # API Client setup
@@ -856,6 +867,44 @@ def generate_doc_file(context, template):
 
 
 # ######################################################
+# Merge PDF files
+# ######################################################
+
+def merge_pdfs(main_pdf, annex_files):
+
+  main_pdf.seek(0)
+  writer = PdfWriter()
+  for page in PdfReader(main_pdf).pages:
+    writer.add_page(page)
+  for data in annex_files:
+    try:
+      for page in PdfReader(io.BytesIO(data)).pages:
+        writer.add_page(page)
+    except Exception as e:
+      logger.warning('No se pudo añadir anexo al PDF: %s', e)
+  out = BytesIO()
+  writer.write(out)
+  out.seek(0)
+  return out
+
+
+# ######################################################
+# Fetch flat or building annexes
+# ######################################################
+
+def fetch_annexes(apiClient, context):
+
+  resource_id = context.get('Resource_flat_id') or context.get('Resource_id')
+  if not resource_id:
+    return [], []
+  result = apiClient.call(DOCUMENTS, { 'id': resource_id })
+  if not result or not result['data']:
+    return [], []
+  documents = flatten(result['data'][0])
+  return documents.get('Building_docs', []), documents.get('Resource_docs', [])
+
+
+# ######################################################
 # Generate (rent and services) contracts
 # ######################################################
 
@@ -923,15 +972,10 @@ def do_contracts(apiClient, id):
     result = apiClient.call(BOOKING, variables)
     context = flatten(result['data'][0])
 
-    # Get documents
-    building_documents = []
-    resource_documents = []
-    variables = { 'id': context.get('Resource_flat_id') or context.get('Resource_id') }
-    result = apiClient.call(DOCUMENTS, variables)
-    if result['data']:
-      documents = flatten(result['data'][0])
-      building_documents = documents['Building_docs']
-      resource_documents = documents['Resource_docs']
+    # Get documents (solo Barcelona)
+    building_documents, resource_documents = [], []
+    if context.get('Resource_location_id') == 1:
+      building_documents, resource_documents = fetch_annexes(apiClient, context)
 
     # Determine template to use
     template_type = context.get('Resource_type')
@@ -963,27 +1007,27 @@ def do_contracts(apiClient, id):
         response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
+    # Merge annexes into rent contract (sorted alphabetically by name)
+    annex_pairs = []
+    for document in building_documents:
+      data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    for document in resource_documents:
+      data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    annex_pairs.sort(key=lambda x: x[0])
+    annex_data = [content for _, content in annex_pairs]
+    if annex_data and file_rent:
+      file_rent = merge_pdfs(file_rent, annex_data)
+
     # Send contract
     if context['Resource_building_contract']:
-      # Contracts
       contracts = [
         { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
         { 'id': 2, 'file': file_svcs, 'name': 'Contrato de servicios ' + str(context['Booking_id']) + ' - ' + context['Resource_code'] }
       ]
-      # Annexes
-      cid = 2
-      for document in building_documents:
-        cid += 1
-        data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
-        if data:
-          file = io.BytesIO(data.content)
-          contracts.append({ 'id': cid, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
-      for document in resource_documents:
-        cid += 1
-        data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
-        if data:
-          file = io.BytesIO(data.content)
-          contracts.append({ 'id': cid, 'file': file, 'name': document['Name'] + ' - ' + context['Resource_code'], })
       eid, status = do_send_contract(contracts, context, 'B2C')
     else:
       eid, status = 'n/a', 'other'

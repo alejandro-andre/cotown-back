@@ -12,6 +12,7 @@ openpyxl==3.1.5
 pandas==2.2.3
 psycopg2-binary==2.9.10
 pycryptodome==3.21.0
+pypdf==6.10.2
 requests==2.32.3
 schwifty==2025.1.0
 sshtunnel==0.4.0

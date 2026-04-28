@@ -5,5 +5,5 @@ __pycache__
 app/download/
 migration/**
 upload/content/**
-
+contra*.pdf
 etl/csv/*.csv
