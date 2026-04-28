@@ -1,23 +1,23 @@
 # CONTRATO DE ARRENDAMIENTO DE TEMPORADA DE INMUEBLE
 <br><br>
-En Barcelona, a [{{Today_day}}] de [{{Today_month|month}}] de [{{Today_year}}]
+En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 <br><br>
 ## LAS PARTES
 
 {%if Owner_id_type=='CIF'%}
-De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}[{{s.Owner_signer_name}}], mayor de edad, provisto de [{{s.Owner_signer_id_type}}] [{{s.Owner_signer_id}}]{%endfor%}, con domicilio profesional en [{{Owner_address}}], [{{Owner_zip}}] [{{Owner_city}}], actuando en nombre y representación de [{{Owner_name}}] con el mismo domicilio, [{{Owner_id_type}}] [{{Owner_id}}]{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}. La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"), con domicilio profesional en Beethoven 15, 7ª planta, 08021 Barcelona, CIF B67551754, representado por Dª Azucena Esteban Calderon, mayor de edad, provisto de DNI 38148452P, con el mismo domicilio, actuando en nombre de la mencionada sociedad.
+De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}. La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"), con domicilio profesional en Beethoven 15, 7ª planta, 08021 Barcelona, CIF B67551754, representado por Dª Azucena Esteban Calderon, mayor de edad, provisto de DNI 38148452P, con el mismo domicilio, actuando en nombre de la mencionada sociedad.
 {%else%}
-De una parte, [{{Owner_name}}], mayor de edad, con [{{Owner_id_type}}] núm. [{{Owner_id}}], con domicilio profesional en [{{Owner_address}}], [{{Owner_zip}}] [{{Owner_city}}] actuando en su nombre y representación.
+De una parte, {{Owner_name}}, mayor de edad, con {{Owner_id_type}} núm. {{Owner_id}}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}} actuando en su nombre y representación.
 {%endif%}
 
 En adelante "**Arrendadora**".
 
 {%if Customer_type=='empresa'%}
-De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_signer_name}}], mayor de edad, con [{{Customer_signer_id_type}}] [{{Customer_signer_id}}], con domicilio profesional en [{{Customer_address}}] [{{Customer_zip}}] [{{Customer_city}}], [{{Customer_province}}], [{{Customer_country}}], actuando en nombre y representacion de [{{Customer_name}}] con el mismo domicilio, [{{Customer_id_type}}] [{{Customer_id}}].
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} {{Customer_id}}.
 {%elif Customer_birth_date|age >= 18%}
-De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_name}}], mayor de edad{%if Customer_nationality!=null%}, de nacionalidad [{{Customer_nationality}}]{%endif%}, con [{{Customer_id_type}}] núm. [{{Customer_id}}], con domicilio habitual y permanente en [{{Customer_address}}] [{{Customer_zip}}] [{{Customer_city}}], [{{Customer_province}}], [{{Customer_country}}], actuando en su nombre y representación.
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
 {%else%}
-De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_name}}], menor de edad{%if Customer_nationality!=null%}, de nacionalidad [{{Customer_nationality}}]{%endif%}, con [{{Customer_id_type}}] núm. [{{Customer_id}}], con domicilio habitual y permanente en [{{Customer_address}}] [{{Customer_zip}}] [{{Customer_city}}], [{{Customer_province}}], [{{Customer_country}}], actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
 {%endif%}
 
 En adelante denominada la "**Arrendataria**"
@@ -30,7 +30,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 I. Que el Arrendador es propietario del inmueble ubicado en [{{Resource_street}}], [{{Resource_address}}] que se encuentra totalmente amueblado y equipado con los utensilios domésticos (en adelante “la Vivienda”)
 
-La Vivienda dispone de cédula de habitabilidad "[{{Resource_occupancy}}]" y de certificado de eficiencia energética "[{{Resource_energy}}]" y tiene una superficie de [{{Resource_area}}] m² construidos.
+La Vivienda dispone de cédula de habitabilidad [{{Resource_occupancy}}] y de certificado de eficiencia energética [{{Resource_energy}}] y tiene una superficie de [{{Resource_area}}] m² construidos.
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente.
 
@@ -39,7 +39,7 @@ III. Que el arrendatario está interesado en arrendar el inmueble antes descrito
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad.
 
 IV. Ambas partes se reconocen suficiente capacidad legal para llevar a cabo este contrato, interviniendo en nombre y derecho mencionados respectivamente, y convienen formalizar el presente CONTRATO DE ARRENDAMIENTO DE TEMPORADA.
-
+<div style="page-break-after: always;"></div>
 ## ESTIPULACIONES: 
  
 ## PRIMERA. OBJETO. 
@@ -99,13 +99,9 @@ c) Que la Vivienda ha estado arrendada/ no ha estado arrendada durante los últi
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
 {% if Booking_type == 'recreativo' %}
-------RECREATIVO-------
-
 Además, la parte arrendataria abonará [{{Booking_final_cleaning|decimal(1)}}] euros de limpieza de salida mediante domiciliación bancaria o tarjeta bancaria dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
 {% elif Booking_limit_type == 'indice' %}
-------INDICE-------
-
 De conformidad con lo anterior, la determinación de la renta de la Vivienda se ha determinado tomando en consideración el índice de Referencia Estatal (se acompaña como anexo).
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
@@ -116,8 +112,6 @@ Los conceptos indicados a continuación no están incluidos en la renta y se fac
 - Conexión al servicio de internet
 
 {% elif Booking_limit_type == 'lau' %}
-------LAU O MAS 150m-------
-
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
 - la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent|decimal(1)}}] euros mensuales.
@@ -133,9 +127,8 @@ El Arrendatario abonará también:
 - Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de [{{Booking_limit|decimal(1)}}] por persona y mes
 {% if Booking_expenses %}
 - IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales.{% endif %}
-{% else %}
-------LIBRE-------
 
+{% else %}
 De conformidad con lo anterior, la determinación de la renta se ha llevado a cabo tomando en consideración la consulta realizada en la página web del Ministerio de Vivienda y Agenda Urbana a efectos de determinar la existencia de Índice de Referencia (se acompaña informe como anexo a la consulta del que resulta que no existe precio de referencia a dichos efectos, por tratarse de una vivienda de más de 150 m2).
 
 Este importe incluye:
@@ -150,10 +143,9 @@ Excedido dicho importe mensual máximo de consumo por piso expresado en euros, e
 
 No está incluido en la renta:
 
-- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal(1)] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
 {% endif %}
-
 El incumplimiento de la obligación de pago de ese recibo en el periodo fijado será motivo de resolución del contrato, dando derecho al arrendador a solicitar el desahucio, siendo por cuenta del arrendatario los gastos que estas acciones originen. Los recibos emitidos se abonarán íntegramente sea cual sea el tiempo en que se utilicen los servicios de alojamiento.
 
 El retraso en el pago por parte de la Arrendataria de la Renta, total o parcial, y por un plazo superior a cinco (5) días naturales contados a partir de la fecha de emisión de la factura (la cual se generará el día 1 de cada mes o el día en que inicie el contrato de alquiler), indicada en la Condición General 4, así como, en su caso, de los conceptos aparte, dará derecho a la Arrendadora a cobrar intereses de demora y, en cualquier caso, a exigir a la Arrendataria el abono de un recargo pactado de 10 euros por factura y por cada día de retraso, una vez requerida formalmente de pago por cualquier medio. La Arrendadora podrá a suspender y resolver el Contrato de Habitación y solicitar la inmediata entrega de la Habitación y el pago de las cantidades pendientes, más los intereses y la penalización.

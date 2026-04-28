@@ -1,23 +1,23 @@
-# CONTRATO DE ARRENDAMIENTO Y USO DE HABITACIÓN.
+# CONTRATO DE ARRENDAMIENTO Y USO DE HABITACIÓN
 <br><br>
-En Barcelona, a [{{Today_day}}] de [{{Today_month|month}}] de [{{Today_year}}]
+En Barcelona, a {{Today_day}} de {{Today_month|month}} de {{Today_year}}
 <br><br>
 ## LAS PARTES
 
 {%if Owner_id_type=='CIF'%}
-De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}[{{s.Owner_signer_name}}], mayor de edad, provisto de [{{s.Owner_signer_id_type}}] [{{s.Owner_signer_id}}]{%endfor%}, con domicilio profesional en [{{Owner_address}}], [{{Owner_zip}}] [{{Owner_city}}], actuando en nombre y representación de [{{Owner_name}}] con el mismo domicilio, [{{Owner_id_type}}] [{{Owner_id}}]{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}. La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"), con domicilio profesional en Beethoven 15, 7ª planta, 08021 Barcelona, CIF B67551754, representado por Dª Azucena Esteban Calderon, mayor de edad, provisto de DNI 38148452P, con el mismo domicilio, actuando en nombre de la mencionada sociedad.
+De una parte, {%for s in Owner_signers%}{%-if loop.index>1%} y {%endif%}{{s.Owner_signer_name}}, mayor de edad, provisto de {{s.Owner_signer_id_type}} {{s.Owner_signer_id}}{%endfor%}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}}, actuando en nombre y representación de {{Owner_name}} con el mismo domicilio, {{Owner_id_type}} {{Owner_id}}{%if Owner_signers|length>1%}, en calidad de apoderados mancomunados{%endif%}. La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"), con domicilio profesional en Beethoven 15, 7ª planta, 08021 Barcelona, CIF B67551754, representado por Dª Azucena Esteban Calderon, mayor de edad, provisto de DNI 38148452P, con el mismo domicilio, actuando en nombre de la mencionada sociedad.
 {%else%}
-De una parte, [{{Owner_name}}], mayor de edad, con [{{Owner_id_type}}] núm. [{{Owner_id}}], con domicilio profesional en [{{Owner_address}}], [{{Owner_zip}}] [{{Owner_city}}] actuando en su nombre y representación.
+De una parte, {{Owner_name}}, mayor de edad, con {{Owner_id_type}} núm. {{Owner_id}}, con domicilio profesional en {{Owner_address}}, {{Owner_zip}} {{Owner_city}} actuando en su nombre y representación.
 {%endif%}
 
 En adelante "**Arrendadora**".
 
 {%if Customer_type=='empresa'%}
-De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_signer_name}}], mayor de edad, con [{{Customer_signer_id_type}}] [{{Customer_signer_id}}], con domicilio profesional en [{{Customer_address}}] [{{Customer_zip}}] [{{Customer_city}}], [{{Customer_province}}], [{{Customer_country}}], actuando en nombre y representacion de [{{Customer_name}}] con el mismo domicilio, [{{Customer_id_type}}] [{{Customer_id}}].
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_signer_name}}, mayor de edad, con {{Customer_signer_id_type}} {{Customer_signer_id}}, con domicilio profesional en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en nombre y representacion de {{Customer_name}} con el mismo domicilio, {{Customer_id_type}} {{Customer_id}}.
 {%elif Customer_birth_date|age >= 18%}
-De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_name}}], mayor de edad{%if Customer_nationality!=null%}, de nacionalidad [{{Customer_nationality}}]{%endif%}, con [{{Customer_id_type}}] núm. [{{Customer_id}}], con domicilio habitual y permanente en [{{Customer_address}}] [{{Customer_zip}}] [{{Customer_city}}], [{{Customer_province}}], [{{Customer_country}}], actuando en su nombre y representación.
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}, mayor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación.
 {%else%}
-De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_name}}], menor de edad{%if Customer_nationality!=null%}, de nacionalidad [{{Customer_nationality}}]{%endif%}, con [{{Customer_id_type}}] núm. [{{Customer_id}}], con domicilio habitual y permanente en [{{Customer_address}}] [{{Customer_zip}}] [{{Customer_city}}], [{{Customer_province}}], [{{Customer_country}}], actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
+De otra parte, {%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}, menor de edad{%if Customer_nationality!=null%}, de nacionalidad {{Customer_nationality}}{%endif%}, con {{Customer_id_type}} núm. {{Customer_id}}, con domicilio habitual y permanente en {{Customer_address}} {{Customer_zip}} {{Customer_city}}, {{Customer_province}}, {{Customer_country}}, actuando en su nombre y representación en virtud de autorización paterna/materna/tutor legal o con la comparecencia paterna/materna/tutor legal.
 {%endif%}
 
 En adelante denominada la "**Arrendataria**"
@@ -36,10 +36,10 @@ III. La Arrendataria tiene su residencia permanente en el domicilio indicado en 
 
 IV.  Asimismo, manifiesta la Arrendataria que dispone de los medios económicos suficientes para atender el pago de la renta acordada y demás responsabilidades económicas por el arrendamiento de la habitación, bien por sus propios medios o de su padre/madre/tutor legal en caso de ser menor de edad.
 
-V.   La Arrendataria está interesada en arrendar y usar de forma temporal una de las habitaciones propiedad de la Arrendadora en [{{Resource_flat_street}}], [{{Resource_building_city}}], que tiene [{{Resource_flat_area}}] m² construidos, cuya cédula de habitabilidad es la "[{{Resource_flat_occupancy}}]" y el certificado de eficiencia energética "[{{Resource_flat_energy}}]".
+V.   La Arrendataria está interesada en arrendar y usar de forma temporal una de las habitaciones propiedad de la Arrendadora en [{{Resource_flat_street}}], [{{Resource_building_city}}], que tiene [{{Resource_flat_area}}] m² construidos, cuya cédula de habitabilidad es la [{{Resource_flat_occupancy}}] y el certificado de eficiencia energética [{{Resource_flat_energy}}].
 
 En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y uso de habitación, de acuerdo con las siguientes condiciones particulares y generales.
-
+<div style="page-break-after: always;"></div>
 ## ESTIPULACIONES
 
 ## A. CONDICIONES PARTICULARES
@@ -72,7 +72,7 @@ Se adjunta al presente la documentación acreditativa de la estancia, a efectos 
 
 El Contrato de Habitación entra en vigor en la fecha de firma del presente contrato, de conformidad con la reserva aceptada, y se procede al bloqueo de la habitación para que esté a disposición de la Arrendataria cuando inicie su uso durante todo el plazo que se indica a continuación.
 
-La Arrendataria hará uso de la habitación desde el día [{{Booking_date_from_day}}]/[{{Booking_date_from_month}}]/[{{Booking_date_from_year}}] al día [{{Booking_date_to_day}}]/[{{Booking_date_to_month}}]/[{{Booking_date_to_year}}] (el "**Plazo**"). 
+La Arrendataria hará uso de la habitación desde el día {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} al día {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}} (el "**Plazo**"). 
 
 Una vez cumplido el indicado Plazo de uso, el Contrato de Habitación quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso.
 
@@ -88,9 +88,9 @@ Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al pre
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
-- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales.
 {%-else %}
-- Mes [{{rent.Rent_date_month}}]/[{{rent.Rent_date_year}}]: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales.
 {%-endif %}
 {%-endfor %}
 
@@ -99,8 +99,6 @@ Mediante los cargos recurrentes que efectuará la Arrendadora en la cuenta corri
 El importe de la renta de la habitación ha sido determinado de conformidad con lo establecido en el artículo 66 ter.3 de la ley 18/2007 del derecho a la vivienda de Cataluña, según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
 {% if Booking_type == 'recreativo' %}
--------RECREATIVO------- 
-
 Este importe incluye:
 
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
@@ -118,8 +116,6 @@ No está incluido en la renta:
 
 {% endif %}
 {% elif Booking_limit_type == 'indice' %}
--------INDICE------- 
-
 De conformidad con lo anterior, la determinación de la renta de la habitación se ha llevado a cabo una vez determinada la renta máxima aplicable al arrendamiento unitario de la vivienda, tomando en consideración el índice de Referencia Estatal (se acompaña como anexo).
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
@@ -130,8 +126,6 @@ Los conceptos indicados a continuación no están incluidos en la renta y se fac
 - IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales.{% endif %}
 
 {% elif Booking_limit_type == 'lau' %}
--------LAU------- 
-
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
 - La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_flat_last_LAU_date}}], cuyo importe ascendía a [{{Resource_flat_last_LAU_rent|decimal(1)}}] euros mensuales.
@@ -144,8 +138,6 @@ Aplicada la actualización de la renta conforme al Índice de Precios al Consumo
 - Mobiliario y equipamiento [{{Booking_furniture|decimal(1)}}] euros mensuales.
 
 {% else %}
--------LIBRE------- 
-
 De conformidad con lo anterior, la determinación de la renta de habitación se ha llevado a cabo una vez determinada la renta máxima aplicable al arrendamiento unitario de vivienda, tomando en consideración la consulta realizada en la página web del Ministerio de Vivienda y Agenda Urbana a efectos de determinar la existencia de Índice de Referencia (se acompaña informe como anexo a la consulta del que resulta que no existe precio de referencia a dichos efectos).
 
 Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de (la "**Renta**"):
