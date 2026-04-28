@@ -45,7 +45,7 @@ def generate_b2c(apiClient, id, template_file):
     context = flatten(result['data'][0])
 
     # Test
-    context['Booking_type'] = 'limitado'
+    context['Booking_type'] = 'recreativo'
     context['Booking_limit_type'] = 'lau'
 
     # Cargar plantilla local y generar PDF
@@ -74,7 +74,7 @@ def generate_b2b(apiClient, id, template_file):
         return
 
     # Test
-    context['Booking_type'] = 'limitado'
+    context['Booking_type'] = 'recreativo'
     context['Booking_limit_type'] = 'lau'
 
     # Construir lista de pisos asignados (por dirección si existe, sino por código)

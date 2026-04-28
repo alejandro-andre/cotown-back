@@ -79,7 +79,7 @@ El arrendamiento se pacta por temporada y, por tanto, por tiempo determinado, co
   
 ## 3. RENTA Y CONCEPTOS DEL ARRENDAMIENTO
 
-Por el arrendamiento de la vivienda, el Arrendatario abonará obligatoriamente al Arrendador y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)] euros mensuales (la "**Renta**"):
+Por el arrendamiento de la vivienda, el Arrendatario abonará obligatoriamente al Arrendador y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)}}] euros mensuales (la "**Renta**"):
 
 El pago de la renta y conceptos asimilados se realizará por el Arrendatario al Arrendador mediante transferencia bancaria a la cuenta designada por el Arrendador, entre los cinco primeros días de cada mes, debiendo remitir un comprobante de esta.
 
@@ -89,7 +89,7 @@ a) Que el Arrendador tiene la condición de gran tenedor.
 
 b) Que la Vivienda está situada en una zona de mercado residencial tensionado.
 
-c) Que la Vivienda ha estado arrendada/ no ha estado arrendada durante los últimos 5 años como vivienda habitual en virtud de un contrato sujeto a la Ley de Arrendamientos Urbanos.
+c) Que la Vivienda ha estado arrendada / no ha estado arrendada durante los últimos 5 años como vivienda habitual en virtud de un contrato sujeto a la Ley de Arrendamientos Urbanos.
 
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
@@ -99,13 +99,13 @@ De conformidad con lo anterior, la determinación de la renta de la Vivienda se 
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
-- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de [{{Booking_limit|decimal(1)] euros por persona y mes
+- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de [{{Booking_limit|decimal(1)}}] euros por persona y mes
 - IBI y gastos de la comunidad de propietarios 
 
 {% elif Booking_limit_type == 'lau' %}
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent|decimal(1)}}] euros mensuales.
+- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent or 0|decimal(1)}}] euros mensuales.
 
 - el Índice de Referencia Estatal que se adjunta como anexo al presente.
 
@@ -115,13 +115,13 @@ Aplicada la actualización de la renta conforme al Índice de Precios al Consumo
 
 El Arrendatario abonará también: 
 
-- Gastos por suministros de los que esté dotada la Viviendao y hasta el límite de [{{Booking_limit|decimal(1)] euros por persona y mes
+- Gastos por suministros de los que esté dotada la Viviendao y hasta el límite de [{{Booking_limit|decimal(1)}}] euros por persona y mes
 
 {% else %}
 De conformidad con lo anterior, la determinación de la renta se ha llevado a cabo tomando en consideración la consulta realizada en la página web del Ministerio de Vivienda y Agenda Urbana a efectos de determinar la existencia de Índice de Referencia (se acompaña informe como anexo a la consulta del que resulta que no existe precio de referencia a dichos efectos, por tratarse de una vivienda de más de 150 m2).
 {% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
 
-La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_final_cleaning|decimal(1)] euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
+La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_final_cleaning|decimal(1)}}] euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
 {% endif %}
 {% endif %}
 
@@ -169,9 +169,9 @@ La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_fin
 
 ## 10. FIANZA Y GARANTÍA ADICIONAL
 
-10.1. El Arrendatario entrega en este acto y en concepto de fianza legal la suma de [{{Booking_deposit|decimal(1)] euros, equivalente a la parte proporcional de un mes de renta en función de la duración del Contrato , mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
+10.1. El Arrendatario entrega en este acto y en concepto de fianza legal la suma de [{{Booking_deposit|decimal(1)}}] euros, equivalente a la parte proporcional de un mes de renta en función de la duración del Contrato , mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
 
-10.2. Asimismo, el Arrendatario entrega en este acto y en concepto de garantía adicional la suma de [{{Booking_deposit|decimal(1)] euros, equivalente a la parte proporcional de dos meses de renta en función de la duración del Contrato, mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
+10.2. Asimismo, el Arrendatario entrega en este acto y en concepto de garantía adicional la suma de [{{Booking_deposit|decimal(1)}}] euros, equivalente a la parte proporcional de dos meses de renta en función de la duración del Contrato, mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
 
 10.3. Ambas partes acuerdan la restitución íntegra de la fianza legal y de la garantía al Arrendatario en el momento de la finalización del Contrato de arrendamiento, previa verificación del correcto estado de la Vivienda al momento de la entrega.
 

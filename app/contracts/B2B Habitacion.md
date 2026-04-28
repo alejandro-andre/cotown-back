@@ -127,7 +127,7 @@ Los conceptos indicados a continuación no están incluidos en la renta y se fac
 {% elif Booking_limit_type == 'lau' %}
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{R.Resource_last_LAU_date}}], cuyo importe ascendía a [{{R.Resource_last_LAU_rent|decimal(1)}}] euros mensuales.
+- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{R.Resource_last_LAU_date}}], cuyo importe ascendía a [{{R.Resource_last_LAU_rent or 0|decimal(1)}}] euros mensuales.
 
 - El Indice de Referencia Estatal que se adjunta como anexo al presente. Por ello, de conformidad con lo dispuesto en los Apartados 6 y 7 del Art. 17 de la LAU, la renta del arrendamiento corresponde a la menor entre la última renta del contrato anterior actualizada y la resultante del Índice de Referencia Estatal.
 
