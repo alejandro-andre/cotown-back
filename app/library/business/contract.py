@@ -144,6 +144,11 @@ query BookingById ($id: Int) {
       Resource_part: Part
       Resource_address: Address
       Resource_street: Street
+      Resource_area: Area_woc
+      Resource_occupancy: Occupancy_certificate
+      Resource_energy: Energy_certificate
+      Resource_last_LAU_date: Last_LAU_date
+      Resource_last_LAU_rent: Last_LAU_rent
       Flat: ResourceViaFlat_id {
         Resource_flat_id: id
         Resource_flat_code: Code
@@ -152,8 +157,8 @@ query BookingById ($id: Int) {
         Resource_flat_area: Area_woc
         Resource_flat_occupancy: Occupancy_certificate
         Resource_flat_energy: Energy_certificate
-        Resource_last_LAU_date: Last_LAU_date
-        Resource_last_LAU_rent: Last_LAU_rent
+        Resource_flat_last_LAU_date: Last_LAU_date
+        Resource_flat_last_LAU_rent: Last_LAU_rent
       }
       Building: BuildingViaBuilding_id {
         Resource_building_code: Code
@@ -341,9 +346,14 @@ query Booking_groupById ($id: Int!) {
         Resource_address: Address
         Resource_street: Street
         Flat: ResourceViaFlat_id {
-        Resource_flat_code: Code
-        Resource_flat_address: Address
-        Resource_flat_street: Street
+          Resource_flat_code: Code
+          Resource_flat_address: Address
+          Resource_flat_street: Street
+          Resource_flat_area: Area_woc
+          Resource_flat_occupancy: Occupancy_certificate
+          Resource_flat_energy: Energy_certificate
+          Resource_flat_last_LAU_date: Last_LAU_date
+          Resource_flat_last_LAU_rent: Last_LAU_rent
         }
         Building: BuildingViaBuilding_id {
         Resource_building_code: Code
@@ -468,8 +478,11 @@ query Booking_group_annexById ($id: Int!, $group: String) {
         }
         Rooms: Booking_group_roomsViaRoom_id {
             ResourceViaResource_id {
-            Resource_code: Code
-            BuildingViaBuilding_id {
+              Resource_code: Code
+              Resource_area: Area_woc
+              Resource_occupancy: Occupancy_certificate
+              Resource_energy: Energy_certificate
+              BuildingViaBuilding_id {
                 Building_address: Address
                 DistrictViaDistrict_id {
                 LocationViaLocation_id {

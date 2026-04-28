@@ -84,7 +84,7 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 
 ## 4. Precio
 
-Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{% if Owner_id == Service_id %}{{(Booking_rent+(Booking_services or 0))|decimal(1)}}{% else %}{{Booking_rent|decimal(1)}}{% endif %}] euros mensuales (la "**Renta**").
+Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de (la "**Renta**").
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
@@ -102,6 +102,7 @@ El importe de la renta de la habitación ha sido determinado de conformidad con 
 -------RECREATIVO------- 
 
 Este importe incluye:
+
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
 - Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
@@ -124,14 +125,16 @@ De conformidad con lo anterior, la determinación de la renta de la habitación 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
 - Los consumos de los suministros de agua, gas, electricidad y servicio de wifi se repercutirán de forma mensual entre todas las plazas, a razón de [{{Booking_limit|decimal(1)}}] euros mensuales.
-{% if Booking_expenses %}- IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales.{% endif %}
+{% if Booking_expenses %}
+
+- IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales.{% endif %}
 
 {% elif Booking_limit_type == 'lau' %}
 -------LAU------- 
 
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent|decimal(1)}}] euros mensuales.
+- La última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_flat_last_LAU_date}}], cuyo importe ascendía a [{{Resource_flat_last_LAU_rent|decimal(1)}}] euros mensuales.
 
 - El Indice de Referencia Estatal que se adjunta como anexo al presente. Por ello, de conformidad con lo dispuesto en los Apartados 6 y 7 del Art. 17 de la LAU, la renta del arrendamiento corresponde a la menor entre la última renta del contrato anterior actualizada y la resultante del Índice de Referencia Estatal.
 

@@ -85,7 +85,7 @@ La entrada y puesta a disposición de la Habitación tendrá lugar el primer dí
 
 ## 4. Precio
 
-Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de [{% if Owner_id == Service_id %}{{(Booking_rent+(Booking_services or 0))|decimal(1)}}{% else %}{{Booking_rent|decimal(1)}}{% endif %}] euros mensuales por plaza (la "**Renta**").
+Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al presente Contrato de Habitación, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de (la "**Renta**").
 
 
 {% for rent in Prices %}
