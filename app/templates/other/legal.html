@@ -161,7 +161,7 @@
     </tr>
 
     {% if flat.Places and data.Sale_type == 'pc' %}
-    {% for place in flat.Places if place.Resource_type == 'habitacion' %}
+    {% for place in flat.Places if place.Resource_type == 'habitacion' and place.Registry_num %}
     <tr>
       <td>{{place.Code[13:]}}</td>
       <td>{{place.Registry_num or ''}}</td>
