@@ -36,9 +36,17 @@ BASE = '''
 <html>
 <head>
 <style>
-@page {{ size: A4; margin: 1.4cm; }}
-body {{ font-size: 14px; font-weight: 400; font-family: Arial, Helvetica, sans-serif;
+@page {{ 
+  size: A4; 
+  margin: 1.4cm 1.4cm 1.7cm 1.4cm;
+  @bottom-right {{
+    margin: 0 0.2cm 1cm 0;
+    content: "Pág. " counter(page);
+    font-size: 14px; 
+    font-family: Arial, Helvetica, sans-serif;
+  }}
 }}
+body {{ font-size: 14px; font-weight: 400; font-family: Arial, Helvetica, sans-serif; }}
 table {{ width: 100%; }}
 p {{ margin-top: 18px; margin-bottom: 18px; text-align: justify; text-justify: inter-word; }}
 ol, ul {{ padding-left: 10px; margin-top: 0; }}
@@ -1093,11 +1101,15 @@ def do_group_contracts(apiClient, id):
     room = context['Rooms'][0]
 
     # Consolidate flats
-    try:
-      context['Flats'] = ', '.join(sorted(list({r['Resource_flat_address'] for r in context['Rooms']})))
-    except:
-      context['Flats'] = ', '.join(sorted(list({r['Resource_code'] for r in context['Rooms']})))
-
+    flats_dict = {}
+    for room in context['Rooms']:
+      if room.get('Resource_flat_code'):
+        flats_dict[room['Resource_flat_code']] = {
+          k: v for k, v in room.items() if k.startswith('Resource_flat_')
+        }
+    context['Flats_info'] = list(flats_dict.values())
+    context['Flats'] = ', '.join(sorted(f['Resource_flat_address'] for f in context['Flats_info']))
+    
     # Generate rent contract
     template, annex, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Resource_location_id'], room['Owner_name'])
     if template is not None:

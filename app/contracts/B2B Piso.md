@@ -29,13 +29,15 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 ## MANIFIESTAN
 
-I. Que el Arrendador es propietario de la siguiente finca (en adelante “la Vivienda””): 
+I. Que el Arrendador es propietario de la siguiente finca en [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}] (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
 
-- Calle:  [{{R.Resource_flat_street}}]
-- Ciudad: [{{R.Resource_building_city}}]
-- Piso/s: [{{Flats}}]
-
-La Vivienda dispone de cédula de habitabilidad [{{R.Resource_flat_occupancy}}] y de certificado de eficiencia energética [{{R.Resource_flat_energy}}] y tiene una superficie de [{{R.Resource_flat_area}}] m² construidos.
+| | | | |
+|:-|:-|:-|-:|
+|**Piso**|**Cédula de habitabilidad**|**Certificado de eficiencia energética**|**m²**|
+{%-for f in Flats_info-%}
+|{{f.Resource_flat_address}}|{{f.Resource_flat_occupancy}}|{{f.Resource_flat_energy}}|{{f.Resource_flat_area}}|
+{% endfor-%}
+| | | | |
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente. 
 
@@ -48,7 +50,7 @@ Se adjunta al presente la documentación acreditativa de la estancia, a efectos 
 V. Que la gestión del presente contrato y, por lo tanto, la representación de la Propiedad durante todo el plazo que dure el presente será llevada a cabo por la compañía Cotown Sharing Life, S.L. (la gestora)
 
 V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con los términos que seguidamente se convienen, suscriben el presente **contrato de arrendamiento de temporada**, de conformidad con las siguientes:
-<div style="page-break-after: always;"></div>
+
 ## ESTIPULACIONES
 
 ## 1. OBJETO DEL CONTRATO DE ARRENDAMIENTO
@@ -79,7 +81,16 @@ El arrendamiento se pacta por temporada y, por tanto, por tiempo determinado, co
   
 ## 3. RENTA Y CONCEPTOS DEL ARRENDAMIENTO
 
-Por el arrendamiento de la vivienda, el Arrendatario abonará obligatoriamente al Arrendador y durante todo el Plazo la cantidad de [{{Booking_rent|decimal(1)}}] euros mensuales (la "**Renta**"):
+Por el arrendamiento de la vivienda, el Arrendatario abonará obligatoriamente al Arrendador y durante todo el Plazo la cantidad de (la "**Renta**"):
+
+{% for rent in Prices %}
+{%-if Owner_id == Service_id %}
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales por plaza.
+{%-else %}
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales por plaza.
+{%-endif %}
+{%-endfor %}
+
 
 El pago de la renta y conceptos asimilados se realizará por el Arrendatario al Arrendador mediante transferencia bancaria a la cuenta designada por el Arrendador, entre los cinco primeros días de cada mes, debiendo remitir un comprobante de esta.
 
@@ -94,6 +105,11 @@ c) Que la Vivienda ha estado arrendada / no ha estado arrendada durante los últ
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
 {% if Booking_type == 'recreativo' %}
+{% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
+
+La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_final_cleaning|decimal(1)}}] euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
+{% endif %}
+
 {% elif Booking_limit_type == 'indice' %}
 De conformidad con lo anterior, la determinación de la renta de la Vivienda se ha determinado tomando en consideración el índice de Referencia Estatal (se acompaña como anexo).
 

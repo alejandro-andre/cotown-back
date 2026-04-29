@@ -29,25 +29,39 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 ## MANIFIESTAN
 
-I. Que, la Arrendadora tiene la consideración de gran tenedora con arreglo a la normativa en vigor.
+I. Que el Arrendador es propietario de la siguiente finca en [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}] (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
 
-II. La Arrendadora es una entidad cuyo objeto es el arrendamiento de habitaciones para su uso por terceros en los edificios de su propiedad.
+| | | | |
+|:-|:-|:-|-:|
+|**Piso**|**Cédula de habitabilidad**|**Certificado de eficiencia energética**|**m²**|
+{%-for f in Flats_info-%}
+|{{f.Resource_flat_address}}|{{f.Resource_flat_occupancy}}|{{f.Resource_flat_energy}}|{{f.Resource_flat_area}}|
+{% endfor-%}
+| | | | |
 
-III. El Arrendatario es una organización interesada en arrendar [{% if Rooms|length == 1 %}una habitación{% else %}{{Rooms|length}} habitaciones{% endif %}] en [{{R.Resource_building_city}}] con el mobiliario, equipamiento e instalaciones que contiene, de forma temporal, para su uso por las personas que se identificarán a continuación.
+II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente. 
 
-IV. Asimismo, manifiesta la Arrendataria que dispone de los medios económicos suficientes para atender el pago de la renta acordada y demás responsabilidades económicas por el arrendamiento de la habitación a favor de las personas designadas.
+III. Que, el Arrendatario es una organización/entidad interesada en arrendar la Vivienda de forma temporal para ser ocupada exclusivamente por parte de las personas que se identificarán en el cuerpo de este documento.
 
-V. La Arrendataria está interesada en arrendar y usar de forma temporal [{% if Rooms|length == 1 %}una habitación{% else %}{{Rooms|length}} habitaciones{% endif %}] en el inmueble propiedad de la Arrendadora en [{{R.Resource_flat_street}}] - [{{R.Resource_flat_address}}], [{{R.Resource_building_city}}], que tiene [{{R.Resource_flat_area}}] m² construidos, cuya cédula de habitabilidad es la [{{R.Resource_flat_occupancy}}] y el certificado de eficiencia energética [{{R.Resource_flat_energy}}]
+Las personas que ocuparán la Vivienda tienen su residencia permanente en los siguientes domicilios y ocuparán  el inmueble antes descrito para la temporada que luego se dirá, por motivos de estudios o trabajo.
 
-En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y uso de habitación, de acuerdo con las siguientes condiciones particulares y generales.
-<div style="page-break-after: always;"></div>
+Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad.
+
+V. Que la gestión del presente contrato y, por lo tanto, la representación de la Propiedad durante todo el plazo que dure el presente será llevada a cabo por la compañía Cotown Sharing Life, S.L. (la gestora)
+
+V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con los términos que seguidamente se convienen, suscriben el presente **contrato de arrendamiento de temporada**, de conformidad con las siguientes:
+
 ## ESTIPULACIONES
 
 ## A. CONDICIONES PARTICULARES
 
 ## 1. Objeto.
 
-1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el piso [{{R.Resource_flat_address}}] del edificio de la calle [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}], para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
+1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el edificio de la calle [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}], para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
+
+{% for r in Rooms %}
+- [{{r.Resource_address}}]
+{%-endfor %}
 
 ## 1.2. Vinculación con las Condiciones Generales 
 
@@ -102,6 +116,7 @@ El importe de la renta de la habitación ha sido determinado de conformidad con 
 
 {% if Booking_type == 'recreativo' %}
 Este importe incluye:
+
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
 - Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará para cada mes y mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 

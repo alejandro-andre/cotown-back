@@ -21,11 +21,9 @@ from library.business.contract import BOOKING, GROUP_BOOKING, generate_doc_file,
 
 logger = logging.getLogger('COTOWN')
 
-CONTRACTS_DIR = 'contracts'
-
 
 def load_local_template(filename):
-    path = os.path.join(CONTRACTS_DIR, filename)
+    path = os.path.join('contracts', filename)
     if not os.path.isfile(path):
         logger.error('Plantilla no encontrada: %s', path)
         return None
@@ -73,7 +71,7 @@ def generate_b2c(apiClient, id, template_file, contract='rent'):
 
     # Guardar contrato (con anexos si los hay)
     merged = merge_pdfs(pdf, annex_data) if annex_data else pdf
-    out = f'contract_b2c_{contract}.pdf'
+    out = f'contracts/test/contract_b2c_{contract}.pdf'
     with open(out, 'wb') as f:
         f.write(merged.read())
     logger.info('PDF guardado: %s (%d anexos)', out, len(annex_data))
@@ -97,18 +95,22 @@ def generate_b2b(apiClient, id, template_file):
     context['Booking_type'] = 'recreativo'
     context['Booking_limit_type'] = 'lau'
 
-    # Construir lista de pisos asignados (por dirección si existe, sino por código)
-    try:
-        context['Flats'] = ', '.join(sorted(list({r['Resource_flat_address'] for r in context['Rooms']})))
-    except:
-        context['Flats'] = ', '.join(sorted(list({r['Resource_code'] for r in context['Rooms']})))
+    # Consolidate flats
+    flats_dict = {}
+    for room in context['Rooms']:
+        if room.get('Resource_flat_code'):
+            flats_dict[room['Resource_flat_code']] = {
+                k: v for k, v in room.items() if k.startswith('Resource_flat_')
+            }
+    context['Flats_info'] = list(flats_dict.values())
+    context['Flats'] = ', '.join(sorted(f['Resource_flat_address'] for f in context['Flats_info']))
 
     # Cargar plantilla local y generar PDF
     template = load_local_template(template_file)
     if template is None:
         return
     pdf = generate_doc_file(context, template)
-    out = f'contract_b2b.pdf'
+    out = f'contracts/test/contract_b2b.pdf'
     with open(out, 'wb') as f:
         f.write(pdf.read())
     logger.info('PDF guardado: %s', out)
