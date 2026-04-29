@@ -164,10 +164,11 @@ def load_rooming(dbClient, con, data):
           record[column] = cell.value
 
       # Update record
+      record['Group_code'] = str(record['Group_code'])
       keys = [k for k in list(record.keys()) if k not in ('Booking_id', 'Group_code', 'Room_id')] 
       update_fields = [f'"{key}" = %s' for key in keys]
       update_values = [record[key] for key in keys + ['Booking_id', 'Group_code', 'Room_id']]
-      update_sql = 'UPDATE "Booking"."Booking_group_rooming" SET {} WHERE "Booking_id"=%s AND "Group_code"=%s and "Room_id"=%s'.format(','.join(update_fields))
+      update_sql = 'UPDATE "Booking"."Booking_group_rooming" SET {} WHERE "Booking_id"=%s AND "Group_code"=%s::TEXT and "Room_id"=%s'.format(','.join(update_fields))
 
       # Or insert record
       insert_fields = list(map(lambda key: '"' + key + '"', record.keys()))
