@@ -81,7 +81,7 @@
   {% for flat in data.Flats if flat.Sale_type in types and (flat.Registry_num or data.Sale_type == 'pc') and flat.Occupancy_certificate %}
     {% set rate = flat.Energy_certificate_rate or '' %}
 
-      {% if flat.Places | selectattr('Registry_num') | list | length > 0 %}
+      {% if data.Sale_type == 'ap' or flat.Places | selectattr('Registry_num') | list | length > 0 %}
       <tr style="background-color: #eee; font-weight: 700; font-size: 10px;">
         <td>{{flat.Code[7:]}}</td>
         <td>{{(flat.Registry_num or '') if data.Sale_type == 'ap' }}</td>
