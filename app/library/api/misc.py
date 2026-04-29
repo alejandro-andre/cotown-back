@@ -273,15 +273,12 @@ def fmt(e, p='', d=''):
     return d
 
 def req_pub_legal_pdf(sale_type, segment, building):
+  # Validate URL
+  if sale_type not in ('pc', 'ap') or segment not in (1, 2): abort(404)
+
   # API Client
   apiClient = APIClient(settings.SERVER)
   apiClient.auth(user=settings.GQLUSER, password=settings.GQLPASS)
-
-  # Jinja environment
-  env = Environment(
-    loader=FileSystemLoader('./templates/other'),
-    autoescape=select_autoescape(['html', 'xml'])
-  )
 
   # Get building
   building = apiClient.call(BUILDING, { "code": building, "segment": segment })
@@ -301,6 +298,12 @@ def req_pub_legal_pdf(sale_type, segment, building):
   context['Today_year'] = now.year
   context['Segment_id'] = segment
   context['Sale_type'] = sale_type
+
+  # Jinja environment
+  env = Environment(
+    loader=FileSystemLoader('./templates/other'),
+    autoescape=select_autoescape(['html', 'xml'])
+  )
 
   # Generate HTML
   tpl = env.get_template('legal.html')
