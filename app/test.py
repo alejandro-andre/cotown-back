@@ -71,13 +71,13 @@ def generate_b2c(apiClient, id, template_file, contract='rent'):
 
     # Guardar contrato (con anexos si los hay)
     merged = merge_pdfs(pdf, annex_data) if annex_data else pdf
-    out = f'contracts/test/contract_b2c_{contract}.pdf'
+    out = f'contracts/test/contract_b2c_{id}_{contract}.pdf'
     with open(out, 'wb') as f:
         f.write(merged.read())
     logger.info('PDF guardado: %s (%d anexos)', out, len(annex_data))
 
 
-def generate_b2b(apiClient, id, template_file):
+def generate_b2b(apiClient, id, template_file, contract='rent'):
 
     # Obtener datos completos de la reserva de grupo
     result = apiClient.call(GROUP_BOOKING, { 'id': id })
@@ -110,7 +110,7 @@ def generate_b2b(apiClient, id, template_file):
     if template is None:
         return
     pdf = generate_doc_file(context, template)
-    out = f'contracts/test/contract_b2b.pdf'
+    out = f'contracts/test/contract_b2b_{id}_{contract}.pdf'
     with open(out, 'wb') as f:
         f.write(pdf.read())
     logger.info('PDF guardado: %s', out)
@@ -134,7 +134,7 @@ def main():
     if args.type == 'B2C':
         generate_b2c(apiClient, args.id, args.template, args.contract)
     else:
-        generate_b2b(apiClient, args.id, args.template)
+        generate_b2b(apiClient, args.id, args.template, args.contract)
 
 
 if __name__ == '__main__':

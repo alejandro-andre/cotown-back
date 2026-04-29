@@ -29,14 +29,15 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 ## MANIFIESTAN
 
-I. Que el Arrendador es propietario de la siguiente finca en [{{R.Resource_flat_street}}], [{{R.Resource_building_city}}] (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
+I. Que el Arrendador es propietario de la siguiente finca en [{{R.Resource_street}}], [{{R.Resource_building_city}}] (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
+
 
 | | | | |
 |:-|:-|:-|-:|
 |**Piso**|**Cédula de habitabilidad**|**Certificado de eficiencia energética**|**m²**|
-{%-for f in Flats_info-%}
-|{{f.Resource_flat_address}}|{{f.Resource_flat_occupancy}}|{{f.Resource_flat_energy}}|{{f.Resource_flat_area}}|
-{% endfor-%}
+{%-for f in Rooms %}
+|{{f.Resource_address}}|{{f.Resource_occupancy}}|{{f.Resource_energy}}|{{f.Resource_area}}|
+{%-endfor %}
 | | | | |
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente. 
@@ -55,10 +56,10 @@ V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con lo
 
 ## 1. OBJETO DEL CONTRATO DE ARRENDAMIENTO
 
-1.1. El Arrendador cede en arrendamiento al Arrendatario la Vivienda  con el número de plazas que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**")
+1.1. El Arrendador cede en arrendamiento al Arrendatario la(s) vivienda(s) con el número de plazas que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**")
 
 {% for r in Rooms %}
-- [{{r.Resource_address}}]
+- [{{r.Resource_address}}], [{{r.Resource_places}}] plazas.
 {%-endfor %}
 
 1.2. La vivienda se destinará de forma exclusiva a vivienda de temporada por parte de las personas cuyos nombres completos, datos de identificación, incluyendo los datos de su residencia permanente y habitual, así como habitaciones y plazas asignadas en la Vivienda constan en el anexo al presente documento, adjuntándose también los documentos que acreditan el motivo de dicha temporalidad

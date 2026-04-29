@@ -354,10 +354,17 @@ query Booking_groupById ($id: Int!) {
         Resource_part: Part
         Resource_address: Address
         Resource_street: Street
+        Resource_places: Places
+        Resource_area: Area_woc
+        Resource_occupancy: Occupancy_certificate
+        Resource_energy: Energy_certificate
+        Resource_last_LAU_date: Last_LAU_date
+        Resource_last_LAU_rent: Last_LAU_rent
         Flat: ResourceViaFlat_id {
           Resource_flat_code: Code
           Resource_flat_address: Address
           Resource_flat_street: Street
+          Resource_flat_places: Places
           Resource_flat_area: Area_woc
           Resource_flat_occupancy: Occupancy_certificate
           Resource_flat_energy: Energy_certificate

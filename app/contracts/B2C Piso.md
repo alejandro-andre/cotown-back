@@ -38,7 +38,7 @@ III. Que el arrendatario está interesado en arrendar el inmueble antes descrito
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad.
 
-IV. Ambas partes se reconocen suficiente capacidad legal para llevar a cabo este contrato, interviniendo en nombre y derecho mencionados respectivamente, y convienen formalizar el presente CONTRATO DE ARRENDAMIENTO DE TEMPORADA.
+IV. Ambas partes se reconocen suficiente capacidad legal para llevar a cabo este contrato, interviniendo en nombre y derecho mencionados respectivamente, y convienen formalizar el presente **Contrato de arrendamiento de temporada**.
 <div style="page-break-after: always;"></div>
 ## ESTIPULACIONES: 
  
@@ -86,7 +86,15 @@ Si el arrendatario continúa ocupando la Vivienda una vez transcurrida la fecha 
 
 ## SEXTA. RENTA. 
 
-El Arrendatario abonará Arrendador, en concepto de renta, la cantidad de [{{Booking_rent|decimal(1)}}] euros, dentro de los cinco primeros días de cada mes, mediante domiciliación bancaria o tarjeta bancaria. 
+Por el arrendamiento y uso del inmueble por la Arrendataria conforme al presente Contrato, la Arrendataria abonará obligatoriamente a la Arrendadora y durante todo el Plazo la cantidad de (la "**Renta**").
+
+{% for rent in Prices %}
+{%-if Owner_id == Service_id %}
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales.
+{%-else %}
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales.
+{%-endif %}
+{%-endfor %}
 
 La renta del presente contrato se ha establecido teniendo en cuenta lo siguiente:
 
