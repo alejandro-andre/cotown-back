@@ -45,6 +45,8 @@ DECLARE
   prev_total NUMERIC;
   curr_total NUMERIC;
 
+  effective_billing_type VARCHAR;
+
 BEGIN
 
   -- Date to
@@ -261,10 +263,10 @@ BEGIN
   END IF;
 
   -- Furniture and expenses
-  IF NEW."limit_type" = 'lau' THEN
+  IF NEW."Limit_type" = 'lau' THEN
     expenses := 0;
   END IF;
-  IF NEW."limit_type" = 'indice' THEN
+  IF NEW."Limit_type" = 'indice' THEN
     furniture := 0;
   END IF;
   NEW."Furniture"       := COALESCE(NEW."Furniture", furniture);
@@ -320,7 +322,15 @@ BEGIN
     dt_intr := AGE(dt_next, dt_curr);
     IF dt_intr < INTERVAL '1 month' THEN
      
-      IF NEW."Billing_type" = 'quincena' THEN
+      -- First or last month
+      IF dt_next = dt_to AND NEW."Billing_type_last" IS NOT NULL THEN
+        effective_billing_type := NEW."Billing_type_last";
+      ELSE
+        effective_billing_type := NEW."Billing_type";
+      END IF;
+
+      -- Bill fortnights
+      IF effective_billing_type  = 'quincena' THEN
         IF EXTRACT(DAY FROM dt_curr) >= 15 OR EXTRACT(DAY FROM (dt_next - INTERVAL '1 day')) < 15 THEN
           disc_rent     := ROUND(disc_rent / 2, 1);
           disc_services := ROUND(disc_services / 2, 1);
@@ -329,7 +339,8 @@ BEGIN
         END IF;
       END IF;
    
-      IF NEW."Billing_type" = 'proporcional' THEN
+      -- Bill days
+      IF effective_billing_type  = 'proporcional' THEN
         dias := EXTRACT(DAY FROM date_trunc('month', dt_curr + INTERVAL '1 month' - INTERVAL '1 day') - INTERVAL '1 day');
         disc_rent     := ROUND(disc_rent * EXTRACT(DAY FROM dt_intr) / dias, 1);
         disc_services := ROUND(disc_services * EXTRACT(DAY FROM dt_intr) / dias, 1);
