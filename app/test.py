@@ -33,7 +33,7 @@ def load_local_template(filename):
         return f.read()
 
 
-def generate_b2c(apiClient, id, template_file):
+def generate_b2c(apiClient, id, template_file, contract='rent'):
 
     # Obtener datos completos de la reserva individual
     result = apiClient.call(BOOKING, { 'id': id })
@@ -54,9 +54,9 @@ def generate_b2c(apiClient, id, template_file):
         return
     pdf = generate_doc_file(context, template)
 
-    # Obtener documentos anexos y fusionar (solo Barcelona, ordenados alfabéticamente)
+    # Obtener documentos anexos y fusionar (solo renta + Barcelona, ordenados alfabéticamente)
     annex_pairs = []
-    if context.get('Resource_location_id') == 1:
+    if contract == 'rent' and context.get('Resource_location_id') == 1:
         building_docs, resource_docs = fetch_annexes(apiClient, context)
         for doc in building_docs:
             resp = apiClient.getFile(doc['id'], 'Building/Building_doc', 'Document')
@@ -73,7 +73,7 @@ def generate_b2c(apiClient, id, template_file):
 
     # Guardar contrato (con anexos si los hay)
     merged = merge_pdfs(pdf, annex_data) if annex_data else pdf
-    out = 'contract_b2c.pdf'
+    out = f'contract_b2c_{contract}.pdf'
     with open(out, 'wb') as f:
         f.write(merged.read())
     logger.info('PDF guardado: %s (%d anexos)', out, len(annex_data))
@@ -120,6 +120,7 @@ def main():
     parser = argparse.ArgumentParser(description='Genera el PDF de contrato para una reserva sin enviarlo.')
     parser.add_argument('--id',       type=int, required=True, help='Número de reserva')
     parser.add_argument('--type',     choices=['B2C', 'B2B'], default='B2C', help='Tipo de reserva (B2C individual / B2B grupo)')
+    parser.add_argument('--contract', choices=['rent', 'services'], default='rent', help='Tipo de contrato (rent / services)')
     parser.add_argument('--template', required=True, help='Nombre del fichero de plantilla en contracts/')
     args = parser.parse_args()
 
@@ -129,7 +130,7 @@ def main():
 
     # Delegar en la función correspondiente según el tipo de reserva
     if args.type == 'B2C':
-        generate_b2c(apiClient, args.id, args.template)
+        generate_b2c(apiClient, args.id, args.template, args.contract)
     else:
         generate_b2b(apiClient, args.id, args.template)
 
