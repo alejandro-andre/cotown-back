@@ -24,11 +24,11 @@ En adelante denominada la "**Arrendataria**"
 <br><br>
 ## MANIFIESTAN
 
-I. Que, el Arrendatario tiene arrendada una habitación en la finca sita [{{Resource_flat_street}}], [{{Resource_building_city}}] (la "**habitación**"), 
+I. Que, el Arrendatario tiene arrendada una habitación en la finca sita {{Resource_flat_street}}, {{Resource_building_city}} (la "**habitación**"), 
 
 II. Que, **el Proveedor de Servicios** es una empresa que dispone de los medios para la prestación de los servicios de mantenimiento y limpieza.
 
-III. Y, siendo la voluntad del Arrendatario contratar los servicios de [{{Booking_services|decimal(1)}}] euros mensuales del **Proveedor de Servicios** y este en prestarlos, los sujetan a los siguientes.
+III. Y, siendo la voluntad del Arrendatario contratar los servicios de {{Booking_services|decimal(1)}} euros mensuales del **Proveedor de Servicios** y este en prestarlos, los sujetan a los siguientes.
 <br><br>
 ## ESTIPULACIONES
 
@@ -42,7 +42,7 @@ En adelante y conjuntamente los “Servicios”.
 
 2) Los servicios a prestar consistirán en la limpieza periódica según condiciones de la reserva de las zonas comunes del piso donde el Arrendatario tiene arrendada una habitación.
 
-3) La retribución global por la prestación del servicio consistirá en el pago de la cantidad de [{{Booking_services|decimal(1)}}] euros mensuales (21% IVA incluido) que se llevará a cabo por el Proveedor de Servicios y durante todo el tiempo que dure el arrendamiento, mediante su pago con tarjeta bancaria o bien mediante domiciliación bancaria en caso de disponer de una cuenta bancaria española previa la firma del documento SEPA.
+3) La retribución global por la prestación del servicio consistirá en el pago de la cantidad de {{Booking_services|decimal(1)}} euros mensuales (21% IVA incluido) que se llevará a cabo por el Proveedor de Servicios y durante todo el tiempo que dure el arrendamiento, mediante su pago con tarjeta bancaria o bien mediante domiciliación bancaria en caso de disponer de una cuenta bancaria española previa la firma del documento SEPA.
 
 4) Los Servicios serán prestados durante un plazo que se extiende desde la firma del presente contrato y hasta el ** Una vez cumplido este Plazo, el Contrato de servicios quedará resuelto automáticamente sin necesidad de previo requerimiento o aviso. 
 

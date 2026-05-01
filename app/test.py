@@ -42,10 +42,6 @@ def generate_b2c(apiClient, id, template_file, contract='rent'):
     # Aplanar la estructura anidada GraphQL a un dict plano
     context = flatten(result['data'][0])
 
-    # Test
-    context['Booking_type'] = 'recreativo'
-    context['Booking_limit_type'] = 'lau'
-
     # Cargar plantilla local y generar PDF
     template = load_local_template(template_file)
     if template is None:
@@ -90,10 +86,6 @@ def generate_b2b(apiClient, id, template_file, contract='rent'):
     if not context['Rooms']:
         logger.error('La reserva grupo %s no tiene habitaciones', id)
         return
-
-    # Test
-    context['Booking_type'] = 'recreativo'
-    context['Booking_limit_type'] = 'lau'
 
     # Consolidate flats
     flats_dict = {}

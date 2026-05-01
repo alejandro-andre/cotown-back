@@ -28,13 +28,13 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 ## MANIFIESTAN
 
-I. Que el Arrendador es propietario del inmueble ubicado en [{{Resource_street}}], [{{Resource_address}}] que se encuentra totalmente amueblado y equipado con los utensilios domésticos (en adelante “la Vivienda”)
+I. Que el Arrendador es propietario del inmueble ubicado en {{Resource_street}}, {{Resource_address}} que se encuentra totalmente amueblado y equipado con los utensilios domésticos (en adelante “la Vivienda”)
 
-La Vivienda dispone de cédula de habitabilidad [{{Resource_occupancy}}] y de certificado de eficiencia energética [{{Resource_energy}}] y tiene una superficie de [{{Resource_area}}] m² construidos.
+La Vivienda dispone de cédula de habitabilidad {{Resource_occupancy}} y de certificado de eficiencia energética {{Resource_energy}} y tiene una superficie de {{Resource_area}} m² construidos.
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente.
 
-III. Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por motivos de [{{Booking_reason|lower}}]{% if Booking_reason_id in (1, 3) and Booking_school %} en [{{Booking_other_school or Booking_school}}]{% endif %}{% if Booking_reason_id in (2, 4) and Booking_company %} en [{{Booking_company}}]{% endif %}.
+III. Que el arrendatario está interesado en arrendar el inmueble antes descrito para la temporada que luego se dirá, por motivos de {{Booking_reason|lower}}{% if Booking_reason_id in (1, 3) and Booking_school %} en {{Booking_other_school or Booking_school}}{% endif %}{% if Booking_reason_id in (2, 4) and Booking_company %} en {{Booking_company}}{% endif %}.
 
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad.
 
@@ -44,7 +44,7 @@ IV. Ambas partes se reconocen suficiente capacidad legal para llevar a cabo este
  
 ## PRIMERA. OBJETO. 
 
-El arrendador arrienda a [{{Customer_signer_name or Customer_name}}] la Vivienda, para ser destinada a constituir su residencia temporal por motivos de [{{Booking_reason|lower}}]{% if Booking_reason_id in (1, 3) and Booking_school %} en [{{Booking_other_school or Booking_school}}]{% endif %}{% if Booking_reason_id in (2, 4) and Booking_company %} en [{{Booking_company}}]{% endif %} y por el tiempo que después se dirá. La Vivienda que se arrienda en virtud del presente contrato no tendrá en ningún caso la condición de residencia permanente del arrendatario, por tener el Arrendatario su residencia permanente en la dirección reseñada en el encabezamiento del presente contrato, ni de cualesquiera terceros, salvo autorización expresa del arrendador. Asimismo, las partes convienen que la Vivienda no podrá ser destinada al uso como alojamiento turístico o análogo (incluyendo de manera no exhaustiva las siguientes modalidades de alojamiento turístico: apartamentos turísticos y viviendas de uso turístico). 
+El arrendador arrienda a {{Customer_signer_name or Customer_name}} la Vivienda, para ser destinada a constituir su residencia temporal por motivos de {{Booking_reason|lower}}{% if Booking_reason_id in (1, 3) and Booking_school %} en {{Booking_other_school or Booking_school}}{% endif %}{% if Booking_reason_id in (2, 4) and Booking_company %} en {{Booking_company}}{% endif %} y por el tiempo que después se dirá. La Vivienda que se arrienda en virtud del presente contrato no tendrá en ningún caso la condición de residencia permanente del arrendatario, por tener el Arrendatario su residencia permanente en la dirección reseñada en el encabezamiento del presente contrato, ni de cualesquiera terceros, salvo autorización expresa del arrendador. Asimismo, las partes convienen que la Vivienda no podrá ser destinada al uso como alojamiento turístico o análogo (incluyendo de manera no exhaustiva las siguientes modalidades de alojamiento turístico: apartamentos turísticos y viviendas de uso turístico). 
  
 La parte arrendataria no podrá modificar el destino mencionado sin el previo consentimiento por escrito del arrendador. El incumplimiento de este precepto será motivo de resolución del contrato.
 
@@ -76,7 +76,7 @@ El arrendatario se compromete a facilitar el acceso a la vivienda en las fechas 
 
 ## QUINTA. DURACIÓN. 
 
-El arrendamiento se pacta por temporada y tiempo determinado empezando este el día [{{Booking_date_from_day}}]/[{{Booking_date_from_month}}]/[{{Booking_date_from_year}}] a fin de proceder a la reserva y bloqueo del inmueble, y finalizando el día [{{Booking_date_to_day}}]/[{{Booking_date_to_month}}]/[{{Booking_date_to_year}}].
+El arrendamiento se pacta por temporada y tiempo determinado empezando este el día {{Booking_date_from_day}}/{{Booking_date_from_month}}/{{Booking_date_from_year}} a fin de proceder a la reserva y bloqueo del inmueble, y finalizando el día {{Booking_date_to_day}}/{{Booking_date_to_month}}/{{Booking_date_to_year}}.
 
 Coincidiendo con la firma de este contrato, la Arrendataria hará efectivo el pago del importe de la fianza legal y la garantía adicional.
 
@@ -90,9 +90,9 @@ Por el arrendamiento y uso del inmueble por la Arrendataria conforme al presente
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales.
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}} euros mensuales.
 {%-else %}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales.
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}} euros mensuales.
 {%-endif %}
 {%-endfor %}
 
@@ -107,14 +107,14 @@ c) Que la Vivienda ha estado arrendada / no ha estado arrendada durante los últ
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
 {% if Booking_type == 'recreativo' %}
-Además, la parte arrendataria abonará [{{Booking_final_cleaning|decimal(1)}}] euros de limpieza de salida mediante domiciliación bancaria o tarjeta bancaria dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+Además, la parte arrendataria abonará {{Booking_final_cleaning|decimal(1)}} euros de limpieza de salida mediante domiciliación bancaria o tarjeta bancaria dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
 {% elif Booking_limit_type == 'indice' %}
 De conformidad con lo anterior, la determinación de la renta de la Vivienda se ha determinado tomando en consideración el índice de Referencia Estatal (se acompaña como anexo).
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
-- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de [{{Booking_limit|decimal(1)}}] euros por persona y mes
+- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de {{Booking_limit|decimal(1)}} euros por persona y mes
 - IBI y Gastos de la comunidad de propietarios
 - Tasa de recogida de basuras
 - Conexión al servicio de internet
@@ -122,19 +122,20 @@ Los conceptos indicados a continuación no están incluidos en la renta y se fac
 {% elif Booking_limit_type == 'lau' %}
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent or 0|decimal(1)}}] euros mensuales.
+- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta {{Resource_last_LAU_date_day}}/{{Resource_last_LAU_date_month}}/{{Resource_last_LAU_date_year}}, cuyo importe ascendía a {{Resource_last_LAU_rent or 0|decimal(1)}} euros mensuales.
 
 - el Índice de Referencia Estatal que se adjunta como anexo al presente.
 
 Por ello, de conformidad con lo dispuesto en los Apartados 6 y 7 del Art. 17 de la LAU la renta del arrendamiento corresponde a la menor entre la última renta del contrato anterior actualizada y la resultante del Índice de Referencia Estatal.
 
-Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la Vivienda en los dos años anteriores, la renta resultante asciende a [{{Booking_rent|decimal(1)}}] euros mensuales.
+Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10% autorizado por la realización de obras de mejora en la Vivienda en los dos años anteriores, la renta resultante asciende a {{Booking_rent|decimal(1)}} euros mensuales.
 
 El Arrendatario abonará también:
 
-- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de [{{Booking_limit|decimal(1)}}] por persona y mes
+- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de {{Booking_limit|decimal(1)}} por persona y mes
+
 {% if Booking_expenses %}
-- IBI y gastos de comunidad [{{Booking_expenses|decimal(1)}}] euros mensuales.{% endif %}
+- IBI y gastos de comunidad {{Booking_expenses|decimal(1)}} euros mensuales.{% endif %}
 
 {% else %}
 De conformidad con lo anterior, la determinación de la renta se ha llevado a cabo tomando en consideración la consulta realizada en la página web del Ministerio de Vivienda y Agenda Urbana a efectos de determinar la existencia de Índice de Referencia (se acompaña informe como anexo a la consulta del que resulta que no existe precio de referencia a dichos efectos, por tratarse de una vivienda de más de 150 m2).
@@ -143,7 +144,7 @@ Este importe incluye:
 
 - Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.
 
-- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de [{{Booking_limit|decimal(1)}}] euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de {{Booking_limit|decimal(1)}} euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad). 
 
 Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte. 
 
@@ -151,7 +152,7 @@ Excedido dicho importe mensual máximo de consumo por piso expresado en euros, e
 
 No está incluido en la renta:
 
-- Limpieza de salida: La Arrendataria abonará la cantidad de [{{Booking_final_cleaning|decimal(1)}}] euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+- Limpieza de salida: La Arrendataria abonará la cantidad de {{Booking_final_cleaning|decimal(1)}} euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
 {% endif %}
 El incumplimiento de la obligación de pago de ese recibo en el periodo fijado será motivo de resolución del contrato, dando derecho al arrendador a solicitar el desahucio, siendo por cuenta del arrendatario los gastos que estas acciones originen. Los recibos emitidos se abonarán íntegramente sea cual sea el tiempo en que se utilicen los servicios de alojamiento.
@@ -180,9 +181,9 @@ La Arrendataria podrá contratar y mantener vigente durante todo el plazo contra
 
 ## NOVENA.  FIANZA Y GARANTÍA ADICIONAL.
 
-El arrendatario entrega a la arrendadora en el transcurso de este acto el importe de [{{Booking_deposit|decimal(1)}}] euros en concepto de fianza legal equivalente a la parte proporcional de un mes de renta en función de la duración del contrato, para garantizar el cumplimiento por la Arrendataria de todas las obligaciones y responsabilidades que asume. 
+El arrendatario entrega a la arrendadora en el transcurso de este acto el importe de {{Booking_deposit|decimal(1)}} euros en concepto de fianza legal equivalente a la parte proporcional de un mes de renta en función de la duración del contrato, para garantizar el cumplimiento por la Arrendataria de todas las obligaciones y responsabilidades que asume. 
 
-Asimismo, el Arrendatario entrega en este acto y en concepto de garantía adicional la suma de [{{Booking_deposit|decimal(1)}}] euros, equivalente a la parte proporcional de dos meses de renta en función de la duración del Contrato, mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas
+Asimismo, el Arrendatario entrega en este acto y en concepto de garantía adicional la suma de {{Booking_deposit|decimal(1)}} euros, equivalente a la parte proporcional de dos meses de renta en función de la duración del Contrato, mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas
 
 Las Partes acuerdan la devolución de la fianza y la garantía adicional a la Arrendataria y sin intereses, en un plazo máximo de treinta (30) días contados desde la finalización del Contrato, previa verificación del correcto estado de las habitaciones y zonas comunes del piso, así como de la no existencia de deudas o cantidades a reclamar a la Arrendataria. La Arrendataria autoriza irrevocablemente y desde ahora a la Arrendadora a la ejecución de la fianza y la garantía adicional para hacer frente a cualquier obligación o pago pendiente de la Arrendataria, debiendo rembolsar el resto, de haberlo, a la Arrendataria.
 
@@ -203,7 +204,7 @@ I. El arrendatario se obliga a no subarrendar, ni ceder o traspasar el inmueble 
 II. Que, la Arrendataria manifiesta que junto con ella vivirán de forma temporal en el piso alquilado, y como máximo hasta el plazo de finalización del contrato pactado por la Partes, las personas cuyos datos completos de identificaciónse detallan a continuación:
 
 {%for r in Residents%}
-- {%if r.Customer_gender=='H'%}D.{%elif r.Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{r.Customer_name}}] con [{{r.Customer_id_type}}] [{{r.Customer_id}}]
+- {%if r.Customer_gender=='H'%}D.{%elif r.Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{r.Customer_name}} con {{r.Customer_id_type}} {{r.Customer_id}}
 {%endfor%}
 
 A lo que no se opone la Arrendadora, siempre que:
@@ -257,8 +258,8 @@ Y con el carácter expresado en la intervención, firman el presente contrato, e
 |**El Arrendador**|**El Arrendatario**|
 {%-for s in Owner_signers-%}
 | | |
-|![firma]([{{Server}}]/signature/[{{s.Owner_signer}}])|<div class="signature">/FIRMACLIENTE/</div>|
-|Fdo: [{{s.Owner_signer_name}}]|{%if loop.index==1%}Fdo: {%if Customer_type=='empresa'%}[{{Customer_signer_name}}]{%else%}{%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_name}}]{%endif%}{%endif%}|
+|![firma]({{Server}}/signature/{{s.Owner_signer}})|<div class="signature">/FIRMACLIENTE/</div>|
+|Fdo: {{s.Owner_signer_name}}|{%if loop.index==1%}Fdo: {%if Customer_type=='empresa'%}{{Customer_signer_name}}{%else%}{%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}{%endif%}{%endif%}|
 | |{%if loop.index==1%}Fecha:<span style="color:white;">/FECHACLIENTE/</span>{%endif%} |
 | | |
 {% endfor-%}

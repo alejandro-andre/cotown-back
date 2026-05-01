@@ -29,7 +29,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 ## MANIFIESTAN
 
-I. Que el Arrendador es propietario de la siguiente finca en [{{R.Resource_street}}], [{{R.Resource_building_city}}] (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
+I. Que el Arrendador es propietario de la siguiente finca en {{R.Resource_street}}, {{R.Resource_building_city}} (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
 
 
 | | | | |
@@ -59,7 +59,7 @@ V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con lo
 1.1. El Arrendador cede en arrendamiento al Arrendatario la(s) vivienda(s) con el número de plazas que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**")
 
 {% for r in Rooms %}
-- [{{r.Resource_address}}], [{{r.Resource_places}}] plazas.
+- {{r.Resource_address}}, {{r.Resource_places}} plazas.
 {%-endfor %}
 
 1.2. La vivienda se destinará de forma exclusiva a vivienda de temporada por parte de las personas cuyos nombres completos, datos de identificación, incluyendo los datos de su residencia permanente y habitual, así como habitaciones y plazas asignadas en la Vivienda constan en el anexo al presente documento, adjuntándose también los documentos que acreditan el motivo de dicha temporalidad
@@ -86,9 +86,9 @@ Por el arrendamiento de la vivienda, el Arrendatario abonará obligatoriamente a
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}}] euros mensuales por plaza.
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}} euros mensuales por plaza.
 {%-else %}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: [{{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}}] euros mensuales por plaza.
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}} euros mensuales por plaza.
 {%-endif %}
 {%-endfor %}
 
@@ -108,7 +108,7 @@ d) Del mismo modo, el importe de la renta se ha establecido según lo previsto e
 {% if Booking_type == 'recreativo' %}
 {% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
 
-La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_final_cleaning|decimal(1)}}] euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
+La gestora de la Propiedad cobrará al Arrendatario un importe de {{Booking_final_cleaning|decimal(1)}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
 {% endif %}
 
 {% elif Booking_limit_type == 'indice' %}
@@ -116,29 +116,29 @@ De conformidad con lo anterior, la determinación de la renta de la Vivienda se 
 
 Los conceptos indicados a continuación no están incluidos en la renta y se facturarán como conceptos aparte de forma mensual:
 
-- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de [{{Booking_limit|decimal(1)}}] euros por persona y mes
+- Gastos por suministros de los que esté dotada la Vivienda y hasta el límite de {{Booking_limit|decimal(1)}} euros por persona y mes
 - IBI y gastos de la comunidad de propietarios 
 
 {% elif Booking_limit_type == 'lau' %}
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta [{{Resource_last_LAU_date}}], cuyo importe ascendía a [{{Resource_last_LAU_rent or 0|decimal(1)}}] euros mensuales.
+- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta {{Resource_last_LAU_date_day}}/{{Resource_last_LAU_date_month}}/{{Resource_last_LAU_date_year}}, cuyo importe ascendía a {{Resource_last_LAU_rent or 0|decimal(1)}} euros mensuales.
 
 - el Índice de Referencia Estatal que se adjunta como anexo al presente.
 
 Por ello, de conformidad con lo dispuesto en los Apartados 6 y 7 del Art. 17 de la LAU la renta del arrendamiento corresponde a la menor entre la última renta del contrato anterior actualizada y la resultante del Índice de Referencia Estatal.
 
-Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10 % autorizado por la realización de obras de mejora en la Vivienda en los dos años anteriores, la renta resultante asciende a [{{Booking_rent|decimal(1)}}] euros mensuales.
+Aplicada la actualización de la renta conforme al Índice de Precios al Consumo correspondiente, así como el incremento del 10% autorizado por la realización de obras de mejora en la Vivienda en los dos años anteriores, la renta resultante asciende a {{Booking_rent|decimal(1)}} euros mensuales.
 
 El Arrendatario abonará también: 
 
-- Gastos por suministros de los que esté dotada la Viviendao y hasta el límite de [{{Booking_limit|decimal(1)}}] euros por persona y mes
+- Gastos por suministros de los que esté dotada la Viviendao y hasta el límite de {{Booking_limit|decimal(1)}} euros por persona y mes
 
 {% else %}
 De conformidad con lo anterior, la determinación de la renta se ha llevado a cabo tomando en consideración la consulta realizada en la página web del Ministerio de Vivienda y Agenda Urbana a efectos de determinar la existencia de Índice de Referencia (se acompaña informe como anexo a la consulta del que resulta que no existe precio de referencia a dichos efectos, por tratarse de una vivienda de más de 150 m2).
 {% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
 
-La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_final_cleaning|decimal(1)}}] euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
+La gestora de la Propiedad cobrará al Arrendatario un importe de {{Booking_final_cleaning|decimal(1)}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
 {% endif %}
 {% endif %}
 
@@ -186,9 +186,9 @@ La gestora de la Propiedad cobrará al Arrendatario un importe de [{{Booking_fin
 
 ## 10. FIANZA Y GARANTÍA ADICIONAL
 
-10.1. El Arrendatario entrega en este acto y en concepto de fianza legal la suma de [{{Booking_deposit|decimal(1)}}] euros, equivalente a la parte proporcional de un mes de renta en función de la duración del Contrato , mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
+10.1. El Arrendatario entrega en este acto y en concepto de fianza legal la suma de {{Booking_deposit|decimal(1)}} euros, equivalente a la parte proporcional de un mes de renta en función de la duración del Contrato , mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
 
-10.2. Asimismo, el Arrendatario entrega en este acto y en concepto de garantía adicional la suma de [{{Booking_deposit|decimal(1)}}] euros, equivalente a la parte proporcional de dos meses de renta en función de la duración del Contrato, mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
+10.2. Asimismo, el Arrendatario entrega en este acto y en concepto de garantía adicional la suma de {{Booking_deposit|decimal(1)}} euros, equivalente a la parte proporcional de dos meses de renta en función de la duración del Contrato, mediante transferencia bancaria cuya copia se acompaña al presente, como garantía del cumplimiento por el Arrendatario de todas sus obligaciones arrendaticias, así como de la falta de cumplimiento de las personas designadas.
 
 10.3. Ambas partes acuerdan la restitución íntegra de la fianza legal y de la garantía al Arrendatario en el momento de la finalización del Contrato de arrendamiento, previa verificación del correcto estado de la Vivienda al momento de la entrega.
 
@@ -232,7 +232,7 @@ Los interesados podrán ejercer sus derechos de acceso, rectificación, supresi�
 
 - El Arrendador: housing@cotown.com
 
-- El Arrendatario en la persona de {%if Customer_type=='empresa'%}[{{Customer_signer_name}}]{%else%}[{{Customer_name}}]{%endif%}, con direcciones de correo electrónico: [{{Customer_email}}]
+- El Arrendatario en la persona de {%if Customer_type=='empresa'%}{{Customer_signer_name}}{%else%}{{Customer_name}}{%endif%}, con direcciones de correo electrónico: {{Customer_email}}
 
 15.2. Las Partes podrán variar las direcciones que figuran en el apartado anterior, comunicándolo a la otra Parte por escrito, en la forma indicada en el apartado inmediatamente anterior.
 
@@ -257,8 +257,8 @@ Y, habiendo leído y comprendido la totalidad del presente Contrato de arrendami
 |**El Arrendador**|**El Arrendatario**|
 {%-for s in Owner_signers-%}
 | | |
-|![firma]([{{Server}}]/signature/[{{s.Owner_signer}}])|<div class="signature">/FIRMACLIENTE/</div>|
-|Fdo: [{{s.Owner_signer_name}}]|{%if loop.index==1%}Fdo: {%if Customer_type=='empresa'%}[{{Customer_signer_name}}]{%else%}{%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} [{{Customer_name}}]{%endif%}{%endif%}|
+|![firma]({{Server}}/signature/{{s.Owner_signer}})|<div class="signature">/FIRMACLIENTE/</div>|
+|Fdo: {{s.Owner_signer_name}}|{%if loop.index==1%}Fdo: {%if Customer_type=='empresa'%}{{Customer_signer_name}}{%else%}{%if Customer_gender=='H'%}D.{%elif Customer_gender=='M'%}Dª.{%else%}D./Dª.{%endif%} {{Customer_name}}{%endif%}{%endif%}|
 | |{%if loop.index==1%}Fecha:<span style="color:white;">/FECHACLIENTE/</span>{%endif%} |
 | | |
 {% endfor-%}

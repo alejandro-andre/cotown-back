@@ -157,6 +157,9 @@ query BookingById ($id: Int) {
       Resource_occupancy: Occupancy_certificate
       Resource_energy: Energy_certificate
       Resource_last_LAU_date: Last_LAU_date
+      Resource_last_LAU_date_day: Last_LAU_date_day
+      Resource_last_LAU_date_month: Last_LAU_date_month
+      Resource_last_LAU_date_year: Last_LAU_date_year
       Resource_last_LAU_rent: Last_LAU_rent
       Flat: ResourceViaFlat_id {
         Resource_flat_id: id
@@ -167,6 +170,9 @@ query BookingById ($id: Int) {
         Resource_flat_occupancy: Occupancy_certificate
         Resource_flat_energy: Energy_certificate
         Resource_flat_last_LAU_date: Last_LAU_date
+        Resource_flat_last_LAU_date_day: Last_LAU_date_day
+        Resource_flat_last_LAU_date_month: Last_LAU_date_month
+        Resource_flat_last_LAU_date_year: Last_LAU_date_year
         Resource_flat_last_LAU_rent: Last_LAU_rent
       }
       Building: BuildingViaBuilding_id {
@@ -359,6 +365,9 @@ query Booking_groupById ($id: Int!) {
         Resource_occupancy: Occupancy_certificate
         Resource_energy: Energy_certificate
         Resource_last_LAU_date: Last_LAU_date
+        Resource_last_LAU_date_day: Last_LAU_date_day
+        Resource_last_LAU_date_month: Last_LAU_date_month
+        Resource_last_LAU_date_year: Last_LAU_date_year
         Resource_last_LAU_rent: Last_LAU_rent
         Flat: ResourceViaFlat_id {
           Resource_flat_code: Code
@@ -369,6 +378,9 @@ query Booking_groupById ($id: Int!) {
           Resource_flat_occupancy: Occupancy_certificate
           Resource_flat_energy: Energy_certificate
           Resource_flat_last_LAU_date: Last_LAU_date
+          Resource_flat_last_LAU_date_day: Last_LAU_date_day
+          Resource_flat_last_LAU_date_month: Last_LAU_date_month
+          Resource_flat_last_LAU_date_year: Last_LAU_date_year
           Resource_flat_last_LAU_rent: Last_LAU_rent
         }
         Building: BuildingViaBuilding_id {

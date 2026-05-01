@@ -8,6 +8,15 @@ DECLARE
   num INTEGER;
   billing_type VARCHAR;
 
+  c_rent INTEGER;
+  c_limit INTEGER;
+  c_piso INTEGER;
+  c_no_piso INTEGER;
+  limit_type VARCHAR;
+
+  deposit NUMERIC;
+  legal_deposit NUMERIC;
+
 BEGIN
 
   -- Check request dates
@@ -32,11 +41,6 @@ BEGIN
     RAISE exception '!!!Enter the number of places!!!Introduzca el número de plazas!!!';
   END IF;
 
-  -- Request date
-  IF NEW."Request_date" IS NULL THEN
-    NEW."Request_date" := NOW();
-  END IF;
-
   -- Cannot cancel booking with invoices
   IF NEW."Status" = 'cancelada' THEN
   	SELECT COUNT(*)
@@ -46,6 +50,11 @@ BEGIN
     IF num > 0 THEN
       RAISE exception '!!!Cannot cancel booking with invoices!!!No se puede cancelar una reserva con facturas!!!';
     END IF;
+  END IF;
+
+  -- Request date
+  IF NEW."Request_date" IS NULL THEN
+    NEW."Request_date" := NOW();
   END IF;
 
   -- Billing type
@@ -61,6 +70,90 @@ BEGIN
       NEW."Billing_type_last" = billing_type;
     END IF;
   END IF;
+
+  -- Rooms changed?
+  --IF OLD."Room_ids" = NEW."Room_ids" THEN
+  --  RETURN NEW;
+  --END IF;
+
+  -- Not tentative?
+  IF NEW."Status" <> 'grupobloqueado' THEN
+    RETURN NEW;
+  END IF;
+
+  -- Check flats limitations and max rent
+  SELECT
+    COUNT(DISTINCT f."Limit_type"),
+    MAX(f."Limit_type"),
+    COUNT(DISTINCT CASE
+      WHEN (f."Limit_type" IS NULL OR f."Limit_type" = 'libre')
+      THEN f."Max_rent"
+    END)
+  INTO c_limit, limit_type, c_rent
+  FROM "Resource"."Resource" f
+  WHERE f.id::text = ANY (
+    SELECT COALESCE(r."Flat_id"::text, r.id::text)
+    FROM "Resource"."Resource" r
+    WHERE "Code" = ANY(NEW."Room_ids")
+  );
+  IF c_limit > 1 THEN
+    RAISE EXCEPTION '!!!Flats with different limitation types!!!Pisos con diferentes tipos de limitación!!!';
+  END IF;
+  IF c_rent > 1 THEN
+    RAISE EXCEPTION '!!!Flats with different max rents!!!Pisos con diferentes rentas máximas!!!';
+  END IF;
+  IF limit_type IN ('lau', 'indice') AND NEW."Book_type" <> 'limitado' THEN
+    RAISE EXCEPTION '!!!Wrong book type: resource(s) has limitations!!!Tipo de reserva erróneo: recurso(s) con limitación!!!';
+  END IF;
+
+  -- Check mix flats and rooms
+  SELECT
+    COUNT(*) FILTER (WHERE r."Resource_type" = 'piso'),
+    COUNT(*) FILTER (WHERE r."Resource_type" != 'piso')
+  INTO c_piso, c_no_piso
+  FROM "Resource"."Resource" r
+  WHERE r.id::text = ANY(NEW."Room_ids");  
+  IF c_piso > 0  and c_no_piso > 0 THEN
+    RAISE EXCEPTION '!!!Mixed resource types: some are flats and some are not!!!Tipos de recurso mezclados: algunos son pisos y otros no!!!';
+  END IF;
+
+  -- Limited prices
+  NEW."Limit_type" = limit_type;
+  IF COALESCE(NEW."Rent") = 0 AND limit_type IN ('lau', 'indice') THEN
+    SELECT
+      AVG(r."Max_rent"),
+      AVG(r."Max_services"),
+      AVG(r."Max_utility"),
+      AVG(r."Max_expenses"),
+      AVG(r."Max_furniture")
+    INTO NEW."Rent", NEW."Services", NEW."Limit", NEW."Expenses", NEW."Furniture"
+    FROM "Resource"."Resource" r
+    WHERE r."Code" = ANY(NEW."Room_ids");
+  END IF;
+
+  -- Calculate stay length in montns
+  SELECT EXTRACT(MONTH FROM AGE(NEW."Date_to", NEW."Date_from")) INTO months;
+
+  -- Deposit
+  IF c_piso > 0 THEN
+    IF NEW."Book_type" == 'limitado' THEN
+      legal_deposit := NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses";
+      deposit := legal_deposit / 2;
+    ELSE
+      legal_deposit := months * (NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses") / 6;
+      deposit := 1.5 * (NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses");
+      IF deposit > legal_deposit THEN
+        deposit := deposit - legal_deposit;
+      ELSE
+        deposit = 0;
+      END IF;
+    END IF;
+  ELSE
+    deposit := 1.5 * (NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses");
+    legal_deposit := 0;
+  END IF;
+  NEW."Deposit" = deposit;
+  NEW."Incasol_deposit" = legal_deposit;
 
   -- Return record
   RETURN NEW;
