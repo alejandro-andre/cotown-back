@@ -72,9 +72,9 @@ BEGIN
   END IF;
 
   -- Rooms changed?
-  --IF OLD."Room_ids" = NEW."Room_ids" THEN
-  --  RETURN NEW;
-  --END IF;
+  IF OLD."Room_ids" = NEW."Room_ids" THEN
+    RETURN NEW;
+  END IF;
 
   -- Not tentative?
   IF NEW."Status" <> 'grupobloqueado' THEN
