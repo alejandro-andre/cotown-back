@@ -475,20 +475,21 @@ def bill_month(dbClient, con):
           # Extra services
           if total_extra_services > 0:
             for e in extra_services:
-              dbClient.execute(con,
-                '''
-                INSERT INTO "Billing"."Invoice_line"
-                ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
-                VALUES (%s, %s, %s, %s, %s, %s)
-                ''',
-                ( servid,
-                  item['Resource_id'],
-                  e['Amount'],
-                  e['Product_id'],
-                  e['Tax_id'],
-                  e['Concept']
+              if e['Amount'] != 0:
+                dbClient.execute(con,
+                  '''
+                  INSERT INTO "Billing"."Invoice_line"
+                  ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+                  VALUES (%s, %s, %s, %s, %s, %s)
+                  ''',
+                  ( servid,
+                    item['Resource_id'],
+                    e['Amount'],
+                    e['Product_id'],
+                    e['Tax_id'],
+                    e['Concept']
+                  )
                 )
-              )
 
           # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
@@ -792,41 +793,43 @@ def bill_group_month(dbClient, con):
           for flat in flat_ids:
             places = len(flats[flat[0]])
             services = places * float(item['Services'] or 0.0)
-            dbClient.execute(con,
-              '''
-              INSERT INTO "Billing"."Invoice_line"
-              ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
-              VALUES (%s, %s, %s, %s, %s, %s, %s)
-              ''',
-              (
-                servid,
-                flat[1],
-                services, 
-                PR_SERVICES,
-                PRODUCTS[PR_SERVICES]['tax'], 
-                PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(places) + ' plazas) ' + str(item['Rent_date'])[:7], 
-                'Plazas: ' + flat[0] + ' ' + (', '.join(flats[flat[0]]))
+            if services != 0:
+              dbClient.execute(con,
+                '''
+                INSERT INTO "Billing"."Invoice_line"
+                ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept", "Comments")
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ''',
+                (
+                  servid,
+                  flat[1],
+                  services, 
+                  PR_SERVICES,
+                  PRODUCTS[PR_SERVICES]['tax'], 
+                  PRODUCTS[PR_SERVICES]['concept'] + ' (' + str(places) + ' plazas) ' + str(item['Rent_date'])[:7], 
+                  'Plazas: ' + flat[0] + ' ' + (', '.join(flats[flat[0]]))
+                )
               )
-            )
 
             # Extra services
             if total_extra_services > 0:
               for e in extra_services:
                 services = places * float(e['Amount'] or 0.0)
-                dbClient.execute(con,
-                  '''
-                  INSERT INTO "Billing"."Invoice_line"
-                  ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
-                  VALUES (%s, %s, %s, %s, %s, %s)
-                  ''',
-                  ( servid,
-                    flat[1],
-                    services,
-                    e['Product_id'],
-                    e['Tax_id'],
-                    e['Concept']
+                if services != 0:
+                  dbClient.execute(con,
+                    '''
+                    INSERT INTO "Billing"."Invoice_line"
+                    ("Invoice_id", "Resource_id", "Amount", "Product_id", "Tax_id", "Concept")
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    ''',
+                    ( servid,
+                      flat[1],
+                      services,
+                      e['Product_id'],
+                      e['Tax_id'],
+                      e['Concept']
+                    )
                   )
-                )
 
           # Update invoice
           dbClient.execute(con, 'UPDATE "Billing"."Invoice" SET "Issued" = %s WHERE id = %s', (True, servid))
