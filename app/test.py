@@ -51,7 +51,8 @@ def generate_b2c(apiClient, id, template_file, contract='rent'):
     # Obtener documentos anexos y fusionar (solo renta + Barcelona, ordenados alfabéticamente)
     annex_pairs = []
     if contract == 'rent' and context.get('Resource_location_id') == 1:
-        building_docs, resource_docs = fetch_annexes(apiClient, context)
+        rid = context.get('Resource_flat_id') or context.get('Resource_id')
+        building_docs, resource_docs = fetch_annexes(apiClient, [rid])
         for doc in building_docs:
             resp = apiClient.getFile(doc['id'], 'Building/Building_doc', 'Document')
             if resp and resp.content:
@@ -90,23 +91,44 @@ def generate_b2b(apiClient, id, template_file, contract='rent'):
     # Consolidate flats
     flats_dict = {}
     for room in context['Rooms']:
-        if room.get('Resource_flat_code'):
-            flats_dict[room['Resource_flat_code']] = {
-                k: v for k, v in room.items() if k.startswith('Resource_flat_')
-            }
+      if room.get('Resource_flat_code'):
+        flats_dict[room['Resource_flat_code']] = {
+          k: v for k, v in room.items() if k.startswith('Resource_flat_')
+        }
     context['Flats_info'] = list(flats_dict.values())
     context['Flats'] = ', '.join(sorted(f['Resource_flat_address'] for f in context['Flats_info']))
+    print(context['Flats'])
 
     # Cargar plantilla local y generar PDF
     template = load_local_template(template_file)
     if template is None:
         return
     pdf = generate_doc_file(context, template)
-    out = f'contracts/test/contract_b2b_{id}_{contract}.pdf'
-    with open(out, 'wb') as f:
-        f.write(pdf.read())
-    logger.info('PDF guardado: %s', out)
 
+    # Obtener documentos anexos y fusionar (solo renta + Barcelona, ordenados alfabéticamente)
+    annex_pairs = []
+    if contract == 'rent' and context.get('Rooms')[0].get('Resource_location_id') == 1:
+        rid = [r.get('Resource_id') for r in context.get('Rooms')]
+        building_docs, resource_docs = fetch_annexes(apiClient, rid)
+        for doc in building_docs:
+            resp = apiClient.getFile(doc['id'], 'Building/Building_doc', 'Document')
+            if resp and resp.content:
+                annex_pairs.append((doc.get('Name', ''), resp.content))
+                logger.info('Anexo edificio añadido: %s', doc.get('Name', doc['id']))
+        for doc in resource_docs:
+            resp = apiClient.getFile(doc['id'], 'Resource/Resource_doc', 'Document')
+            if resp and resp.content:
+                annex_pairs.append((doc.get('Name', ''), resp.content))
+                logger.info('Anexo recurso añadido: %s', doc.get('Name', doc['id']))
+    annex_pairs.sort(key=lambda x: x[0])
+    annex_data = [content for _, content in annex_pairs]
+
+    # Guardar contrato (con anexos si los hay)
+    merged = merge_pdfs(pdf, annex_data) if annex_data else pdf
+    out = f'contracts/test/contract_b2c_{id}_{contract}.pdf'
+    with open(out, 'wb') as f:
+        f.write(merged.read())
+    logger.info('PDF guardado: %s (%d anexos)', out, len(annex_data))
 
 def main():
 

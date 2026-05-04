@@ -355,6 +355,7 @@ query Booking_groupById ($id: Int!) {
     }
     Rooms: Booking_group_roomsListViaBooking_id {
       ResourceViaResource_id {
+        Resource_id: id
         Resource_code: Code
         Resource_type
         Resource_part: Part
@@ -541,9 +542,9 @@ query Booking_group_annexById ($id: Int!, $group: String) {
 '''
 
 DOCUMENTS = '''
-query Documents ($id: Int) {
+query Documents ($ids: [Int]) {
   data: Resource_ResourceList (
-    where: { id: { EQ: $id } }
+    where: { id: { IN: $ids } }
   ) {
     Code
     Building: BuildingViaBuilding_id {
@@ -919,16 +920,31 @@ def merge_pdfs(main_pdf, annex_files):
 # Fetch flat or building annexes
 # ######################################################
 
-def fetch_annexes(apiClient, context):
+def _unique_annexes(docs, type_key):
+    seen = {}
+    for doc in docs:
+        doc_id = doc.get('id')
+        if doc_id is None or doc_id in seen:
+            continue
+        name = (doc.get(type_key) or {}).get('Name')
+        seen[doc_id] = {'id': doc_id, 'Name': name}
+    return list(seen.values())
 
-  resource_id = context.get('Resource_flat_id') or context.get('Resource_id')
-  if not resource_id:
-    return [], []
-  result = apiClient.call(DOCUMENTS, { 'id': resource_id })
-  if not result or not result['data']:
-    return [], []
-  documents = flatten(result['data'][0])
-  return documents.get('Building_docs', []), documents.get('Resource_docs', [])
+def fetch_annexes(apiClient, ids):
+    if ids == []:
+        return [], []
+
+    result = apiClient.call(DOCUMENTS, {'ids': ids})
+    if not result or not result.get('data'):
+        return [], []
+
+    entry = result['data'][0]
+    building_docs = (entry.get('Building') or {}).get('Building_docs') or []
+    resource_docs = entry.get('Resource_docs') or []
+    building_annexes = _unique_annexes(building_docs, 'Building_doc_type')
+    resource_annexes = _unique_annexes(resource_docs, 'Resource_doc_type')
+
+    return building_annexes, resource_annexes
 
 
 # ######################################################
@@ -1002,16 +1018,18 @@ def do_contracts(apiClient, id):
     # Get documents (solo Barcelona)
     building_documents, resource_documents = [], []
     if context.get('Resource_location_id') == 1:
-      building_documents, resource_documents = fetch_annexes(apiClient, context)
+      rid = context.get('Resource_flat_id') or context.get('Resource_id')
+      building_documents, resource_documents = fetch_annexes(apiClient, [rid])
 
     # Determine template to use
-    template_type = context.get('Resource_type')
-    if template_type is None:
-      return
-    if template_type == 'plaza':
-      template_type = 'habitacion'
     if context['Booking_building_type'] == 3:
       template_type = 'residencia'
+    elif context.get('Resource_type') in ('habitacion', 'plaza'):
+      template_type = 'b2c_habitacion'
+    elif context.get('Resource_type') in ('piso'):
+      template_type = 'b2c_piso'
+    else:
+      return
 
     # Generate rent contract
     template, annex, name = get_template(apiClient, context['Owner_template'], template_type, context['Resource_location_id'], context['Owner_name'])
@@ -1128,9 +1146,23 @@ def do_group_contracts(apiClient, id):
         }
     context['Flats_info'] = list(flats_dict.values())
     context['Flats'] = ', '.join(sorted(f['Resource_flat_address'] for f in context['Flats_info']))
+
+    # Get documents (solo Barcelona)
+    building_documents, resource_documents = [], []
+    if context.get('Resource_location_id') == 1:
+      rid = [r.get('Resource_id') for r in context.get('Rooms')]
+      building_documents, resource_documents = fetch_annexes(apiClient, [rid])
+
+    # Determine template to use
+    if context.get('Resource_type') in ('habitacion', 'plaza'):
+      template_type = 'b2b_habitacion'
+    elif context.get('Resource_type') in ('piso'):
+      template_type = 'b2b_piso'
+    else:
+      return
     
     # Generate rent contract
-    template, annex, name = get_template(apiClient, room['Owner_template'], 'grupo', room['Resource_location_id'], room['Owner_name'])
+    template, annex, name = get_template(apiClient, room['Owner_template'], template_type, room['Resource_location_id'], room['Owner_name'])
     if template is not None:
       file_rent = generate_doc_file(context, template)
       url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
@@ -1139,12 +1171,27 @@ def do_group_contracts(apiClient, id):
 
     # Generate services contract
     if room['Owner_id'] != room['Service_id'] and context['Booking_services'] > 0:
-      template, annex, name = get_template(apiClient, room['Service_template'], 'grupo', room['Resource_location_id'], room['Service_name'])
+      template, annex, name = get_template(apiClient, room['Service_template'], template_type, room['Resource_location_id'], room['Service_name'])
       if template is not None:
         file_svcs = generate_doc_file(context, template)
         url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
         response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
+
+    # Merge annexes into rent contract (sorted alphabetically by name)
+    annex_pairs = []
+    for document in building_documents:
+      data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    for document in resource_documents:
+      data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    annex_pairs.sort(key=lambda x: x[0])
+    annex_data = [content for _, content in annex_pairs]
+    if annex_data and file_rent:
+      file_rent = merge_pdfs(file_rent, annex_data)
 
     # Update query
     query = '''

@@ -31,13 +31,17 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 I. Que el Arrendador es propietario de la siguiente finca en {{R.Resource_flat_street}}, {{R.Resource_building_city}} (en adelante “la Vivienda”) que dispone de cédula de habitabilidad, el certificado de eficiencia energética y una superficie de m² construidos que se indica a continuación:
 
-| | | | |
-|:-|:-|:-|-:|
-|**Piso**|**Cédula de habitabilidad**|**Certificado de eficiencia energética**|**m²**|
-{%-for f in Flats_info-%}
-|{{f.Resource_flat_address}}|{{f.Resource_flat_occupancy}}|{{f.Resource_flat_energy}}|{{f.Resource_flat_area}}|
-{% endfor-%}
-| | | | |
+<table>
+<tr>
+<td><strong>Piso</strong></td><td><strong>Cédula de habitabilidad</strong></td><td><strong>Certificado de eficiencia energética</strong></td><td><strong>m²</strong></td>
+</tr>
+{% for f in Flats_info %}
+<tr>
+<td>{{f.Resource_flat_address}}</td><td>{{f.Resource_flat_occupancy}}</td><td>{{f.Resource_flat_energy}}</td><td>{{f.Resource_flat_area}}</td>
+</tr>
+{% endfor %} 
+</tr>
+</table>
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente. 
 
