@@ -36,7 +36,7 @@ III. La Arrendataria tiene su residencia permanente en el domicilio indicado en 
 
 IV.  Asimismo, manifiesta la Arrendataria que dispone de los medios económicos suficientes para atender el pago de la renta acordada y demás responsabilidades económicas por el arrendamiento de la habitación, bien por sus propios medios o de su padre/madre/tutor legal en caso de ser menor de edad.
 
-V.   La Arrendataria está interesada en arrendar y usar de forma temporal una de las habitaciones propiedad de la Arrendadora en {{Resource_flat_street}}, {{Resource_building_city}}, que tiene {{Resource_flat_area}} m² construidos, cuya cédula de habitabilidad es la {{Resource_flat_occupancy}} y el certificado de eficiencia energética {{Resource_flat_energy}}.
+V.   La Arrendataria está interesada en arrendar y usar de forma temporal una de las habitaciones propiedad de la Arrendadora en {{Resource_flat_street}}, {{Resource_building_city}}, que tiene {{Resource_flat_area}} m² construidos, cuya cédula de habitabilidad es la {{Resource_flat_occupancy}}, el certificado de eficiencia energética {{Resource_flat_energy}} y NRA {{Resource_registry}}.
 
 En su virtud, las partes acuerdan celebrar este contrato de arrendamiento y uso de habitación, de acuerdo con las siguientes condiciones particulares y generales.
 <div style="page-break-after: always;"></div>

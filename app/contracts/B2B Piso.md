@@ -37,7 +37,7 @@ I. Que el Arrendador es propietario de la siguiente finca en {{R.Resource_street
 </tr>
 {% for f in Flats_info %}
 <tr>
-<td>{{f.Resource_flat_address}}</td><td>{{f.Resource_flat_occupancy}}</td><td>{{f.Resource_flat_energy}}</td><td>{{f.Resource_flat_area}}</td>
+<td>{{f.Resource_address}}</td><td>{{f.Resource_occupancy}}</td><td>{{f.Resource_energy}}</td><td>{{f.Resource_area}}</td>
 </tr>
 {% endfor %} 
 </tr>
@@ -62,7 +62,7 @@ V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con lo
 1.1. El Arrendador cede en arrendamiento al Arrendatario la(s) vivienda(s) con el número de plazas que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**")
 
 {% for r in Rooms %}
-- {{r.Resource_address}}, {{r.Resource_places}} plazas.
+- {{r.Resource_address}}, {{r.Resource_places}} plazas, NRA: {{r.Resource_registry}}
 {%-endfor %}
 
 1.2. La vivienda se destinará de forma exclusiva a vivienda de temporada por parte de las personas cuyos nombres completos, datos de identificación, incluyendo los datos de su residencia permanente y habitual, así como habitaciones y plazas asignadas en la Vivienda constan en el anexo al presente documento, adjuntándose también los documentos que acreditan el motivo de dicha temporalidad

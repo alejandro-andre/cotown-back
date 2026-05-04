@@ -154,6 +154,7 @@ query BookingById ($id: Int) {
       Resource_address: Address
       Resource_street: Street
       Resource_area: Area_woc
+      Resource_registry: Registry_num 
       Resource_occupancy: Occupancy_certificate
       Resource_energy: Energy_certificate
       Resource_last_LAU_date: Last_LAU_date
@@ -167,6 +168,7 @@ query BookingById ($id: Int) {
         Resource_flat_address: Address
         Resource_flat_street: Street
         Resource_flat_area: Area_woc
+        Resource_flat_registry: Registry_num 
         Resource_flat_occupancy: Occupancy_certificate
         Resource_flat_energy: Energy_certificate
         Resource_flat_last_LAU_date: Last_LAU_date
@@ -261,6 +263,9 @@ query BookingById ($id: Int) {
       CountryViaCountry_id {
         Customer_country: Name
       }
+      CountryViaNationality_id {
+        Customer_nationality: Name
+      }
       Customer_email: Email
       Customer_birth_date: Birth_date
       Customer_signer_name: Signer_name
@@ -343,6 +348,9 @@ query Booking_groupById ($id: Int!) {
       CountryViaCountry_id {
         Customer_country: Name
       }
+      CountryViaNationality_id {
+        Customer_nationality: Name
+      }
       Customer_email: Email
       Customer_birth_date: Birth_date
       Customer_bank_account: Bank_account
@@ -363,6 +371,7 @@ query Booking_groupById ($id: Int!) {
         Resource_street: Street
         Resource_places: Places
         Resource_area: Area_woc
+        Resource_registry: Registry_num 
         Resource_occupancy: Occupancy_certificate
         Resource_energy: Energy_certificate
         Resource_last_LAU_date: Last_LAU_date
@@ -376,6 +385,7 @@ query Booking_groupById ($id: Int!) {
           Resource_flat_street: Street
           Resource_flat_places: Places
           Resource_flat_area: Area_woc
+          Resource_flat_registry: Registry_num 
           Resource_flat_occupancy: Occupancy_certificate
           Resource_flat_energy: Energy_certificate
           Resource_flat_last_LAU_date: Last_LAU_date
@@ -744,17 +754,7 @@ def do_send_contract(contracts, context, type):
   logger.info(context.get('Resource_building_city'))
   if settings.DOCUSIGNSEND != 1 or context.get('Booking_type') or context.get('Resource_building_city') == 'Barcelona':
     logger.info('Not sent!')
-    # >>> TEST
-    if context.get('Resource_building_city') == 'Barcelona':
-      for contract in contracts:
-        if contract['file']:
-          contract['file'].seek(0)
-          filename = contract['name'].replace(' ', '_') + '.pdf'
-          with open(filename, 'wb') as f:
-            f.write(contract['file'].read())
-          logger.info('Contrato Barcelona guardado: %s', filename)
-    # <<< TEST
-    return None, None
+    return 'n/a', 'other'
   
   # API Client setup
   api_client = ApiClient()
@@ -1140,12 +1140,18 @@ def do_group_contracts(apiClient, id):
     # Consolidate flats
     flats_dict = {}
     for room in context['Rooms']:
-      if room.get('Resource_flat_code'):
-        flats_dict[room['Resource_flat_code']] = {
-          k: v for k, v in room.items() if k.startswith('Resource_flat_')
+      code = room.get('Resource_flat_code')
+      if code and len(code) == 12:
+        flats_dict[code] = {
+          k.replace('_flat_', '_'): v for k, v in room.items() if k.startswith('Resource_flat_')
+        }
+      code = room.get('Resource_code')
+      if code and len(code) == 12:
+        flats_dict[code] = {
+          k: v for k, v in room.items() if k.startswith('Resource_')
         }
     context['Flats_info'] = list(flats_dict.values())
-    context['Flats'] = ', '.join(sorted(f['Resource_flat_address'] for f in context['Flats_info']))
+    context['Flats'] = ', '.join(sorted(f['Resource_address'] for f in context['Flats_info']))
 
     # Get documents (solo Barcelona)
     building_documents, resource_documents = [], []

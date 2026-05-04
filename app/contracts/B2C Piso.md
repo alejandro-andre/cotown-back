@@ -30,7 +30,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 I. Que el Arrendador es propietario del inmueble ubicado en {{Resource_street}}, {{Resource_address}} que se encuentra totalmente amueblado y equipado con los utensilios domésticos (en adelante “la Vivienda”)
 
-La Vivienda dispone de cédula de habitabilidad {{Resource_occupancy}} y de certificado de eficiencia energética {{Resource_energy}} y tiene una superficie de {{Resource_area}} m² construidos.
+La Vivienda dispone de cédula de habitabilidad {{Resource_occupancy}}, de certificado de eficiencia energética {{Resource_energy}}, NRA {{Resource_registry}} y tiene una superficie de {{Resource_area}} m² construidos.
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente.
 

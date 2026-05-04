@@ -91,12 +91,18 @@ def generate_b2b(apiClient, id, template_file, contract='rent'):
     # Consolidate flats
     flats_dict = {}
     for room in context['Rooms']:
-      if room.get('Resource_flat_code'):
-        flats_dict[room['Resource_flat_code']] = {
-          k: v for k, v in room.items() if k.startswith('Resource_flat_')
+      code = room.get('Resource_flat_code')
+      if code and len(code) == 12:
+        flats_dict[code] = {
+          k.replace('_flat_', '_'): v for k, v in room.items() if k.startswith('Resource_flat_')
+        }
+      code = room.get('Resource_code')
+      if code and len(code) == 12:
+        flats_dict[code] = {
+          k: v for k, v in room.items() if k.startswith('Resource_')
         }
     context['Flats_info'] = list(flats_dict.values())
-    context['Flats'] = ', '.join(sorted(f['Resource_flat_address'] for f in context['Flats_info']))
+    context['Flats'] = ', '.join(sorted(f['Resource_address'] for f in context['Flats_info']))
     print(context['Flats'])
 
     # Cargar plantilla local y generar PDF
@@ -125,7 +131,7 @@ def generate_b2b(apiClient, id, template_file, contract='rent'):
 
     # Guardar contrato (con anexos si los hay)
     merged = merge_pdfs(pdf, annex_data) if annex_data else pdf
-    out = f'contracts/test/contract_b2c_{id}_{contract}.pdf'
+    out = f'contracts/test/contract_b2b_{id}_{contract}.pdf'
     with open(out, 'wb') as f:
         f.write(merged.read())
     logger.info('PDF guardado: %s (%d anexos)', out, len(annex_data))
