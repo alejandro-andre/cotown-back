@@ -964,11 +964,11 @@ def get_template(apiClient, templates, resource_type, location, provider):
     dfid = None
     dfname = ''
     for c in templates:
-      if location == c['Location_id'] and resource_type == c['Type']:
+      if c['Location_id'] == location and c['Type'] == resource_type:
         fid = c['Contract_id']
         fname = c['Name']
         break
-      if resource_type == c['Type']:
+      if c['Location_id'] == '' and c['Type'] == resource_type:
         dfid = c['Contract_id']
         dfname = c['Name']
     if (fid or dfid) is None:
@@ -1024,9 +1024,9 @@ def do_contracts(apiClient, id):
     # Determine template to use
     if context['Booking_building_type'] == 3:
       template_type = 'residencia'
-    elif context.get('Resource_type') in ('habitacion', 'plaza'):
+    elif context.get('Resource_type') in ('habitacion', 'plaza',):
       template_type = 'b2c_habitacion'
-    elif context.get('Resource_type') in ('piso'):
+    elif context.get('Resource_type') in ('piso',):
       template_type = 'b2c_piso'
     else:
       return
@@ -1160,9 +1160,9 @@ def do_group_contracts(apiClient, id):
       building_documents, resource_documents = fetch_annexes(apiClient, [rid])
 
     # Determine template to use
-    if context.get('Resource_type') in ('habitacion', 'plaza'):
+    if room.get('Resource_type') in ('habitacion', 'plaza',):
       template_type = 'b2b_habitacion'
-    elif context.get('Resource_type') in ('piso'):
+    elif room.get('Resource_type') in ('piso',):
       template_type = 'b2b_piso'
     else:
       return
@@ -1219,7 +1219,10 @@ def do_group_contracts(apiClient, id):
     return False
  
   except Exception as error:
+    import traceback
+    traceback.print_exception(error)
     logger.error(error)
+    import prints
     return False
 
 
