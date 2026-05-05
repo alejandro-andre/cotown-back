@@ -66,12 +66,22 @@ query data ($code: String!, $segment: Int!) {
       Occupancy_certificate
       Energy_certificate
       Energy_certificate_rate
-      Places: ResourceListViaFlat_id {
+      Places: ResourceListViaFlat_id (
+        orderBy: { attribute: Code }
+      ) {
         Code
         Address
         Sale_type
         Resource_type
         Registry_num
+        Availability: Resource_availabilityListViaResource_id {
+            id
+            Locked_from: Date_from
+            Locked_to: Date_to
+            Status: Resource_statusViaStatus_id {
+                Locked_available: Available
+            }
+        }
       }
     }
   }
@@ -298,6 +308,16 @@ def req_pub_legal_pdf(sale_type, segment, building):
   context['Today_year'] = now.year
   context['Segment_id'] = segment
   context['Sale_type'] = sale_type
+
+  # Available
+  for flat in (context.get('Flats') or []):
+    for place in (flat.get('Places') or []):
+      place['Available'] = True
+      for item in (place['Availability'] or []):
+        df = datetime.strptime(item['Locked_from'], "%Y-%m-%d")
+        dt = datetime.strptime(item['Locked_to'], "%Y-%m-%d")
+        if item['Status']['Locked_available'] == False and df <= datetime.today() <= dt:
+          place['Available'] = False
 
   # Jinja environment
   env = Environment(
