@@ -64,7 +64,7 @@ V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con lo
 1.1 Las Condiciones particulares descritas a continuación junto con las condiciones generales tienen por objeto regular las relaciones entre la Arrendadora y la Arrendataria en todo lo relativo al contrato de arrendamiento y uso de habitación por temporada, (en adelante el "**Contrato de Habitación**"), en el edificio de la calle {{R.Resource_flat_street}}, {{R.Resource_building_city}}, para el tipo de habitación acordado en el documento de reserva (la "**Habitación**") y por el plazo que luego se dirá. 
 
 {% for r in Rooms %}
-- {{r.Resource_address}}, NRA: {{r.Resource_registry}}
+- {{r.Resource_address}}{% if r.Resource_registry %}, NRA: {{r.Resource_registry}}{% endif %}
 {%-endfor %}
 
 ## 1.2. Vinculación con las Condiciones Generales 

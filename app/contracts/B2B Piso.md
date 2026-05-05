@@ -62,7 +62,7 @@ V. Y, estando ambas partes interesadas en el arrendamiento de conformidad con lo
 1.1. El Arrendador cede en arrendamiento al Arrendatario la(s) vivienda(s) con el número de plazas que se indican a continuación, por el plazo y precio indicados en los siguientes pactos (en adelante el "**Contrato de arrendamiento**")
 
 {% for r in Rooms %}
-- {{r.Resource_address}}, {{r.Resource_places}} plazas, NRA: {{r.Resource_registry}}
+- {{r.Resource_address}}, {{r.Resource_places}} plazas{% if r.Resource_registry %}, NRA: {{r.Resource_registry}}{% endif %}
 {%-endfor %}
 
 1.2. La vivienda se destinará de forma exclusiva a vivienda de temporada por parte de las personas cuyos nombres completos, datos de identificación, incluyendo los datos de su residencia permanente y habitual, así como habitaciones y plazas asignadas en la Vivienda constan en el anexo al presente documento, adjuntándose también los documentos que acreditan el motivo de dicha temporalidad
@@ -104,7 +104,7 @@ a) Que el Arrendador tiene la condición de gran tenedor.
 
 b) Que la Vivienda está situada en una zona de mercado residencial tensionado.
 
-c) Que la Vivienda ha estado arrendada / no ha estado arrendada durante los últimos 5 años como vivienda habitual en virtud de un contrato sujeto a la Ley de Arrendamientos Urbanos.
+c) Que la Vivienda {% if five_years_ago(R.Resource_last_LAU_date) %}no {% endif %}ha estado arrendada durante los últimos 5 años como vivienda habitual en virtud de un contrato sujeto a la Ley de Arrendamientos Urbanos.
 
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
@@ -125,7 +125,7 @@ Los conceptos indicados a continuación no están incluidos en la renta y se fac
 {% elif Booking_limit_type == 'lau' %}
 De conformidad con lo expuesto, la determinación de la renta se ha efectuado tomando como referencia:
 
-- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta {{Resource_last_LAU_date_day}}/{{Resource_last_LAU_date_month}}/{{Resource_last_LAU_date_year}}, cuyo importe ascendía a {{Resource_last_LAU_rent or 0|decimal(1)}} euros mensuales.
+- la última renta del contrato de arrendamiento de vivienda habitual que permaneció vigente hasta {{R.Resource_last_LAU_date_day}}/{{R.Resource_last_LAU_date_month}}/{{R.Resource_last_LAU_date_year}}, cuyo importe ascendía a {{R.Resource_last_LAU_rent or 0|decimal(1)}} euros mensuales.
 
 - el Índice de Referencia Estatal que se adjunta como anexo al presente.
 

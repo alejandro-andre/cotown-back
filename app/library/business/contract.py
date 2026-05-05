@@ -13,7 +13,8 @@ from flask import g
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from docusign_esign import ApiClient, EnvelopesApi, EnvelopeDefinition, Document, Signer, Tabs, SignHere, DateSigned, CustomFields, TextCustomField 
 from num2words import num2words
-from datetime import datetime
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 from jinja2 import Environment
 from weasyprint import HTML
 from io import BytesIO
@@ -662,6 +663,14 @@ def get_jwt_token(private_key, scopes, auth_server, client_id, impersonated_user
   return response
 
 
+# Five years ago
+def five_years_ago(dt):
+  if not dt:
+    return True
+  aux = datetime.strptime(dt, "%Y-%m-%d").date()
+  return aux < date.today() - relativedelta(years=5)
+
+
 # Get Docusign private key
 def get_private_key(private_key_path):
 
@@ -856,6 +865,7 @@ def generate_doc_file(context, template):
 
   # Prepare render context
   now = datetime.now()
+  context['Today'] = now
   context['Today_day'] = now.day
   context['Today_month'] = now.month
   context['Today_year'] = now.year
@@ -868,6 +878,7 @@ def generate_doc_file(context, template):
 
   # Add custom functions
   env = Environment()
+  env.globals['five_years_ago'] = five_years_ago
   env.filters['decimal'] = decimal
   env.filters['words'] = words
   env.filters['month'] = month

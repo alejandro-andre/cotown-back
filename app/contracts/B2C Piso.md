@@ -30,7 +30,7 @@ Las Partes acuerdan conjuntamente suscribir el presente contrato que se regirá 
 
 I. Que el Arrendador es propietario del inmueble ubicado en {{Resource_street}}, {{Resource_address}} que se encuentra totalmente amueblado y equipado con los utensilios domésticos (en adelante “la Vivienda”)
 
-La Vivienda dispone de cédula de habitabilidad {{Resource_occupancy}}, de certificado de eficiencia energética {{Resource_energy}}, NRA {{Resource_registry}} y tiene una superficie de {{Resource_area}} m² construidos.
+La Vivienda dispone de cédula de habitabilidad {{Resource_occupancy}}, de certificado de eficiencia energética {{Resource_energy}}{% if Resource_registry %}, NRA: {{Resource_registry}}{% endif %} y tiene una superficie de {{Resource_area}} m² construidos.
 
 II. Que, el Arrendador tiene la consideración de gran tenedor con arreglo a la normativa vigente.
 
@@ -102,7 +102,7 @@ a) Que el Arrendador tiene la condición de gran tenedor.
 
 b) Que la Vivienda está situada en una zona de mercado residencial tensionado.
 
-c) Que la Vivienda ha estado arrendada / no ha estado arrendada durante los últimos 5 años como vivienda habitual en virtud de un contrato sujeto a la Ley de Arrendamientos Urbanos.
+c) Que la Vivienda {% if five_years_ago(Resource_last_LAU_date) %}no {% endif %}ha estado arrendada durante los últimos 5 años como vivienda habitual en virtud de un contrato sujeto a la Ley de Arrendamientos Urbanos.
 
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
