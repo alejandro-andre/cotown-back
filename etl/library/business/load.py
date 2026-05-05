@@ -36,14 +36,17 @@ def execute(dbDestination, script):
   fi.close()
 
   # Execute script
+  con = None
   try:
     con = dbDestination.getconn()
     cur = dbDestination.execute(con, sql)
     cur.close()
-    dbDestination.putconn(con)
   except Exception as e:
     logger.error(e)
     return False
+  finally:
+    if con:
+      dbDestination.putconn(con)
   return True
 
 
@@ -70,6 +73,8 @@ def get_data(dbClient, script):
     fi.close()
 
     # Execute script
+    con = None
+    cur = None
     try:
       con = dbClient.getconn()
       cur = dbClient.execute(con, sql)
@@ -77,12 +82,14 @@ def get_data(dbClient, script):
       data = cur.fetchall()
     except Exception as e:
       logger.error(e)
-      con.rollback()
-      dbClient.putconn(con)
+      if con:
+        con.rollback()
       return None
     finally:
-      cur.close()
-      dbClient.putconn(con)
+      if cur:
+        cur.close()
+      if con:
+        dbClient.putconn(con)
     
     # Dataframe
     df = pd.DataFrame(data, columns=desc)
@@ -136,14 +143,14 @@ def load(dbOrigin, dbDestination, table, query):
   # Log
   logger.info('Loading ' + query + '...')
 
-  # Get connection (autocommit must be off for SAVEPOINT support)
-  con = dbDestination.getconn()
-  con.autocommit = False
-
   # Get data
   data = get_data(dbOrigin, query)
   if data is None or data.empty:
     return
+
+  # Get connection (autocommit must be off for SAVEPOINT support)
+  con = dbDestination.getconn()
+  con.autocommit = False
 
   try:
     # Get table columns
