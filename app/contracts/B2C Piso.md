@@ -39,7 +39,7 @@ III. Que el arrendatario está interesado en arrendar el inmueble antes descrito
 Se adjunta al presente la documentación acreditativa de la estancia, a efectos de justificar la necesidad de temporalidad.
 
 IV. Ambas partes se reconocen suficiente capacidad legal para llevar a cabo este contrato, interviniendo en nombre y derecho mencionados respectivamente, y convienen formalizar el presente **Contrato de arrendamiento de temporada**.
-<div style="page-break-after: always;"></div>
+
 ## ESTIPULACIONES: 
  
 ## PRIMERA. OBJETO. 
