@@ -333,6 +333,7 @@ query Booking_groupById ($id: Int!) {
     Booking_limit: Limit
     Booking_final_cleaning: Final_cleaning
     Booking_cleaning_freq: Cleaning_freq
+    Booking_full_flat: Full_flat
     Contract_rent: Contract_rent { oid }
     Contract_services: Contract_services { oid }
     CustomerViaPayer_id {
@@ -1171,12 +1172,9 @@ def do_group_contracts(apiClient, id):
       building_documents, resource_documents = fetch_annexes(apiClient, [rid])
 
     # Determine template to use
-    if room.get('Resource_type') in ('habitacion', 'plaza',):
-      template_type = 'b2b_habitacion'
-    elif room.get('Resource_type') in ('piso',):
+    template_type = 'b2b_habitacion'
+    if context.get('Full_flat'):
       template_type = 'b2b_piso'
-    else:
-      return
     
     # Generate rent contract
     template, annex, name = get_template(apiClient, room['Owner_template'], template_type, room['Resource_location_id'], room['Owner_name'])

@@ -10,10 +10,8 @@ DECLARE
 
   c_rent INTEGER;
   c_limit INTEGER;
-  c_piso INTEGER;
-  c_no_piso INTEGER;
   limit_type VARCHAR;
-
+  
   deposit NUMERIC;
   legal_deposit NUMERIC;
 
@@ -102,19 +100,8 @@ BEGIN
   IF c_rent > 1 THEN
     RAISE EXCEPTION '!!!Flats with different max rents!!!Pisos con diferentes rentas máximas!!!';
   END IF;
-  IF limit_type IN ('lau', 'indice') AND NEW."Book_type" <> 'limitado' THEN
+  IF limit_type IN ('lau', 'indice') AND (NEW."Book_type" IS NULL OR NEW."Book_type" = 'libre') THEN
     RAISE EXCEPTION '!!!Wrong book type: resource(s) has limitations!!!Tipo de reserva erróneo: recurso(s) con limitación!!!';
-  END IF;
-
-  -- Check mix flats and rooms
-  SELECT
-    COUNT(*) FILTER (WHERE r."Resource_type" = 'piso'),
-    COUNT(*) FILTER (WHERE r."Resource_type" != 'piso')
-  INTO c_piso, c_no_piso
-  FROM "Resource"."Resource" r
-  WHERE r.id::text = ANY(NEW."Room_ids");  
-  IF c_piso > 0  and c_no_piso > 0 THEN
-    RAISE EXCEPTION '!!!Mixed resource types: some are flats and some are not!!!Tipos de recurso mezclados: algunos son pisos y otros no!!!';
   END IF;
 
   -- Limited prices
@@ -135,10 +122,10 @@ BEGIN
   SELECT EXTRACT(MONTH FROM AGE(NEW."Date_to", NEW."Date_from")) INTO months;
 
   -- Deposit
-  IF c_piso > 0 THEN
+  IF NEW."Full_flat" THEN
     IF NEW."Book_type" == 'limitado' THEN
       legal_deposit := NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses";
-      deposit := legal_deposit / 2;
+      deposit := 1.5 * legal_deposit;
     ELSE
       legal_deposit := months * (NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses") / 6;
       deposit := 1.5 * (NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses");
