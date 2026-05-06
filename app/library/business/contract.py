@@ -382,6 +382,7 @@ query Booking_groupById ($id: Int!) {
         Resource_last_LAU_date_year: Last_LAU_date_year
         Resource_last_LAU_rent: Last_LAU_rent
         Flat: ResourceViaFlat_id {
+          Resource_flat_id: id
           Resource_flat_code: Code
           Resource_flat_address: Address
           Resource_flat_street: Street
@@ -1032,6 +1033,17 @@ def do_contracts(apiClient, id):
     if context.get('Resource_location_id') == 1:
       rid = context.get('Resource_flat_id') or context.get('Resource_id')
       building_documents, resource_documents = fetch_annexes(apiClient, [rid])
+    annex_pairs = []
+    for document in building_documents:
+      data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    for document in resource_documents:
+      data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    annex_pairs.sort(key=lambda x: x[0])
+    annex_data = [content for _, content in annex_pairs]
 
     # Determine template to use
     if context['Booking_building_type'] == 3:
@@ -1049,6 +1061,8 @@ def do_contracts(apiClient, id):
       if context['Customer_lang'] == 'en' and annex:
         template = template + '<div style="page-break-after: always;"></div>\n' + annex
       file_rent = generate_doc_file(context, template)
+      if annex_data and file_rent:
+        file_rent = merge_pdfs(file_rent, annex_data)
       url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
       response = requests.post(url, data=file_rent.read(), headers={ 'Content-Type': 'application/pdf' })      
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
@@ -1063,21 +1077,6 @@ def do_contracts(apiClient, id):
         url = 'https://' + apiClient.server + '/document/Booking/Booking/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
         response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
-
-    # Merge annexes into rent contract (sorted alphabetically by name)
-    annex_pairs = []
-    for document in building_documents:
-      data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
-      if data and data.content:
-        annex_pairs.append((document.get('Name', ''), data.content))
-    for document in resource_documents:
-      data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
-      if data and data.content:
-        annex_pairs.append((document.get('Name', ''), data.content))
-    annex_pairs.sort(key=lambda x: x[0])
-    annex_data = [content for _, content in annex_pairs]
-    if annex_data and file_rent:
-      file_rent = merge_pdfs(file_rent, annex_data)
 
     # Send contract
     if context['Resource_building_contract']:
@@ -1167,9 +1166,20 @@ def do_group_contracts(apiClient, id):
 
     # Get documents (solo Barcelona)
     building_documents, resource_documents = [], []
-    if context.get('Resource_location_id') == 1:
-      rid = [r.get('Resource_id') for r in context.get('Rooms')]
-      building_documents, resource_documents = fetch_annexes(apiClient, [rid])
+    if context.get('Rooms')[0].get('Resource_location_id') == 1:
+      rids = [r.get('Resource_flat_id') or r.get('Resource_id') for r in context.get('Rooms')]
+      building_documents, resource_documents = fetch_annexes(apiClient, rids)
+    annex_pairs = []
+    for document in building_documents:
+      data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    for document in resource_documents:
+      data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
+      if data and data.content:
+        annex_pairs.append((document.get('Name', ''), data.content))
+    annex_pairs.sort(key=lambda x: x[0])
+    annex_data = [content for _, content in annex_pairs]
 
     # Determine template to use
     template_type = 'b2b_habitacion'
@@ -1180,6 +1190,8 @@ def do_group_contracts(apiClient, id):
     template, annex, name = get_template(apiClient, room['Owner_template'], template_type, room['Resource_location_id'], room['Owner_name'])
     if template is not None:
       file_rent = generate_doc_file(context, template)
+      if annex_data and file_rent:
+        file_rent = merge_pdfs(file_rent, annex_data)
       url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_rent/contents?access_token=' + apiClient.token
       response = requests.post(url, data=file_rent.read(), headers={ 'Content-Type': 'application/pdf' })      
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
@@ -1192,21 +1204,6 @@ def do_group_contracts(apiClient, id):
         url = 'https://' + apiClient.server + '/document/Booking/Booking_group/' + str(id) + '/Contract_services/contents?access_token=' + apiClient.token
         response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
-
-    # Merge annexes into rent contract (sorted alphabetically by name)
-    annex_pairs = []
-    for document in building_documents:
-      data = apiClient.getFile(document['id'], 'Building/Building_doc', 'Document')
-      if data and data.content:
-        annex_pairs.append((document.get('Name', ''), data.content))
-    for document in resource_documents:
-      data = apiClient.getFile(document['id'], 'Resource/Resource_doc', 'Document')
-      if data and data.content:
-        annex_pairs.append((document.get('Name', ''), data.content))
-    annex_pairs.sort(key=lambda x: x[0])
-    annex_data = [content for _, content in annex_pairs]
-    if annex_data and file_rent:
-      file_rent = merge_pdfs(file_rent, annex_data)
 
     # Update query
     query = '''
