@@ -100,7 +100,7 @@ BEGIN
   IF c_rent > 1 THEN
     RAISE EXCEPTION '!!!Flats with different max rents!!!Pisos con diferentes rentas máximas!!!';
   END IF;
-  IF limit_type IN ('lau', 'indice') AND (NEW."Book_type" IS NULL OR NEW."Book_type" = 'libre') THEN
+  IF limit_type IN ('lau', 'indice') AND NEW."Book_type" IS NULL THEN
     RAISE EXCEPTION '!!!Wrong book type: resource(s) has limitations!!!Tipo de reserva erróneo: recurso(s) con limitación!!!';
   END IF;
 

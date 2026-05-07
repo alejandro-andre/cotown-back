@@ -334,6 +334,7 @@ query Booking_groupById ($id: Int!) {
     Booking_final_cleaning: Final_cleaning
     Booking_cleaning_freq: Cleaning_freq
     Booking_full_flat: Full_flat
+    Booking_type: Book_type
     Contract_rent: Contract_rent { oid }
     Contract_services: Contract_services { oid }
     CustomerViaPayer_id {
