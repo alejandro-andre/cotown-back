@@ -243,5 +243,6 @@ def history(dbClient):
   df['id'] = 'HIS' + df['id'].astype(str)
 
   # To CSV
-  df.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'area_woc', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])  
+  df.to_csv('csv/history_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'status', 'area', 'area_woc', 'units', 'rooms', 'beds', 'val_current','val_residential','val_cosharing'])
   logger.info('- History saved')
+  dbClient.putconn(con)

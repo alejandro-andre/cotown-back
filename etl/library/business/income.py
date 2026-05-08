@@ -125,6 +125,7 @@ def income_forecast_calc(dbClient):
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
   df['id'] = 'IFO' + df['id'].astype(str)
   logger.info('- Income calculated')
+  dbClient.putconn(con)
   return df
 
 
@@ -298,6 +299,7 @@ def income_stabilised_calc(dbClient):
   df_mpc['id'] = 'MPC' + df_mpc['id'].astype(str)
 
   logger.info('- Income calculated')
+  dbClient.putconn(con)
   return pd.concat([df_ina, df_inc, df_mpa, df_mpc], ignore_index=True)
 
 

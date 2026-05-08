@@ -238,6 +238,7 @@ def beds_real_calc(dbClient):
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
   df['id'] = 'BDR' + df['id'].astype(str)
   logger.info('- Real beds and nights calculated')
+  dbClient.putconn(con)
   return df
 
 
@@ -301,6 +302,7 @@ def beds_forecast_calc(dbClient):
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
   df['id'] = 'BDF' + df['id'].astype(str)
   logger.info('- Forecast beds and nights calculated')
+  dbClient.putconn(con)
   return df
 
 

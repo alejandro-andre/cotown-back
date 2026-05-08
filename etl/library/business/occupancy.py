@@ -151,6 +151,7 @@ def occupancy_real_calc(dbClient):
   df['id'] = (df.index + 1).astype(str).str.zfill(7)
   df['id'] = 'ORE' + df['id'].astype(str)
   logger.info('- Occupied and sold nights calculated')
+  dbClient.putconn(con)
   return df
 
 
@@ -232,6 +233,7 @@ def occupancy_forecast_calc(dbClient):
   df['id'] = (df.index + 1).astype(str).str.zfill(6)
   df['id'] = 'OFO' + df['id'].astype(str)
   logger.info('- Occupied and sold nights calculated')
+  dbClient.putconn(con)
   return df
 
 
@@ -322,6 +324,7 @@ def occupancy_stabilised_calc(dbClient):
   df_stc['id'] = (df_stc.index + 1).astype(str).str.zfill(6)
   df_stc['id'] = 'OSC' + df_stc['id'].astype(str)
   logger.info('- Occupied and sold nights calculated')
+  dbClient.putconn(con)
   return pd.concat([df_sta, df_stc], ignore_index=True)
 
 def occupancy_stabilised(dbClient):
