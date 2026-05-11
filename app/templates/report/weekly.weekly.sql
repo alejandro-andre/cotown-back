@@ -1,5 +1,10 @@
 SELECT 
   b.id,
+  CASE 
+    WHEN b."Book_type" = 'limitado' THEN 'Limitado (' || b."Limit_type" || ')'
+    WHEN b."Book_type" = 'recreativo' THEN 'Recreativo'
+    ELSE 'Libre'
+  END AS "Book_type",
   b."Status",
   b."Request_date",
   b."Confirmation_date",

@@ -1,5 +1,6 @@
 [
 "id",
+"Book_type",
 "Status",
 "Name",
 "Booking_who",
