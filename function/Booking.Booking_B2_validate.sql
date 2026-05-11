@@ -19,6 +19,10 @@ DECLARE
   limit_type VARCHAR;
   
 BEGIN
+  -- Do not validate these cases:
+  IF NEW."Status" IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
+    RETURN NEW;
+  END IF;
 
   -- Superuser ROLE 
   curr_user := CURRENT_USER;
@@ -95,18 +99,16 @@ BEGIN
   END IF;
 
   -- Check for overlaps
-  IF NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
-    SELECT b."Booking_id"
-    INTO num
-    FROM "Booking"."Booking_detail" b 
-    WHERE b."Resource_id" = NEW."Resource_id"
-    AND b."Booking_id" <> NEW.id
-    AND b."Date_from" <= NEW."Date_to" 
-    AND b."Date_to" >= NEW."Date_from"
-    LIMIT 1;
-    IF num IS NOT NULL THEN
-      RAISE exception '!!!Overlaping % with booking %!!!Solapamiento % con la reserva %!!!', NEW.id, num, NEW.id, num;
-    END IF;
+  SELECT b."Booking_id"
+  INTO num
+  FROM "Booking"."Booking_detail" b 
+  WHERE b."Resource_id" = NEW."Resource_id"
+  AND b."Booking_id" <> NEW.id
+  AND b."Date_from" <= NEW."Date_to" 
+  AND b."Date_to" >= NEW."Date_from"
+  LIMIT 1;
+  IF num IS NOT NULL THEN
+    RAISE exception '!!!Overlaping % with booking %!!!Solapamiento % con la reserva %!!!', NEW.id, num, NEW.id, num;
   END IF;
 
   -- Valida cliente
