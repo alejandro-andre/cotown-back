@@ -140,7 +140,7 @@ BEGIN
     legal_deposit := 0;
   END IF;
   NEW."Deposit" = deposit;
-  NEW."Incasol_deposit" = legal_deposit;
+  NEW."Incasol_deposit" = legal_deposit * COALESCE(NEW."Rooms", 0);
 
   -- Return record
   RETURN NEW;
