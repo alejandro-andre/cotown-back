@@ -70,9 +70,9 @@ BEGIN
   END IF;
 
   -- Rooms changed?
-  IF OLD."Room_ids" = NEW."Room_ids" THEN
-    RETURN NEW;
-  END IF;
+  --IF OLD."Room_ids" = NEW."Room_ids" THEN
+  --  RETURN NEW;
+  --END IF;
 
   -- Not tentative?
   IF NEW."Status" <> 'grupobloqueado' THEN
@@ -123,7 +123,7 @@ BEGIN
 
   -- Deposit
   IF NEW."Full_flat" THEN
-    IF NEW."Book_type" == 'limitado' THEN
+    IF NEW."Book_type" = 'limitado' THEN
       legal_deposit := NEW."Rent" + NEW."Limit" + NEW."Furniture" + NEW."Expenses";
       deposit := 1.5 * legal_deposit;
     ELSE
