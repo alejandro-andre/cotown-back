@@ -109,11 +109,13 @@ c) Que la Vivienda {% if five_years_ago(R.Resource_last_LAU_date) %}no {% endif 
 d) Del mismo modo, el importe de la renta se ha establecido según lo previsto en el Artículo 17.6 y 7 de la Ley de Arrendamientos Urbanos y en virtud de lo dispuesto en la ley 18/2007 de Vivienda de Cataluña según la redacción dada por la ley 11/2025 de 29 de diciembre de medidas en materia de vivienda y urbanismo.
 
 {% if Booking_type == 'recreativo' %}
+Por el arrendamiento de la vivienda, el Arrendatario abonará obligatoriamente al Arrendador y durante todo el Plazo la cantidad de (la "**Renta**"):
+La parte arrendataria abonará al gestor del arrendador Cotown Sharing Life, SL, en concepto de renta, la cantidad de {{Booking_rent|decimal(1)}} euros, dentro de los cinco primeros días de cada mes, mediante domiciliación bancaria o tarjeta bancaria.
+
 {% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
+Además, la parte arrendataria abonará {{Booking_final_cleaning|decimal(1)}} euros de limpieza de salida mediante domiciliación bancaria o tarjeta bancaria dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
 
-La gestora de la Propiedad cobrará al Arrendatario un importe de {{Booking_final_cleaning|decimal(1)}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
 {% endif %}
-
 {% elif Booking_limit_type == 'indice' %}
 De conformidad con lo anterior, la determinación de la renta de la Vivienda se ha determinado tomando en consideración el índice de Referencia Estatal (se acompaña como anexo).
 
@@ -139,9 +141,19 @@ El Arrendatario abonará también:
 
 {% else %}
 De conformidad con lo anterior, la determinación de la renta se ha llevado a cabo tomando en consideración la consulta realizada en la página web del Ministerio de Vivienda y Agenda Urbana a efectos de determinar la existencia de Índice de Referencia (se acompaña informe como anexo a la consulta del que resulta que no existe precio de referencia a dichos efectos, por tratarse de una vivienda de más de 150 m2).
-{% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
 
-La gestora de la Propiedad cobrará al Arrendatario un importe de {{Booking_final_cleaning|decimal(1)}} euros (21% IVA incluido) por plaza en concepto de limpieza de salida a la finalización de la estancia.
+Este importe incluye:
+
+- Los trabajos de mantenimiento en las zonas comunes del piso y edificio por parte de la Arrendadora, que se llevarán a cabo como mínimo una vez cada quince días.  
+- Los consumos de los suministros de agua, gas y electricidad del piso donde está ubicada la habitación, que tienen un límite máximo mensual del conjunto del piso incluido en el importe de la renta, resultante de sumar la cantidad de {{Booking_limit|decimal(1)}} euros mensuales por cada habitación que tenga cada piso. Dicho importe en euros se calculará mensualmente mediante la suma de las tres facturas de suministros (Agua, gas y electricidad).   
+Excedido dicho importe mensual máximo de consumo por piso expresado en euros, el exceso se cobrará a partes iguales a todos los ocupantes de las habitaciones del mismo piso, y se le pasará el cargo al cobro dentro de la factura mensual de Renta pero como concepto aparte. 
+- El servicio de internet.  
+
+{% if Booking_final_cleaning and Booking_final_cleaning > 0 %}
+No está incluido en la renta:
+
+Limpieza de salida: La Arrendataria abonará la cantidad de {{Booking_final_cleaning|decimal(1)}} euros dentro de los cinco primeros días naturales contados a partir de la fecha de emisión de la factura.
+
 {% endif %}
 {% endif %}
 

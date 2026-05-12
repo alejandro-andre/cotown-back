@@ -79,8 +79,6 @@ Las Condiciones Particulares del presente Contrato de Habitación están vincula
 
 La Arrendadora tiene designada para la gestión de este contrato de arrendamiento y uso de habitación y durante todo el plazo de duración a la compañía Cotown Sharing Life, S.L. (la "**Gestora**"). 
 
-La Arrendadora tiene delegada en la web de la gestora ({{R.Segment_url}}) el área privada a la que se podrá dirigir la Arrendataria para algunas de las gestiones de su Contrato de Habitación durante todo el plazo de duración.
-
 ## 2. Descripción del arrendamiento
 
 La Arrendataria contrata el arrendamiento y uso de la Habitación indicada en la Condición Particular 1 anterior, (según documento de reserva), que se da aquí por íntegramente reproducido, para su uso como alojamiento temporal por la persona indicada en el encabezamiento por motivos de estudios o trabajo, con el mobiliario y equipamiento que constan en la página web de la Arrendadora y de la Gestora, y con la posibilidad de uso de las zonas comunes que se indican en las Condiciones Generales, todo lo cual es conocido y aceptado por la Arrendataria.
@@ -97,7 +95,10 @@ Una vez cumplido el indicado Plazo de uso, el Contrato de Habitación quedará r
 
 Coincidiendo con la firma de este contrato, la Arrendataria hará efectivo el pago del importe de la garantía.
 
-Sin perjuicio del Plazo, la Arrendataria tendrá derecho a resolver el Contrato de Habitación en cualquier momento siempre que dé un preaviso mínimo a la Arrendadora de treinta (30) días naturales a la fecha en la que desee finalizar el Contrato de Habitación, incurriendo en una penalización de 230 euros que serán cobrados por la gestora. En caso de preaviso inferior a treinta (30) días naturales a la fecha en la que desea finalizar el contrato de habitación, la penalización es de la totalidad de la garantía.
+- Cancelaciones realizadas hasta dos meses antes de la fecha de llegada sin gastos de cancelación.  
+- Cancelaciones realizadas entre un mes y medio y un mes antes de la fecha de llegada se penalizará con un importe del 50% de la totalidad de la reserva.  
+- Cancelaciones realizadas entre un mes antes de la fecha de llegada y hasta la fecha de llegada se penalizará con un importe del 85% de la totalidad de la reserva.  
+- A partir de la fecha de llegada y durante toda la estancia, cualquier cancelación total o parcial y reducción de estancia se penalizará con el importe del 100% de la totalidad de la reserva.  
 
 La entrada y puesta a disposición de la Habitación tendrá lugar el primer día del Plazo y se llevará a cabo en la forma pactada por las Partes en el formulario de entrada y registro que se remitirá a la Arrendataria por mail o que estará a su disposición en el área privada de la web de la Gestora.
 
@@ -108,9 +109,9 @@ Por el arrendamiento y uso de la Habitación por la Arrendataria conforme al pre
 
 {% for rent in Prices %}
 {%-if Owner_id == Service_id %}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}} euros mensuales por plaza.
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+rent.Services+(rent.Rent_discount or 0)+(rent.Services_discount or 0))|decimal(1)}} euros mensuales.
 {%-else %}
-- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}} euros mensuales por plaza.
+- Mes {{rent.Rent_date_month}}/{{rent.Rent_date_year}}: {{(rent.Rent+(rent.Rent_discount or 0))|decimal(1)}} euros mensuales.
 {%-endif %}
 {%-endfor %}
 
@@ -232,7 +233,7 @@ La entrega de las llaves de la Habitación tendrá lugar el día y forma señala
 
 Una vez entregadas las llaves, la Arrendataria dispondrá de un plazo de diez (10) días naturales para examinar el estado de la Habitación, el inventario, los muebles y el equipo. En caso de encontrar alguna disconformidad lo hará saber a la Arrendadora mediante el formulario que se contiene en la página web de la Gestora. En caso contrario y transcurridos los indicados diez (10) días naturales, se entenderá que el inventario (con los muebles, equipo y estado general) está en buen estado y orden.
 
-En caso de pérdida o extravío de una o la totalidad del llavero con las llaves durante el Plazo del Contrato de Habitación, la Arrendataria podrá pedir otra llave o llavero a la Arrendadora, y por ello se le cobrará el importe de 105 euros por cada reposición.
+En caso de pérdida o extravío de una o la totalidad del llavero con las llaves durante el Plazo del Contrato de Habitación, la Arrendataria podrá pedir otra llave o llavero a la Arrendadora, y por ello se le cobrará el importe de 120 euros por cada reposición.
 
 La Habitación se entrega en perfecto estado de cuidado y mantenimiento. La Arrendataria deberá devolverla en las mismas condiciones a la finalización del Contrato de Habitación, comprometiéndose a su limpieza y conservación. En caso contrario, el coste de restauración al estado original será asumido por la Arrendataria.
 
@@ -257,8 +258,6 @@ Si la Arrendataria continúa ocupando la Habitación una vez cumplido el vencimi
 La Renta acordada entre las Partes es la cantidad indicada en las Condiciones Particulares y que abonará la Arrendataria por meses anticipados, mediante cargo que realizará la Arrendadora, entre los cinco (5) primeros días de cada mes, en la cuenta bancaria de la Arrendataria abierta en un banco español o sistema de pago alternativo acordado.
 
 Mediante la firma del presente y salvo que las Partes acuerden otra forma de pago, la Arrendataria autoriza a que la Arrendadora realice cargos recurrentes para el pago de la Renta acordada en la cuenta bancaria o tarjeta de crédito que se indicará, y durante el Plazo del Contrato de Habitación. En su caso se acompañará orden de domiciliación de adeudo directo SEPA.
-
-La Arrendataria se compromete y obliga a subir a su área interna el documento SEPA con el número de cuenta IBAN de la Arrendataria donde realizar los cargos en cuenta de los recibos mensuales de la Renta, debiendo informar a su entidad financiera y a la Arrendadora.
 
 Todo coste, gasto o interés bancario que se derive de un impago de la Renta y demás cantidades, en caso de que se produzca, deberá abonarlo la Arrendataria.
 
