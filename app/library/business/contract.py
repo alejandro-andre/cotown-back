@@ -1069,7 +1069,7 @@ def do_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if context['Owner_id'] != context['Service_id'] and context['Booking_services'] > 0:
+    if context['Owner_id'] != context['Service_id'] and (context['Booking_services'] or 0) > 0:
       template, annex, name = get_template(apiClient, context['Service_template'], template_type, context['Resource_location_id'], context['Service_name'])
       if template is not None:
         if context['Customer_lang'] == 'en' and annex:
@@ -1184,7 +1184,7 @@ def do_group_contracts(apiClient, id):
 
     # Determine template to use
     template_type = 'b2b_habitacion'
-    if context.get('Full_flat'):
+    if context.get('Booking_full_flat'):
       template_type = 'b2b_piso'
     
     # Generate rent contract
@@ -1198,7 +1198,7 @@ def do_group_contracts(apiClient, id):
       json_rent = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
     # Generate services contract
-    if room['Owner_id'] != room['Service_id'] and context['Booking_services'] > 0:
+    if room['Owner_id'] != room['Service_id'] and (context['Booking_services'] or 0) > 0:
       template, annex, name = get_template(apiClient, room['Service_template'], template_type, room['Resource_location_id'], room['Service_name'])
       if template is not None:
         file_svcs = generate_doc_file(context, template)
