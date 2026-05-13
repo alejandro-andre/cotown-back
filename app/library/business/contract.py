@@ -104,6 +104,8 @@ query BookingById ($id: Int) {
     Booking_rent: Rent
     Booking_services: Services
     Booking_deposit: Deposit
+    Booking_deposit_actual: Deposit_actual
+    Booking_incasol_deposit: Incasol_deposit
     Booking_limit: Limit
     Booking_expenses: Expenses
     Booking_furniture: Furniture
@@ -330,6 +332,8 @@ query Booking_groupById ($id: Int!) {
     Booking_rent: Rent
     Booking_services: Services
     Booking_deposit: Deposit
+    Booking_deposit_actual: Deposit_actual
+    Booking_incasol_deposit: Incasol_deposit
     Booking_limit: Limit
     Booking_final_cleaning: Final_cleaning
     Booking_cleaning_freq: Cleaning_freq
