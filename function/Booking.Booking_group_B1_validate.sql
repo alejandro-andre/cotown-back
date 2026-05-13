@@ -41,11 +41,11 @@ BEGIN
 
   -- Cannot cancel booking with invoices
   IF NEW."Status" = 'cancelada' THEN
-  	SELECT COUNT(*)
+  	SELECT COALESCE(SUM(i."Total"), 0)
   	INTO num
   	FROM "Billing"."Invoice" i
   	WHERE i."Booking_group_id" = NEW.id;
-    IF num > 0 THEN
+    IF num <> 0 THEN
       RAISE exception '!!!Cannot cancel booking with invoices!!!No se puede cancelar una reserva con facturas!!!';
     END IF;
   END IF;
