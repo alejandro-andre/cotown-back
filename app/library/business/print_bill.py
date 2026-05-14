@@ -50,6 +50,9 @@ query BillById ($id: Int!) {
             BuildingViaBuilding_id {
                 Building_code: Code
             }
+          Rooming: Booking_group_roomingListViaBooking_id {
+            Resident_name: Name
+          }
         }
         Booking_otherViaBooking_other_id {
             Invoice_comment
@@ -194,17 +197,17 @@ def do_bill(apiClient, id, emails=[]):
       if cc == []:
         cc = None
       file.filename = context['Bill_code'] + '.pdf'
-      try:
-        smtp_mail(
-          to,
-          context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
-          'Adjuntamos ' + context['Bill_type'].lower() + ' ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
-          cc=cc,
-          file=file,
-          from_type='cotown'
-        )
-      except Exception as error:
-        logger.error(error)
+    #  try:
+    #    smtp_mail(
+    #      to,
+    #      context['Bill_code'] + ' - ' + context['Bill_concept'] + ' ' + context['Bill_issued_date'], 
+    #      'Adjuntamos ' + context['Bill_type'].lower() + ' ' + context['Bill_concept'].lower() + ' ' + context['Bill_issued_date'], 
+    #      cc=cc,
+    #      file=file,
+    #      from_type='cotown'
+    #    )
+    #  except Exception as error:
+    #    logger.error(error)
 
     # Email LAU bill
     if context.get('Send_bill') and context['Customer_email']:
