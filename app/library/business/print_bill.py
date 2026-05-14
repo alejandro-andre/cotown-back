@@ -85,6 +85,7 @@ query BillById ($id: Int!) {
             Customer_billing_zip: Billing_zip
             Customer_billing_city: Billing_city
             Customer_billing_province: Billing_province
+            Customer_bill_rooming_list: Bill_rooming_list
             CountryViaBilling_country_id {
                 Customer_billing_country: Name
             }

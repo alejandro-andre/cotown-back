@@ -29,6 +29,7 @@ p { margin: 0.3em; }
 </head>
 <body>
 
+{% if not Customer_bill_rooming_list %}{% set Rooming = [] %}{% endif %}
 {% for page in range(0, Lines|length, 9) %}
 <div class="container">
 
@@ -104,7 +105,7 @@ p { margin: 0.3em; }
     </tbody>
   </table>
 
-  {% if Rooming|length <= 10 and Lines|length <= 3 %}
+  {% if Rooming|length > 0 and Rooming|length <= 10 and Lines|length <= 3 %}
   <table>
     <tbody>
       <tr class="row">
