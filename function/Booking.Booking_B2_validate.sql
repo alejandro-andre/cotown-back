@@ -144,18 +144,30 @@ BEGIN
     END IF;
   END IF;
 
-  -- Documentos obligatorios
-  --?INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id", "Booking_id")
-  --?SELECT NEW."Customer_id", cdt.id, NEW.id
-  --?FROM "Customer"."Customer_doc_type" cdt
-  --?WHERE (cdt."Reason_id" = NEW."Reason_id" OR cdt."Id_type_id" = NEW."Id_type_id")
-  --?  AND NOT EXISTS (
-  --?    SELECT 1
-  --?    FROM "Customer"."Customer_doc" cd
-  --?    WHERE cd."Customer_id"          = NEW."Customer_id"
-  --?      AND cd."Customer_doc_type_id" = cdt.id
-  --?      AND cd."Booking_id"           = NEW.id
-  --?  );
+  -- Documentos motivo obligatorios
+  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id", "Booking_id")
+    SELECT NEW."Customer_id", cdt.id, NEW.id
+    FROM "Customer"."Customer_doc_type" cdt
+    WHERE cdt."Mandatory" AND (cdt."Reason_id" = NEW."Reason_id")
+      AND NOT EXISTS (
+        SELECT 1
+        FROM "Customer"."Customer_doc" cd
+        WHERE cd."Customer_id"          = NEW."Customer_id"
+          AND cd."Customer_doc_type_id" = cdt.id
+          AND cd."Booking_id"           = NEW.id
+      );
+
+  -- Documentos id obligatorios
+  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
+    SELECT NEW."Customer_id", cdt.id
+    FROM "Customer"."Customer_doc_type" cdt
+    WHERE (cdt."Id_type_id" = id_type_id)
+      AND NOT EXISTS (
+        SELECT 1
+        FROM "Customer"."Customer_doc" cd
+        WHERE cd."Customer_id"          = NEW."Customer_id"
+          AND cd."Customer_doc_type_id" = cdt.id
+      );
 
   -- Valida recurso
   IF NEW."Resource_id" IS NOT NULL AND OLD."Resource_id" IS DISTINCT FROM NEW."Resource_id" THEN
