@@ -105,7 +105,7 @@ p { margin: 0.3em; }
     </tbody>
   </table>
 
-  {% if Rooming|length > 0 and Rooming|length <= 10 and Lines|length <= 3 %}
+  {% if Rooming|length > 0 and Rooming|length <= 10 and Lines|length <= 5 %}
   <table>
     <tbody>
       <tr class="row">
@@ -163,7 +163,7 @@ p { margin: 0.3em; }
 <div style="page-break-after: always;"></div>
 {% endfor %}
 
-{% if Rooming|length > 10 or Lines|length > 3 %}
+{% if Rooming|length > 10 or Lines|length > 5 %}
 {% for page in range(0, Rooming|length, 65) %}
 <div class="container">
 
