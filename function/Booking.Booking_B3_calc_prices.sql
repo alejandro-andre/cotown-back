@@ -87,7 +87,6 @@ BEGIN
     -- Delete future not billed prices
     DELETE FROM "Booking"."Booking_price"
     WHERE "Booking_id" = NEW.id
-      --? AND "Rent_date" > 'CURRENT_DATE'
       AND "Invoice_rent_id" IS NULL
       AND "Invoice_services_id" IS NULL;
  

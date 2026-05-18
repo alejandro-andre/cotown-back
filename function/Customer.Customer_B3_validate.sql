@@ -75,15 +75,19 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE; 
 
-  -- Documentos obligatorios
-  --?IF TG_OP = 'UPDATE' THEN
-  --?  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
-  --?    SELECT NEW.id, id
-  --?    FROM "Customer"."Customer_doc_type" cdt
-  --?    WHERE "Mandatory" = TRUE
-  --?    AND cdt."Id_type_id" = NEW."Id_type_id"
-  --?  ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
-  --?END IF;
+  -- Documento ID obligatorio
+  IF TG_OP = 'UPDATE' THEN
+    INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
+      SELECT NEW."Customer_id", cdt.id
+      FROM "Customer"."Customer_doc_type" cdt
+      WHERE (cdt."Id_type_id" = id_type_id)
+        AND NOT EXISTS (
+          SELECT 1
+          FROM "Customer"."Customer_doc" cd
+          WHERE cd."Customer_id"          = NEW."Customer_id"
+            AND cd."Customer_doc_type_id" = cdt.id
+        );
+  END IF;
 
   -- Cambio de email
   IF (OLD."Email" IS NOT NULL AND OLD."Email" <> NEW."Email") THEN
