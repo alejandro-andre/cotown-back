@@ -443,30 +443,30 @@ query Booking_groupById ($id: Int!) {
         Owner_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
         }
         ProviderViaService_id {
-        Id_typeViaId_type_id {
+          Id_typeViaId_type_id {
             Service_id_type: Name
-        } 
-        Service_id: Document
-        Service_name: Name
-        Service_email: Email
-        Service_address: Address
-        Service_zip: Zip
-        Service_city: City
-        Service_province: Province
-        CountryViaCountry_id {
+          } 
+          Service_id: Document
+          Service_name: Name
+          Service_email: Email
+          Service_address: Address
+          Service_zip: Zip
+          Service_city: City
+          Service_province: Province
+          CountryViaCountry_id {
             Service_country: Name
-        }
-        Service_signers: Provider_contactListViaProvider_id (
-            where: { Provider_contact_type_id: { EQ: 1 } }
-        ) {
+          }
+          Service_signers: Provider_contactListViaProvider_id (
+              where: { Provider_contact_type_id: { EQ: 1 } }
+          ) {
             Service_signer: id
             Service_signer_name: Name
             Id_typeViaId_type_id {
             Service_signer_id_type: Name
             }
             Service_signer_id: Document
-        }
-        Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
+          }
+          Service_template: Provider_templateListViaProvider_id ( where: { Active: { EQ: true }} ) { id Name Type Location_id Contract_id }
         }
       }
     }

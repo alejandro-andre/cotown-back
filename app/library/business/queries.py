@@ -461,8 +461,6 @@ def sql_dashboard_deposits(vars):
 def sql_dashboard_incasol(vars):
 
   # Params
-  date_from  = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
-  date_to    = (datetime.now() + timedelta(days=settings.LAUDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
   building   = vars.get('building')
   buildings  = vars.getlist('building[]')
   location   = vars.get('location')
@@ -476,19 +474,15 @@ def sql_dashboard_incasol(vars):
   if location:
     where += f'''AND d."Location_id"={location} '''
 
-  # Deposits
+  # Incasol deposits
   sql = f'''
     SELECT 
       b.id AS "Booking_id",
       b."Limit_type",
+      b."Contract_signed",
       COALESCE(b."Check_in", b."Date_from") AS "Date_from", 
       COALESCE(b."Check_out", b."Date_to") AS "Date_to",
-      b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned", 
-      b."Incasol_deposit", b."Incasol_type",
-      CASE 
-        WHEN b."Deposit_locked" THEN 1
-        ELSE 0
-      END AS "Deposit_locked",
+      b."Deposit_required", b."Incasol_deposit", b."Incasol_type",
       c."Name" AS "Customer",
       c."Email" AS "Email",
       pm."Name" AS "Payment_method",

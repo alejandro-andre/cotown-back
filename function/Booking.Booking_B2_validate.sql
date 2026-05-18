@@ -19,11 +19,6 @@ DECLARE
   limit_type VARCHAR;
   
 BEGIN
-  -- Do not validate these cases:
-  IF NEW."Status" IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
-    RETURN NEW;
-  END IF;
-
   -- Superuser ROLE 
   curr_user := CURRENT_USER;
   RESET ROLE;
@@ -98,6 +93,11 @@ BEGIN
     RAISE EXCEPTION '!!!Returned deposit greater than actual.!!!Garantía devuelta superior a la depositada!!!';
   END IF;
 
+  -- Do not validate these cases:
+  IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'pendientepago', 'caducada', 'cancelada') THEN
+    RETURN NEW;
+  END IF;
+
   -- Check for overlaps
   SELECT b."Booking_id"
   INTO num
@@ -113,10 +113,8 @@ BEGIN
 
   -- Valida cliente
   SELECT c."Id_type_id", c."Document", c."Address", c."Black_list", c."Black_reason" INTO id_type_id, document, address, black_list, black_reason FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
-  IF NEW."Status" <> 'solicitud' THEN
-    IF id_type_id IS NULL OR document IS NULL OR address IS NULL THEN
-      RAISE exception '!!!Customer without fiscal data!!!Cliente sin datos fiscales!!!';
-    END IF;
+  IF id_type_id IS NULL OR document IS NULL OR address IS NULL THEN
+    RAISE exception '!!!Customer without fiscal data!!!Cliente sin datos fiscales!!!';
   END IF;
   IF black_list = TRUE THEN
     IF NEW."Ignore_black_list" = TRUE 
@@ -145,29 +143,29 @@ BEGIN
   END IF;
 
   -- Documentos motivo obligatorios
-  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id", "Booking_id")
-    SELECT NEW."Customer_id", cdt.id, NEW.id
-    FROM "Customer"."Customer_doc_type" cdt
-    WHERE cdt."Mandatory" AND (cdt."Reason_id" = NEW."Reason_id")
-      AND NOT EXISTS (
-        SELECT 1
-        FROM "Customer"."Customer_doc" cd
-        WHERE cd."Customer_id"          = NEW."Customer_id"
-          AND cd."Customer_doc_type_id" = cdt.id
-          AND cd."Booking_id"           = NEW.id
-      );
+  --?INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id", "Booking_id")
+  --?  SELECT NEW."Customer_id", cdt.id, NEW.id
+  --?  FROM "Customer"."Customer_doc_type" cdt
+  --?  WHERE cdt."Mandatory" AND (cdt."Reason_id" = NEW."Reason_id")
+  --?    AND NOT EXISTS (
+  --?      SELECT 1
+  --?      FROM "Customer"."Customer_doc" cd
+  --?      WHERE cd."Customer_id"          = NEW."Customer_id"
+  --?        AND cd."Customer_doc_type_id" = cdt.id
+  --?        AND cd."Booking_id"           = NEW.id
+  --?    );
 
   -- Documentos id obligatorios
-  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
-    SELECT NEW."Customer_id", cdt.id
-    FROM "Customer"."Customer_doc_type" cdt
-    WHERE (cdt."Id_type_id" = id_type_id)
-      AND NOT EXISTS (
-        SELECT 1
-        FROM "Customer"."Customer_doc" cd
-        WHERE cd."Customer_id"          = NEW."Customer_id"
-          AND cd."Customer_doc_type_id" = cdt.id
-      );
+  --?INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
+  --?  SELECT NEW."Customer_id", cdt.id
+  --?  FROM "Customer"."Customer_doc_type" cdt
+  --?  WHERE (cdt."Id_type_id" = id_type_id)
+  --?    AND NOT EXISTS (
+  --?      SELECT 1
+  --?      FROM "Customer"."Customer_doc" cd
+  --?      WHERE cd."Customer_id"          = NEW."Customer_id"
+  --?        AND cd."Customer_doc_type_id" = cdt.id
+  --?    );
 
   -- Valida recurso
   IF NEW."Resource_id" IS NOT NULL AND OLD."Resource_id" IS DISTINCT FROM NEW."Resource_id" THEN

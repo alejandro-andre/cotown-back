@@ -76,14 +76,14 @@ BEGIN
   RESET ROLE; 
 
   -- Documentos obligatorios
-  IF TG_OP = 'UPDATE' THEN
-    INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
-      SELECT NEW.id, id
-      FROM "Customer"."Customer_doc_type" cdt
-      WHERE "Mandatory" = TRUE
-      AND cdt."Id_type_id" = NEW."Id_type_id"
-    ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
-  END IF;
+  --?IF TG_OP = 'UPDATE' THEN
+  --?  INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
+  --?    SELECT NEW.id, id
+  --?    FROM "Customer"."Customer_doc_type" cdt
+  --?    WHERE "Mandatory" = TRUE
+  --?    AND cdt."Id_type_id" = NEW."Id_type_id"
+  --?  ON CONFLICT ("Customer_id", "Customer_doc_type_id") DO NOTHING;
+  --?END IF;
 
   -- Cambio de email
   IF (OLD."Email" IS NOT NULL AND OLD."Email" <> NEW."Email") THEN
