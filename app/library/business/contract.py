@@ -335,10 +335,13 @@ query Booking_groupById ($id: Int!) {
     Booking_deposit_actual: Deposit_actual
     Booking_incasol_deposit: Incasol_deposit
     Booking_limit: Limit
+    Booking_expenses: Expenses
+    Booking_furniture: Furniture
     Booking_final_cleaning: Final_cleaning
     Booking_cleaning_freq: Cleaning_freq
     Booking_full_flat: Full_flat
     Booking_type: Book_type
+    Booking_limit_type: Limit_type
     Contract_rent: Contract_rent { oid }
     Contract_services: Contract_services { oid }
     CustomerViaPayer_id {
