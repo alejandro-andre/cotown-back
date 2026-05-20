@@ -58,6 +58,12 @@ h3 {{ font-size: 1em; font-weight: 600; }}
 hr {{ border-top: 0px; page-break-after: always; }}
 img[alt=firma] {{ width: 200px; }}
 .signature {{ padding: 20px 0px; color: white; }}
+@media print {{
+  div.keep-together {{
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }}
+}}
 </style>
 </head>
 <body>{}</body>
@@ -900,7 +906,7 @@ def generate_doc_file(context, template):
   md = env.from_string(text).render(context)
 
   # Convert markdown to HTML
-  doc = BASE.format(markdown.markdown(md, extensions=['tables', 'attr_list']))
+  doc = BASE.format(markdown.markdown(md, extensions=['md_in_html', 'tables', 'attr_list']))
 
   # Return file
   file = BytesIO()
