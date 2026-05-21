@@ -681,7 +681,6 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE rpt."Code" IS NULL
-          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND r."Sale_type" IN ('completo', 'ambos')
           AND bd.id IS NULL
         GROUP BY 1
@@ -702,7 +701,6 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE bd.id IS NULL 
           --AND rpt."Code" NOT LIKE 'DUI%%'
-          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND r."Building_id" = %s 
           AND r."Sale_type" IN ('plazas', 'ambos')
         GROUP BY 1
@@ -721,7 +719,6 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE bd.id IS NULL 
-          AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
           AND r."Building_id" = %s
           AND r."Sale_type" IN ('completo', 'ambos')
         GROUP BY 1
