@@ -80,7 +80,7 @@ BEGIN
     INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
       SELECT NEW."Customer_id", cdt.id
       FROM "Customer"."Customer_doc_type" cdt
-      WHERE (cdt."Id_type_id" = id_type_id)
+      WHERE (cdt."Id_type_id" = NEW."Id_type_id")
         AND NOT EXISTS (
           SELECT 1
           FROM "Customer"."Customer_doc" cd
