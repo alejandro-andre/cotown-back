@@ -11,11 +11,9 @@ BEGIN
   curr_user := CURRENT_USER;
   RESET ROLE;
 
-  SELECT c."Id_type_id" 
-  INTO id_type_id 
-  FROM "Customer"."Customer" c 
-  WHERE c.id = NEW."Customer_id";
-  
+  -- Customer
+  SELECT c."Id_type_id" INTO id_type_id FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
+
   -- Documentos id obligatorios
   INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
     SELECT NEW."Customer_id", cdt.id
