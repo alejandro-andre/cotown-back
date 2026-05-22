@@ -486,9 +486,9 @@ def sql_dashboard_incasol(vars):
       c."Name" AS "Customer",
       c."Email" AS "Email",
       pm."Name" AS "Payment_method",
-      p."Name" AS "Owner",--
-      r."Code" AS "Resource",--
-      bu."Code" AS "Building"--
+      p."Name" AS "Owner",
+      r."Code" AS "Resource",
+      bu."Code" AS "Building"
     FROM "Booking"."Booking" b 
       INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
       INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
@@ -496,8 +496,7 @@ def sql_dashboard_incasol(vars):
       INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
       LEFT JOIN "Billing"."Payment_method" pm ON pm.id = c."Payment_method_id" 
       LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
-    WHERE b."Limit_type" IS NOT NULL
-      AND COALESCE(b."Incasol_deposit") >= 0
+    WHERE COALESCE(b."Incasol_deposit") >= 0
       AND (
         (b."Incasol_type" = 'depositada' AND COALESCE(b."Check_out", b."Date_to") > CURRENT_DATE - INTERVAL '5 days')
         OR b."Incasol_type" IN ('pendiente', 'reclamada')
