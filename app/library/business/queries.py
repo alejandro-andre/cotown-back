@@ -370,6 +370,7 @@ def sql_dashboard_payments(vars):
       c."Name" AS "Customer",
       c."Email" AS "Email",
       b.id AS "Booking_id", 
+      b."Status",
       b."Date_from", b."Date_to",
       r."Code" AS "Resource",
       bu."Code" AS "Building",
@@ -433,6 +434,7 @@ def sql_dashboard_deposits(vars):
   sql = f'''
     SELECT 
       b.id AS "Booking_id",
+      b."Status",
       b."Date_from", b."Date_to",
       b."Deposit_required", b."Date_deposit_required", b."Deposit_returned", b."Date_deposit_returned", 
       CASE 
@@ -478,6 +480,7 @@ def sql_dashboard_incasol(vars):
   sql = f'''
     SELECT 
       b.id AS "Booking_id",
+      b."Status",
       b."Limit_type",
       b."Contract_signed",
       COALESCE(b."Check_in", b."Date_from") AS "Date_from", 
