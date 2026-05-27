@@ -777,7 +777,7 @@ def do_send_contract(contracts, context, type):
   # Skip sending
   logger.info(context.get('Booking_type'))
   logger.info(context.get('Resource_building_city'))
-  if settings.DOCUSIGNSEND != 1 or context.get('Booking_type') or context.get('Resource_building_city') == 'Barcelona':
+  if settings.DOCUSIGNSEND != 1: # or context.get('Booking_type') or context.get('Resource_building_city') == 'Barcelona':
     logger.info('Not sent!')
     return 'n/a', 'other'
   
