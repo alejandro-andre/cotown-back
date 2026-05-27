@@ -501,9 +501,9 @@ def sql_dashboard_incasol(vars):
       LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
     WHERE COALESCE(b."Incasol_deposit") > 0
       AND (
-        (b."Incasol_type" = 'depositada' AND COALESCE(b."Check_out", b."Date_to") > CURRENT_DATE - INTERVAL '5 days')
-        OR b."Incasol_type" IN ('pendiente', 'reclamada')
-        OR b."Incasol_type" IS NULL
+        (b."Incasol_type" = 'depositada' AND COALESCE(b."Check_out", b."Date_to") < CURRENT_DATE + INTERVAL '5 days') OR
+        b."Incasol_type" IN ('pendiente', 'reclamada') OR
+        b."Incasol_type" IS NULL
       )
       {where}
     ORDER BY 1
