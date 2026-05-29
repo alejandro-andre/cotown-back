@@ -16,7 +16,7 @@ from io import BytesIO
 from library.business.export import do_export_to_excel
 from library.business.occupancy import do_occupancy
 from library.business.download import do_download
-from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_dashboard_payments, q_dashboard_deposits, q_dashboard_incasol, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones, sql_dashboard_payments, sql_dashboard_deposits
+from library.business.queries import q_available_resources, q_booking_status, q_dashboard_operaciones, q_dashboard_lau, q_dashboard_payments, q_dashboard_deposits, q_dashboard_incasol, q_prev_next, q_labels, q_questionnaire, sql_dashboard_operaciones, sql_dashboard_payments, sql_dashboard_deposits, sql_dashboard_incasol
 
 # Logging
 import logging
@@ -222,6 +222,10 @@ def req_dashboard_to_excel(status=None):
   # Deposits?
   elif status == 'dep':
     external_sql = sql_dashboard_deposits(request.args)
+
+  # Incasol?
+  elif status == 'inc':
+    external_sql = sql_dashboard_incasol(request.args)
 
   # Operations
   else:

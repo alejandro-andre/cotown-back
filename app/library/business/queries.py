@@ -482,7 +482,7 @@ def sql_dashboard_incasol(vars):
       b.id AS "Booking_id",
       b."Status",
       b."Limit_type",
-      b."Contract_signed",
+      b."Contract_signed"::Date,
       COALESCE(b."Check_in", b."Date_from") AS "Date_from", 
       COALESCE(b."Check_out", b."Date_to") AS "Date_to",
       b."Deposit_required", b."Incasol_deposit", b."Incasol_type",

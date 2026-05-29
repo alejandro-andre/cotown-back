@@ -1,0 +1,12 @@
+[
+  "Booking_id",
+  "Date_from",
+  "Date_to",
+  "Status",
+  "Resource",
+  "Customer",
+  "Email",
+  "Contract_signed",
+  "Incasol_deposit",
+  "Incasol_type"
+]
