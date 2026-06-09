@@ -31,7 +31,9 @@ SELECT
     WHEN b."Unlawful" THEN 'Tentative'
     ELSE 'OTB'
   END AS "data_type",
-  '' AS "discount_type"
+  '' AS "discount_type",
+  NULL::varchar AS "book_type",
+  NULL::varchar AS "limit_type"
 FROM "Booking"."Booking_other" b
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id" 

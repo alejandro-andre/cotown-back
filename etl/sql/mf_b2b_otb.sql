@@ -37,9 +37,11 @@ SELECT
   --'B2B' AS "income_type",
   CASE
     WHEN b."Status" IN ('grupobloqueado') THEN 'Tentative'
-    ELSE 'OTB' 
+    ELSE 'OTB'
   END AS "data_type",
-  NULL AS "discount_type"
+  NULL AS "discount_type",
+  b."Book_type"::text AS "book_type",
+  b."Limit_type"::text AS "limit_type"
 FROM "Booking"."Booking_group_price" bp 
   INNER JOIN "Booking"."Booking_group" b ON b.id = bp."Booking_id" 
   INNER JOIN "Building"."Building" bu on bu.id = b."Building_id" 

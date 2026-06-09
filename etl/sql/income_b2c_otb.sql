@@ -27,15 +27,17 @@ SELECT
   "Rent_rack" AS "price",
   --'B2C' AS "income_type",
   CASE
-    WHEN b."Status" = 'confirmada' THEN 'Tentative' 
-    ELSE 'OTB' 
+    WHEN b."Status" = 'confirmada' THEN 'Tentative'
+    ELSE 'OTB'
   END AS "data_type",
-  dtp."Name_en" AS "discount_type"
-FROM "Booking"."Booking_price" bp 
-  INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
-  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  dtp."Name_en" AS "discount_type",
+  b."Book_type"::text AS "book_type",
+  b."Limit_type"::text AS "limit_type"
+FROM "Booking"."Booking_price" bp
+  INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
+  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
-  INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id" 
+  INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
   LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
 WHERE bp."Rent_date" >= CURRENT_DATE
@@ -45,7 +47,7 @@ WHERE bp."Rent_date" >= CURRENT_DATE
 UNION
 
 -- Services
-SELECT 
+SELECT
   CONCAT('ICOS', bp.id) AS "id",
   b.id AS "doc_id",
   '-' AS "doc_type",
@@ -65,24 +67,26 @@ SELECT
     WHEN r."Service_id" = r."Owner_id" THEN 'Monthly rent'
     ELSE 'Monthly services'
   END "product",
-  CASE 
+  CASE
   	WHEN bu."Building_type_id" = 3 THEN (bp."Services" + COALESCE(bp."Services_discount", 0)) / 1.1
   	ELSE bp."Services" + COALESCE(bp."Services_discount", 0)
   END AS "amount",
-  CASE 
+  CASE
   	WHEN bu."Building_type_id" = 3 THEN bp."Services"/ 1.1
   	ELSE bp."Services"
   END AS "rate",
   "Services_rack" AS "price",
   --'B2C' AS "income_type",
   CASE
-    WHEN b."Status" = 'confirmada' THEN 'Tentative' 
-    ELSE 'OTB' 
+    WHEN b."Status" = 'confirmada' THEN 'Tentative'
+    ELSE 'OTB'
   END AS "data_type",
-  dtp."Name_en" AS "discount_type"
-FROM "Booking"."Booking_price" bp 
-  INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id" 
-  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  dtp."Name_en" AS "discount_type",
+  b."Book_type"::text AS "book_type",
+  b."Limit_type"::text AS "limit_type"
+FROM "Booking"."Booking_price" bp
+  INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
+  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
   INNER JOIN "Provider"."Provider" p ON p.id = r."Owner_id"
   LEFT JOIN "Booking"."Booking_discount_type" dtp ON dtp.id = bp."Discount_type_id"
@@ -116,19 +120,21 @@ SELECT
   bs."Amount" / (1 + (t."Value" / 100)) AS "rate",
   bs."Amount" / (1 + (t."Value" / 100)) AS "price",
   CASE
-    WHEN b."Status" = 'confirmada' THEN 'Tentative' 
-    ELSE 'OTB' 
+    WHEN b."Status" = 'confirmada' THEN 'Tentative'
+    ELSE 'OTB'
   END AS "data_type",
-  NULL AS "discount_type"
-FROM "Booking"."Booking_service" bs 
-  INNER JOIN "Booking"."Booking" b ON b.id = bs."Booking_id" 
+  NULL AS "discount_type",
+  b."Book_type"::text AS "book_type",
+  b."Limit_type"::text AS "limit_type"
+FROM "Booking"."Booking_service" bs
+  INNER JOIN "Booking"."Booking" b ON b.id = bs."Booking_id"
   INNER JOIN "Provider"."Provider" p ON p.id = 10
-  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id" 
+  INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
   INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
-  INNER JOIN "Billing"."Product" pr ON pr.id = bs."Product_id" 
+  INNER JOIN "Billing"."Product" pr ON pr.id = bs."Product_id"
   INNER JOIN "Billing"."Tax" t ON t.id = bs."Tax_id"
   LEFT JOIN "Provider"."Agent" a ON a.id = b."Agent_id"
-WHERE bs."Invoice_services_id" IS NULL 
+WHERE bs."Invoice_services_id" IS NULL
   AND bs."Billing_date_from" > CURRENT_DATE
   AND bs."Extra_type" <> 'recurrente'
   AND bs."Amount" > 0
@@ -143,7 +149,7 @@ SELECT
   '-' AS "doc_type",
   'C' || bs."Booking_id"::text AS "booking",
   NULL AS "marketplace",
-  d.dt AS "date", -- día 1 de cada mes
+  d.dt AS "date",
   p."Document" AS "provider",
   b."Customer_id" AS "customer",
   r."Code" AS "resource",
@@ -161,7 +167,9 @@ SELECT
     WHEN b."Status" = 'confirmada' THEN 'Tentative'
     ELSE 'OTB'
   END AS "data_type",
-  NULL AS "discount_type"
+  NULL AS "discount_type",
+  b."Book_type"::text AS "book_type",
+  b."Limit_type"::text AS "limit_type"
 FROM "Booking"."Booking_service" bs
   JOIN "Booking"."Booking" b ON b.id = bs."Booking_id"
   JOIN "Provider"."Provider" p ON p.id = 10

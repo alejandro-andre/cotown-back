@@ -158,7 +158,7 @@ CREATE TABLE gold.resource (
   "type" varchar NOT NULL,
   "owner" varchar NOT NULL,
   "location" varchar NOT NULL,
-  "estabilised_date" date DEFAULT NULL, 
+  "estabilised_date" date DEFAULT NULL,
   "building" varchar NOT NULL,
   "segment" varchar NOT NULL,
   "flat" varchar DEFAULT NULL,
@@ -169,6 +169,24 @@ CREATE TABLE gold.resource (
   "area_woc" numeric DEFAULT NULL,
   "rooms" numeric DEFAULT NULL,
   "beds" numeric DEFAULT NULL,
+  "renovation_date" date DEFAULT NULL,
+  "energy_certificate" varchar DEFAULT NULL,
+  "energy_certificate_rate" varchar DEFAULT NULL,
+  "last_lau_date" date DEFAULT NULL,
+  "last_lau_free_date" date DEFAULT NULL,
+  "last_lau_rent" numeric(8,2) DEFAULT NULL,
+  "max_lau_rent" numeric(8,2) DEFAULT NULL,
+  "index_rent" numeric(8,2) DEFAULT NULL,
+  "limit_type" varchar DEFAULT NULL,
+  "max_rent" numeric(8,2) DEFAULT NULL,
+  "max_services" numeric(8,2) DEFAULT NULL,
+  "max_expenses" numeric(8,2) DEFAULT NULL,
+  "max_furniture" numeric(8,2) DEFAULT NULL,
+  "big_renovation_date" date DEFAULT NULL,
+  "occupancy_certificate" varchar DEFAULT NULL,
+  "max_utility" numeric(8,2) DEFAULT NULL,
+  "hoa" bool DEFAULT NULL,
+  "lau_applicable" bool DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT resource_pk PRIMARY KEY ("id"),
 CONSTRAINT resource_owner_fk FOREIGN KEY ("owner") REFERENCES gold.owner("id"),
@@ -260,6 +278,8 @@ CREATE TABLE gold.income (
   "rate" numeric NOT NULL,              -- Rent without discounts
   "price" numeric DEFAULT NULL,         -- Standard monthly rate
   "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
+  "book_type" varchar DEFAULT NULL,
+  "limit_type" varchar DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT income_pk PRIMARY KEY ("id")
 );
@@ -303,6 +323,12 @@ CREATE TABLE gold.booking (
   "tax" numeric NULL,
   "booking_fee" numeric NULL,
   "management_fee" numeric NULL,
+  "book_type" varchar DEFAULT NULL,
+  "expenses" numeric(8,2) DEFAULT NULL,
+  "furniture" numeric(8,2) DEFAULT NULL,
+  "incasol_deposit" numeric(8,2) DEFAULT NULL,
+  "incasol_type" varchar DEFAULT NULL,
+  "limit_type" varchar DEFAULT NULL,
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT booking_pk PRIMARY KEY ("id")
 );
