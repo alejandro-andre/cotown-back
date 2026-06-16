@@ -96,6 +96,7 @@ LEAD_FIELDS = [
         "Madrid": 76,
         "Bilbao": 77,
     }},
+    {"name": "budget",       "key": "cf5fcca01987f6e4d4afb8135f8d3964692f9ca4"},
     {"name": "place_type",   "key": "7faa69bfe88c3b4b66eeec11b5689e18759f9c53"},
     {"name": "date_from",    "key": "fa49ccea3f47eb227cad47d97f7a1b45369016ef"},
     {"name": "date_to",      "key": "0000cd62bd55a463fe0883b6bd03e75d0d04c412"},
@@ -171,6 +172,8 @@ def prepare_lead(data):
             key, value = resolved
             if value is not None:
                 result[key] = value
+                if field.split('-')[0] == 'budget':
+                    result[key + '_currency'] = 'EUR'
     return result
 
 
@@ -184,10 +187,6 @@ def prepare_deal(data):
         "pipeline_id": 3,
         "stage_id":    12,
     }
-    budget = data.get('budget')
-    if budget and budget != "null":
-        result['value']    = budget
-        result['currency'] = 'EUR'
     for field, raw in data.items():
         if raw is None or raw == "null":
             continue
@@ -196,6 +195,8 @@ def prepare_deal(data):
             key, value = resolved
             if value is not None:
                 result[key] = value
+                if field.split('-')[0] == 'budget':
+                    result[key + '_currency'] = 'EUR'
     return result
 
 
