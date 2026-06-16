@@ -169,9 +169,9 @@ def q_typologies(dbClient, segment):
         WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'completo') THEN 'ap'
       END as "Sale_type",
       CASE
-        WHEN rpt."Code" LIKE 'I\_%' THEN 'ind'
-        WHEN rpt."Code" LIKE 'D\_%' THEN 'sha'
-        WHEN rpt."Code" LIKE 'DUI\_%' THEN 'idu'
+        WHEN rpt."Code" LIKE 'I\\_%' THEN 'ind'
+        WHEN rpt."Code" LIKE 'D\\_%' THEN 'sha'
+        WHEN rpt."Code" LIKE 'DUI\\_%' THEN 'idu'
         ELSE 'apt'
       END as "Room_type",
       COUNT(*)
