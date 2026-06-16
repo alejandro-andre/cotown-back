@@ -144,8 +144,10 @@ def prepare_person(data):
     }
     if data.get('birth_date'):
         result['birthday'] = data['birth_date']
-    for field in data:
-        resolved = resolve(field.split('-')[0], data[field])
+    for field, raw in data.items():
+        if raw is None or raw == "null":
+            continue
+        resolved = resolve(field.split('-')[0], raw)
         if resolved:
             key, value = resolved
             if value is not None:
@@ -161,8 +163,10 @@ def prepare_lead(data):
         "person_id": data['person_id'],
         "channel":   3,
     }
-    for field in data:
-        resolved = resolve(field.split('-')[0], data[field], LEAD_FIELDS)
+    for field, raw in data.items():
+        if raw is None or raw == "null":
+            continue
+        resolved = resolve(field.split('-')[0], raw, LEAD_FIELDS)
         if resolved:
             key, value = resolved
             if value is not None:
@@ -180,8 +184,10 @@ def prepare_deal(data):
         "pipeline_id": 3,
         "stage_id":    12,
     }
-    for field in data:
-        resolved = resolve(field.split('-')[0], data[field], LEAD_FIELDS)
+    for field, raw in data.items():
+        if raw is None or raw == "null":
+            continue
+        resolved = resolve(field.split('-')[0], raw, LEAD_FIELDS)
         if resolved:
             key, value = resolved
             if value is not None:
