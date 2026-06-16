@@ -29,19 +29,18 @@ def beds_real_calc(dbClient):
     beds_cap = 0.0 # Capex beds
     rn_avail = 0.0 # Available room nights
     rn_conv  = 0.0 # Convertible room nights
-    convert  = ''
 
     # Date
     date = row['date']
 
     # Building not active
     if date < row['Start_date']:
-      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
+      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
 
     # Resource not existent
     if row['Date_from'] and row['Date_to']:
       if row['Date_from'] <= date <= row['Date_to']:
-        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
+        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
 
     # All flat non availability rows
     availability = df_avail[df_avail['Resource_id'] == row['flat']]
@@ -61,29 +60,19 @@ def beds_real_calc(dbClient):
 
         # Pre capex
         elif r['Status_id'] == 3:
-          convert  = 'PRECAPEX'
           beds_pot = 1.0
           beds_cnv = 1.0
           beds_pre = 1.0
           rn_conv = calendar.monthrange(date.year, date.month)[1]
 
-        # Capex
-        elif r['Status_id'] == 4:
-          convert  = 'CAPEX'
+        # Capex or other convertible
+        elif r['Status_id'] == 4 or r['Conv']:
           beds_pot = 1.0
           beds_cnv = 1.0
           beds_cap = 1.0
           rn_conv = calendar.monthrange(date.year, date.month)[1]
 
-        # Other
-        elif r['Conv']:
-          convert  = 'N/D'
-          beds_pot = 1.0
-          beds_cnv = 1.0
-          beds_cap = 1.0
-          rn_conv = calendar.monthrange(date.year, date.month)[1]
-
-        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
+        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
 
 
     # Bed is available (and convertible, and potential)
@@ -94,7 +83,7 @@ def beds_real_calc(dbClient):
     rn_conv  = calendar.monthrange(date.year, date.month)[1]
 
     # Return values
-    return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0]
+    return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
   
   # Log
   logger.info('Calculating real beds...')
@@ -110,6 +99,7 @@ def beds_real_calc(dbClient):
     r."Pre_capex_long_term" AS "val_current",
     r."Post_capex" AS "val_residential",
     r."Post_capex" AS "val_cosharing",
+    r."Limit_type" AS "limit_type",
     ra."Date_from",
     ra."Date_to",
     CASE
@@ -136,6 +126,7 @@ def beds_real_calc(dbClient):
     r."Pre_capex_long_term" AS "val_current",
     r."Post_capex" AS "val_residential",
     r."Post_capex" AS "val_cosharing",
+    r."Limit_type" AS "limit_type",
     ra."Date_from",
     ra."Date_to",
     CASE
@@ -163,6 +154,7 @@ def beds_real_calc(dbClient):
     r."Pre_capex_long_term" AS "val_current",
     r."Post_capex" AS "val_residential",
     r."Post_capex" AS "val_cosharing",
+    r."Limit_type" AS "limit_type",
     ra."Date_from",
     ra."Date_to",
     CASE
@@ -227,7 +219,7 @@ def beds_real_calc(dbClient):
   df = pd.merge(df_res, df_dates, on='key').drop('key', axis=1)
 
   # Beds and available nights
-  df[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', ]] = df.apply(count_real, axis=1, result_type='expand')
+  df[['beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type', ]] = df.apply(count_real, axis=1, result_type='expand')
   df['data_type'] = 'Real'
 
   # Remove non existing beds
@@ -245,7 +237,7 @@ def beds_real_calc(dbClient):
 def beds_real(dbClient):
 
   df = beds_real_calc(dbClient)
-  df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
+  df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type'])  
   logger.info('- Beds saved')
 
 
@@ -309,5 +301,5 @@ def beds_forecast_calc(dbClient):
 def beds_forecast(dbClient):
 
   df = beds_forecast_calc(dbClient)
-  df.to_csv('csv/beds_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible','val_current','val_residential','val_cosharing'])  
+  df.to_csv('csv/beds_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type'])  
   logger.info('- Beds saved')

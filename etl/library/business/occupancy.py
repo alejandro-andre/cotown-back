@@ -95,7 +95,7 @@ def occupancy_real_calc(dbClient):
         END AS "stay_length"
     FROM "Booking"."Booking_detail" b
     INNER JOIN (
-        SELECT r."Code", r.id
+        SELECT r."Code", r.id, r."Limit_type" AS "limit_type"
         FROM "Resource"."Resource" r
         WHERE NOT EXISTS ( SELECT id FROM "Resource"."Resource" rr WHERE rr."Code" LIKE CONCAT(r."Code", '.%') )
     ) AS r ON r.id = b."Resource_id"
@@ -158,7 +158,7 @@ def occupancy_real_calc(dbClient):
 def occupancy_real(dbClient):
 
   df = occupancy_real_calc(dbClient)
-  df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
   logger.info('- Occupancy saved')
 
 
@@ -176,9 +176,10 @@ def occupancy_forecast_calc(dbClient):
 
   # Forecast
   sql = f'''
-    SELECT 
+    SELECT
       r."Code" as "resource", rf."Date_price" as "date", rf."Beds" as "beds", rf."Occupancy" as "occupancy",
-      rf."Pct_long", rf."Pct_medium", rf."Pct_short", 100 - rf."Pct_long" - rf."Pct_medium" - rf."Pct_short" as "Pct_group"
+      rf."Pct_long", rf."Pct_medium", rf."Pct_short", 100 - rf."Pct_long" - rf."Pct_medium" - rf."Pct_short" as "Pct_group",
+      r."Limit_type" AS "limit_type"
     FROM "Resource"."Resource_forecast" rf
       INNER JOIN "Resource"."Resource" r ON r.id = rf."Resource_id"
     WHERE rf."Beds" > 0
@@ -206,14 +207,14 @@ def occupancy_forecast_calc(dbClient):
       'Pct_group': 'GROUP',
     }
   )
-  base_cols = ['resource', 'date', 'beds', 'occupancy']
+  base_cols = ['resource', 'date', 'beds', 'occupancy', 'limit_type']
   df = (
     df[base_cols + ['LONG', 'MEDIUM', 'SHORT', 'GROUP']]
       .set_index(base_cols)
       .stack()
       .reset_index()
   )
-  df.columns = ['resource', 'date', 'beds', 'occupancy', 'stay_length', 'pct']
+  df.columns = ['resource', 'date', 'beds', 'occupancy', 'limit_type', 'stay_length', 'pct']
 
   # Ocuppied and sold nights
   df['date'] = pd.to_datetime(df['date'], errors='coerce')
@@ -240,7 +241,7 @@ def occupancy_forecast_calc(dbClient):
 def occupancy_forecast(dbClient):
 
   df = occupancy_forecast_calc(dbClient)
-  df.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  df.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
   logger.info('- Occupancy saved')
 
 
@@ -330,5 +331,5 @@ def occupancy_stabilised_calc(dbClient):
 def occupancy_stabilised(dbClient):
 
   df = occupancy_stabilised_calc(dbClient)
-  df.to_csv('csv/occupancy_stabilised.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length'])
+  df.to_csv('csv/occupancy_stabilised.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
   logger.info('- Occupancy saved')

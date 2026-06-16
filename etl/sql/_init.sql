@@ -236,6 +236,7 @@ CREATE TABLE gold.beds (
   "val_current" numeric DEFAULT NULL,
   "val_residential" numeric DEFAULT NULL,
   "val_cosharing" numeric DEFAULT NULL,
+  "limit_type" varchar DEFAULT NULL,    -- Libre, LAU, Indice...
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT beds_pk PRIMARY KEY ("id"),
 CONSTRAINT beds_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")
@@ -254,6 +255,7 @@ CREATE TABLE gold.occupancy (
   "sold" numeric NOT NULL,
   "sold_t" numeric NOT NULL,
   "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
+  "limit_type" varchar DEFAULT NULL,    -- Libre, LAU, Indice...
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT occupancy_pk PRIMARY KEY ("id"),
 CONSTRAINT occupancy_resource_fk FOREIGN KEY ("resource") REFERENCES gold.resource("id")

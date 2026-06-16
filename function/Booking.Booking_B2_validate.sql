@@ -117,7 +117,7 @@ BEGIN
     RAISE exception '!!!Customer without fiscal data!!!Cliente sin datos fiscales!!!';
   END IF;
   IF black_list = TRUE THEN
-    IF NEW."Ignore_black_list" = TRUE 
+    IF NEW."Ignore_black_list" = TRUE OR NEW."Status" IN ('descartada', 'descartadapagada', 'caducada', 'cancelada', 'inhouse', 'checkout', 'devolvergarantia', 'finalizada', 'revision')
     THEN
     ELSE
       RAISE exception '!!!Customer on black list: "%"!!!Cliente en lista negra: "%"!!!', black_reason, black_reason;
