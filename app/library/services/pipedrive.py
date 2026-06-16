@@ -184,6 +184,10 @@ def prepare_deal(data):
         "pipeline_id": 3,
         "stage_id":    12,
     }
+    budget = data.get('budget')
+    if budget and budget != "null":
+        result['value']    = budget
+        result['currency'] = 'EUR'
     for field, raw in data.items():
         if raw is None or raw == "null":
             continue
