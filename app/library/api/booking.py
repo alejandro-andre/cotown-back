@@ -13,11 +13,9 @@ import locale
 from flask import g, request, session, send_from_directory
 
 # Cotown includes - services
-from library.services.config import settings
-from library.services.ac import add_contact
+from library.services.pipedrive import add_info
 
 # Cotown includes - business functions
-from library.business.send_email import smtp_mail
 from library.business.booking import *
 
 # Logging
@@ -112,53 +110,15 @@ def req_form():
     # Get form fields
     contact = {}
     for item in request.form:
-      contact[item] = request.form.get(item)
+        contact[item] = request.form.get(item)
 
-    # Attachment?
-    file = None
-    if 'file' in request.files:
-      file = request.files['file']
-      if file.filename == '':
-        file = None
+    # Add to Pipedrive
+    try:
+        add_info(contact)
+    except Exception:
+        logger.exception("Pipedrive form error")
 
-    # Add contact
-    listid = contact.get('listid', None)
-    id = str(add_contact(contact, listid))
-
-    # Prepare and send email
-    forms = {
-      "27": "Disponibilidad",
-      "28": "Visita",
-      "29": "Contacto",
-      "30": "Ventajas",
-      "31": "Equipo"
-    }
-    fields = {
-      "email": "Email",
-      "firstName": "Nombre",
-      "lastName": "Apellidos",
-      "phone": "Teléfono",
-      "1": "Edad",
-      "3": "Nacionalidad",
-      "27": "Empresa",
-      "95": "Presupuesto",
-      "96": "Desde",
-      "97": "Hasta",
-      "98": "Motivo",
-      "99": "Tipo de plaza",
-      "100": "Edificio",
-      "101": "Ciudad",
-      "180": "Fecha visita",
-      "181": "Mensaje"
-    }
-    message = '<h2>' + contact['186'] + '</h2><h3>Formulario: ' + forms[str(listid)] + '</h3>'
-    for item in contact:
-      if fields.get(item):
-        message = message + '<li><b>' + fields[item] + '</b>: ' + contact[item] + '</li>'
-    smtp_mail(settings.EMAIL_TO, 'Formulario ' + forms[str(listid)], message, file=file)
-
-    # Return contact ID
-    return id
+    return '', 200
 
 
 # ###################################################
@@ -211,7 +171,7 @@ def login(usr, pwd):
 # Web register
 # ---------------------------------------------------
 
-def register(segment):
+def register():
 
   # Insert customer
   phones = None
@@ -246,26 +206,20 @@ def register(segment):
   customer['id'] = id
   logged, customer = login(customer['Email'], 'Passw0rd!')
 
-  # Add to AC
-  contact = {
-    'firstName': customer['Name'],
-    'lastName': '',
-    'email': customer['Email'],
-    'phone': customer['Phones'],
-    '13': customer['Birth_date'],
-    '3': customer['Country']['Name'] if customer['Country'] else '',
-    '2': customer['Gender']['Name'] if customer['Gender'] else '',
-    '185': 'Web',
-    '186': 'VSH' if segment == 1 else 'COTOWN',
-    '188': 'B2C',
-    '168': get_var('utm_campaign', save=False),
-    '169': get_var('utm_medium', save=False),
-    '170': get_var('utm_source', save=False),
-    '173': get_var('gclid', save=False)
-  }
-  logger.info(contact)
-  add_contact(contact)
-  
+  try:
+    crm_data = {
+      'first_name':  customer['Name'],
+      'last_name':   '',
+      'email':       customer['Email'],
+      'phone':       customer['Phones'] or '',
+      'birth_date':  customer['Birth_date'],
+      'nationality': customer['Country']['Name'] if customer.get('Country') else '',
+      'gender':      str(customer['Gender_id']) if customer.get('Gender_id') else '',
+    }
+    add_info(crm_data)
+  except Exception:
+    logger.exception("Pipedrive register error")
+
   # Return
   return logged, customer, None
 
@@ -431,7 +385,7 @@ def req_pub_booking(step):
     elif step == 4 and action == 'register':
        
       # Try to register
-      logged, customer, error_register = register(segment)
+      logged, customer, error_register = register()
       session['logged'] = logged
       session['customer'] = customer
       step = 3

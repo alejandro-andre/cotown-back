@@ -92,7 +92,8 @@ def occupancy_real_calc(dbClient):
           WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 3 THEN 'SHORT'
           WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
           ELSE 'LONG'
-        END AS "stay_length"
+        END AS "stay_length",
+        r."limit_type"
     FROM "Booking"."Booking_detail" b
     INNER JOIN (
         SELECT r."Code", r.id, r."Limit_type" AS "limit_type"
