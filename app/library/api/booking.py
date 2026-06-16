@@ -399,8 +399,8 @@ def req_pub_booking(step):
         'Resource_type': 'piso' if acom_type == 'ap' else 'habitacion',
         'Flat_type_id': place_type_id if acom_type == 'ap' else flat_type_id,
         'Place_type_id': None if acom_type == 'ap' else place_type_id,
-        'Reason_id': get_var('Reason_id', None),
-        'School_id': get_var('School_id', None),
+        'Reason_id': get_var('Reason_id', None) or None,
+        'School_id': get_var('School_id', None) or None,
         'Other_school': get_var('Other_school', None),
         'Company': get_var('Company', None),
         'Comments': summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + (' / ' + extras) if extras else ''
@@ -409,33 +409,40 @@ def req_pub_booking(step):
 
       # Error?
       if error:
-        return None, customer, error # process_error(error.pgerror)
+        error_book = process_error(error.pgerror)
+        genders   = q_genders(g.dbClient, lang)
+        reasons   = q_reasons(g.dbClient, lang)
+        schools   = q_schools(g.dbClient, lang)
+        countries = q_countries(g.dbClient, lang)
+        id_types  = q_id_types(g.dbClient, lang)
+        step = 3
 
-      # CRM
-      try:
-        _brand = {'2': 'Cotown', '1': 'Vanguard'}.get(str(segment), '')
-        crm_data = {
-          'first_name':  customer['Name'],
-          'last_name':   '',
-          'email':       customer['Email'],
-          'phone':       customer['Phones'] or '',
-          'birth_date':  customer['Birth_date'],
-          'nationality': customer['Country']['Name'] if customer.get('Country') else '',
-          'gender':      str(customer['Gender_id']) if customer.get('Gender_id') else '',
-          'language':    lang,
-          'date_from':   date_from,
-          'date_to':     date_to,
-          'city':        city['Name'],
-          'building':    summary['Building_code'] if summary else '',
-          'place_type':  summary['Place_type_code'] if summary else '',
-          'budget-max':  int(float(summary['Rent']) + float(summary['Services'])) if summary else None,
-          'reason':      get_var('Reason_id', save=False),
-          'brand':       _brand,
-          'web':         _brand,
-        }
-        add_info(crm_data)
-      except Exception:
-        logger.exception("Pipedrive booking error")
+      else:
+        # CRM
+        try:
+          _brand = {'2': 'Cotown', '1': 'Vanguard'}.get(str(segment), '')
+          crm_data = {
+            'first_name':  customer['Name'],
+            'last_name':   '',
+            'email':       customer['Email'],
+            'phone':       customer['Phones'] or '',
+            'birth_date':  customer['Birth_date'],
+            'nationality': customer['Country']['Name'] if customer.get('Country') else '',
+            'gender':      str(customer['Gender_id']) if customer.get('Gender_id') else '',
+            'language':    lang,
+            'date_from':   date_from,
+            'date_to':     date_to,
+            'city':        city['Name'],
+            'building':    summary['Building_code'] if summary else '',
+            'place_type':  summary['Place_type_code'] if summary else '',
+            'budget-max':  int(float(summary['Rent']) + float(summary['Services'])) if summary else None,
+            'reason':      get_var('Reason_id', save=False),
+            'brand':       _brand,
+            'web':         _brand,
+          }
+          add_info(crm_data)
+        except Exception:
+          logger.exception("Pipedrive booking error")
 
     # Add your custom filter to Jinja2 environment
     g.env.filters['number'] = format_number
