@@ -159,6 +159,7 @@ def prepare_lead(data):
     result = {
         "title":     name,
         "person_id": data['person_id'],
+        "channel":   3,
     }
     for field in data:
         resolved = resolve(field.split('-')[0], data[field], LEAD_FIELDS)
@@ -171,10 +172,13 @@ def prepare_lead(data):
 
 def prepare_deal(data):
 
+    name = (data.get('first_name', '') + ' ' + data.get('last_name', '')).strip() or data.get('email', 'Deal')
     result = {
-        "person_id": data['person_id'],
+        "title":       name,
+        "person_id":   data['person_id'],
+        "channel":     3,
         "pipeline_id": 3,
-        "stage_id": 12,
+        "stage_id":    12,
     }
     for field in data:
         resolved = resolve(field.split('-')[0], data[field], LEAD_FIELDS)
