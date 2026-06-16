@@ -286,7 +286,8 @@ def beds_forecast_calc(dbClient):
   df['beds_cap']        = 0
   df['val_current']     = 0
   df['val_residential'] = 0
-  df['val_cosharing']   = 0 
+  df['val_cosharing']   = 0
+  df['limit_type']      = None
   df['data_type'] = 'Forecast'
 
   # Index

@@ -178,8 +178,7 @@ def occupancy_forecast_calc(dbClient):
   sql = f'''
     SELECT
       r."Code" as "resource", rf."Date_price" as "date", rf."Beds" as "beds", rf."Occupancy" as "occupancy",
-      rf."Pct_long", rf."Pct_medium", rf."Pct_short", 100 - rf."Pct_long" - rf."Pct_medium" - rf."Pct_short" as "Pct_group",
-      r."Limit_type" AS "limit_type"
+      rf."Pct_long", rf."Pct_medium", rf."Pct_short", 100 - rf."Pct_long" - rf."Pct_medium" - rf."Pct_short" as "Pct_group"
     FROM "Resource"."Resource_forecast" rf
       INNER JOIN "Resource"."Resource" r ON r.id = rf."Resource_id"
     WHERE rf."Beds" > 0
@@ -207,14 +206,14 @@ def occupancy_forecast_calc(dbClient):
       'Pct_group': 'GROUP',
     }
   )
-  base_cols = ['resource', 'date', 'beds', 'occupancy', 'limit_type']
+  base_cols = ['resource', 'date', 'beds', 'occupancy']
   df = (
     df[base_cols + ['LONG', 'MEDIUM', 'SHORT', 'GROUP']]
       .set_index(base_cols)
       .stack()
       .reset_index()
   )
-  df.columns = ['resource', 'date', 'beds', 'occupancy', 'limit_type', 'stay_length', 'pct']
+  df.columns = ['resource', 'date', 'beds', 'occupancy', 'stay_length', 'pct']
 
   # Ocuppied and sold nights
   df['date'] = pd.to_datetime(df['date'], errors='coerce')
@@ -227,6 +226,7 @@ def occupancy_forecast_calc(dbClient):
   df['occupied_t'] = 0
   df['sold_t']     = 0
   df['booking']    = 0
+  df['limit_type'] = None
   df['data_type']  = 'Forecast'
 
   # Index
@@ -310,11 +310,13 @@ def occupancy_stabilised_calc(dbClient):
   df_sta['sold_t']      = 0
   df_sta['booking']     = 0
   df_sta['stay_length'] = ''
+  df_sta['limit_type']  = None
   df_sta['data_type']   = 'Stabilised Available'
   df_stc['occupied_t']  = 0
   df_stc['sold_t']      = 0
   df_stc['booking']     = 0
   df_stc['stay_length'] = ''
+  df_stc['limit_type']  = None
   df_stc['data_type']   = 'Stabilised Convertible'
 
   # Indexes
