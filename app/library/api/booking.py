@@ -206,20 +206,6 @@ def register():
   customer['id'] = id
   logged, customer = login(customer['Email'], 'Passw0rd!')
 
-  try:
-    crm_data = {
-      'first_name':  customer['Name'],
-      'last_name':   '',
-      'email':       customer['Email'],
-      'phone':       customer['Phones'] or '',
-      'birth_date':  customer['Birth_date'],
-      'nationality': customer['Country']['Name'] if customer.get('Country') else '',
-      'gender':      str(customer['Gender_id']) if customer.get('Gender_id') else '',
-    }
-    add_info(crm_data)
-  except Exception:
-    logger.exception("Pipedrive register error")
-
   # Return
   return logged, customer, None
 
@@ -423,7 +409,33 @@ def req_pub_booking(step):
 
       # Error?
       if error:
-        return None, customer, error # process_error(error.pgerror) 
+        return None, customer, error # process_error(error.pgerror)
+
+      # CRM
+      try:
+        _brand = {'2': 'Cotown', '1': 'Vanguard'}.get(str(segment), '')
+        crm_data = {
+          'first_name':  customer['Name'],
+          'last_name':   '',
+          'email':       customer['Email'],
+          'phone':       customer['Phones'] or '',
+          'birth_date':  customer['Birth_date'],
+          'nationality': customer['Country']['Name'] if customer.get('Country') else '',
+          'gender':      str(customer['Gender_id']) if customer.get('Gender_id') else '',
+          'language':    lang,
+          'date_from':   date_from,
+          'date_to':     date_to,
+          'city':        city['Name'],
+          'building':    summary['Building_code'] if summary else '',
+          'place_type':  summary['Place_type_code'] if summary else '',
+          'budget-max':  int(float(summary['Rent']) + float(summary['Services'])) if summary else None,
+          'reason':      get_var('Reason_id', save=False),
+          'brand':       _brand,
+          'web':         _brand,
+        }
+        add_info(crm_data)
+      except Exception:
+        logger.exception("Pipedrive booking error")
 
     # Add your custom filter to Jinja2 environment
     g.env.filters['number'] = format_number

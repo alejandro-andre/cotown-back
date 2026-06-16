@@ -347,12 +347,14 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
   if acom_type == 'ap':
     sql = f'''
       SELECT DISTINCT
-        b."Name" as "Building_name", rfst."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
+        b."Name" as "Building_name", b."Code" AS "Building_code",
+        rfst."Name{l}" AS "Place_type_name", NULL AS "Place_type_code",
+        rft."Name{l}" AS "Flat_type_name",
         r."Billing_type",
         ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
-        COALESCE(pd."Services", 0) AS "Services", 
+        COALESCE(pd."Services", 0) AS "Services",
         COALESCE(pd."Limit", 0) as "Limit",
-        COALESCE(pd."Deposit", 0) AS "Deposit", 
+        COALESCE(pd."Deposit", 0) AS "Deposit",
         COALESCE(pd."Booking_fee", 0) AS "Booking_fee",
         COALESCE(pd."Second_resident", 0) AS "Second_resident",
         COALESCE(pd."Final_cleaning", 0) AS "Final_cleaning"
@@ -362,7 +364,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
         INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id)
-      WHERE (pd."Year" = %s or pd."Year" = %s) 
+      WHERE (pd."Year" = %s or pd."Year" = %s)
         AND b.id = %s
         AND rft.id = %s
         AND rfst.id = %s
@@ -371,12 +373,14 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
   else:
     sql = f'''
       SELECT DISTINCT
-        b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
+        b."Name" as "Building_name", b."Code" AS "Building_code",
+        rpt."Name{l}" AS "Place_type_name", rpt."Code" AS "Place_type_code",
+        rft."Name{l}" AS "Flat_type_name",
         r."Billing_type",
         ROUND(pr."Multiplier" * COALESCE(pd."{field}", 0), 0) AS "Rent",
-        COALESCE(pd."Services", 0) AS "Services", 
+        COALESCE(pd."Services", 0) AS "Services",
         COALESCE(pd."Limit", 0) as "Limit",
-        COALESCE(pd."Deposit", 0) AS "Deposit", 
+        COALESCE(pd."Deposit", 0) AS "Deposit",
         COALESCE(pd."Booking_fee", 0) AS "Booking_fee",
         COALESCE(pd."Final_cleaning", 0) AS "Final_cleaning"
       FROM "Resource"."Resource" r
@@ -385,7 +389,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
         INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
         INNER JOIN "Billing"."Pricing_detail" pd ON (pd."Building_id" = b.id AND pd."Flat_type_id" = rft.id AND pd."Place_type_id" = rpt.id)
-      WHERE (pd."Year" = %s or pd."Year" = %s) 
+      WHERE (pd."Year" = %s or pd."Year" = %s)
         AND b.id = %s
         AND rft.id = %s
         AND rpt.id = %s
