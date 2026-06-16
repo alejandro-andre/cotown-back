@@ -578,9 +578,10 @@ def q_flat_prices(dbClient, segment, year):
     ),
     "Prices" AS (
       SELECT
-        r."Building_id", 
-        rft.id  AS "Flat_type_id", 
-        rfst.id AS "Flat_subtype_id", 
+        r."Building_id",
+        rft.id  AS "Flat_type_id",
+        rft."Code" AS "Flat_type",
+        rfst.id AS "Flat_subtype_id",
         rfst."Code" AS "Flat_subtype",
         MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long",   0)) AS "Rent_long",
         MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
@@ -600,7 +601,7 @@ def q_flat_prices(dbClient, segment, year):
         AND pd."Year" = %s
         AND px."Year" = %s
         AND r."Segment_id" = %s
-      GROUP BY 1, 2, 3, 4
+      GROUP BY 1, 2, 3, 4, 5
     )
     SELECT 
       pz.*,
@@ -642,6 +643,7 @@ def q_flat_prices(dbClient, segment, year):
       grouped_data[building_index]['Flat_subtypes'].append({
         'id': row['Flat_subtype_id'],
         'Flat_type_id': row['Flat_type_id'],
+        'Flat_type': row['Flat_type'],
         'Code': row['Flat_subtype'],
         'Rent_long': int(row['Rent_long']),
         'Rent_medium': int(row['Rent_medium']),
