@@ -92,6 +92,13 @@ query data ($code: String!, $segment: Int!) {
 # Misc functions
 # ###################################################
 
+# HTTP status code tester
+def req_pub_http(code):
+  if code < 100 or code > 599:
+    abort(400)
+  return Response(f'HTTP {code}', status=code)
+
+
 # Hi - I'm live endpoint
 def req_pub_hello():
 

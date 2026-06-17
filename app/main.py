@@ -20,7 +20,7 @@ from library.services.config import settings
 
 # Cotown includes - api functions
 from library.api.token import validate_token
-from library.api.misc import req_pub_hello, req_validate_iban, req_validate_swift, req_cert_booking, req_ical, req_pub_legal_pdf
+from library.api.misc import req_pub_hello, req_pub_http, req_validate_iban, req_validate_swift, req_cert_booking, req_ical, req_pub_legal_pdf
 from library.api.contract import req_pub_contract
 from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
 from library.api.airflows import req_signature, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard_operaciones, req_dashboard_lau, req_dashboard_payments, req_dashboard_deposits, req_dashboard_incasol, req_dashboard_to_excel, req_prev_next_operaciones, req_availability, req_questionnaire
@@ -232,6 +232,7 @@ def runapp():
   app.add_url_rule('/booking/<int:step>', view_func=req_pub_booking, methods=['GET', 'POST'])
 
   # Misc functions
+  app.add_url_rule(settings.API_PREFIX + '/http/<int:code>', view_func=req_pub_http, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/hi', view_func=req_pub_hello, methods=['GET'])
   app.add_url_rule(settings.API_PREFIX + '/contract', view_func=req_pub_contract, methods=['POST'])
   app.add_url_rule(settings.API_PREFIX + '/cert/<int:booking>', view_func=req_cert_booking, methods=['GET'])
