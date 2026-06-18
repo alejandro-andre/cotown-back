@@ -68,7 +68,8 @@ BEGIN
           WHEN b."Cleaning_freq" = 'semanal'   THEN r."Management_fee_weekly"
           WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly"
           WHEN b."Cleaning_freq" = 'mensual'   THEN r."Management_fee_monthly"
-          ELSE r."Management_fee"
+          WHEN b."Cleaning_freq" = 'sin'       THEN r."Management_fee"
+          ELSE r."Management_fee_biweekly"
         END
       INTO NEW."Management_fee"
       FROM "Booking"."Booking" b
@@ -82,7 +83,8 @@ BEGIN
           WHEN b."Cleaning_freq" = 'semanal'   THEN r."Management_fee_weekly"
           WHEN b."Cleaning_freq" = 'quincenal' THEN r."Management_fee_biweekly"
           WHEN b."Cleaning_freq" = 'mensual'   THEN r."Management_fee_monthly"
-          ELSE r."Management_fee"
+          WHEN b."Cleaning_freq" = 'sin'       THEN r."Management_fee"
+          ELSE r."Management_fee_biweekly"
         END
       INTO NEW."Management_fee"
       FROM "Booking"."Booking_group" b
