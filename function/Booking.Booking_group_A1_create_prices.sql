@@ -68,10 +68,10 @@ BEGIN
 
     END IF;
 
-    INSERT INTO "Booking"."Booking_group_price" ("Booking_id", "Rent_date", "Rent", "Services", "Expenses", "Utility", "Furniture") 
-    VALUES (NEW.id, dt_curr, rent, services, NEW."Expenses", NEW."Limit", NEW."Furniture")
-	ON CONFLICT ("Booking_id", "Rent_date") DO UPDATE SET
-  	  "Rent"      = EXCLUDED."Rent",
+    INSERT INTO "Booking"."Booking_group_price" ("Booking_id", "Rent_date", "Rent", "Services", "Expenses", "Utility", "Furniture")
+    VALUES (NEW.id, dt_curr, rent, services, NEW."Expenses", CASE WHEN NEW."Limit_type" IS DISTINCT FROM 'libre' THEN NEW."Limit" ELSE 0 END, NEW."Furniture")
+    ON CONFLICT ("Booking_id", "Rent_date") DO UPDATE SET
+      "Rent"      = EXCLUDED."Rent",
       "Services"  = EXCLUDED."Services",
       "Expenses"  = EXCLUDED."Expenses",
       "Utility"   = EXCLUDED."Utility",
