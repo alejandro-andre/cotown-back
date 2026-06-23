@@ -78,7 +78,7 @@ BEGIN
   -- Documento ID obligatorio
   IF TG_OP = 'UPDATE' THEN
     INSERT INTO "Customer"."Customer_doc" ("Customer_id", "Customer_doc_type_id")
-      SELECT NEW."Customer_id", cdt.id
+      SELECT NEW.id, cdt.id
       FROM "Customer"."Customer_doc_type" cdt
       WHERE (cdt."Id_type_id" = NEW."Id_type_id")
         AND NOT EXISTS (
