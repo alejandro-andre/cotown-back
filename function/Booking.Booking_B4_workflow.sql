@@ -101,7 +101,11 @@ BEGIN
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
-    NEW."Status" :='pendientepago';
+    IF NEW."Membership_marketplace" THEN
+      NEW."Status" :='confirmada';
+    ELSE
+      NEW."Status" :='pendientepago';
+    END IF;
     deposit := TRUE;
   END IF;
 
@@ -120,14 +124,7 @@ BEGIN
   -- SOLICITUD PAGADA o ALTERNATIVA PAGADA a CONFIRMADA
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
-    -- Si hay que pagar garantía, pasa a confirmada
-    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
-      NEW."Status" := 'confirmada';
-      deposit := TRUE;
-    -- Si no hay que pagar garantía o ya está pagada, pasa a firma contrato
-    ELSE
-      NEW."Status" := 'firmacontrato';
-    END IF;
+    NEW."Status" := 'confirmada';
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO

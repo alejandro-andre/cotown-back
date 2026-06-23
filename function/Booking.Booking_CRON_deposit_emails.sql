@@ -4,7 +4,7 @@ DECLARE
   entity_id INTEGER;
   customer_id INTEGER;
  
-  -- Confirmadas, faltan menos de 40 dias para entrar, y no se ha enviado recordatorio
+  -- Documentación ok, faltan menos de 40 dias para entrar, y no se ha enviado recordatorio
   curs CURSOR FOR
     SELECT b.id, b."Customer_id", ce.id
     FROM "Booking"."Booking" b
@@ -12,16 +12,16 @@ DECLARE
       ON ce."Customer_id" = b."Customer_id"
       AND ce."Entity_id" = b.id
       AND ce."Template" = 'deposito'
-    WHERE b."Status" = 'confirmada'
+    WHERE b."Status" = 'documentacionok'
     AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '40 days')
     AND ce.id IS NULL
     AND b."Origin_id" IS NULL;
 
-  -- Confirmadas, faltan menos de 32 dias para entrar
+  -- Documentaciòn ok, faltan menos de 32 dias para entrar
   cursrecall CURSOR FOR
     SELECT b.id, b."Customer_id"
     FROM "Booking"."Booking" b
-    WHERE b."Status" = 'confirmada'
+    WHERE b."Status" = 'documentacionok'
     AND COALESCE(b."Check_in", b."Date_from") <= (CURRENT_DATE + INTERVAL '32 days')
     AND b."Origin_id" IS NULL;
 

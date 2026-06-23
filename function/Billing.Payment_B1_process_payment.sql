@@ -74,15 +74,7 @@ BEGIN
     -- PENDIENTE PAGO a CONFIRMADA o FIRMACONTRATO
     -- Comprobamos si el estado es 'pendientepago'
     IF (status_record = 'pendientepago') THEN
-
-      -- Deposito no pagado aun
-      IF deposit > 0 AND deposit_actual IS NULL THEN
-        UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      -- Deposito pagado ANTES QUE EL MEMBERSHIP FEE
-      ELSE
-        UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-      END IF;
-     
+      UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";    
     END IF;   
 
   END IF;
@@ -93,8 +85,8 @@ BEGIN
     -- Registra el pago
     INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
 
-    -- CONFIRMADA a FIRMA CONTRATO
-    IF status_record = 'confirmada' OR booking_fee = 0 OR booking_fee_actual IS NOT NULL THEN
+    -- DOCUMENTACION OK a FIRMA CONTRATO
+    IF status_record = 'documentacionok' OR booking_fee = 0 OR booking_fee_actual IS NOT NULL THEN
       UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
     ELSE
       UPDATE "Booking"."Booking" SET "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
