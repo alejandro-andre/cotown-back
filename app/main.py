@@ -23,7 +23,7 @@ from library.api.token import validate_token
 from library.api.misc import req_pub_hello, req_pub_http, req_validate_iban, req_validate_swift, req_cert_booking, req_ical, req_pub_legal_pdf
 from library.api.contract import req_pub_contract
 from library.api.booking import req_form, req_typologies, req_pub_asset, req_pub_availability, req_pub_booking
-from library.api.airflows import req_signature, req_document, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard_operaciones, req_dashboard_lau, req_dashboard_payments, req_dashboard_deposits, req_dashboard_incasol, req_dashboard_documents, req_dashboard_to_excel, req_prev_next_operaciones, req_availability, req_questionnaire
+from library.api.airflows import req_signature, req_export, req_href, req_download, req_booking_status, req_labels, req_dashboard_operaciones, req_dashboard_lau, req_dashboard_payments, req_dashboard_deposits, req_dashboard_incasol, req_dashboard_documents, req_dashboard_to_excel, req_prev_next_operaciones, req_availability, req_questionnaire
 from library.api.web import req_flats, req_rooms, req_roomsd, req_amenities, req_promo
 from library.api.payment import req_pay, req_pub_notification
 from library.api.integration import req_pub_int_customers, req_pub_int_invoices, req_pub_int_management_fees, req_pub_int_payments
@@ -173,8 +173,6 @@ def runapp():
 
   # Airflows plugins - Contracts, get signature image
   app.add_url_rule(settings.API_PREFIX + '/signature/<int:id>', view_func=req_signature, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/document/<int:id>', view_func=req_document, methods=['GET'])
-  app.add_url_rule(settings.API_PREFIX + '/document/<int:id>/<string:field>', view_func=req_document, methods=['GET'])
 
   # Airflows plugins - Change location
   app.add_url_rule(settings.API_PREFIX + '/href/<path:path>', view_func=req_href, methods=['GET'])

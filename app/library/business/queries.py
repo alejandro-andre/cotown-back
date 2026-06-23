@@ -555,8 +555,8 @@ def q_dashboard_incasol(dbClient, vars=None):
 def sql_dashboard_documents(status, vars):
 
   # Params
-  date_from  = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
-  date_to    = (datetime.now() + timedelta(days=settings.LAUDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  date_from  = (datetime.now() - timedelta(days=365)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
+  date_to    = (datetime.now() + timedelta(days=15)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
   building   = vars.get('building')
   buildings  = vars.getlist('building[]')
   location   = vars.get('location')
@@ -585,6 +585,7 @@ def sql_dashboard_documents(status, vars):
     SELECT
       cd.id,
       b.id AS "Booking_id",
+      COALESCE(INITCAP(b."Book_type"::text), 'Libre') AS "Booking_type",
       b."Status",
       COALESCE(b."Check_in", b."Date_from") AS "Date_from",
       COALESCE(b."Check_out", b."Date_to") AS "Date_to",
