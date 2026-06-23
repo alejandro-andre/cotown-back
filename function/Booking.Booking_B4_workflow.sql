@@ -101,7 +101,7 @@ BEGIN
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
-    IF NEW."Membership_marketplace" THEN
+    IF NEW."Fee_marketplace" THEN
       NEW."Status" :='confirmada';
     ELSE
       NEW."Status" :='pendientepago';
