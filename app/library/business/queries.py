@@ -552,6 +552,88 @@ def q_dashboard_incasol(dbClient, vars=None):
   return result
 
 
+def sql_dashboard_documents(status, vars):
+
+  # Params
+  date_from  = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d') if not vars.get('date_from') else vars.get('date_from')
+  date_to    = (datetime.now() + timedelta(days=settings.LAUDAYS)).strftime('%Y-%m-%d') if not vars.get('date_to') else vars.get('date_to')
+  building   = vars.get('building')
+  buildings  = vars.getlist('building[]')
+  location   = vars.get('location')
+
+  # Additional where
+  where = ''
+  if buildings:
+    where += f'''AND bu.id IN ({','.join(buildings)}) '''
+  elif building:
+    where += f'''AND bu.id={building} '''
+  if location:
+    where += f'''AND d."Location_id"={location} '''
+
+  # a) Pending upload: document not attached yet
+  if status == 'upload':
+    where += '''AND (cd."Document").name IS NULL '''
+  # b) Pending approval: document attached but not approved
+  elif status == 'approve':
+    where += '''AND (cd."Document").name IS NOT NULL AND COALESCE(cd."Approved", FALSE) = FALSE '''
+  # Both: not uploaded OR uploaded-but-not-approved
+  else:
+    where += '''AND ((cd."Document").name IS NULL OR COALESCE(cd."Approved", FALSE) = FALSE) '''
+
+  # Documents pending upload / approval, associated to a booking in the date range
+  sql = f'''
+    SELECT
+      cd.id,
+      b.id AS "Booking_id",
+      b."Status",
+      COALESCE(b."Check_in", b."Date_from") AS "Date_from",
+      COALESCE(b."Check_out", b."Date_to") AS "Date_to",
+      c."Name" AS "Customer",
+      c."Email" AS "Email",
+      c."Phones" AS "Phones",
+      r."Code" AS "Resource",
+      bu."Code" AS "Building",
+      cdt."Name" AS "Document",
+      cd."Approved",
+      cd."Expiry_date",
+      (cd."Document").name IS NOT NULL AS "Uploaded",
+      CASE
+        WHEN (cd."Document").name IS NULL THEN 'upload'
+        ELSE 'approve'
+      END AS "Doc_status"
+    FROM "Booking"."Booking" b
+      INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
+      INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
+      INNER JOIN "Building"."Building" bu ON bu.id = r."Building_id"
+      LEFT JOIN "Geo"."District" d ON d.id = bu."District_id"
+      INNER JOIN "Customer"."Customer_doc" cd
+        ON cd."Customer_id" = b."Customer_id"
+        AND cd."Booking_id" = b.id
+      INNER JOIN "Customer"."Customer_doc_type" cdt
+        ON cdt.id = cd."Customer_doc_type_id" AND cdt."Mandatory"
+    WHERE b."Status" IN ('confirmada', 'firmacontrato', 'contrato', 'checkinconfirmado')
+      AND COALESCE(b."Check_in", b."Date_from") BETWEEN '{date_from}' AND '{date_to}'
+      {where}
+    ORDER BY "Date_from", b.id, cdt."Name"
+  '''
+
+  # SQL
+  return sql
+
+
+def q_dashboard_documents(dbClient, status=None, vars=None):
+
+  # Connect
+  con = dbClient.getconn()
+
+  # Get documents
+  cur = dbClient.execute(con, sql_dashboard_documents(status, vars), vars)
+  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+  cur.close()
+  dbClient.putconn(con)
+  return result
+
+
 # ######################################################
 # Web - Flat prices
 # ######################################################
