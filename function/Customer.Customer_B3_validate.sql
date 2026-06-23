@@ -84,7 +84,7 @@ BEGIN
         AND NOT EXISTS (
           SELECT 1
           FROM "Customer"."Customer_doc" cd
-          WHERE cd."Customer_id"          = NEW."Customer_id"
+          WHERE cd."Customer_id"          = NEW.id
             AND cd."Customer_doc_type_id" = cdt.id
         );
   END IF;
