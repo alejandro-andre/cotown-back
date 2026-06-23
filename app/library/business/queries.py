@@ -69,9 +69,9 @@ def sql_dashboard_operaciones(status, vars):
       b."Comments",
       b."Origin_id", b."Destination_id", b."Eco_ext_change_ok", b."Eco_ext_keyless_ok", b."Cha_ext",
       CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END AS "Building",
-      r."Code" as "Resource",
-      c."Name", c."Email", c."Phones", 
-      NULL AS "Resident_name", NULL AS "Resident_email", NULL AS "Resident_phones", 
+      r.id AS "Resource_id", r."Code" as "Resource", r."Last_cleaning",
+      c."Name", c."Email", c."Phones",
+      NULL AS "Resident_name", NULL AS "Resident_email", NULL AS "Resident_phones",
       p.id AS "Payment_id", p."Payment_date"
     FROM "Booking"."Booking" b
       INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
@@ -99,9 +99,9 @@ def sql_dashboard_operaciones(status, vars):
       bg."Comments",
       NULL AS "Origin_id", NULL AS "Destination_id", NULL AS "Eco_ext_change_ok", NULL AS "Eco_ext_keyless_ok", NULL AS "Cha_ext",
       CASE WHEN b2."Name" IS NULL THEN b1."Name" ELSE b2."Name" END AS "Building",
-      r."Code" AS "Resource",
-      c."Name", c."Email", c."Phones", 
-      b."Name" AS "Resident_name", b."Email" AS "Resident_email", b."Phones" AS "Resident_phones", 
+      r.id AS "Resource_id", r."Code" AS "Resource", r."Last_cleaning",
+      c."Name", c."Email", c."Phones",
+      b."Name" AS "Resident_name", b."Email" AS "Resident_email", b."Phones" AS "Resident_phones",
       NULL AS "Payment_id", NULL AS "Payment_date"
     FROM "Booking"."Booking_group_rooming" b
       INNER JOIN "Booking"."Booking_group_rooms" br ON br.id = b."Room_id"
