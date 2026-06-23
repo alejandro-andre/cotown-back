@@ -33,6 +33,15 @@ BEGIN
       VALUES (NEW."Customer_id", 'keyless', NEW.id);
   END IF;
 
+  -- Boton activar
+  NEW."Button_activate" := '';
+  IF NEW."Status" = 'descartada' THEN
+     NEW."Button_activate" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/solicitud');
+  END IF;
+  IF NEW."Status" = 'descartadapagada' THEN
+     NEW."Button_activate" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/solicitadapagada');
+  END IF;
+
   -- Boton descartar
   NEW."Button_discard" := '';
   IF NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas' OR NEW."Status" = 'pendientepago' THEN

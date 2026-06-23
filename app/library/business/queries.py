@@ -589,6 +589,7 @@ def sql_dashboard_documents(status, vars):
       b."Status",
       COALESCE(b."Check_in", b."Date_from") AS "Date_from",
       COALESCE(b."Check_out", b."Date_to") AS "Date_to",
+      b."Documentation_limit",
       c."Name" AS "Customer",
       c."Email" AS "Email",
       c."Phones" AS "Phones",

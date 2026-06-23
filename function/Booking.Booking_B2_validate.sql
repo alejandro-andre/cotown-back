@@ -76,10 +76,15 @@ BEGIN
     END IF;
   END IF;
 
-  -- Valida que las fechas de solicitud sea menor que la fecha de expiracion
+  -- Valida que la fechas de solicitud sea menor que la fecha de expiracion
   IF NEW."Expiry_date" IS NOT NULL THEN
     IF NEW."Expiry_date" < NEW."Request_date"· THEN
       RAISE EXCEPTION '!!!The expiry date must be equal to or greater than the date of application.!!!La fecha de expiración debe ser igual o mayor a la fecha de solicitud!!!';
+    END IF;
+  END IF;
+  IF NEW."Documentation_limit" IS NOT NULL THEN
+    IF NEW."Documentation_limit" < NEW."Request_date"· THEN
+      RAISE EXCEPTION '!!!The documentation limit date must be equal to or greater than the date of application.!!!La fecha de entrega de documnetación debe ser igual o mayor a la fecha de solicitud!!!';
     END IF;
   END IF;
 

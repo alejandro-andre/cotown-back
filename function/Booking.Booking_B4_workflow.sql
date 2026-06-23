@@ -114,6 +114,9 @@ BEGIN
   IF (NEW."Status" = 'pendientepago' AND NEW."Expiry_date" < CURRENT_DATE)  THEN
     NEW."Status" :='caducada';
   END IF;
+  IF (NEW."Status" = 'pendientepago' AND NEW."Documentation_limit" < CURRENT_DATE)  THEN
+    NEW."Status" :='caducada';
+  END IF;
 
   -- CADUCADA A PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago'
@@ -257,6 +260,9 @@ BEGIN
     -- Confirmada
     IF NEW."Confirmation_date" IS NULL THEN
       NEW."Confirmation_date" := CURRENT_DATE;
+    END IF;
+    IF (NEW."Documentation_limit" IS NULL) THEN
+      NEW."Documentation_limit" := (CURRENT_DATE + INTERVAL '14 days');
     END IF;
     NEW."Expiry_date" := NULL;
     -- Borramos las alternativas asociadas a la solicitud

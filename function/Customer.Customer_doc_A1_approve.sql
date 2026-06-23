@@ -3,6 +3,7 @@ DECLARE
 
   docs_ok BOOLEAN;
   status VARCHAR;
+  c INTEGER;
 
 BEGIN
 
@@ -14,19 +15,15 @@ BEGIN
 
   -- ¿No hay documentos, o hay al menos uno aprobado?
   SELECT
-        NOT EXISTS (
-          SELECT 1
-          FROM "Customer"."Customer_doc" cd
-          WHERE cd."Booking_id" = NEW."Booking_id"
-        )
-     OR EXISTS (
-          SELECT 1
-          FROM "Customer"."Customer_doc" cd
-          WHERE cd."Booking_id" = NEW."Booking_id"
-            AND cd."Approved" IS TRUE
-        )
+    NOT EXISTS (
+      SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW."Booking_id"
+    )
+    OR EXISTS (
+      SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW."Booking_id" AND cd."Approved" IS TRUE
+    )
+    OR NEW."Approved" IS TRUE
   INTO docs_ok;
-
+  
   -- Actualiza
   IF docs_ok THEN
     UPDATE "Booking"."Booking" SET "Status" = 'documentacionok' WHERE id = NEW."Booking_id";

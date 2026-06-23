@@ -237,13 +237,28 @@ def prepare_deal(data):
 # API calls
 # #####################################
 
+def check(response):
+    """Raise for HTTP errors, logging Pipedrive's error body first."""
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        try:
+            body = response.json()
+            logger.error(f"Pipedrive {response.status_code} on {response.url}: "
+                         f"{body.get('error')} - {body.get('error_info')}")
+        except ValueError:
+            logger.error(f"Pipedrive {response.status_code} on {response.url}: {response.text}")
+        raise
+    return response
+
+
 def get_person_id_by_email(email):
     response = requests.get(
         f"{CRM_URL}/persons/search",
         headers=CRM_HEADERS,
         params={"term": email, "fields": "email", "limit": 1, "exact_match": "true"},
     )
-    response.raise_for_status()
+    check(response)
     items = response.json().get("data", {}).get("items", [])
     if not items:
         return None
@@ -257,21 +272,21 @@ def upsert_person(data):
         response = requests.put(f"{CRM_URL}/persons/{person_id}", headers=CRM_HEADERS, json=payload)
     else:
         response = requests.post(f"{CRM_URL}/persons", headers=CRM_HEADERS, json=payload)
-    response.raise_for_status()
+    check(response)
     return response.json()["data"]["id"]
 
 
 def add_lead(data):
     payload = prepare_lead(data)
     response = requests.post(f"{CRM_URL}/leads", headers=CRM_HEADERS, json=payload)
-    response.raise_for_status()
+    check(response)
     return response.json()["data"]["id"]
 
 
 def add_deal(data):
     payload = prepare_deal(data)
     response = requests.post(f"{CRM_URL}/deals", headers=CRM_HEADERS, json=payload)
-    response.raise_for_status()
+    check(response)
     return response.json()["data"]["id"]
 
 
