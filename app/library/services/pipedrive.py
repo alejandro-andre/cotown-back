@@ -97,7 +97,7 @@ LEAD_FIELDS = [
         "Madrid": 76,
         "Bilbao": 77,
     }},
-    {"name": "place_type", "key": "7faa69bfe88c3b4b66eeec11b5689e18759f9c53", "options": {
+    {"name": "place_type", "key": "c6761abedb5f51a6386371e6f080d30026ab4380", "options": {
         "D_STA": 118,
         "D_STA_BS": 119,
         "D_STA_BS_R": 120,
