@@ -101,12 +101,14 @@ BEGIN
   -- SOLICITUD a PENDIENTE DE PAGO
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
-    IF NEW."Fee_marketplace" THEN
-      NEW."Status" :='confirmada';
-    ELSE
-      NEW."Status" :='pendientepago';
-    END IF;
+    NEW."Status" :='pendientepago';
     deposit := TRUE;
+  END IF;
+
+  -- PENDIENTE DE PAGO A CONFIRMADA
+  -- Actualiza al estado 'Confirmada' cuando se paga el booking fee por marketplace
+  IF NEW."Status" = 'pendientepago' AND NEW."Fee_marketplace" THEN
+    NEW."Status" := 'confirmada';
   END IF;
 
   -- PENDIENTE DE PAGO A CADUCADA
@@ -128,6 +130,18 @@ BEGIN
   -- Actualiza al estado 'Confirmada' cuando se asigna el recurso a una solicitud pagada
   IF ((NEW."Status" = 'solicitudpagada' OR NEW."Status" = 'alternativaspagada') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" := 'confirmada';
+  END IF;
+
+  -- CONFIRMADA A FIRMA CONTRATO
+  -- Actualiza al estado 'Firma contrato' si no hay que pagar depósito
+  IF NEW."Status" = 'confirmada' AND NEW."Fee_marketplace" THEN
+    -- Si hay que pagar garantía, pasa a confirmada
+    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
+      deposit := TRUE;
+    -- Si no hay que pagar garantía o ya está pagada, pasa a firma contrato
+    ELSE
+      NEW."Status" := 'firmacontrato';
+    END IF;
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
@@ -261,7 +275,7 @@ BEGIN
     IF NEW."Confirmation_date" IS NULL THEN
       NEW."Confirmation_date" := CURRENT_DATE;
     END IF;
-    IF (NEW."Documentation_limit" IS NULL) THEN
+    IF NEW."Documentation_limit" IS NULL AND NEW."Book_type" = 'limitado' THEN
       NEW."Documentation_limit" := (CURRENT_DATE + INTERVAL '14 days');
     END IF;
     NEW."Expiry_date" := NULL;
