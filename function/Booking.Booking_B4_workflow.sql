@@ -275,7 +275,7 @@ BEGIN
     IF NEW."Confirmation_date" IS NULL THEN
       NEW."Confirmation_date" := CURRENT_DATE;
     END IF;
-    IF NEW."Documentation_limit" IS NULL AND NEW."Book_type" = 'limitado' THEN
+    IF NEW."Documentation_limit" IS NULL THEN
       NEW."Documentation_limit" := (CURRENT_DATE + INTERVAL '14 days');
     END IF;
     NEW."Expiry_date" := NULL;
