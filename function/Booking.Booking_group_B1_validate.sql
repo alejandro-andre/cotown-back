@@ -116,6 +116,9 @@ BEGIN
     INTO NEW."Rent", NEW."Services", NEW."Limit", NEW."Expenses", NEW."Furniture"
     FROM "Resource"."Resource" r
     WHERE r."Code" = ANY(NEW."Room_ids");
+    IF NEW."Limit_type" = 'indice' THEN
+      NEW."Furniture" := 0;
+    END IF;
   END IF;
 
   -- Calculate stay length in montns

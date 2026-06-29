@@ -3,6 +3,7 @@
 "Income_date",
 "Booking_id",
 "Type",
+"Book_type",
 "Code",
 "Date_from",
 "Date_to",
