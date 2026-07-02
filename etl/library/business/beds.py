@@ -37,42 +37,42 @@ def beds_real_calc(dbClient):
     if date < row['Start_date']:
       return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
 
-    # Resource not existent
-    if row['Date_from'] and row['Date_to']:
-      if row['Date_from'] <= date <= row['Date_to']:
-        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
+    # All unavailabilities affecting this resource (itself, its room or its flat) this month
+    availability = df_avail[df_avail['Resource_id'].isin([row['id'], row['room'], row['flat']])]
+    availability = availability[(availability['Date_from'] <= date) & (date <= availability['Date_to'])]
 
-    # All flat non availability rows
-    availability = df_avail[df_avail['Resource_id'] == row['flat']]
+    # Resource not existent (status 5 takes priority)
+    if (availability['Status_id'] == 5).any():
+      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
+
+    # Other unavailabilities
     for _, r in availability.iterrows():
 
-      # Bed is not available?
-      if r['Date_from'] <= date <= r['Date_to']:
-        # Convertible
-        convert = r['Convertible'] or 'N/D'
+      # Convertible
+      convert = r['Convertible'] or 'N/D'
 
-        # LAU
-        if r['Status_id'] == 2:
-          beds_pot = 1.0
-          if convert in ('N/D', 'LTC', 'FTC'):
-            beds_cnv = 1.0
-            rn_conv = calendar.monthrange(date.year, date.month)[1]
-
-        # Pre capex
-        elif r['Status_id'] == 3:
-          beds_pot = 1.0
+      # LAU
+      if r['Status_id'] == 2:
+        beds_pot = 1.0
+        if convert in ('N/D', 'LTC', 'FTC'):
           beds_cnv = 1.0
-          beds_pre = 1.0
           rn_conv = calendar.monthrange(date.year, date.month)[1]
 
-        # Capex or other convertible
-        elif r['Status_id'] == 4 or r['Conv']:
-          beds_pot = 1.0
-          beds_cnv = 1.0
-          beds_cap = 1.0
-          rn_conv = calendar.monthrange(date.year, date.month)[1]
+      # Pre capex
+      elif r['Status_id'] == 3:
+        beds_pot = 1.0
+        beds_cnv = 1.0
+        beds_pre = 1.0
+        rn_conv = calendar.monthrange(date.year, date.month)[1]
 
-        return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
+      # Capex or other convertible
+      elif r['Status_id'] == 4 or r['Conv']:
+        beds_pot = 1.0
+        beds_cnv = 1.0
+        beds_cap = 1.0
+        rn_conv = calendar.monthrange(date.year, date.month)[1]
+
+      return [beds, beds_cnv, beds_pot, beds_pre, beds_cap, rn_avail, rn_conv, 0, 0, 0, row['limit_type']]
 
 
     # Bed is available (and convertible, and potential)
@@ -100,8 +100,7 @@ def beds_real_calc(dbClient):
     r."Post_capex" AS "val_residential",
     r."Post_capex" AS "val_cosharing",
     r."Limit_type" AS "limit_type",
-    ra."Date_from",
-    ra."Date_to",
+    r."Room_id" AS "room",
     CASE
       WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
       WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -115,7 +114,6 @@ def beds_real_calc(dbClient):
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
     INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
     LEFT JOIN "Billing"."Pricing_rate" pr on pr.id = r."Rate_id"
-    LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE r."Resource_type" = 'plaza'
   
   UNION
@@ -127,8 +125,7 @@ def beds_real_calc(dbClient):
     r."Post_capex" AS "val_residential",
     r."Post_capex" AS "val_cosharing",
     r."Limit_type" AS "limit_type",
-    ra."Date_from",
-    ra."Date_to",
+    r."Room_id" AS "room",
     CASE
       WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
       WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -142,7 +139,6 @@ def beds_real_calc(dbClient):
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
     INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
     LEFT JOIN "Billing"."Pricing_rate" pr on pr.id = r."Rate_id"
-    LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE "Resource_type" = 'habitacion' 
     AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Room_id" = r.id)
   
@@ -155,8 +151,7 @@ def beds_real_calc(dbClient):
     r."Post_capex" AS "val_residential",
     r."Post_capex" AS "val_cosharing",
     r."Limit_type" AS "limit_type",
-    ra."Date_from",
-    ra."Date_to",
+    r."Room_id" AS "room",
     CASE
       WHEN r."Billing_type" = 'mes' THEN 'Monthly' 
       WHEN r."Billing_type" = 'quincena' THEN 'Fortnightly' 
@@ -170,7 +165,6 @@ def beds_real_calc(dbClient):
     INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
     LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"
     LEFT JOIN "Billing"."Pricing_rate" pr on pr.id = r."Rate_id"
-    LEFT JOIN "Resource"."Resource_availability" ra ON (r.id = ra."Resource_id" OR r."Room_id" = ra."Resource_id") AND ra."Status_id" = 5 
   WHERE "Resource_type" = 'piso' 
     AND NOT EXISTS (SELECT id FROM "Resource"."Resource" rr WHERE rr."Flat_id" = r.id)
 
