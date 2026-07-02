@@ -67,6 +67,7 @@ LEAD_FIELDS = [
     {"name": "web", "key": "03c9da3106ae03ee7d38950e0f8b3afeeb22cdf0", "options": {
         "Cotown": 64,
         "Vanguard": 65,
+        "VSH": 65,
         "Landing BIO": 66,
         "Landing MAD": 67,
         "Barcelona residencias - Sardenya": 68,
