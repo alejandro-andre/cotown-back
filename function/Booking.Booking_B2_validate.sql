@@ -99,7 +99,7 @@ BEGIN
   END IF;
 
   -- Do not validate these cases:
-  IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'pendientepago', 'caducada', 'cancelada') THEN
+  IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'caducada', 'cancelada') THEN
     RETURN NEW;
   END IF;
 
@@ -109,8 +109,8 @@ BEGIN
   FROM "Booking"."Booking_detail" b 
   WHERE b."Resource_id" = NEW."Resource_id"
   AND b."Booking_id" <> NEW.id
-  AND b."Date_from" <= NEW."Date_to" 
-  AND b."Date_to" >= NEW."Date_from"
+  AND b."Date_from" < NEW."Date_to" 
+  AND b."Date_to" > NEW."Date_from"
   LIMIT 1;
   IF num IS NOT NULL THEN
     RAISE exception '!!!Overlaping % with booking %!!!Solapamiento % con la reserva %!!!', NEW.id, num, NEW.id, num;
@@ -149,7 +149,7 @@ BEGIN
 
   -- Valida recurso
   IF (NEW."Resource_id" IS NOT NULL AND OLD."Resource_id" IS DISTINCT FROM NEW."Resource_id") OR
-     (NEW."Book_type" = 'limitado' AND NEW."Limit_type" IS NULL) THEN
+     (NEW."Book_type" IS NOT NULL AND NEW."Limit_type" IS NULL) THEN
 
     -- Lee datos de recurso
     SELECT "Limit_type", "Billing_type" 
