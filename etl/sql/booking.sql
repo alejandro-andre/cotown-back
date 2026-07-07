@@ -47,12 +47,12 @@ SELECT
     WHEN b."Cleaning_freq" = 'mensual' THEN r."Management_fee" / 100
     ELSE r."Management_fee" / 100
   END AS "Management_fee",
-  b."Book_type"::text AS "book_type",
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
   b."Expenses" AS "expenses",
   b."Furniture" AS "furniture",
   b."Incasol_deposit" AS "incasol_deposit",
   b."Incasol_type"::text AS "incasol_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Booking"."Booking" b
   INNER JOIN "Customer"."Customer" c ON c.id = b."Customer_id"
   LEFT JOIN "Booking"."Customer_reason" cr ON cr.id = b."Reason_id"

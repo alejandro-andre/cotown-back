@@ -20,8 +20,8 @@ SELECT
   --'B2C' AS "income_type",
   'Real' AS "data_type",
   NULL AS "discount_type",
-  b."Book_type"::text AS "book_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"
@@ -53,8 +53,8 @@ SELECT
   --'B2B' AS "income_type",
   'Real' AS "data_type",
   NULL AS "discount_type",
-  b."Book_type"::text AS "book_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Billing"."Invoice_line" il
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i on i.id = il."Invoice_id"

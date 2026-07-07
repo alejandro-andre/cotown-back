@@ -159,6 +159,7 @@ def occupancy_real_calc(dbClient):
 def occupancy_real(dbClient):
 
   df = occupancy_real_calc(dbClient)
+  df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
   df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
   logger.info('- Occupancy saved')
 
@@ -242,6 +243,7 @@ def occupancy_forecast_calc(dbClient):
 def occupancy_forecast(dbClient):
 
   df = occupancy_forecast_calc(dbClient)
+  df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
   df.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
   logger.info('- Occupancy saved')
 
@@ -334,5 +336,6 @@ def occupancy_stabilised_calc(dbClient):
 def occupancy_stabilised(dbClient):
 
   df = occupancy_stabilised_calc(dbClient)
+  df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
   df.to_csv('csv/occupancy_stabilised.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
   logger.info('- Occupancy saved')

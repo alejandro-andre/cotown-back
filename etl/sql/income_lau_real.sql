@@ -25,8 +25,8 @@ SELECT
   NULL AS "price",
   'Real' AS "data_type",
   '' AS "discount_type",
-  NULL::varchar AS "book_type",
-  NULL::varchar AS "limit_type"
+  'libre'::varchar AS "book_type",
+  'libre'::varchar AS "limit_type"
 FROM "Billing"."Invoice_line" il 
   INNER JOIN "Billing"."Tax" t ON t.id = il."Tax_id"
   INNER JOIN "Billing"."Invoice" i ON i.id = il."Invoice_id" 

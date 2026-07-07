@@ -31,8 +31,8 @@ SELECT
     ELSE 'OTB'
   END AS "data_type",
   dtp."Name_en" AS "discount_type",
-  b."Book_type"::text AS "book_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Booking"."Booking_price" bp
   INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
@@ -82,8 +82,8 @@ SELECT
     ELSE 'OTB'
   END AS "data_type",
   dtp."Name_en" AS "discount_type",
-  b."Book_type"::text AS "book_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Booking"."Booking_price" bp
   INNER JOIN "Booking"."Booking" b ON b.id = bp."Booking_id"
   INNER JOIN "Resource"."Resource" r ON r.id = b."Resource_id"
@@ -124,8 +124,8 @@ SELECT
     ELSE 'OTB'
   END AS "data_type",
   NULL AS "discount_type",
-  b."Book_type"::text AS "book_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Booking"."Booking_service" bs
   INNER JOIN "Booking"."Booking" b ON b.id = bs."Booking_id"
   INNER JOIN "Provider"."Provider" p ON p.id = 10
@@ -168,8 +168,8 @@ SELECT
     ELSE 'OTB'
   END AS "data_type",
   NULL AS "discount_type",
-  b."Book_type"::text AS "book_type",
-  b."Limit_type"::text AS "limit_type"
+  COALESCE(NULLIF(b."Book_type"::text, ''), 'libre') AS "book_type",
+  COALESCE(NULLIF(b."Limit_type"::text, ''), 'libre') AS "limit_type"
 FROM "Booking"."Booking_service" bs
   JOIN "Booking"."Booking" b ON b.id = bs."Booking_id"
   JOIN "Provider"."Provider" p ON p.id = 10

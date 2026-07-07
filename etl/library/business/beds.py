@@ -231,7 +231,8 @@ def beds_real_calc(dbClient):
 def beds_real(dbClient):
 
   df = beds_real_calc(dbClient)
-  df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type'])  
+  df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
+  df.to_csv('csv/beds_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type'])
   logger.info('- Beds saved')
 
 
@@ -296,5 +297,6 @@ def beds_forecast_calc(dbClient):
 def beds_forecast(dbClient):
 
   df = beds_forecast_calc(dbClient)
-  df.to_csv('csv/beds_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type'])  
+  df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
+  df.to_csv('csv/beds_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'beds', 'beds_cnv', 'beds_pot', 'beds_pre', 'beds_cap', 'available', 'convertible', 'val_current', 'val_residential', 'val_cosharing', 'limit_type'])
   logger.info('- Beds saved')
