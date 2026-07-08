@@ -1092,7 +1092,28 @@ def do_contracts(apiClient, id):
         response = requests.post(url, data=file_svcs.read(), headers={ 'Content-Type': 'application/pdf' })      
         json_svcs = { 'name': name + '.pdf', 'oid': int(response.content), 'type': 'application/pdf' }
 
-    # Send contract
+    # Nothing generated -> nothing to send
+    if json_rent is None and json_svcs is None:
+      return False
+
+    # Step 1 - Mark as 'pending' BEFORE sending.
+    dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
+    pending_query = '''
+    mutation ($id: Int! $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType $dt: String) {
+      Booking_BookingUpdate (
+        where:  { id: {EQ: $id} }
+        entity: {
+          Contract_rent: $rent
+          Contract_services: $svcs
+          Contract_status: pending
+          Contract_signed: $dt
+        }
+      ) { id }
+    }
+    '''
+    apiClient.call(pending_query, { 'id': id, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
+
+    # Step 2 - Send contract
     if context['Resource_building_contract']:
       contracts = [
         { 'id': 1, 'file': file_rent, 'name': 'Contrato de arrendamiento ' + str(context['Booking_id']) + ' - ' + context['Resource_code'], },
@@ -1102,16 +1123,14 @@ def do_contracts(apiClient, id):
     else:
       eid, status = 'n/a', 'other'
 
-    # Update query
-    query = '''
-    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $rent: Models_DocumentTypeInputType $svcs: Models_DocumentTypeInputType $dt: String) {
+    # Step 3 - Mark as 'sent' with the envelope id
+    sent_query = '''
+    mutation ($id: Int! $contractid: String $contractstatus: Auxiliar_Contract_statusEnumType $dt: String) {
       Booking_BookingUpdate (
         where:  { id: {EQ: $id} }
         entity: {
           Contract_id: $contractid
           Contract_status: $contractstatus
-          Contract_rent: $rent
-          Contract_services: $svcs
           Contract_signed: $dt
         }
       ) { id }
@@ -1119,12 +1138,9 @@ def do_contracts(apiClient, id):
     '''
 
     # Call graphQL endpoint
-    if eid is not None and (json_rent is not None or json_svcs is not None):
-      dt = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')
-      logger.info(eid + ' - ' + status + ' - ' + dt)
-      result = apiClient.call(query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'rent': json_rent, 'svcs': json_svcs, 'dt': dt })
-      return True
-    return False
+    logger.info(str(eid) + ' - ' + status + ' - ' + dt)
+    apiClient.call(sent_query, { 'id': id, 'contractid': eid, 'contractstatus': status, 'dt': dt })
+    return True
  
   except Exception as error:
     logger.error(error)
