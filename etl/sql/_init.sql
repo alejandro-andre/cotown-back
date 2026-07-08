@@ -255,6 +255,7 @@ CREATE TABLE gold.occupancy (
   "sold" numeric NOT NULL,
   "sold_t" numeric NOT NULL,
   "stay_length" varchar NULL,           -- LONG, MEDIUM, SHORT, GROUP
+  "book_type" varchar DEFAULT NULL,     -- Libre, Limitado, Recreativo...
   "limit_type" varchar DEFAULT NULL,    -- Libre, LAU, Indice...
   "ts" timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT occupancy_pk PRIMARY KEY ("id"),

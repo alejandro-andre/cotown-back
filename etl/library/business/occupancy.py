@@ -93,8 +93,11 @@ def occupancy_real_calc(dbClient):
           WHEN EXTRACT(MONTH FROM AGE(b."Date_to", b."Date_from")) < 7 THEN 'MEDIUM'
           ELSE 'LONG'
         END AS "stay_length",
+        COALESCE(NULLIF(COALESCE(bk."Book_type", bg."Book_type")::text, ''), 'libre') AS "book_type",
         r."limit_type"
     FROM "Booking"."Booking_detail" b
+      LEFT JOIN "Booking"."Booking" bk ON bk.id = b."Booking_id"
+      LEFT JOIN "Booking"."Booking_group" bg ON bg.id = b."Booking_group_id"
     INNER JOIN (
         SELECT r."Code", r.id, r."Limit_type" AS "limit_type"
         FROM "Resource"."Resource" r
@@ -159,8 +162,9 @@ def occupancy_real_calc(dbClient):
 def occupancy_real(dbClient):
 
   df = occupancy_real_calc(dbClient)
+  df['book_type'] = df['book_type'].fillna('libre').replace('', 'libre')
   df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
-  df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
+  df.to_csv('csv/occupancy_real.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'book_type', 'limit_type'])
   logger.info('- Occupancy saved')
 
 
@@ -228,6 +232,7 @@ def occupancy_forecast_calc(dbClient):
   df['occupied_t'] = 0
   df['sold_t']     = 0
   df['booking']    = 0
+  df['book_type']  = None
   df['limit_type'] = None
   df['data_type']  = 'Forecast'
 
@@ -243,8 +248,9 @@ def occupancy_forecast_calc(dbClient):
 def occupancy_forecast(dbClient):
 
   df = occupancy_forecast_calc(dbClient)
+  df['book_type'] = df['book_type'].fillna('libre').replace('', 'libre')
   df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
-  df.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
+  df.to_csv('csv/occupancy_forecast.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'book_type', 'limit_type'])
   logger.info('- Occupancy saved')
 
 
@@ -313,12 +319,14 @@ def occupancy_stabilised_calc(dbClient):
   df_sta['sold_t']      = 0
   df_sta['booking']     = 0
   df_sta['stay_length'] = ''
+  df_sta['book_type']   = None
   df_sta['limit_type']  = None
   df_sta['data_type']   = 'Stabilised Available'
   df_stc['occupied_t']  = 0
   df_stc['sold_t']      = 0
   df_stc['booking']     = 0
   df_stc['stay_length'] = ''
+  df_stc['book_type']   = None
   df_stc['limit_type']  = None
   df_stc['data_type']   = 'Stabilised Convertible'
 
@@ -336,6 +344,7 @@ def occupancy_stabilised_calc(dbClient):
 def occupancy_stabilised(dbClient):
 
   df = occupancy_stabilised_calc(dbClient)
+  df['book_type'] = df['book_type'].fillna('libre').replace('', 'libre')
   df['limit_type'] = df['limit_type'].fillna('libre').replace('', 'libre')
-  df.to_csv('csv/occupancy_stabilised.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'limit_type'])
+  df.to_csv('csv/occupancy_stabilised.csv', index=False, sep=',', encoding='utf-8', columns=['id', 'data_type', 'resource', 'date', 'occupied', 'sold', 'occupied_t', 'sold_t', 'booking', 'stay_length', 'book_type', 'limit_type'])
   logger.info('- Occupancy saved')
