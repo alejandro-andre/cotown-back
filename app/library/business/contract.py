@@ -1042,6 +1042,11 @@ def do_contracts(apiClient, id):
     result = apiClient.call(BOOKING, variables)
     context = flatten(result['data'][0])
 
+    # Skip clients missing identification type, document or address
+    if not context.get('Customer_id_type') or not context.get('Customer_id') or not context.get('Customer_address'):
+      logger.warning('Reserva ' + str(id) + ': cliente sin datos fiscales, contrato no generado')
+      return False
+
     # Get documents (solo Barcelona)
     building_documents, resource_documents = [], []
     if context.get('Resource_location_id') == 1:
