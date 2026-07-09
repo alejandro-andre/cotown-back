@@ -2,7 +2,7 @@ SELECT
   CONCAT('IBRX', il.id) AS "id",
   i.id AS "doc_id",
   i."Bill_type" AS "doc_type",
-  'G' || b.id::text AS "booking",
+  'B' || b.id::text AS "booking",
   a."Name" AS "marketplace",
   i."Issued_date" AS "date",
   p."Document" AS "provider", 
