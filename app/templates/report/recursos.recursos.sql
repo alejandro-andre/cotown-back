@@ -44,7 +44,8 @@ SELECT
   r."Registry_num", r."Registry_date", r."Occupancy_certificate",
   r."Big_renovation_date", r."Renovation_date", r."Energy_certificate", r."Energy_certificate_rate",
   r."Last_LAU_date", r."Last_LAU_rent", r."Index_rent", r."Max_services", r."Max_utility", r."Max_furniture", r."HOA",
-  r."Limit_type", r."Max_LAU_rent", r."Max_rent", r."Max_expenses", r."LAU_applicable"
+  r."Limit_type", r."Max_LAU_rent", r."Max_rent", r."Max_expenses", r."LAU_applicable",
+  r."Ical"
 FROM "Resource"."Resource" r
   INNER JOIN "Provider"."Provider" o ON o.id = r."Owner_id" 
   INNER JOIN "Provider"."Provider" s ON s.id = r."Service_id"
