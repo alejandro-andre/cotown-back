@@ -118,7 +118,7 @@ BEGIN
 
   -- Valida cliente
   SELECT c."Id_type_id", c."Document", c."Address", c."Black_list", c."Black_reason" INTO id_type_id, document, address, black_list, black_reason FROM "Customer"."Customer" c WHERE c.id = NEW."Customer_id";
-  IF id_type_id IS NULL OR document IS NULL OR address IS NULL THEN
+  IF (id_type_id IS NULL OR document IS NULL OR address IS NULL) AND NEW."Status" <> 'pendientepago' THEN
     RAISE exception '!!!Customer without fiscal data!!!Cliente sin datos fiscales!!!';
   END IF;
   IF black_list = TRUE THEN
