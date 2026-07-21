@@ -143,6 +143,27 @@ LEAD_FIELDS = [
 ]
 
 
+# #####################################
+# Valores por defecto según el origen
+# #####################################
+
+# Formularios de la web estática
+DEFAULTS_FORM = {
+    'type':       'B2C',
+    'channel':    'Directo',
+    'subchannel': 'Web',
+    'form':       'Formulario Disponibilidad',
+}
+
+# Reservas (web y Core). El canal/subcanal reales los aporta el llamante
+DEFAULTS_BOOKING = {
+    'type':       'B2C',
+    'channel':    'Directo',
+    'subchannel': 'Web',
+    'form':       'Reserva',
+}
+
+
 def resolve(field_name, value, fields=PERSON_FIELDS):
     name_match = None
     for f in fields:
@@ -157,6 +178,10 @@ def resolve(field_name, value, fields=PERSON_FIELDS):
         return None
     if "options" not in name_match:
         return name_match["key"], value
+
+    # Valor sin opción en Pipedrive: se descarta, pero hay que enterarse
+    # (edificio nuevo, tipología nueva, canal no mapeado...)
+    logger.warning(f"Pipedrive: '{value}' no es una opción válida de '{field_name}', se omite el campo")
     return name_match["key"], None
 
 
@@ -295,16 +320,14 @@ def add_deal(data):
 # Add info to Pipedrive
 # #####################################
 
-def add_info(data):
+def add_info(data, defaults=None):
 
     # Copy to avoid mutating caller's dict
     data = {**data}
 
     # Inject fixed values
-    data.setdefault('type',       'B2C')
-    data.setdefault('channel',    'Directo')
-    data.setdefault('subchannel', 'Web')
-    data.setdefault('form',       'Formulario Disponibilidad')
+    for field, value in (defaults or DEFAULTS_FORM).items():
+        data.setdefault(field, value)
 
     # Normalize field names from forms
     if 'Reason_id' in data:
@@ -319,4 +342,4 @@ def add_info(data):
     deal_id = add_deal(data)
 
     logger.info(f"Pipedrive: person={person_id} lead={lead_id} deal={deal_id}")
-    return person_id
+    return { 'person_id': person_id, 'lead_id': lead_id, 'deal_id': deal_id }

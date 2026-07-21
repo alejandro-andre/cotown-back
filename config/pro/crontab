@@ -4,6 +4,7 @@
 06,21,36,51 * * * * cd /home/cotown/app; sh ./dobatch.sh printcontract
 09,24,39,54 * * * * cd /home/cotown/app; sh ./dobatch.sh processload
 12,27,42,57 * * * * cd /home/cotown/app; sh ./dobatch.sh sendemail
+14,29,44,59 * * * * cd /home/cotown/app; sh ./dobatch.sh sendcrm
 0 1 * * * rm /tmp/batch*.lock
 
 # Procesos Web

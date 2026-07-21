@@ -13,9 +13,11 @@ import locale
 from flask import g, request, session, send_from_directory
 
 # Cotown includes - services
-from library.services.pipedrive import add_info
+from library.services.config import settings
+from library.services.pipedrive import add_info, DEFAULTS_FORM
 
 # Cotown includes - business functions
+from library.business.send_email import smtp_mail
 from library.business.booking import *
 
 # Logging
@@ -112,13 +114,69 @@ def req_form():
     for item in request.form:
         contact[item] = request.form.get(item)
 
+    # Attachment?
+    file = None
+    if 'file' in request.files:
+      file = request.files['file']
+      if file.filename == '':
+        file = None
+
     # Add to Pipedrive
     try:
         add_info(contact)
     except Exception:
         logger.exception("Pipedrive form error")
 
+    # Notificación interna del formulario
+    try:
+        notify_form(contact, file)
+    except Exception:
+        logger.exception("Form email error")
+
     return '', 200
+
+
+# ---------------------------------------------------
+# Internal notification of a web form
+# ---------------------------------------------------
+
+# Etiquetas de los campos en el cuerpo del correo
+FIELDS = {
+  'first_name':  'Nombre',
+  'last_name':   'Apellidos',
+  'email':       'Email',
+  'phone':       'Teléfono',
+  'birth_date':  'Fecha de nacimiento',
+  'nationality': 'Nacionalidad',
+  'company':     'Empresa',
+  'budget-max':  'Presupuesto',
+  'date_from':   'Desde',
+  'date_to':     'Hasta',
+  'reason':      'Motivo',
+  'place_type':  'Tipo de plaza',
+  'building':    'Edificio',
+  'city':        'Ciudad',
+  'visit_date':  'Fecha visita',
+  'message':     'Mensaje',
+  'comments':    'Mensaje'
+}
+
+def notify_form(contact, file=None):
+
+    # Tipo de formulario. El mismo defecto que se manda a Pipedrive
+    form = contact.get('form') or DEFAULTS_FORM['form']
+
+    # Marca
+    brand = contact.get('brand') or contact.get('web') or ''
+
+    # Cuerpo
+    message = '<h2>' + brand + '</h2><h3>' + form + '</h3>'
+    for item in contact:
+        if FIELDS.get(item) and contact[item]:
+            message = message + '<li><b>' + FIELDS[item] + '</b>: ' + str(contact[item]) + '</li>'
+
+    # Envía
+    smtp_mail(settings.EMAIL_TO, form, message, file=file)
 
 
 # ###################################################
@@ -417,32 +475,7 @@ def req_pub_booking(step):
         id_types  = q_id_types(g.dbClient, lang)
         step = 3
 
-      else:
-        # CRM
-        try:
-          _brand = {'2': 'Cotown', '1': 'Vanguard'}.get(str(segment), '')
-          crm_data = {
-            'first_name':  customer['Name'],
-            'last_name':   '',
-            'email':       customer['Email'],
-            'phone':       customer['Phones'] or '',
-            'birth_date':  customer['Birth_date'],
-            'nationality': customer['Country']['Name'] if customer.get('Country') else '',
-            'gender':      str(customer['Gender_id']) if customer.get('Gender_id') else '',
-            'language':    lang,
-            'date_from':   date_from,
-            'date_to':     date_to,
-            'city':        city['Name'],
-            'building':    summary['Building_code'] if summary else '',
-            'place_type':  summary['Place_type_code'] if summary else '',
-            'budget-max':  int(float(summary['Rent']) + float(summary['Services'])) if summary else None,
-            'reason':      get_var('Reason_id', save=False),
-            'brand':       _brand,
-            'web':         _brand,
-          }
-          add_info(crm_data)
-        except Exception:
-          logger.exception("Pipedrive booking error")
+      # El envío al CRM lo encola el trigger Booking_A4_lead y lo procesa batch_sendcrm
 
     # Add your custom filter to Jinja2 environment
     g.env.filters['number'] = format_number

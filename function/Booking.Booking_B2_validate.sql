@@ -98,6 +98,24 @@ BEGIN
     RAISE EXCEPTION '!!!Returned deposit greater than actual.!!!Garantía devuelta superior a la depositada!!!';
   END IF;
 
+  -- Reason
+  IF NEW."Reason_id" IS NULL AND NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
+    RAISE exception '!!!Reason not selected!!!Motivo no seleccionado!!!';
+  END IF;
+  IF NEW."Reason_id" IN (1, 3) THEN
+    IF NEW."School_id" IS NULL THEN
+      RAISE exception '!!!School not selected!!!Escuela no seleccionada!!!';
+    END IF;
+    IF NEW."School_id" = 1 AND NEW."Other_school" IS NULL THEN
+      RAISE exception '!!!School (other) not completed!!!Escuela (otra) no indicada!!!';
+    END IF;
+  END IF;
+  IF NEW."Reason_id" IN (2, 3, 4) THEN
+    IF NEW."Company" IS NULL THEN
+      RAISE exception '!!!Company not completed!!!Compañía no indicada!!!';
+    END IF;
+  END IF;
+
   -- Do not validate these cases:
   IF NEW."Status" IN ('solicitud', 'solicitudpagada', 'alternativas', 'alternativaspagada', 'descartada', 'descartadapagada', 'caducada', 'cancelada') THEN
     RETURN NEW;
@@ -126,24 +144,6 @@ BEGIN
     THEN
     ELSE
       RAISE exception '!!!Customer on black list: "%"!!!Cliente en lista negra: "%"!!!', black_reason, black_reason;
-    END IF;
-  END IF;
-
-  -- Reason
-  IF NEW."Reason_id" IS NULL AND NEW."Status" NOT IN ('descartada', 'descartadapagada', 'cancelada', 'caducada', 'finalizada') THEN
-    RAISE exception '!!!Reason not selected!!!Motivo no seleccionado!!!';
-  END IF;
-  IF NEW."Reason_id" IN (1, 3) THEN
-    IF NEW."School_id" IS NULL THEN
-      RAISE exception '!!!School not selected!!!Escuela no seleccionada!!!';
-    END IF;
-    IF NEW."School_id" = 1 AND NEW."Other_school" IS NULL THEN
-      RAISE exception '!!!School (other) not completed!!!Escuela (otra) no indicada!!!';
-    END IF;
-  END IF;
-  IF NEW."Reason_id" IN (2, 3, 4) THEN
-    IF NEW."Company" IS NULL THEN
-      RAISE exception '!!!Company not completed!!!Compañía no indicada!!!';
     END IF;
   END IF;
 
