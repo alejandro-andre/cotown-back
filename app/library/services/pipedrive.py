@@ -7,6 +7,7 @@ import requests
 
 # Cotown includes
 from library.services.config import settings
+from library.business.send_email import crm_mail
 
 # Logging
 import logging
@@ -320,7 +321,7 @@ def add_deal(data):
 # Add info to Pipedrive
 # #####################################
 
-def add_info(data, defaults=None):
+def add_info(data, defaults=None, file=None):
 
     # Copy to avoid mutating caller's dict
     data = {**data}
@@ -335,6 +336,11 @@ def add_info(data, defaults=None):
     if 'message' in data:
         data['comments'] = data.pop('message')
 
+    # CRM disabled: nothing is inserted, so no email either
+    if not settings.get('CRMSEND', 0):
+        logger.info(f'CRM desactivado (CRMSEND=0), no se envía a Pipedrive: {data}')
+        return None
+
     person_id = upsert_person(data)
 
     data['person_id'] = person_id
@@ -342,4 +348,12 @@ def add_info(data, defaults=None):
     deal_id = add_deal(data)
 
     logger.info(f"Pipedrive: person={person_id} lead={lead_id} deal={deal_id}")
+
+    # Notification email, only once the lead is in the CRM
+    if settings.get('CRMEMAIL', 0):
+        try:
+            crm_mail(data, file)
+        except Exception:
+            logger.exception('CRM: error enviando el correo de notificación')
+
     return { 'person_id': person_id, 'lead_id': lead_id, 'deal_id': deal_id }

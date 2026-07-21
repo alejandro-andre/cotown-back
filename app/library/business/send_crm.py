@@ -13,7 +13,6 @@
 import json
 
 # Cotown includes
-from library.services.config import settings
 from library.services.pipedrive import add_info, DEFAULTS_BOOKING
 
 # Logging
@@ -175,12 +174,7 @@ def do_crm(dbClient, con, lead):
     logger.error(f"CRM: la reserva {lead['Booking_id']} no tiene email")
     return 0
 
-  # Entornos sin envío (dev): no se marca como enviada
-  if not settings.get('CRMSEND', 0):
-    logger.info(f"CRM desactivado (CRMSEND=0), reserva {lead['Booking_id']} no enviada: {data}")
-    return 0
-
-  # ¡¡¡ Envía a Pipedrive !!!
+  # ¡¡¡ Envía a Pipedrive (y correo de notificación) !!!
   try:
     ids = add_info(data, defaults=DEFAULTS_BOOKING)
 
@@ -189,6 +183,11 @@ def do_crm(dbClient, con, lead):
     dbClient.execute(con, SQL_ERROR, (str(error)[:1000], lead['Row_id']))
     con.commit()
     logger.error(f"CRM: error enviando la reserva {lead['Booking_id']}: {error}")
+    return 0
+
+  # Entornos sin envío al CRM
+  if not ids:
+    logger.info(f"CRM desactivado (CRMSEND=0), reserva {lead['Booking_id']} no enviada")
     return 0
 
   # Marca como enviada

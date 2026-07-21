@@ -183,6 +183,47 @@ def smtp_mail(to, subject, body, cc=None, bcc=None, file=None, from_type='cotown
 
 
 # ###################################################
+# Internal notification of a lead sent to the CRM
+# ###################################################
+
+# Field labels for the email body
+CRM_FIELDS = {
+  'first_name':  'Nombre',
+  'last_name':   'Apellidos',
+  'email':       'Email',
+  'phone':       'Teléfono',
+  'birth_date':  'Fecha de nacimiento',
+  'nationality': 'Nacionalidad',
+  'company':     'Empresa',
+  'budget-max':  'Presupuesto',
+  'date_from':   'Desde',
+  'date_to':     'Hasta',
+  'reason':      'Motivo',
+  'place_type':  'Tipo de plaza',
+  'building':    'Edificio',
+  'city':        'Ciudad',
+  'visit_date':  'Fecha visita',
+  'message':     'Mensaje',
+  'comments':    'Mensaje'
+}
+
+def crm_mail(data, file=None):
+
+  # Origin ('Formulario Visita', 'Chatbot', 'Reserva'...) and brand
+  subject = data.get('form') or 'Lead'
+  brand = data.get('brand') or data.get('web') or ''
+
+  # Body
+  body = '<h2>' + brand + '</h2><h3>' + subject + '</h3>'
+  for field, label in CRM_FIELDS.items():
+    if data.get(field):
+      body = body + '<li><b>' + label + '</b>: ' + str(data[field]) + '</li>'
+
+  # Send
+  return smtp_mail(settings.EMAIL_TO, subject, body, file=file)
+
+
+# ###################################################
 # Do one email
 # ###################################################
 
