@@ -104,7 +104,7 @@ def download_contracts(apiClient, variables=None):
   logger.info('Downloading contracts...')
   clear('download')
  
-  # Get records
+  # Get records (B2C bookings)
   query = '''
   query Download ($fdesde:String, $fhasta:String, $pdesde:Int, $phasta:Int, $bdesde:Int, $bhasta:Int) {
     data: Booking_BookingList (
@@ -119,7 +119,7 @@ def download_contracts(apiClient, variables=None):
       resource: ResourceViaResource_id {
         building: BuildingViaBuilding_id (
           joinType: INNER
-          where: { 
+          where: {
             AND: [
               { id: { GE: $bdesde } }
               { id: { LE: $bhasta } }
@@ -131,20 +131,17 @@ def download_contracts(apiClient, variables=None):
         Code
         ProviderViaOwner_id (
           joinType: INNER
-          where: { 
+          where: {
             AND: [
               { id: { GE: $pdesde } }
               { id: { LE: $phasta } }
             ]
           }
         ) {
-          Name
+          id
         }
       }
       id
-      Contract_id
-      Contract_status
-      Contract_signed
       Contract_rent { name }
       Contract_services { name }
     }
@@ -165,11 +162,60 @@ def download_contracts(apiClient, variables=None):
         pdf.write(file.content)
         pdf.close()
 
-    '''
     # Services contract
+    '''
     if item['resource'] and item['Contract_services']:
-      name = 'Servicios ' + str(item['resource']['building']['Name']) + ' ' + str(item['resource']['Code'][7:])
+      name = 'Servicios (' + str(item['id']) + ') ' + str(item['resource']['building']['Name']) + ' ' + str(item['resource']['Code'][7:])
       file = apiClient.getFile(item['id'], 'Booking/Booking', 'Contract_services')
+      with open('download/' + name + '.pdf', 'wb') as pdf:
+        logger.info(name)
+        num += 1
+        pdf.write(file.content)
+        pdf.close()
+    '''
+
+  # Get records (B2B group bookings)
+  group_query = '''
+  query Download ($fdesde:String, $fhasta:String) {
+    data: Booking_Booking_groupList (
+      where: {
+        AND: [
+          { Date_from: { GE: $fdesde } }
+          { Date_from: { LT: $fhasta } }
+        ]
+      }
+    ) {
+      id
+      Contract_rent { name }
+      Contract_services { name }
+      customer: CustomerViaPayer_id {
+        Name
+      }
+    }
+  }'''
+  group_result = apiClient.call(group_query, variables)
+
+  # Download each group file
+  for item in group_result['data']:
+
+    # Payer name (safe for file system)
+    payer = str((item['customer'] or {}).get('Name') or '').replace('/', '-').replace('\\', '-').strip()
+
+    # Rent contract
+    if item['Contract_rent']:
+      name = 'Renta B2B (' + str(item['id']) + ') ' + payer
+      file = apiClient.getFile(item['id'], 'Booking/Booking_group', 'Contract_rent')
+      with open('download/' + name + '.pdf', 'wb') as pdf:
+        logger.info(name)
+        num += 1
+        pdf.write(file.content)
+        pdf.close()
+
+    # Services contract
+    '''
+    if item['Contract_services']:
+      name = 'Servicios B2B (' + str(item['id']) + ') ' + payer
+      file = apiClient.getFile(item['id'], 'Booking/Booking_group', 'Contract_services')
       with open('download/' + name + '.pdf', 'wb') as pdf:
         logger.info(name)
         num += 1
