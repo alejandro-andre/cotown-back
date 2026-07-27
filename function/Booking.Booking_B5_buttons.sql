@@ -39,7 +39,7 @@ BEGIN
      NEW."Button_activate" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/solicitud');
   END IF;
   IF NEW."Status" = 'descartadapagada' THEN
-     NEW."Button_activate" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/solicitadapagada');
+     NEW."Button_activate" := CONCAT('https://back.cotown.com/api/v1/booking/', NEW.id, '/status/solicitudpagada');
   END IF;
 
   -- Boton descartar
