@@ -955,29 +955,34 @@ def q_promo(dbClient, segment):
 # Get payment
 # ######################################################
 
-def q_get_payment(dbClient, id, generate_order=False):
+def q_get_payment(dbClient, id, generate_order=False, validate_customer=True):
 
+  con = None
   try:
     # Get payment
     con = dbClient.getconn()
+
+    check = ''
+    if validate_customer:
+      check = '''
+        AND c."Id_type_id" IS NOT NULL
+        AND c."Document" IS NOT NULL
+        AND c."Address" IS NOT NULL
+        AND c."Zip" IS NOT NULL
+        AND c."City" IS NOT NULL
+        AND c."Country_id" IS NOT NULL
+      '''
     cur = dbClient.execute(con, '''
-      SELECT p.id, p."Issued_date", p."Concept", p."Amount", p."Payment_order", p."Pos"  
+      SELECT p.id, p."Issued_date", p."Concept", p."Amount", p."Payment_order", p."Pos", p."Payment_date"
       FROM "Billing"."Payment" p
       INNER JOIN "Customer"."Customer" c ON c.id = p."Customer_id"
       WHERE p.id = %s
-      AND c."Id_type_id" IS NOT NULL 
-      AND c."Document" IS NOT NULL
-      AND c."Address" IS NOT NULL
-      AND c."Zip" IS NOT NULL
-      AND c."City" IS NOT NULL
-      AND c."Country_id" IS NOT NULL
-    ''', (id,))
+    ''' + check, (id,))
     result = cur.fetchone()
     cur.close()
     if result is None:
-      dbClient.putconn(con)
       return None
-   
+
     # Get data
     aux = dict(result)
     aux['Issued_date'] = aux['Issued_date'].strftime("%Y-%m-%d")
@@ -998,14 +1003,18 @@ def q_get_payment(dbClient, id, generate_order=False):
       con.commit()
 
     # Prepare response
-    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
-    logger.error(error)
-    con.rollback()
+    logger.error(f'Error leyendo el pago {id}: {error}')
+    if con is not None:
+      con.rollback()
     return None
+
+  finally:
+    if con is not None:
+      dbClient.putconn(con)
 
 
 # ######################################################
@@ -1014,17 +1023,27 @@ def q_get_payment(dbClient, id, generate_order=False):
 
 def q_put_payment(dbClient, id, auth, date):
 
+  con = None
   try:
     con = dbClient.getconn()
-    dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
+    cur = dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
+    updated = cur.rowcount
+    cur.close()
     con.commit()
-    dbClient.putconn(con)
+    if updated == 0:
+      logger.error(f'El pago {id} no existe, no se ha registrado el cobro (auth {auth}, {date})')
+      return False
     return True
 
   except Exception as error:
-    logger.error(error)
-    con.rollback()
+    logger.error(f'Error registrando el cobro del pago {id} (auth {auth}, {date}): {error}')
+    if con is not None:
+      con.rollback()
     return False
+
+  finally:
+    if con is not None:
+      dbClient.putconn(con)
 
 
 # ######################################################

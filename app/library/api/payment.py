@@ -9,6 +9,7 @@
 # ###################################################
 
 from flask import g, request, abort
+from datetime import datetime
 import urllib.parse
 
 # Logging
@@ -61,22 +62,58 @@ def req_pub_notification(pos='delegado'):
       return 'KO'
 
     # Transaction denied
-    if response['Ds_Response'][:2] != '00':
+    code = response.get('Ds_Response', '')
+    if not code.startswith('00'):
+      logger.warning(f'Notificación Redsys ({pos}) denegada: Ds_Response {code}, pedido {response.get("Ds_Order")}')
+      return 'KO'
+
+    # Payment id
+    try:
+      id = int(response['Ds_MerchantData'])
+    except (KeyError, TypeError, ValueError):
+      logger.error(f'Notificación Redsys ({pos}) sin identificador de pago: {response.get("Ds_MerchantData")}, pedido {response.get("Ds_Order")}')
       return 'KO'
 
     # Get payment
-    id = int(response['Ds_MerchantData'])
-    payment = q_get_payment(g.dbClient, id)
+    payment = q_get_payment(g.dbClient, id, validate_customer=False)
     logger.debug(payment)
     if payment is None:
+      logger.error(f'Notificación Redsys ({pos}): no se encuentra el pago {id}, pedido {response.get("Ds_Order")}')
       return 'KO'
 
-    # Update payment
-    date = urllib.parse.unquote(response['Ds_Date'])
-    hour = urllib.parse.unquote(response['Ds_Hour'])
-    ts = date[6:] + '-' + date[3:5] + '-' + date[:2] + ' ' + hour + ':00'
+    # Already registered
+    if payment['Payment_date'] is not None:
+      logger.info(f'Notificación Redsys ({pos}): el pago {id} ya estaba registrado el {payment["Payment_date"]}')
+      return 'OK'
+
+    # Amount check
+    amount = int(round(100 * float(payment['Amount'])))
+    if str(response.get('Ds_Amount')) != str(amount):
+      logger.error(f'Notificación Redsys ({pos}): el pago {id} se ha cobrado por {response.get("Ds_Amount")} y se esperaba {amount}')
+    if str(response.get('Ds_Currency')) != '978':
+      logger.error(f'Notificación Redsys ({pos}): el pago {id} se ha cobrado en la divisa {response.get("Ds_Currency")}')
+
+    # Payment date check
+    try:
+      date = urllib.parse.unquote(response['Ds_Date'])
+      hour = urllib.parse.unquote(response['Ds_Hour'])
+      ts = date[6:] + '-' + date[3:5] + '-' + date[:2] + ' ' + hour + ':00'
+      datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
+    except Exception:
+      ts = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+      logger.error(f'Notificación Redsys ({pos}): el pago {id} no trae fecha válida ({response.get("Ds_Date")} {response.get("Ds_Hour")}), se registra con la fecha actual')
     logger.debug(ts)
-    q_put_payment(g.dbClient, id, response['Ds_AuthorisationCode'], ts)
+
+    # Auth code
+    auth = response.get('Ds_AuthorisationCode')
+    if not auth:
+      auth = 'REDSYS'
+      logger.error(f'Notificación Redsys ({pos}): el pago {id} no trae código de autorización')
+
+    # Update payment. Deny if it fails.
+    if not q_put_payment(g.dbClient, id, auth, ts):
+      logger.error(f'Notificación Redsys ({pos}): NO se ha podido registrar el cobro del pago {id} (auth {auth}, {ts})')
+      return 'KO'
 
     # Ok
     return 'OK'

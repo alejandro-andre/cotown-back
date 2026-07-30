@@ -10,6 +10,8 @@ DECLARE
   booking_fee_actual NUMERIC;
   y VARCHAR;
   curr_user VARCHAR;
+  err TEXT;
+  err_state TEXT;
 
 BEGIN
 
@@ -44,55 +46,72 @@ BEGIN
   -- Pago realizado, quita el botón
   NEW."Pay" := NULL;
 
-  -- Seleccionamos el estado actual de la reserva
-  SELECT "Status", "Deposit", "Deposit_actual", "Booking_fee", "Booking_fee_actual" 
-  INTO status_record, deposit, deposit_actual, booking_fee, booking_fee_actual 
-  FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
- 
   -- Superuser ROLE
   curr_user := CURRENT_USER;
   RESET ROLE;
 
-  -- Comprobamos si el tipo de pago es 'booking' B2C
-  IF (NEW."Payment_type" = 'booking' AND NEW."Booking_id" IS NOT NULL) THEN
+  -- Sub transaccion
+  BEGIN
 
-    -- Registra el pago
-    INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Membership fee pagado');
+    -- Seleccionamos el estado actual de la reserva
+    SELECT "Status", "Deposit", "Deposit_actual", "Booking_fee", "Booking_fee_actual"
+    INTO status_record, deposit, deposit_actual, booking_fee, booking_fee_actual
+    FROM "Booking"."Booking" WHERE id = NEW."Booking_id";
 
-    -- SOLICITUD a SOLICITUD PAGADA
-    -- Comprobamos si el estado es 'solicitud'
-    IF (status_record = 'solicitud') THEN
-      UPDATE "Booking"."Booking" SET "Status" ='solicitudpagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-    END IF;
- 
-    -- ALTERNATIVAS a ALTERNATIVAS PAGADA
-    -- Comprobamos si el estado es 'alternativas'
-    IF (status_record = 'alternativas') THEN
-      UPDATE "Booking"."Booking" SET "Status" ='alternativaspagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-    END IF;
- 
-    -- PENDIENTE PAGO a CONFIRMADA o FIRMACONTRATO
-    -- Comprobamos si el estado es 'pendientepago'
-    IF (status_record = 'pendientepago') THEN
-      UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";    
-    END IF;   
+    -- Comprobamos si el tipo de pago es 'booking' B2C
+    IF (NEW."Payment_type" = 'booking' AND NEW."Booking_id" IS NOT NULL) THEN
 
-  END IF;
+      -- Registra el pago
+      INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Membership fee pagado');
 
-  -- Comprobamos si el tipo de pago es 'deposito'
-  IF (NEW."Payment_type" = 'deposito' AND NEW."Booking_id" IS NOT NULL) THEN
+      -- SOLICITUD a SOLICITUD PAGADA
+      -- Comprobamos si el estado es 'solicitud'
+      IF (status_record = 'solicitud') THEN
+        UPDATE "Booking"."Booking" SET "Status" ='solicitudpagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      END IF;
 
-    -- Registra el pago
-    INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
+      -- ALTERNATIVAS a ALTERNATIVAS PAGADA
+      -- Comprobamos si el estado es 'alternativas'
+      IF (status_record = 'alternativas') THEN
+        UPDATE "Booking"."Booking" SET "Status" ='alternativaspagada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      END IF;
 
-    -- DOCUMENTACION OK a FIRMA CONTRATO
-    IF status_record = 'documentacionok' OR booking_fee = 0 OR booking_fee_actual IS NOT NULL THEN
-      UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
-    ELSE
-      UPDATE "Booking"."Booking" SET "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      -- PENDIENTE PAGO a CONFIRMADA o FIRMACONTRATO
+      -- Comprobamos si el estado es 'pendientepago'
+      IF (status_record = 'pendientepago') THEN
+        UPDATE "Booking"."Booking" SET "Status" ='confirmada', "Booking_fee_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      END IF;
+
     END IF;
 
-  END IF;
+    -- Comprobamos si el tipo de pago es 'deposito'
+    IF (NEW."Payment_type" = 'deposito' AND NEW."Booking_id" IS NOT NULL) THEN
+
+      -- Registra el pago
+      INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log") VALUES (NEW."Booking_id", 'Garantía pagada');
+
+      -- DOCUMENTACION OK a FIRMA CONTRATO
+      IF status_record = 'documentacionok' OR booking_fee = 0 OR booking_fee_actual IS NOT NULL THEN
+        UPDATE "Booking"."Booking" SET "Status" ='firmacontrato', "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      ELSE
+        UPDATE "Booking"."Booking" SET "Deposit_actual" = NEW."Amount" WHERE id = NEW."Booking_id";
+      END IF;
+
+    END IF;
+
+  -- El pago se registra igualmente, sólo se anota el fallo del workflow
+  EXCEPTION WHEN OTHERS THEN
+
+    -- Anota el error en la reserva (sin poder tumbar el registro del pago)
+    IF NEW."Booking_id" IS NOT NULL THEN
+      BEGIN
+        INSERT INTO "Booking"."Booking_log" ("Booking_id", "Log")
+        VALUES (NEW."Booking_id", CONCAT('ERROR: pago ', NEW.id, ' (', NEW."Payment_type", ', ', NEW."Amount", ') cobrado y registrado, pero NO se ha podido actualizar la reserva: ', err));
+        EXCEPTION WHEN OTHERS THEN NULL;
+      END;
+    END IF;
+
+  END;
 
   -- Return
   EXECUTE 'SET ROLE "' || curr_user || '"';
