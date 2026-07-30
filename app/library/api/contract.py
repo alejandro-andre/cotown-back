@@ -43,7 +43,7 @@ def req_pub_contract():
   status  = data['envelopeSummary']['status']
   dt      = data['envelopeSummary']['statusChangedDateTime']
   subject = data['envelopeSummary']['emailSubject']
-  if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
+  if status not in ('sent', 'delivered', 'declined', 'completed', 'expired', 'voided'):
     status = 'other'
 
   # Debug

@@ -72,6 +72,7 @@ def main():
               { Contract_id: { NE: "n/a" } }
               { Contract_status: { NE: completed } }
               { Contract_status: { NE: other } }
+              { Contract_status: { NE: voided } }
               { ''' + FIELDS[key] + ''': { IS_NULL: false } }
             ]
           }
