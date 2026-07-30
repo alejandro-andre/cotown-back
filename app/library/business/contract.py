@@ -832,7 +832,7 @@ def check_contracts(apiClient, id, current_status, table='Booking'):
 
     # Status
     status = envelope.status
-    if status not in ('sent', 'delivered', 'declined', 'completed', 'expired'):
+    if status not in ('sent', 'delivered', 'declined', 'completed', 'expired', 'voided'):
       status = 'other'
     
     # Datetime

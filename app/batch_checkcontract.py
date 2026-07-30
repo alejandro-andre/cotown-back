@@ -71,6 +71,7 @@ def main():
             AND: [
               { Contract_id: { NE: "n/a" } }
               { Contract_status: { NE: completed } }
+              { Contract_status: { NE: voided } }
               { Contract_status: { NE: other } }
               { ''' + FIELDS[key] + ''': { IS_NULL: false } }
             ]
