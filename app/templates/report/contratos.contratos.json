@@ -1,6 +1,7 @@
 [
 "id",
 "Resource.Code",
+"Status",
 "Customer.id",
 "Customer.Name",
 "Customer.Email",
