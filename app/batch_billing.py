@@ -282,7 +282,7 @@ def bill_month(dbClient, con):
       # Amounts
       total_rent     = float(item['Rent'] or 0.0) + float(item['Rent_discount'] or 0.0)
       total_services = float(item['Services'] or 0.0) + float(item['Services_discount'] or 0.0)
-      utility        = float(item['Utility'] or 0.0)
+      utility        = float(item['Utility'] or 0.0) if (item['Limit_type'] or 'libre') != 'libre' else 0.0
       expenses       = float(item['Expenses'] or 0.0)
       furniture      = float(item['Furniture'] or 0.0)
       if total_rent + total_services + utility + expenses + furniture != 0:
@@ -531,7 +531,7 @@ def bill_group_month(dbClient, con):
   '''
   SELECT 
     bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bgp."Expenses", bgp."Utility", bgp."Furniture", 
-    bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id", pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos",
+    bg."Payer_id", bg."Tax", bg."Limit_type", pr."Receipt", st."Tax_id", pr."Pos" as "Rent_pos", sv."Pos" as "Service_pos",
     COUNT(r."Code") as num, 
     MIN(bg."Room_ids") as "Room_ids", 
     MIN(r."Owner_id") as "Owner_id", 
@@ -550,7 +550,7 @@ def bill_group_month(dbClient, con):
     AND bgp."Invoice_services_id" IS NULL
     AND bgp."Rent_date" <= CURRENT_DATE
     AND bgp."Rent_date" >= %s
-  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", pr."Receipt", st."Tax_id", pr."Pos", sv."Pos"
+  GROUP BY bgp.id, bgp."Booking_id", bgp."Rent_date", bgp."Rent", bgp."Services", bg."Payer_id", bg."Tax", bg."Limit_type", pr."Receipt", st."Tax_id", pr."Pos", sv."Pos"
   ORDER BY bgp."Booking_id", bgp."Rent_date"
   ''', (settings.BILLDATE, ))
   data = cur.fetchall()
@@ -611,7 +611,7 @@ def bill_group_month(dbClient, con):
       # Amounts
       total_rent     = float(item['Rent'] or 0.0) * float(item['num'] or 0.0)
       total_services = float(item['Services'] or 0.0) * float(item['num'] or 0.0)
-      utility        = float(item['Utility'] or 0.0) * float(item['num'] or 0.0)
+      utility        = (float(item['Utility'] or 0.0) if (item['Limit_type'] or 'libre') != 'libre' else 0.0) * float(item['num'] or 0.0)
       expenses       = float(item['Expenses'] or 0.0) * float(item['num'] or 0.0)
       furniture      = float(item['Furniture'] or 0.0) * float(item['num'] or 0.0)
       if total_rent + total_services + utility + expenses + furniture != 0:
