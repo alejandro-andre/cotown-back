@@ -7,6 +7,10 @@ import psycopg2
 import psycopg2.pool
 import psycopg2.extras
 
+# Logging
+import logging
+logger = logging.getLogger('COTOWN')
+
 # #####################################
 # Database class
 # #####################################
@@ -14,7 +18,7 @@ import psycopg2.extras
 class DBClient:
 
   # Init
-  def __init__(self, host, port, dbname, user, password, sshuser=None, sshpassword=None, sshprivatekey=None, schema='public', readonly=False ):
+  def __init__(self, host, port, dbname, user, password, sshuser=None, sshpassword=None, sshprivatekey=None, schema='public', readonly=False, minconn=1, maxconn=3 ):
 
     self.host = host
     self.port = port
@@ -26,6 +30,8 @@ class DBClient:
     self.sshprivatekey = sshprivatekey
     self.schema = schema
     self.readonly = readonly
+    self.minconn = minconn
+    self.maxconn = maxconn
 
     self.tunnel = None
     self.pool = None
@@ -67,8 +73,8 @@ class DBClient:
 
     # Connect to DB using pool
     self.pool = psycopg2.pool.SimpleConnectionPool(
-      1, 
-      20, 
+      self.minconn,
+      self.maxconn,
       host=self.host,
       port=self.port,
       dbname=self.dbname, 
@@ -106,8 +112,24 @@ class DBClient:
   # Free pool connection
   def putconn(self, con):
 
-    con.commit()
-    self.pool.putconn(con)
+    if con is None:
+      return
+
+    # Commit pending work. If it fails the connection is unusable
+    broken = con.closed != 0
+    if not broken:
+      try:
+        con.commit()
+      except Exception as error:
+        logger.error(error)
+        broken = True
+
+    # Always give the slot back to the pool, closing the connection if broken.
+    # Never raise from here: a failure would leak the connection out of the pool
+    try:
+      self.pool.putconn(con, close=broken)
+    except Exception as error:
+      logger.error(error)
 
 
   # Execute SQL command

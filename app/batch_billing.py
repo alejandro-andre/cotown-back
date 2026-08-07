@@ -56,8 +56,7 @@ def get_data(dbClient, con):
   try:
 
     # Get product list
-    con = dbClient.getconn()
-    cur = dbClient.execute(con, 
+    cur = dbClient.execute(con,
       '''
       SELECT p.id, p."Name", p."Name_en", t.id, t."Name", t."Name_en", t."Value"
       FROM "Billing"."Product" p
