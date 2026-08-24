@@ -203,18 +203,19 @@ def req_ical(token):
   # Retrieve data
   logger.debug(token)
   code = 'unknown'
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, sql, ('https://back.cotown.com/api/v1/ical/' + token,))
     rows = cur.fetchall()
     cur.close()
-    dbClient.putconn(con)
   except Exception as error:
     logger.error(error)
     if con:
       con.rollback()
-      dbClient.putconn(con)
     return None
+  finally:
+    dbClient.putconn(con)
 
   # Sin resultados = recurso no existe
   if not rows:

@@ -44,6 +44,7 @@ def q_int_payments(dbClient, date):
       AND p."Payment_date"::date = '{date}'   
     ORDER BY p.id 
   '''
+  con = None
   try:
     # Get data
     con = dbClient.getconn()
@@ -51,7 +52,6 @@ def q_int_payments(dbClient, date):
     column_names = [desc[0] for desc in cur.description]
     result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
     cur.close()
-    dbClient.putconn(con)
 
     # Group by payment/invoice
     payments = {}
@@ -87,11 +87,15 @@ def q_int_payments(dbClient, date):
       payment["invoices"] = list(payment["invoices"].values())
       json_result.append(payment)
     return list(payments.values())
- 
+
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return []
+
+  finally:
+    dbClient.putconn(con)
 
 
 
@@ -247,19 +251,23 @@ def q_int_customers(dbClient, date, codes):
     ) AS customers
     ORDER BY 1
   '''
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, sql)
     column_names = [desc[0] for desc in cur.description]
     result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
     cur.close()
-    dbClient.putconn(con)
     return result
- 
+
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ------------------------------------------------------
@@ -310,6 +318,7 @@ def q_int_invoices(dbClient, date, codes):
       AND p.id <= {codes[1]}
     ORDER BY 2, 3
   '''
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, sql)
@@ -337,14 +346,17 @@ def q_int_invoices(dbClient, date, codes):
         'tax_id': row['tax_id']
       })
     cur.close()
-    dbClient.putconn(con)
     return result
- 
+
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
-  
+
+  finally:
+    dbClient.putconn(con)
+
 
 # ------------------------------------------------------
 # Management fees query
@@ -399,16 +411,20 @@ def q_int_management_fees(dbClient, fdesde, codes):
     ) AS "data"
     GROUP BY 1, 2, 3
   '''
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, sql)
     column_names = [desc[0] for desc in cur.description]
     result = [{col: (row[i] if row[i] is not None else '') for i, col in enumerate(column_names)} for row in cur.fetchall()]
     cur.close()
-    dbClient.putconn(con)
     return result
- 
+
   except Exception as error:
     logger.error(error)
-    con.rollback()
-    return None  
+    if con:
+      con.rollback()
+    return None
+
+  finally:
+    dbClient.putconn(con)

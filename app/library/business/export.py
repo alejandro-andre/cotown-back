@@ -206,6 +206,7 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=N
 
     # Get SQL data
     if sql:
+      con = None
       try:
         con = dbClient.getconn()
         if variables == {}:
@@ -217,10 +218,11 @@ def do_export_to_excel(apiClient, dbClient, name, variables=None, external_sql=N
         cur.close()
       except Exception as e:
         logger.error(e)
-        con.rollback()
-        dbClient.putconn(con)
+        if con:
+          con.rollback()
         return
-      dbClient.putconn(con)
+      finally:
+        dbClient.putconn(con)
       df = pd.DataFrame(data, columns=desc)
       fill_sheet(df, columns, wb[sheet])
 
