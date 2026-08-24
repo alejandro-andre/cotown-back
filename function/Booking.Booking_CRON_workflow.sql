@@ -41,7 +41,7 @@ BEGIN
     UPDATE "Booking"."Booking"
     SET "Status"='descartada'
     WHERE "Booking"."Status"='caducada'
-    AND ("Booking"."Expiry_date" IS NULL OR "Booking"."Expiry_date" < (CURRENT_DATE + INTERVAL '5 days'));
+    AND ("Booking"."Expiry_date" IS NULL OR "Booking"."Expiry_date" < (CURRENT_DATE - INTERVAL '5 days'));
   EXCEPTION WHEN OTHERS THEN
     RAISE NOTICE 'Error descartando solicitudes caducadas: % %', SQLSTATE, SQLERRM;
   END; 

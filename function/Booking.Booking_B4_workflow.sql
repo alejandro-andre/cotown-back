@@ -132,9 +132,28 @@ BEGIN
     NEW."Status" := 'confirmada';
   END IF;
 
-  -- CONFIRMADA A FIRMA CONTRATO
-  -- Actualiza al estado 'Firma contrato' si no hay que pagar depósito
-  IF NEW."Status" = 'confirmada' AND NEW."Fee_marketplace" THEN
+  -- CONFIRMADA a DOCUMENTACION OK
+  -- Actualiza al estado 'Documentación ok' cuando la documentación de la reserva está aprobada.
+  -- Se evalúa en cada update de la reserva, no solo al tocar un documento, de forma que la
+  -- documentación aprobada antes de confirmar también hace avanzar la reserva.
+  -- Solo avanza desde 'confirmada': una reserva que ya ha avanzado (firmacontrato, contrato,
+  -- checkin...) no retrocede aunque se apruebe o se añada un documento nuevo.
+  IF NEW."Status" = 'confirmada' AND (
+       NOT EXISTS (
+         SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW.id
+       )
+       OR EXISTS (
+         SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW.id AND cd."Approved" IS TRUE
+       )
+     ) THEN
+    NEW."Status" := 'documentacionok';
+  END IF;
+
+  -- CONFIRMADA o DOCUMENTACION OK A FIRMA CONTRATO
+  -- Actualiza al estado 'Firma contrato' si no hay que pagar depósito.
+  -- Se acepta también desde 'documentacionok' para que una reserva sin garantía pendiente no se
+  -- quede atascada ahí: el único otro paso a 'firmacontrato' es el pago de la garantía.
+  IF NEW."Status" IN ('confirmada', 'documentacionok') AND NEW."Fee_marketplace" THEN
     -- Si hay que pagar garantía, pasa a confirmada
     IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
       deposit := TRUE;
@@ -145,8 +164,13 @@ BEGIN
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
-  -- Actualiza el estado a "contrato" desde 'firmacontrato' cuando firma el contrado (status = completed)
-  IF (NEW."Status" = 'firmacontrato' AND NEW."Contract_status" = 'completed') THEN
+  -- Actualiza el estado a "contrato" cuando firma el contrado (status = completed).
+  -- La firma se graba por "Contract_id" desde el callback de firma, sin mirar el estado, así que
+  -- se acepta desde cualquier estado previo a la firma. Si no, una reserva que estuviera en
+  -- 'documentacionok' al llegar la firma se quedaba con el contrato firmado y sin avanzar.
+  IF (NEW."Status" IN ('confirmada', 'documentacionok', 'firmacontrato')
+      AND NEW."Contract_status" = 'completed'
+      AND NEW."Contract_rent" IS NOT NULL) THEN
     NEW."Status" := 'contrato';
   END IF;
 
@@ -325,6 +349,12 @@ BEGIN
     IF (NEW."Booking_fee_returned" IS NOT NULL) THEN
       change := CONCAT(change, ' Hay que devolver el booking con por importe de: ', NEW."Booking_fee_returned");
     END IF;
+  END IF;
+
+  -- A DOCUMENTACION OK
+  IF (NEW."Status" = 'documentacionok') THEN
+    -- Log
+    change := 'Documentación aprobada';
   END IF;
 
   -- A FIRMA CONTRATO

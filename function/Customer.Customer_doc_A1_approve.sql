@@ -1,39 +1,27 @@
--- Valida la aprobación de los documentos de cliente
+-- Fuerza la revisión de la documentación de la reserva
 DECLARE
 
   curr_user VARCHAR;
-  docs_ok BOOLEAN;
-  status VARCHAR;
-  c INTEGER;
 
 BEGIN
 
-  -- Superuser ROLE
-  curr_user := CURRENT_USER;
-  RESET ROLE; 
-
-  -- Status del booking
-  SELECT "Status" INTO status FROM "Booking"."Booking" b WHERE b.id = NEW."Booking_id";
-  IF status <> 'confirmada' THEN
-    EXECUTE 'SET ROLE "' || curr_user || '"';
+  -- Documento sin reserva asociada (documentos de identidad): no hay nada que revisar
+  IF NEW."Booking_id" IS NULL THEN
     RETURN NEW;
   END IF;
 
-  -- ¿No hay documentos, o hay al menos uno aprobado?
-  SELECT
-    NOT EXISTS (
-      SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW."Booking_id"
-    )
-    OR EXISTS (
-      SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW."Booking_id" AND cd."Approved" IS TRUE
-    )
-    OR NEW."Approved" IS TRUE
-  INTO docs_ok;
-  
-  -- Actualiza
-  IF docs_ok THEN
-    UPDATE "Booking"."Booking" SET "Status" = 'documentacionok' WHERE id = NEW."Booking_id";
-  END IF;
+  -- Superuser ROLE
+  curr_user := CURRENT_USER;
+  RESET ROLE;
+
+  -- Toca la reserva para que el workflow (Booking.Booking_B4_workflow) reevalúe la documentación.
+  -- El criterio de 'documentación ok' vive allí, en un único sitio, y solo avanza desde
+  -- 'confirmada', así que una reserva que ya ha avanzado (documentacionok, firmacontrato,
+  -- contrato, checkin...) no retrocede al aprobar o añadir un documento.
+  UPDATE "Booking"."Booking"
+  SET "Status" = "Status"
+  WHERE id = NEW."Booking_id"
+    AND "Status" = 'confirmada';
 
   -- Fin
   EXECUTE 'SET ROLE "' || curr_user || '"';
