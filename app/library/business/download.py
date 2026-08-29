@@ -286,6 +286,7 @@ def download_nra(dbClient, variables=None):
   '''
 
   # Capture exceptions
+  con = None
   try:
 
     # Get data
@@ -327,9 +328,12 @@ def download_nra(dbClient, variables=None):
   # Error, return
   except Exception as e:
     logger.error(e)
-    con.rollback()
-    dbClient.putconn(con)
+    if con:
+      con.rollback()
     return
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ##################################################

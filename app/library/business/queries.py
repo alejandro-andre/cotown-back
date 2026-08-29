@@ -22,19 +22,23 @@ from library.services.config import settings
 def q_labels(dbClient, id, locale):
 
   # Get labels
-  con = dbClient.getconn()
-  cur = dbClient.execute(con,
-    '''
-    SELECT "values", "labels"
-    FROM "Models"."EnumType" et
-    INNER JOIN "Models"."EnumTypeLabel" ON container = et.id
-    WHERE et.id = %s AND locale = %s;
-    ''',
-    (id, locale,))
-  result = cur.fetchone()
-  cur.close()
-  dbClient.putconn(con)
-  return json.dumps(result, default=str)
+  con = None
+  try:
+    con = dbClient.getconn()
+    cur = dbClient.execute(con,
+      '''
+      SELECT "values", "labels"
+      FROM "Models"."EnumType" et
+      INNER JOIN "Models"."EnumTypeLabel" ON container = et.id
+      WHERE et.id = %s AND locale = %s;
+      ''',
+      (id, locale,))
+    result = cur.fetchone()
+    cur.close()
+    return json.dumps(result, default=str)
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -212,54 +216,58 @@ def sql_dashboard_operaciones(status, vars):
 def q_dashboard_operaciones(dbClient, status=None, vars=None):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
 
-  # Counters
-  if status is None:
-    result = {}  
+    # Counters
+    if status is None:
+      result = {}  
 
-    # Count by status
-    cur = dbClient.execute(con, 'SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
-    for row in cur.fetchall():
-      result[row[0]] = row[1]
-    cur.close()
+      # Count by status
+      cur = dbClient.execute(con, 'SELECT "Status", COUNT (*) FROM "Booking"."Booking" GROUP BY 1')
+      for row in cur.fetchall():
+        result[row[0]] = row[1]
+      cur.close()
 
-    # Count all confirmed
-    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
-    row = cur.fetchone()
-    cur.close()
-    result['ok'] = row[0]
+      # Count all confirmed
+      cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\')')
+      row = cur.fetchone()
+      cur.close()
+      result['ok'] = row[0]
 
-    # Count checkins
-    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" = \'checkin\' OR (COALESCE("Check_in", "Date_from") <= CURRENT_DATE AND "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))')
-    row = cur.fetchone()
-    cur.close()
-    result['checkin'] = row[0]
+      # Count checkins
+      cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" = \'checkin\' OR (COALESCE("Check_in", "Date_from") <= CURRENT_DATE AND "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\'))')
+      row = cur.fetchone()
+      cur.close()
+      result['checkin'] = row[0]
 
-    # Count nearest checkins
-    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') AND COALESCE("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
-    row = cur.fetchone()
-    cur.close()
-    result['next'] = row[0]
+      # Count nearest checkins
+      cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'firmacontrato\', \'contrato\', \'checkinconfirmado\') AND COALESCE("Check_in", "Date_from") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKINDAYS) + ' days\'')
+      row = cur.fetchone()
+      cur.close()
+      result['next'] = row[0]
 
-    # Count nearest checkouts
-    cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'inhouse\') AND COALESCE("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKOUTDAYS) + ' days\'')
-    row = cur.fetchone()
-    cur.close()
-    result['nextout'] = row[0]
+      # Count nearest checkouts
+      cur = dbClient.execute(con, 'SELECT COUNT (*) FROM "Booking"."Booking" WHERE "Status" IN (\'inhouse\') AND COALESCE("Check_out", "Date_to") BETWEEN CURRENT_DATE + INTERVAL \'1 days\' AND CURRENT_DATE + INTERVAL \'' + str(settings.CHECKOUTDAYS) + ' days\'')
+      row = cur.fetchone()
+      cur.close()
+      result['nextout'] = row[0]
 
-    # Return
-    return result
+      # Return
+      return result
 
-  # Get bookings
-  sql = sql_dashboard_operaciones(status, vars)
-  if sql:
-    cur = dbClient.execute(con, sql, vars)
-    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-    cur.close()
+    # Get bookings
+    sql = sql_dashboard_operaciones(status, vars)
+    if sql:
+      cur = dbClient.execute(con, sql, vars)
+      result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+      cur.close()
+      return result
+    return []
+
+  finally:
     dbClient.putconn(con)
-    return result
-  return []
 
 
 # ######################################################
@@ -324,14 +332,18 @@ def sql_dashboard_lau(status, vars):
 def q_dashboard_lau(dbClient, status=None, vars=None):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
  
-  # Get bookings
-  cur = dbClient.execute(con, sql_dashboard_lau(status, vars), vars)
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-  cur.close()
-  dbClient.putconn(con)
-  return result
+    # Get bookings
+    cur = dbClient.execute(con, sql_dashboard_lau(status, vars), vars)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -516,40 +528,52 @@ def sql_dashboard_incasol(vars):
 def q_dashboard_payments(dbClient, vars=None):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
  
-  # Get bookings
-  cur = dbClient.execute(con, sql_dashboard_payments(vars), vars)
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-  cur.close()
-  dbClient.putconn(con)
-  return result
+    # Get bookings
+    cur = dbClient.execute(con, sql_dashboard_payments(vars), vars)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 def q_dashboard_deposits(dbClient, vars=None):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
  
-  # Get bookings
-  cur = dbClient.execute(con, sql_dashboard_deposits(vars), vars)
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-  cur.close()
-  dbClient.putconn(con)
-  return result
+    # Get bookings
+    cur = dbClient.execute(con, sql_dashboard_deposits(vars), vars)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 def q_dashboard_incasol(dbClient, vars=None):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
  
-  # Get bookings
-  cur = dbClient.execute(con, sql_dashboard_incasol(vars), vars)
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-  cur.close()
-  dbClient.putconn(con)
-  return result
+    # Get bookings
+    cur = dbClient.execute(con, sql_dashboard_incasol(vars), vars)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 def sql_dashboard_documents(status, vars):
@@ -626,14 +650,18 @@ def sql_dashboard_documents(status, vars):
 def q_dashboard_documents(dbClient, status=None, vars=None):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
 
-  # Get documents
-  cur = dbClient.execute(con, sql_dashboard_documents(status, vars), vars)
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
-  cur.close()
-  dbClient.putconn(con)
-  return result
+    # Get documents
+    cur = dbClient.execute(con, sql_dashboard_documents(status, vars), vars)
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    cur.close()
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -643,92 +671,224 @@ def q_dashboard_documents(dbClient, status=None, vars=None):
 def q_flat_prices(dbClient, segment, year):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
 
-  # Get prices
-  sql = '''
-    WITH 
-    "Promotions" AS (
+    # Get prices
+    sql = '''
+      WITH 
+      "Promotions" AS (
+        SELECT 
+          bpb."Building_id",
+          bpp."Flat_type_id",
+          1 + bp."Value_rent_pct" / 100.0 AS "Value_rent_pct", 
+          1 + bp."Value_fee_pct"  / 100.0 AS "Value_fee_pct"
+        FROM "Billing"."Promotion" bp
+          LEFT JOIN "Billing"."Promotion_building" bpb ON bpb."Promotion_id" = bp.id
+          LEFT JOIN "Billing"."Promotion_place" bpp ON bpp."Promotion_id" = bp.id
+        WHERE bp."Active_from" <= CURRENT_DATE 
+          AND bp."Active_to"   >= CURRENT_DATE
+      ),
+      "Prices" AS (
+        SELECT
+          r."Building_id",
+          rft.id  AS "Flat_type_id",
+          rft."Code" AS "Flat_type",
+          rfst.id AS "Flat_subtype_id",
+          rfst."Code" AS "Flat_subtype",
+          MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long",   0)) AS "Rent_long",
+          MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
+          MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short",  0)) AS "Rent_short",
+          MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_long",   0)) AS "Rent_long_next",
+          MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_medium", 0)) AS "Rent_medium_next",
+          MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short",  0)) AS "Rent_short_next",
+          COUNT(*) AS "Qty"
+        FROM "Resource"."Resource" r
+          INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+          INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+          INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
+          INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id" = pr.id
+          INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
+          LEFT  JOIN "Billing"."Pricing_detail" px ON px."Building_id" = r."Building_id" AND px."Flat_type_id" = r."Flat_type_id" AND px."Place_type_id" IS NULL
+        WHERE r."Sale_type" IN ('ambos', 'completo')
+          AND pd."Year" = %s
+          AND px."Year" = %s
+          AND r."Segment_id" = %s
+        GROUP BY 1, 2, 3, 4, 5
+      )
       SELECT 
-        bpb."Building_id",
-        bpp."Flat_type_id",
-        1 + bp."Value_rent_pct" / 100.0 AS "Value_rent_pct", 
-        1 + bp."Value_fee_pct"  / 100.0 AS "Value_fee_pct"
-      FROM "Billing"."Promotion" bp
-        LEFT JOIN "Billing"."Promotion_building" bpb ON bpb."Promotion_id" = bp.id
-        LEFT JOIN "Billing"."Promotion_place" bpp ON bpp."Promotion_id" = bp.id
-      WHERE bp."Active_from" <= CURRENT_DATE 
-        AND bp."Active_to"   >= CURRENT_DATE
-    ),
-    "Prices" AS (
-      SELECT
-        r."Building_id",
-        rft.id  AS "Flat_type_id",
-        rft."Code" AS "Flat_type",
-        rfst.id AS "Flat_subtype_id",
-        rfst."Code" AS "Flat_subtype",
-        MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long",   0)) AS "Rent_long",
-        MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
-        MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short",  0)) AS "Rent_short",
-        MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_long",   0)) AS "Rent_long_next",
-        MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_medium", 0)) AS "Rent_medium_next",
-        MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short",  0)) AS "Rent_short_next",
-        COUNT(*) AS "Qty"
-      FROM "Resource"."Resource" r
-        INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-        INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
-        INNER JOIN "Resource"."Resource_flat_subtype" rfst ON r."Flat_subtype_id" = rfst.id
-        INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id" = pr.id
-        INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" IS NULL
-        LEFT  JOIN "Billing"."Pricing_detail" px ON px."Building_id" = r."Building_id" AND px."Flat_type_id" = r."Flat_type_id" AND px."Place_type_id" IS NULL
-      WHERE r."Sale_type" IN ('ambos', 'completo')
-        AND pd."Year" = %s
-        AND px."Year" = %s
-        AND r."Segment_id" = %s
-      GROUP BY 1, 2, 3, 4, 5
-    )
-    SELECT 
-      pz.*,
-      pr."Value_rent_pct", 
-      pr."Value_fee_pct"
-    FROM "Prices" pz
-    LEFT JOIN "Promotions" pr
-      ON pr."Building_id" = pz."Building_id"
-     AND (pr."Flat_type_id" IS NULL OR pr."Flat_type_id" = pz."Flat_type_id")
-    ORDER BY pz."Building_id", pz."Flat_type_id", pz."Flat_subtype_id";
-  '''
-  cur = dbClient.execute(con, sql, (year, year + 1, segment))
+        pz.*,
+        pr."Value_rent_pct", 
+        pr."Value_fee_pct"
+      FROM "Prices" pz
+      LEFT JOIN "Promotions" pr
+        ON pr."Building_id" = pz."Building_id"
+       AND (pr."Flat_type_id" IS NULL OR pr."Flat_type_id" = pz."Flat_type_id")
+      ORDER BY pz."Building_id", pz."Flat_type_id", pz."Flat_subtype_id";
+    '''
+    cur = dbClient.execute(con, sql, (year, year + 1, segment))
 
-  # Obtener los resultados de la consulta
-  results = cur.fetchall()
-  cur.close()
+    # Obtener los resultados de la consulta
+    results = cur.fetchall()
+    cur.close()
 
-  # Crear una estructura de datos para almacenar los resultados agrupados
-  grouped_data = []
+    # Crear una estructura de datos para almacenar los resultados agrupados
+    grouped_data = []
 
-  # Procesar los resultados y agruparlos en dos niveles (Building, Flat_subtype)
-  for row in results:
+    # Procesar los resultados y agruparlos en dos niveles (Building, Flat_subtype)
+    for row in results:
      
-    # Building
-    building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
-    if building_index is None:
-      grouped_data.append({
-        'id': row['Building_id'],
-        'Flat_subtypes': []
-      })
-      building_index = len(grouped_data) - 1
+      # Building
+      building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
+      if building_index is None:
+        grouped_data.append({
+          'id': row['Building_id'],
+          'Flat_subtypes': []
+        })
+        building_index = len(grouped_data) - 1
 
-    # Flat subtype
-    flat_type_index = next(
-      (index for (index, d) in enumerate(grouped_data[building_index]['Flat_subtypes']) if d['Code'] == row['Flat_subtype']),
-      None
-    )
-    if flat_type_index is None:
-      grouped_data[building_index]['Flat_subtypes'].append({
-        'id': row['Flat_subtype_id'],
-        'Flat_type_id': row['Flat_type_id'],
-        'Flat_type': row['Flat_type'],
-        'Code': row['Flat_subtype'],
+      # Flat subtype
+      flat_type_index = next(
+        (index for (index, d) in enumerate(grouped_data[building_index]['Flat_subtypes']) if d['Code'] == row['Flat_subtype']),
+        None
+      )
+      if flat_type_index is None:
+        grouped_data[building_index]['Flat_subtypes'].append({
+          'id': row['Flat_subtype_id'],
+          'Flat_type_id': row['Flat_type_id'],
+          'Flat_type': row['Flat_type'],
+          'Code': row['Flat_subtype'],
+          'Rent_long': int(row['Rent_long']),
+          'Rent_medium': int(row['Rent_medium']),
+          'Rent_short': int(row['Rent_short']),
+          'Rent_long_next': int(row['Rent_long_next']),
+          'Rent_medium_next': int(row['Rent_medium_next']),
+          'Rent_short_next': int(row['Rent_short_next']),
+          'Qty': row['Qty'],
+          'Rent_pct': row['Value_rent_pct'],
+          'Fee_pct': row['Value_fee_pct']
+        })
+
+    # To JSON
+    result = json.dumps(grouped_data, default=str)
+ 
+    # Disconnect
+
+    # Return
+    return result
+
+  finally:
+    dbClient.putconn(con)
+
+
+# ######################################################
+# Web - Price by place/flat types info
+# ######################################################
+
+def q_room_prices(dbClient, segment, year, dui=False):
+
+  # Connect
+  con = None
+  try:
+    con = dbClient.getconn()
+
+    # DUI?
+    type = 'DUI%' if not dui else 'X'
+
+    # Get prices
+    sql = '''
+      WITH 
+      "Promotions" AS (
+        SELECT 
+          bpb."Building_id",
+          bpp."Place_type_id",
+          bp."Flat_type_id",
+          1 + bp."Value_rent_pct" / 100.0 AS "Value_rent_pct", 
+          1 + bp."Value_fee_pct" / 100.0 "Value_fee_pct"
+        FROM "Billing"."Promotion" bp
+          LEFT JOIN "Billing"."Promotion_building" bpb ON bpb."Promotion_id" = bp.id
+          LEFT JOIN "Billing"."Promotion_place" bpp ON bpp."Promotion_id" = bp.id
+        WHERE bp."Active_from" <= CURRENT_DATE AND bp."Active_to" >= CURRENT_DATE 
+      ),
+      "Prices" AS (
+        SELECT
+          r."Building_id", 
+          rpt.id AS "Place_type_id", 
+          rft.id AS "Flat_type_id", 
+          CASE
+            WHEN rpt."Code" LIKE 'DUI%%' THEN REPLACE(rpt."Code", 'DUI_', 'ID_')
+            ELSE rpt."Code"
+          END as "Place_type",
+          rft."Code" AS "Flat_type",
+          MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long",   0)) AS "Rent_long",
+          MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
+          MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short",  0)) AS "Rent_short",
+          MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_long",   0)) AS "Rent_long_next",
+          MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_medium", 0)) AS "Rent_medium_next",
+          MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short",  0)) AS "Rent_short_next",
+          COUNT(*) AS "Qty"
+        FROM "Resource"."Resource" r
+        	INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id" 
+          INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+          INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+          INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
+          INNER JOIN "Billing"."Pricing_rate" pr  ON r."Rate_id"  = pr.id
+          INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id"
+          LEFT JOIN "Billing"."Pricing_detail" px ON px."Building_id" = r."Building_id" AND px."Flat_type_id" = r."Flat_type_id" AND px."Place_type_id" = r."Place_type_id"
+        WHERE r."Sale_type" in ('ambos', 'plazas')
+          AND pd."Year" = %s
+          AND px."Year" = %s
+          AND f."Segment_id" = %s
+          AND rpt."Code" NOT LIKE %s
+        GROUP BY 1, 2, 3, 4, 5
+      )
+      SELECT 
+        pz.*,
+        pr."Value_rent_pct", 
+        pr."Value_fee_pct"
+      FROM "Prices" pz
+      LEFT JOIN "Promotions" pr
+        ON pr."Building_id" = pz."Building_id"
+      AND (pr."Place_type_id" IS NULL OR pr."Place_type_id" = pz."Place_type_id")
+      AND (pr."Flat_type_id"  IS NULL OR pr."Flat_type_id"  = pz."Flat_type_id")
+      ORDER BY pz."Building_id", pz."Place_type_id", pz."Flat_type_id";
+    '''
+    cur = dbClient.execute(con, sql, (year, year + 1, segment, type))
+
+    # Obtener los resultados de la consulta
+    results = cur.fetchall()
+    cur.close()
+
+    # Crear una estructura de datos para almacenar los resultados agrupados
+    grouped_data = []
+
+    # Procesar los resultados y agruparlos en tres niveles (Building, Place_type, Flat_type)
+    for row in results:
+     
+      # Building
+      building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
+      if building_index is None:
+        grouped_data.append({
+          'id': row['Building_id'],
+          'Place_types': []
+        })
+        building_index = len(grouped_data) - 1
+
+      # Place type
+      place_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Place_types']) if d['Code'] == row['Place_type']), None)
+      if place_type_index is None:
+        grouped_data[building_index]['Place_types'].append({
+          'id': row['Place_type_id'],
+          'Code': row['Place_type'],
+          'Flat_types': []
+        })
+        place_type_index = len(grouped_data[building_index]['Place_types']) - 1
+
+      # Flat type
+      grouped_data[building_index]['Place_types'][place_type_index]['Flat_types'].append({
+        'id': row['Flat_type_id'],
+        'Code': row['Flat_type'],
         'Rent_long': int(row['Rent_long']),
         'Rent_medium': int(row['Rent_medium']),
         'Rent_short': int(row['Rent_short']),
@@ -740,140 +900,16 @@ def q_flat_prices(dbClient, segment, year):
         'Fee_pct': row['Value_fee_pct']
       })
 
-  # To JSON
-  result = json.dumps(grouped_data, default=str)
+    # To JSON
+    result = json.dumps(grouped_data, default=str)
  
-  # Disconnect
-  dbClient.putconn(con)
+    # Disconnect
 
-  # Return
-  return result
+    # Return
+    return result
 
-
-# ######################################################
-# Web - Price by place/flat types info
-# ######################################################
-
-def q_room_prices(dbClient, segment, year, dui=False):
-
-  # Connect
-  con = dbClient.getconn()
-
-  # DUI?
-  type = 'DUI%' if not dui else 'X'
-
-  # Get prices
-  sql = '''
-    WITH 
-    "Promotions" AS (
-      SELECT 
-        bpb."Building_id",
-        bpp."Place_type_id",
-        bp."Flat_type_id",
-        1 + bp."Value_rent_pct" / 100.0 AS "Value_rent_pct", 
-        1 + bp."Value_fee_pct" / 100.0 "Value_fee_pct"
-      FROM "Billing"."Promotion" bp
-        LEFT JOIN "Billing"."Promotion_building" bpb ON bpb."Promotion_id" = bp.id
-        LEFT JOIN "Billing"."Promotion_place" bpp ON bpp."Promotion_id" = bp.id
-      WHERE bp."Active_from" <= CURRENT_DATE AND bp."Active_to" >= CURRENT_DATE 
-    ),
-    "Prices" AS (
-      SELECT
-        r."Building_id", 
-        rpt.id AS "Place_type_id", 
-        rft.id AS "Flat_type_id", 
-        CASE
-          WHEN rpt."Code" LIKE 'DUI%%' THEN REPLACE(rpt."Code", 'DUI_', 'ID_')
-          ELSE rpt."Code"
-        END as "Place_type",
-        rft."Code" AS "Flat_type",
-        MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_long",   0)) AS "Rent_long",
-        MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_medium", 0)) AS "Rent_medium",
-        MIN(ROUND(pd."Services" + pr."Multiplier" * pd."Rent_short",  0)) AS "Rent_short",
-        MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_long",   0)) AS "Rent_long_next",
-        MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_medium", 0)) AS "Rent_medium_next",
-        MIN(ROUND(px."Services" + pr."Multiplier" * px."Rent_short",  0)) AS "Rent_short_next",
-        COUNT(*) AS "Qty"
-      FROM "Resource"."Resource" r
-      	INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id" 
-        INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-        INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
-        INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
-        INNER JOIN "Billing"."Pricing_rate" pr  ON r."Rate_id"  = pr.id
-        INNER JOIN "Billing"."Pricing_detail" pd ON pd."Building_id" = r."Building_id" AND pd."Flat_type_id" = r."Flat_type_id" AND pd."Place_type_id" = r."Place_type_id"
-        LEFT JOIN "Billing"."Pricing_detail" px ON px."Building_id" = r."Building_id" AND px."Flat_type_id" = r."Flat_type_id" AND px."Place_type_id" = r."Place_type_id"
-      WHERE r."Sale_type" in ('ambos', 'plazas')
-        AND pd."Year" = %s
-        AND px."Year" = %s
-        AND f."Segment_id" = %s
-        AND rpt."Code" NOT LIKE %s
-      GROUP BY 1, 2, 3, 4, 5
-    )
-    SELECT 
-      pz.*,
-      pr."Value_rent_pct", 
-      pr."Value_fee_pct"
-    FROM "Prices" pz
-    LEFT JOIN "Promotions" pr
-      ON pr."Building_id" = pz."Building_id"
-    AND (pr."Place_type_id" IS NULL OR pr."Place_type_id" = pz."Place_type_id")
-    AND (pr."Flat_type_id"  IS NULL OR pr."Flat_type_id"  = pz."Flat_type_id")
-    ORDER BY pz."Building_id", pz."Place_type_id", pz."Flat_type_id";
-  '''
-  cur = dbClient.execute(con, sql, (year, year + 1, segment, type))
-
-  # Obtener los resultados de la consulta
-  results = cur.fetchall()
-  cur.close()
-
-  # Crear una estructura de datos para almacenar los resultados agrupados
-  grouped_data = []
-
-  # Procesar los resultados y agruparlos en tres niveles (Building, Place_type, Flat_type)
-  for row in results:
-     
-    # Building
-    building_index = next((index for (index, d) in enumerate(grouped_data) if d['id'] == row['Building_id']), None)
-    if building_index is None:
-      grouped_data.append({
-        'id': row['Building_id'],
-        'Place_types': []
-      })
-      building_index = len(grouped_data) - 1
-
-    # Place type
-    place_type_index = next((index for (index, d) in enumerate(grouped_data[building_index]['Place_types']) if d['Code'] == row['Place_type']), None)
-    if place_type_index is None:
-      grouped_data[building_index]['Place_types'].append({
-        'id': row['Place_type_id'],
-        'Code': row['Place_type'],
-        'Flat_types': []
-      })
-      place_type_index = len(grouped_data[building_index]['Place_types']) - 1
-
-    # Flat type
-    grouped_data[building_index]['Place_types'][place_type_index]['Flat_types'].append({
-      'id': row['Flat_type_id'],
-      'Code': row['Flat_type'],
-      'Rent_long': int(row['Rent_long']),
-      'Rent_medium': int(row['Rent_medium']),
-      'Rent_short': int(row['Rent_short']),
-      'Rent_long_next': int(row['Rent_long_next']),
-      'Rent_medium_next': int(row['Rent_medium_next']),
-      'Rent_short_next': int(row['Rent_short_next']),
-      'Qty': row['Qty'],
-      'Rent_pct': row['Value_rent_pct'],
-      'Fee_pct': row['Value_fee_pct']
-    })
-
-  # To JSON
-  result = json.dumps(grouped_data, default=str)
- 
-  # Disconnect
-  dbClient.putconn(con)
-
-  # Return
-  return result
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -883,34 +919,38 @@ def q_room_prices(dbClient, segment, year, dui=False):
 def q_room_amenities(dbClient, segment):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
 
-  # Get amenities
-  sql = '''
-  SELECT
-    b.id, rpt."Code" AS "Place_type", rft."Code" AS "Flat_type", rat."Name", rat."Name_en", rat."Increment"::INTEGER, COUNT(*) AS "Qty"
-  FROM
-    "Resource"."Resource_amenity" ra
-    INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id"
-    INNER JOIN "Resource"."Resource" r ON r.id = ra."Resource_id"
-    INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
-    INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
-    INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-  WHERE b."Segment_id" = %s
-  GROUP BY 1, 2, 3, 4, 5, 6
-  ORDER BY 1, 2, 3, 4
-  '''
-  cur = dbClient.execute(con, sql, (segment, ))
+    # Get amenities
+    sql = '''
+    SELECT
+      b.id, rpt."Code" AS "Place_type", rft."Code" AS "Flat_type", rat."Name", rat."Name_en", rat."Increment"::INTEGER, COUNT(*) AS "Qty"
+    FROM
+      "Resource"."Resource_amenity" ra
+      INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id"
+      INNER JOIN "Resource"."Resource" r ON r.id = ra."Resource_id"
+      INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
+      INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
+      INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
+    WHERE b."Segment_id" = %s
+    GROUP BY 1, 2, 3, 4, 5, 6
+    ORDER BY 1, 2, 3, 4
+    '''
+    cur = dbClient.execute(con, sql, (segment, ))
 
-  # To JSON
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    # To JSON
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
  
-  # Disconnect
-  cur.close()
-  dbClient.putconn(con)
+    # Disconnect
+    cur.close()
 
-  # Return
-  return result
+    # Return
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -920,35 +960,39 @@ def q_room_amenities(dbClient, segment):
 def q_promo(dbClient, segment):
 
   # Connect
-  con = dbClient.getconn()
+  con = None
+  try:
+    con = dbClient.getconn()
 
-  # Get highest promo
-  sql = '''
-    SELECT DISTINCT b.id AS "building", r."Segment_id", rft."Code" AS "flat_type", rpt."Code" AS "place_type",
-      ROUND(p."Value_rent_pct", 0) AS "Value_rent_pct", ROUND(p."Value_fee_pct", 0) AS "Value_fee_pct",
-      p."Active_from", p."Active_to", p."Date_from", p."Date_to", p."Name", p."Name_en"
-    FROM "Billing"."Promotion" p
-      LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
-      LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
-      LEFT JOIN "Resource"."Resource_flat_type" rft ON rft."id" = pp."Flat_type_id" 
-      LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt."id" = pp."Place_type_id" 
-      LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
-     INNER JOIN "Resource"."Resource" r ON r."Building_id" = pb."Building_id" 
-    WHERE  p."Active_from" <= CURRENT_DATE
-      AND p."Active_to" >= CURRENT_DATE
-      AND r."Segment_id" = %s
-  '''
-  cur = dbClient.execute(con, sql, (segment, ))
+    # Get highest promo
+    sql = '''
+      SELECT DISTINCT b.id AS "building", r."Segment_id", rft."Code" AS "flat_type", rpt."Code" AS "place_type",
+        ROUND(p."Value_rent_pct", 0) AS "Value_rent_pct", ROUND(p."Value_fee_pct", 0) AS "Value_fee_pct",
+        p."Active_from", p."Active_to", p."Date_from", p."Date_to", p."Name", p."Name_en"
+      FROM "Billing"."Promotion" p
+        LEFT JOIN "Billing"."Promotion_building" pb ON pb."Promotion_id" = p.id
+        LEFT JOIN "Billing"."Promotion_place" pp ON pp."Promotion_id" = p.id
+        LEFT JOIN "Resource"."Resource_flat_type" rft ON rft."id" = pp."Flat_type_id" 
+        LEFT JOIN "Resource"."Resource_place_type" rpt ON rpt."id" = pp."Place_type_id" 
+        LEFT JOIN "Building"."Building" b ON b.id = pb."Building_id"
+       INNER JOIN "Resource"."Resource" r ON r."Building_id" = pb."Building_id" 
+      WHERE  p."Active_from" <= CURRENT_DATE
+        AND p."Active_to" >= CURRENT_DATE
+        AND r."Segment_id" = %s
+    '''
+    cur = dbClient.execute(con, sql, (segment, ))
 
-  # To JSON
-  result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
+    # To JSON
+    result = json.dumps([dict(row) for row in cur.fetchall()], default=str)
  
-  # Disconnect
-  cur.close()
-  dbClient.putconn(con)
+    # Disconnect
+    cur.close()
 
-  # Return
-  return result
+    # Return
+    return result
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -957,6 +1001,7 @@ def q_promo(dbClient, segment):
 
 def q_get_payment(dbClient, id, generate_order=False):
 
+  con = None
   try:
     # Get payment
     con = dbClient.getconn()
@@ -975,7 +1020,6 @@ def q_get_payment(dbClient, id, generate_order=False):
     result = cur.fetchone()
     cur.close()
     if result is None:
-      dbClient.putconn(con)
       return None
    
     # Get data
@@ -998,14 +1042,17 @@ def q_get_payment(dbClient, id, generate_order=False):
       con.commit()
 
     # Prepare response
-    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1014,17 +1061,21 @@ def q_get_payment(dbClient, id, generate_order=False):
 
 def q_put_payment(dbClient, id, auth, date):
 
+  con = None
   try:
     con = dbClient.getconn()
     dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
     con.commit()
-    dbClient.putconn(con)
     return True
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return False
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1033,18 +1084,22 @@ def q_put_payment(dbClient, id, auth, date):
 
 def get_provider(dbClient, id):
 
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, 'SELECT id, "Name", "Email", "Document", "User_name" FROM "Provider"."Provider" WHERE id=%s', (id,))
     aux = cur.fetchone()
-    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
 
 # ######################################################
 # Get customer
@@ -1052,18 +1107,22 @@ def get_provider(dbClient, id):
 
 def get_customer(dbClient, id):
 
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, 'SELECT id, "Name",  "Email", "Document", "User_name" FROM "Customer"."Customer" WHERE id=%s', (id,))
     aux = cur.fetchone()
-    dbClient.putconn(con)
     logger.debug(aux)
     return aux
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1078,6 +1137,7 @@ def create_airflows_user(dbClient, user, role):
   username = user['User_name'].lower()
   password = username + 'p4$$w0rd'
 
+  con = None
   try:
     # Connect
     con = dbClient.getconn()
@@ -1103,13 +1163,16 @@ def create_airflows_user(dbClient, user, role):
    
     # Commit
     con.commit()
-    dbClient.putconn(con)
     return userid
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1118,18 +1181,22 @@ def create_airflows_user(dbClient, user, role):
 
 def delete_airflows_user(dbClient, id):
 
+  con = None
   try:
     # Connect
     con = dbClient.getconn()
     dbClient.execute(con, 'DELETE FROM "Models"."User" WHERE id = %s', (id,) )
     con.commit()
-    dbClient.putconn(con)
     return id
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
  
 
 # ######################################################
@@ -1138,17 +1205,21 @@ def delete_airflows_user(dbClient, id):
 
 def q_booking_status(dbClient, id, status):
 
+  con = None
   try:
     con = dbClient.getconn()
     dbClient.execute(con, 'UPDATE "Booking"."Booking" SET "Status" = %s WHERE id = %s', (status, id))
     con.commit()
-    dbClient.putconn(con)
     return True
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return False
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1167,6 +1238,7 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
   if flat_type is None:
     flat_type = 0
 
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, '''
@@ -1186,14 +1258,17 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
     ''', (date_to, date_from, building, building, flat_type, flat_type,place_type, place_type))
     aux = cur.fetchall()
     cur.close()
-    dbClient.putconn(con)
     list = [item for sub_list in aux for item in sub_list]
     return list
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
   
 # ######################################################
 # Questionnaire
@@ -1202,6 +1277,7 @@ def q_available_resources(dbClient, date_from, date_to, building, flat_type, pla
 # Upsert questionnaire answers
 def q_questionnaire(dbClient, id, values, issues=None):
 
+  con = None
   try:
     con = dbClient.getconn()
 
@@ -1233,13 +1309,16 @@ def q_questionnaire(dbClient, id, values, issues=None):
       ''', (issues, id,))
       cur.close()
     
-    dbClient.putconn(con)
     return 'ok'
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return 'ko'
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1248,6 +1327,7 @@ def q_questionnaire(dbClient, id, values, issues=None):
 
 def q_prev_next(dbClient):
 
+  con = None
   try:
     con = dbClient.getconn()
     cur = dbClient.execute(con, '''
@@ -1278,13 +1358,16 @@ def q_prev_next(dbClient):
     ''')
     nxt = [dict(row) for row in cur.fetchall()]
     cur.close()
-    dbClient.putconn(con)
     return json.dumps([prv, nxt], default=str)    
   
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return None
+
+  finally:
+    dbClient.putconn(con)
 
 
 # ######################################################
@@ -1293,14 +1376,18 @@ def q_prev_next(dbClient):
 
 def q_change_contract(dbClient, id, dt, status):
 
+  con = None
   try:
     con = dbClient.getconn()
     dbClient.execute(con, 'UPDATE "Booking"."Booking" SET "Contract_signed" = %s, "Contract_status" = %s WHERE "Contract_id"=%s', (dt, status, id))
     con.commit()
-    dbClient.putconn(con)
     return True
 
   except Exception as error:
     logger.error(error)
-    con.rollback()
+    if con:
+      con.rollback()
     return False
+
+  finally:
+    dbClient.putconn(con)

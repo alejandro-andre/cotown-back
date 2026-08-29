@@ -69,6 +69,7 @@ def main():
   while True:
 
     # Manage any exception
+    con = None
     try:
 
       # Connect
@@ -129,7 +130,8 @@ def main():
     # Error
     except Exception as error:     
       logger.error(error)
-      con.rollback()
+      if con:
+        con.rollback()
 
     # Close connection and tunnel
     dbClient.putconn(con)
