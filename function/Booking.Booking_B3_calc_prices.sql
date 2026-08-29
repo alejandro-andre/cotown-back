@@ -140,7 +140,7 @@ BEGIN
 
     -- Deposit
     IF resource_type = 'piso' THEN
-      IF NEW."Book_type" == 'limitado' THEN
+      IF NEW."Book_type" = 'limitado' THEN
         legal_deposit := rent + utility + furniture + expenses;
         deposit := legal_deposit / 2;
       ELSE
