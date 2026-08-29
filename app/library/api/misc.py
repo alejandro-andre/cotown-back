@@ -213,7 +213,7 @@ def req_ical(token):
     logger.error(error)
     if con:
       con.rollback()
-    return None
+    abort(500)
   finally:
     dbClient.putconn(con)
 
