@@ -24,11 +24,14 @@ BEGIN
   END IF;
 
   -- Brand
-  SELECT COALESCE(bu."Segment_id", 1)
+  -- La marca la da el piso: las habitaciones y plazas siguen a su piso padre
+  SELECT COALESCE(
+           CASE WHEN r."Resource_type" = 'piso' THEN r."Segment_id" ELSE f."Segment_id" END,
+           1)
   INTO brand
   FROM "Booking"."Booking" b
   INNER JOIN "Resource"."Resource" r on r.id = b."Resource_id"
-  INNER JOIN "Building"."Building" bu on bu.id = r."Building_id"
+  LEFT  JOIN "Resource"."Resource" f on f.id = r."Flat_id"
   WHERE b.id = NEW."Entity_id";
 
   -- Plantilla

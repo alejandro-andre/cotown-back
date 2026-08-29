@@ -249,7 +249,16 @@ def req_pub_availability(type, filter):
 
   date_from = get_var('date_from')
   date_to   = get_var('date_to')
-  result = q_availability(g.dbClient, type, filter, date_from, date_to)
+
+  # Marca (1 Vanguard, 2 Cotown). Sin el parametro no se filtra, para no romper
+  # las webs publicadas que todavia no lo mandan
+  segment = get_var('segment', save=False)
+  try:
+    segment = int(segment) if segment is not None else None
+  except ValueError:
+    segment = None
+
+  result = q_availability(g.dbClient, type, filter, date_from, date_to, segment)
   return result
 
 # ---------------------------------------------------

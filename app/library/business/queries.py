@@ -931,10 +931,11 @@ def q_room_amenities(dbClient, segment):
       "Resource"."Resource_amenity" ra
       INNER JOIN "Resource"."Resource_amenity_type" rat ON rat.id = ra."Amenity_type_id"
       INNER JOIN "Resource"."Resource" r ON r.id = ra."Resource_id"
+      INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
       INNER JOIN "Resource"."Resource_flat_type" rft ON r."Flat_type_id" = rft.id
       INNER JOIN "Resource"."Resource_place_type" rpt ON r."Place_type_id" = rpt.id
       INNER JOIN "Building"."Building" b ON r."Building_id" = b.id
-    WHERE b."Segment_id" = %s
+    WHERE f."Segment_id" = %s
     GROUP BY 1, 2, 3, 4, 5, 6
     ORDER BY 1, 2, 3, 4
     '''
@@ -978,6 +979,7 @@ def q_promo(dbClient, segment):
        INNER JOIN "Resource"."Resource" r ON r."Building_id" = pb."Building_id" 
       WHERE  p."Active_from" <= CURRENT_DATE
         AND p."Active_to" >= CURRENT_DATE
+        AND r."Resource_type" = 'piso'
         AND r."Segment_id" = %s
     '''
     cur = dbClient.execute(con, sql, (segment, ))

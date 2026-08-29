@@ -172,9 +172,9 @@ def q_typologies(dbClient, segment):
         WHEN (r."Sale_type" = 'ambos' OR r."Sale_type" = 'completo') THEN 'ap'
       END as "Sale_type",
       CASE
-        WHEN rpt."Code" LIKE 'I\\_%' THEN 'ind'
-        WHEN rpt."Code" LIKE 'D\\_%' THEN 'sha'
-        WHEN rpt."Code" LIKE 'DUI\\_%' THEN 'idu'
+        WHEN rpt."Code" LIKE 'I\\_%%' THEN 'ind'
+        WHEN rpt."Code" LIKE 'D\\_%%' THEN 'sha'
+        WHEN rpt."Code" LIKE 'DUI\\_%%' THEN 'idu'
         ELSE 'apt'
       END as "Room_type",
       COUNT(*)
@@ -182,22 +182,23 @@ def q_typologies(dbClient, segment):
       INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
       INNER JOIN "Geo"."District" d on d.id = b."District_id"
       INNER JOIN "Geo"."Location" l on l.id = d."Location_id"
+      LEFT JOIN "Resource"."Resource" f on f.id = r."Flat_id"
       LEFT JOIN "Resource"."Resource_place_type" rpt on rpt.id = r."Place_type_id"
     WHERE b."Building_type_id" < 4
       AND b."Active" 
-      AND b."Segment_id" = {}
-      AND "Sale_type" IS NOT NULL
-      --AND (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI_%')
+      AND CASE WHEN r."Resource_type" = 'piso' THEN r."Segment_id" ELSE f."Segment_id" END = %s
+      AND r."Sale_type" IS NOT NULL
+      --AND (rpt."Code" IS NULL OR rpt."Code" NOT LIKE 'DUI_%%')
     GROUP BY 1, 2, 3, 4
     ORDER BY 1, 2, 3, 4
-    '''.format(segment)
+    '''
 
   con = None
   try:
 
     # Read data
     con = dbClient.getconn()
-    cur = dbClient.execute(con, sql)
+    cur = dbClient.execute(con, sql, (segment, ))
     data = cur.fetchall()
     cur.close()
 
@@ -263,7 +264,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
       WHERE bd.id IS NULL
         AND r."Sale_type" IN ('ambos', 'completo')
         AND pd."Year" = %s
-        AND b."Segment_id" = %s
+        AND r."Segment_id" = %s
         AND b."Building_type_id" < 3
         AND d."Location_id" = %s
       GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -277,6 +278,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
         b."Name" as "Building_name", rpt."Name{l}" AS "Place_type_name", rft."Name{l}" AS "Flat_type_name",
         pd."Services" + ROUND(pr."Multiplier" * pd."{field}", 0) AS "Price", MIN(mrt.id) AS "Photo"
       FROM "Resource"."Resource" r
+        INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
         INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
         INNER JOIN "Geo"."District" d ON d.id = b."District_id"
         INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
@@ -288,7 +290,7 @@ def q_book_search(dbClient, segment, lang, date_from, date_to, city, acom_type, 
       WHERE bd.id IS NULL
         AND r."Sale_type" IN ('ambos', 'plazas')
         AND pd."Year" = %s
-        AND b."Segment_id" = %s
+        AND f."Segment_id" = %s
         AND b."Building_type_id" IN %s
         AND d."Location_id" = %s
         AND rpt."Code" LIKE %s
@@ -668,7 +670,14 @@ def q_insert_booking(dbClient, booking):
 # Availability for static web
 # ------------------------------------------------------
 
-def q_availability(dbClient, type, filter, date_from, date_to):
+def q_availability(dbClient, type, filter, date_from, date_to, segment):
+
+  # Filtro de marca. Las plazas siguen al piso padre (f), los pisos van por su
+  # propia columna (r). Sin segmento no se filtra: las webs publicadas que aun
+  # no mandan el parametro siguen viendo el total como hasta ahora
+  seg_flat  = 'AND f."Segment_id" = %s' if segment is not None else ''
+  seg_own   = 'AND r."Segment_id" = %s' if segment is not None else ''
+  seg_param = [segment] if segment is not None else []
 
   # Connect
   con = None
@@ -677,11 +686,12 @@ def q_availability(dbClient, type, filter, date_from, date_to):
 
     # Single, Shared and Flat availabilities for all buildings
     if type == 0:
-      sql = '''
+      sql = f'''
         SELECT 
           CONCAT(r."Building_id", '_', SUBSTRING(rpt."Code", 1, 1)) as "id", COUNT(*) as "Qty"
         FROM
           "Resource"."Resource" r
+          INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
           INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
           INNER JOIN "Geo"."District" d ON d.id = b."District_id"
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
@@ -690,6 +700,7 @@ def q_availability(dbClient, type, filter, date_from, date_to):
         WHERE r."Sale_type" IN ('plazas', 'ambos')
           --AND rpt."Code" NOT LIKE 'DUI%%'
           AND (d."Location_id" <> 1 OR b."Building_type_id" = 3)
+          {seg_flat}
           AND bd.id IS NULL
         GROUP BY 1  
         UNION ALL
@@ -704,18 +715,20 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE rpt."Code" IS NULL
           AND r."Sale_type" IN ('completo', 'ambos')
+          {seg_own}
           AND bd.id IS NULL
         GROUP BY 1
       '''
-      cur = dbClient.execute(con, sql, (date_to, date_from, date_to, date_from))
+      cur = dbClient.execute(con, sql, [date_to, date_from] + seg_param + [date_to, date_from] + seg_param)
 
     # Room cur for one building
     elif type == 1:
-      sql = '''
+      sql = f'''
         SELECT 
           CONCAT(rpt."Code", '_', rft."Code") AS "id", COUNT(*) AS "Qty"
         FROM
           "Resource"."Resource" r
+          INNER JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
           INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
           INNER JOIN "Geo"."District" d ON d.id = b."District_id"
           INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
@@ -724,14 +737,15 @@ def q_availability(dbClient, type, filter, date_from, date_to):
         WHERE bd.id IS NULL 
           --AND rpt."Code" NOT LIKE 'DUI%%'
           AND r."Building_id" = %s 
+          {seg_flat}
           AND r."Sale_type" IN ('plazas', 'ambos')
         GROUP BY 1
         '''
-      cur = dbClient.execute(con, sql, (date_to, date_from, filter))
+      cur = dbClient.execute(con, sql, [date_to, date_from, filter] + seg_param)
 
     # Flat cur for one building
     else:
-      sql = '''
+      sql = f'''
         SELECT 
           rfst."Code" AS "id", COUNT(*) AS "Qty"
         FROM
@@ -742,10 +756,11 @@ def q_availability(dbClient, type, filter, date_from, date_to):
           LEFT JOIN "Booking"."Booking_detail" bd ON (bd."Resource_id" = r.id AND bd."Date_from" <= %s AND bd."Date_to" >= %s)
         WHERE bd.id IS NULL 
           AND r."Building_id" = %s
+          {seg_own}
           AND r."Sale_type" IN ('completo', 'ambos')
         GROUP BY 1
         '''
-      cur = dbClient.execute(con, sql, (date_to, date_from, filter))
+      cur = dbClient.execute(con, sql, [date_to, date_from, filter] + seg_param)
 
     # Read cur
     column_names = [desc[0] for desc in cur.description]

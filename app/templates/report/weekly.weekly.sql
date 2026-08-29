@@ -51,7 +51,8 @@ FROM "Booking"."Booking" b
   LEFT JOIN "Booking"."Booking_channel" bc ON bc.id = b."Booking_channel_id" 
   LEFT JOIN "Booking"."Booking_referral" br ON br.id = b."Booking_referral_id" 
   LEFT JOIN "Booking"."Booking_who" bw ON bw.id = b."Booking_who_id" 
-  LEFT JOIN "Auxiliar"."Segment" se ON se.id = bu."Segment_id" 
+  LEFT JOIN "Resource"."Resource" f ON f.id = r."Flat_id"
+  LEFT JOIN "Auxiliar"."Segment" se ON se.id = CASE WHEN r."Resource_type" = 'piso' THEN r."Segment_id" ELSE f."Segment_id" END 
   LEFT JOIN "Auxiliar"."Gender" g ON g.id = c."Gender_id" 
   LEFT JOIN "Auxiliar"."School" s ON s.id = b."School_id"
   LEFT JOIN "Auxiliar"."Language" l ON l.id = c."Language_id" 
