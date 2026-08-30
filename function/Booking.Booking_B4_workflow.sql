@@ -85,8 +85,9 @@ BEGIN
       IF NEW."Deposit" = 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
         NEW."Deposit_actual" = 0;
       END IF;
-      -- Add payment if actual deposit is 0
-      IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0 THEN
+      -- Add payment if actual deposit is 0.
+      IF NEW."Deposit" > 0 AND COALESCE(NEW."Deposit_actual", 0) = 0
+        AND NEW."Status" IN ('documentacionok', 'firmacontrato') THEN
         SELECT "Payment_method_id" INTO payment_method_id FROM "Customer"."Customer" WHERE id = NEW."Customer_id";
         SELECT p."Pos" INTO pos FROM "Resource"."Resource" r LEFT JOIN "Provider"."Provider" p ON p.id = r."Owner_id" WHERE r.id = NEW."Resource_id";
         INSERT
@@ -102,7 +103,6 @@ BEGIN
   -- Actualiza al estado 'Pendiente de pago' cuando se asigna el recurso a una solicitud no pagada
   IF ((NEW."Status" = 'solicitud' OR NEW."Status" = 'alternativas') AND NEW."Resource_id" IS NOT NULL) THEN
     NEW."Status" :='pendientepago';
-    deposit := TRUE;
   END IF;
 
   -- PENDIENTE DE PAGO A CONFIRMADA
@@ -133,11 +133,6 @@ BEGIN
   END IF;
 
   -- CONFIRMADA a DOCUMENTACION OK
-  -- Actualiza al estado 'Documentación ok' cuando la documentación de la reserva está aprobada.
-  -- Se evalúa en cada update de la reserva, no solo al tocar un documento, de forma que la
-  -- documentación aprobada antes de confirmar también hace avanzar la reserva.
-  -- Solo avanza desde 'confirmada': una reserva que ya ha avanzado (firmacontrato, contrato,
-  -- checkin...) no retrocede aunque se apruebe o se añada un documento nuevo.
   IF NEW."Status" = 'confirmada' AND (
        NOT EXISTS (
          SELECT 1 FROM "Customer"."Customer_doc" cd WHERE cd."Booking_id" = NEW.id
@@ -149,25 +144,24 @@ BEGIN
     NEW."Status" := 'documentacionok';
   END IF;
 
-  -- CONFIRMADA o DOCUMENTACION OK A FIRMA CONTRATO
-  -- Actualiza al estado 'Firma contrato' si no hay que pagar depósito.
-  -- Se acepta también desde 'documentacionok' para que una reserva sin garantía pendiente no se
-  -- quede atascada ahí: el único otro paso a 'firmacontrato' es el pago de la garantía.
-  IF NEW."Status" IN ('confirmada', 'documentacionok') AND NEW."Fee_marketplace" THEN
-    -- Si hay que pagar garantía, pasa a confirmada
-    IF NEW."Deposit" > 0 AND NEW."Deposit_actual" IS NULL THEN
-      deposit := TRUE;
-    -- Si no hay que pagar garantía o ya está pagada, pasa a firma contrato
-    ELSE
-      NEW."Status" := 'firmacontrato';
-    END IF;
+  -- EMISION DEL COBRO DE LA GARANTIA
+  IF NEW."Status" = 'documentacionok' AND OLD."Status" IS DISTINCT FROM 'documentacionok' THEN
+    deposit := TRUE;
+  END IF;
+
+  -- DOCUMENTACION OK a FIRMA CONTRATO
+  IF NEW."Status" = 'documentacionok'
+     AND (COALESCE(NEW."Deposit", 0) = 0 OR NEW."Deposit_actual" IS NOT NULL) THEN
+    NEW."Status" := 'firmacontrato';
+  END IF;
+
+  -- CONFIRMADA A FIRMA CONTRATO (marketplace)
+  IF NEW."Status" = 'confirmada' AND NEW."Fee_marketplace"
+     AND NOT (COALESCE(NEW."Deposit", 0) > 0 AND NEW."Deposit_actual" IS NULL) THEN
+    NEW."Status" := 'firmacontrato';
   END IF;
 
   -- FIRMA CONTRATO a CONTRATO
-  -- Actualiza el estado a "contrato" cuando firma el contrado (status = completed).
-  -- La firma se graba por "Contract_id" desde el callback de firma, sin mirar el estado, así que
-  -- se acepta desde cualquier estado previo a la firma. Si no, una reserva que estuviera en
-  -- 'documentacionok' al llegar la firma se quedaba con el contrato firmado y sin avanzar.
   IF (NEW."Status" IN ('confirmada', 'documentacionok', 'firmacontrato')
       AND NEW."Contract_status" = 'completed'
       AND NEW."Contract_rent" IS NOT NULL) THEN
