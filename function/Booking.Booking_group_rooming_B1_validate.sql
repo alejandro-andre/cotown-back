@@ -25,7 +25,7 @@ BEGIN
     IF NEW."Check_in" < date_from THEN
       RAISE exception '!!!Check-in date cannot be earlier than the start of the reservation!!!Fecha de check in no puede ser anterior al inicio de la reserva!!!';
     END IF;
-    IF NEW."Check_in" >= date_to THEN
+    IF NEW."Check_in" > date_to THEN
       RAISE exception '!!!Check-in date cannot be later than the end of the reservation!!!Fecha de check in no puede ser posterior al final de la reserva!!!';
     END IF;
   END IF;
