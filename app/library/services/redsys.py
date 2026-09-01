@@ -84,24 +84,40 @@ def pay(pos, order, amount, id, urlok, urlko):
 
 def validate(pos, response):
 
-  # Received params
-  params = response['Ds_MerchantParameters']
-  logger.debug(params)
+  # Do not propagate exceptions
+  try:
 
-  # Get DS_ORDER
-  result = json.loads(base64.b64decode(params).decode('utf-8'))
-  logger.debug(result)
+    # Known pos
+    if settings.get('REDSYS_KEY_' + pos.upper(), None) is None:
+      logger.error(f'Notificación Redsys con TPV desconocido: {pos}')
+      return None
 
-  # Calc signatures
-  calculated_signature = calc_signature(pos, result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
-  received_signature = response['Ds_Signature'].replace('_', '/').replace('-', '+')
-  logger.debug(calculated_signature)
-  logger.debug(received_signature)
- 
-  # Check signature
-  if calculated_signature != received_signature:
-    logger.debug('Dont match')
+    # Received params
+    params = response.get('Ds_MerchantParameters')
+    signature = response.get('Ds_Signature')
+    logger.debug(params)
+    if params is None or signature is None:
+      logger.error(f'Notificación Redsys ({pos}) sin Ds_MerchantParameters y/o Ds_Signature')
+      return None
+
+    # Get DS_ORDER
+    result = json.loads(base64.b64decode(params).decode('utf-8'))
+    logger.debug(result)
+
+    # Calc signatures
+    calculated_signature = calc_signature(pos, result['Ds_Order'], params.encode('utf-8')).decode('utf-8')
+    received_signature = signature.replace('_', '/').replace('-', '+')
+    logger.debug(calculated_signature)
+    logger.debug(received_signature)
+
+    # Check signature
+    if not hmac.compare_digest(calculated_signature, received_signature):
+      logger.error(f'Notificación Redsys ({pos}) con firma incorrecta, pedido {result.get("Ds_Order")}')
+      return None
+
+    # Return response
+    return result
+
+  except Exception as error:
+    logger.error(f'Notificación Redsys ({pos}) ilegible: {error}')
     return None
- 
-  # Return response
-  return result

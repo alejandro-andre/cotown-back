@@ -1001,24 +1001,30 @@ def q_promo(dbClient, segment):
 # Get payment
 # ######################################################
 
-def q_get_payment(dbClient, id, generate_order=False):
+def q_get_payment(dbClient, id, generate_order=False, validate_customer=True):
 
   con = None
   try:
     # Get payment
     con = dbClient.getconn()
+
+    # The fiscal data is only required to start a payment, never to register a charge
+    check = ''
+    if validate_customer:
+      check = '''
+        AND c."Id_type_id" IS NOT NULL
+        AND c."Document" IS NOT NULL
+        AND c."Address" IS NOT NULL
+        AND c."Zip" IS NOT NULL
+        AND c."City" IS NOT NULL
+        AND c."Country_id" IS NOT NULL
+      '''
     cur = dbClient.execute(con, '''
-      SELECT p.id, p."Issued_date", p."Concept", p."Amount", p."Payment_order", p."Pos"  
+      SELECT p.id, p."Issued_date", p."Concept", p."Amount", p."Payment_order", p."Pos", p."Payment_date"
       FROM "Billing"."Payment" p
       INNER JOIN "Customer"."Customer" c ON c.id = p."Customer_id"
       WHERE p.id = %s
-      AND c."Id_type_id" IS NOT NULL 
-      AND c."Document" IS NOT NULL
-      AND c."Address" IS NOT NULL
-      AND c."Zip" IS NOT NULL
-      AND c."City" IS NOT NULL
-      AND c."Country_id" IS NOT NULL
-    ''', (id,))
+    ''' + check, (id,))
     result = cur.fetchone()
     cur.close()
     if result is None:
@@ -1048,7 +1054,7 @@ def q_get_payment(dbClient, id, generate_order=False):
     return aux
 
   except Exception as error:
-    logger.error(error)
+    logger.error(f'Error leyendo el pago {id}: {error}')
     if con:
       con.rollback()
     return None
@@ -1066,12 +1072,24 @@ def q_put_payment(dbClient, id, auth, date):
   con = None
   try:
     con = dbClient.getconn()
-    dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s', (auth, date, id))
+    cur = dbClient.execute(con, 'UPDATE "Billing"."Payment" SET "Payment_auth" = %s, "Payment_date" = %s WHERE id=%s AND "Payment_date" IS NULL', (auth, date, id))
+    updated = cur.rowcount
+    cur.close()
     con.commit()
+    # Nothing updated: already registered by a previous notification, or the payment is gone
+    if updated == 0:
+      cur = dbClient.execute(con, 'SELECT "Payment_date" FROM "Billing"."Payment" WHERE id=%s', (id,))
+      row = cur.fetchone()
+      cur.close()
+      if row is not None and row[0] is not None:
+        logger.info(f'El pago {id} ya estaba cobrado el {row[0]}, no se sobreescribe (auth {auth}, {date})')
+        return True
+      logger.error(f'El pago {id} no existe, no se ha registrado el cobro (auth {auth}, {date})')
+      return False
     return True
 
   except Exception as error:
-    logger.error(error)
+    logger.error(f'Error registrando el cobro del pago {id} (auth {auth}, {date}): {error}')
     if con:
       con.rollback()
     return False
