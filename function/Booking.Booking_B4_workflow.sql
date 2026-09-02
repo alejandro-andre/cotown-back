@@ -163,14 +163,13 @@ BEGIN
 
   -- FIRMA CONTRATO a CONTRATO
   IF (NEW."Status" IN ('confirmada', 'documentacionok', 'firmacontrato')
-      AND NEW."Contract_status" = 'completed'
-      AND NEW."Contract_rent" IS NOT NULL) THEN
+      AND NEW."Contract_status" = 'completed') THEN
     NEW."Status" := 'contrato';
   END IF;
 
   -- CONTRATO a FIRMACONTRATO
   -- Actualiza el estado a "firmacontrato" cuando se quita la firma, tiene que firmarse el contrato nuevamente
-  IF (NEW."Status" = 'contrato' AND (NEW."Contract_status" <> 'completed' OR NEW."Contract_rent" IS NULL)) THEN
+  IF (NEW."Status" = 'contrato' AND NEW."Contract_status" IS DISTINCT FROM 'completed') THEN
     NEW."Status"          := 'firmacontrato';
     NEW."Contract_id"     := NULL; 
     NEW."Contract_status" := NULL; 
