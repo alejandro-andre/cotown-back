@@ -359,7 +359,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
   if acom_type == 'ap':
     sql = f'''
       SELECT DISTINCT
-        b."Name" as "Building_name", b."Code" AS "Building_code",
+        b."Name" as "Building_name", b."Code" AS "Building_code", d."Location_id",
         rfst."Name{l}" AS "Place_type_name", NULL AS "Place_type_code",
         rft."Name{l}" AS "Flat_type_name",
         r."Billing_type",
@@ -372,6 +372,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         COALESCE(pd."Final_cleaning", 0) AS "Final_cleaning"
       FROM "Resource"."Resource" r
         INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+        INNER JOIN "Geo"."District" d ON d.id = b."District_id"
         INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
         INNER JOIN "Resource"."Resource_flat_subtype" rfst ON rfst.id = r."Flat_subtype_id"
@@ -385,7 +386,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
   else:
     sql = f'''
       SELECT DISTINCT
-        b."Name" as "Building_name", b."Code" AS "Building_code",
+        b."Name" as "Building_name", b."Code" AS "Building_code", d."Location_id",
         rpt."Name{l}" AS "Place_type_name", rpt."Code" AS "Place_type_code",
         rft."Name{l}" AS "Flat_type_name",
         r."Billing_type",
@@ -397,6 +398,7 @@ def q_book_summary(dbClient, lang, date_from, date_to, building_id, place_type_i
         COALESCE(pd."Final_cleaning", 0) AS "Final_cleaning"
       FROM "Resource"."Resource" r
         INNER JOIN "Building"."Building" b ON b.id = r."Building_id"
+        INNER JOIN "Geo"."District" d ON d.id = b."District_id"
         INNER JOIN "Billing"."Pricing_rate" pr ON r."Rate_id"  = pr.id
         INNER JOIN "Resource"."Resource_flat_type" rft ON rft.id = r."Flat_type_id"
         INNER JOIN "Resource"."Resource_place_type" rpt ON rpt.id = r."Place_type_id"

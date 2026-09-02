@@ -27,8 +27,8 @@ map $host$request_uri $new_uri {
     cotown.com/blog/which-documents-do-you-need-to-live-in-valencia/ /documents-to-live-in-valencia.html;
     cotown.com/blog/why-is-coliving-the-lifestyle-choice-for-young-professionals-and-digital-nomads/ /coliving-for-young-professionals-digital-nomads.html;
     cotown.com/blog/why-moving-cities-can-change-your-life/ /why-moving-cities-can-change-your-life.html;
-    cotown.com/book-now /book.html;
-    cotown.com/book-now/ /book-now.html;
+    cotown.com/book-now /;
+    cotown.com/book-now/ /;
     cotown.com/companies/ /;
     cotown.com/contact/ /contact.html;
     cotown.com/cotown-prive/ /private-apartments-barcelona.html;

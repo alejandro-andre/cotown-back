@@ -24,6 +24,20 @@ logger = logging.getLogger('COTOWN')
 
 
 # ###################################################
+# Constants
+# ###################################################
+
+# Anti-bot: campo trampa (honeypot) y tiempo minimo de cumplimentacion
+HONEYPOT_FIELD = 'website'
+MIN_ELAPSED_MS = 3000
+
+# Declaracion de estancia recreativa: solo en Cotown y en Barcelona
+LEISURE_LOCATION_ID = 1
+LEISURE_REASON_ID = 5
+LEISURE_FIELD = 'leisure'
+
+
+# ###################################################
 # Auxiliary methods
 # ###################################################
 
@@ -69,6 +83,15 @@ def process_error(msg):
   return msg
   
 # ---------------------------------------------------
+# Leisure statement required? (Cotown + Barcelona)
+# ---------------------------------------------------
+
+def leisure_required(segment, summary):
+
+  # Segmento 1 es Vanguard, cualquier otro valor es Cotown (igual que en las plantillas)
+  return segment != '1' and bool(summary) and summary.get('Location_id') == LEISURE_LOCATION_ID
+
+# ---------------------------------------------------
 # Get variable from form, request or session
 # ---------------------------------------------------
 
@@ -111,6 +134,24 @@ def req_form():
     contact = {}
     for item in request.form:
         contact[item] = request.form.get(item)
+
+    # Anti-bot: solo un bot rellena un campo invisible.
+    # Se responde 200 para que no aprenda que ha sido detectado.
+    if (contact.pop(HONEYPOT_FIELD, '') or '').strip():
+        logger.warning('Form discarded (honeypot): %s', contact.get('email'))
+        return '', 200
+
+    # Anti-bot: los bots rellenan y envian en milisegundos.
+    # Si el campo no llega (web publicada aun sin el), se deja pasar y solo se avisa.
+    try:
+        elapsed = int(contact.pop('elapsed', ''))
+    except (TypeError, ValueError):
+        elapsed = -1
+    if elapsed < 0:
+        logger.warning('Form without elapsed: %s', contact.get('email'))
+    elif elapsed < MIN_ELAPSED_MS:
+        logger.warning('Form discarded (elapsed=%sms): %s', elapsed, contact.get('email'))
+        return '', 200
 
     # Attachment?
     file = None
@@ -303,6 +344,8 @@ def req_pub_booking(step):
     flat_type_id  = get_var('book_flat_type_id')
     extras        = get_var('book_extras')
     booking_id    = 0
+    summary       = None
+    reasons       = []
 
     # Current user, if logged
     logged   = session.get('logged', None)
@@ -407,6 +450,12 @@ def req_pub_booking(step):
 
       # Try to mke the reservation book
       summary = q_book_summary(g.dbClient, lang, date_from, date_to, building_id, place_type_id, flat_type_id, acom_type)
+
+      # Comentarios (con traza de la declaracion de estancia recreativa)
+      comments = summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + ((' / ' + extras) if extras else '')
+      if leisure_required(segment, summary) and request.form.get(LEISURE_FIELD):
+        comments += ' / Declara estancia recreativa/vacacional'
+
       booking = {
         'Date_from': date_from,
         'Date_to': date_to,
@@ -419,7 +468,7 @@ def req_pub_booking(step):
         'School_id': get_var('School_id', None) or None,
         'Other_school': get_var('Other_school', None),
         'Company': get_var('Company', None),
-        'Comments': summary['Building_name'] + ' / ' + summary['Place_type_name'] + ' / ' + summary['Flat_type_name'] + (' / ' + extras) if extras else ''
+        'Comments': comments
       }
       booking_id, error = q_insert_booking(g.dbClient, booking)
 
@@ -434,6 +483,12 @@ def req_pub_booking(step):
         step = 3
 
       # El envío al CRM lo encola el trigger Booking_A4_lead y lo procesa batch_sendcrm
+
+    # Barcelona (Cotown): mostrar la declaracion de estancia recreativa
+    # y dejar el motivo vacacional como unica opcion
+    leisure = leisure_required(segment, summary)
+    if leisure and reasons:
+      reasons = [r for r in reasons if r['id'] == LEISURE_REASON_ID]
 
     # Add your custom filter to Jinja2 environment
     g.env.filters['number'] = format_number

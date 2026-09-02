@@ -70,6 +70,15 @@
                     </div>
                   </div>
 
+                  [% if data.leisure %]
+                  <div id="leisure_div" class="pure-u-1 registry leisure" style="display:none; margin-bottom:25px;">
+                    <input id="leisure" name="leisure" type="checkbox" value="1" required/>
+                    <label for="leisure" class="label">
+                      Confirmo que viajo por motivos exclusivamente recreativos/vacacionales y que facilitaré la documentación requerida.
+                    </label>
+                  </div>
+                  [% endif %]
+
                   <input type="hidden" name="book_action" value="book">
 
                   <section class="next">
@@ -342,6 +351,17 @@
       work = (reason.value === "2" || reason.value === "3" || reason.value === "4");
       document.getElementById("Company_div").style.display = work ? "block" : "none";
       document.getElementById("Company").required = work;
+
+      // Vacacional (el bloque solo existe en Barcelona con Cotown)
+      const leisureDiv = document.getElementById("leisure_div");
+      if (leisureDiv) {
+        const holiday = (reason.value === "5");
+        const leisure = document.getElementById("leisure");
+        leisureDiv.style.display = holiday ? "flex" : "none";
+        leisure.required = holiday;
+        if (!holiday)
+          leisure.checked = false;
+      }
     });
 
   const school = document.getElementById("School_id");
